@@ -589,7 +589,7 @@ class WalletListTile extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
-          const BoxShadow(
+          BoxShadow(
             color: Color(0x3f000000),
             blurRadius: 5,
             offset: Offset(0, 3),
@@ -597,6 +597,7 @@ class WalletListTile extends StatelessWidget {
         ],
         color: const Color(0xfffffbfb),
       ),
+      margin: EdgeInsets.symmetric(horizontal: 5),
       child: ListTile(
         onTap: () => Get.to(SendToken()),
         leading: ClipRRect(

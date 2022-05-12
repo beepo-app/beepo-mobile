@@ -55,10 +55,12 @@ class _WalletState extends State<Wallet> {
                 height: 280,
                 width: double.infinity,
                 decoration: const BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                        bottomLeft: const Radius.circular(20),
-                        bottomRight: const Radius.circular(20)),
-                    color: const Color(0xff0e014c)),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  ),
+                  color: Color(0xff0e014c),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -143,71 +145,75 @@ class _WalletState extends State<Wallet> {
               ),
             ),
             Expanded(
-                child: Container(
-              padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-              color: Colors.white,
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 24),
-                    const Text(
-                      'Cripto Assets',
-                      style: const TextStyle(fontSize: 18, color: Colors.black),
-                    ),
-                    const SizedBox(height: 45),
-                    WalletListTile(
-                      image: 'assets/bCoin.png',
-                      title: 'Bitcoin',
-                      subtext: 'BTC',
-                      amount: '0.0234789',
-                    ),
-                    const SizedBox(height: 20),
-                    WalletListTile(
-                      image: 'assets/BTCoin.png',
-                      title: 'Binance Token',
-                      subtext: 'BNB',
-                      amount: '6.0483920',
-                    ),
-                    const SizedBox(height: 20),
-                    WalletListTile(
-                      image: 'assets/ETH.png',
-                      title: 'Etherium',
-                      subtext: 'ETH',
-                      amount: '6.0483920',
-                    ),
-                    const SizedBox(height: 20),
-                    WalletListTile(
-                      image: 'assets/Celo.png',
-                      title: 'Celo',
-                      subtext: 'Celo',
-                      amount: '20.234789',
-                    ),
-                    const SizedBox(height: 20),
-                    WalletListTile(
-                      image: 'assets/BTC.png',
-                      title: 'Celo Dollar',
-                      subtext: 'CUSD',
-                      amount: '20.234789',
-                    ),
-                    const SizedBox(height: 20),
-                    WalletListTile(
-                      image: 'assets/volt.png',
-                      title: 'Volt Token',
-                      subtext: 'VOLT',
-                      amount: '0.0234789',
-                    ),
-                    const SizedBox(height: 20),
-                    WalletListTile(
-                      image: 'assets/usdt.png',
-                      title: 'USDT Token',
-                      subtext: 'USDT',
-                      amount: '0.0234789',
-                    ),
-                  ],
+              child: Container(
+                padding: const EdgeInsets.only(top: 10),
+                margin: EdgeInsets.symmetric(
+                  horizontal: 10,
+                ),
+                color: Colors.white,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Crypto Assets',
+                        style: TextStyle(fontSize: 18, color: Colors.black),
+                      ),
+                      const SizedBox(height: 45),
+                      WalletListTile(
+                        image: 'assets/bCoin.png',
+                        title: 'Bitcoin',
+                        subtext: 'BTC',
+                        amount: '0.0234789',
+                      ),
+                      const SizedBox(height: 20),
+                      WalletListTile(
+                        image: 'assets/BTCoin.png',
+                        title: 'Binance Token',
+                        subtext: 'BNB',
+                        amount: '6.0483920',
+                      ),
+                      const SizedBox(height: 20),
+                      WalletListTile(
+                        image: 'assets/ETH.png',
+                        title: 'Etherium',
+                        subtext: 'ETH',
+                        amount: '6.0483920',
+                      ),
+                      const SizedBox(height: 20),
+                      WalletListTile(
+                        image: 'assets/Celo.png',
+                        title: 'Celo',
+                        subtext: 'Celo',
+                        amount: '20.234789',
+                      ),
+                      const SizedBox(height: 20),
+                      WalletListTile(
+                        image: 'assets/BTC.png',
+                        title: 'Celo Dollar',
+                        subtext: 'CUSD',
+                        amount: '20.234789',
+                      ),
+                      const SizedBox(height: 20),
+                      WalletListTile(
+                        image: 'assets/volt.png',
+                        title: 'Volt Token',
+                        subtext: 'VOLT',
+                        amount: '0.0234789',
+                      ),
+                      const SizedBox(height: 20),
+                      WalletListTile(
+                        image: 'assets/usdt.png',
+                        title: 'USDT Token',
+                        subtext: 'USDT',
+                        amount: '0.0234789',
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            )),
+            ),
           ],
         ),
       ),

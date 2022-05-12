@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../Utils/styles.dart';
 import 'signup_screen.dart';
+import 'package:lottie/lottie.dart';
 
 class Onboarding extends StatefulWidget {
   Onboarding({Key key}) : super(key: key);
@@ -31,103 +32,110 @@ class _OnboardingState extends State<Onboarding> {
     super.dispose();
   }
 
-  // int index = 0;
-
-  // List body = [
   List<Map<String, String>> body = [
     {
       'image': 'assets/onboard1.png',
       'text':
-          'Access an easy-to-use Chat platform that does not track or store your personal information.'
+          'Beepo  is a decentralized social media platform that prioritizes anonymity with small-scale business capabilities.'
     },
     {
       'image': 'assets/onboard2.png',
       'text':
-          'Web3 wallet that is multi-chain, non-custodial, NFT integrated, and communications enabled. \nSend and receive messages and notifications, make audio and video calls, \ntransfer funds, and purchase and store NFTs in a non-custodial blockchain wallet.'
+          'Beepo enables seamless communication and media sharing with family and friends using an enhanced E2EE protocol.'
     },
     {
       'image': 'assets/onboard3.png',
       'text':
-          'Scanning user codes is a simple way to send tips and interact with people all around the world.'
+          'Beepo is designed to meet the needs of small scale business owners and freelancers for secured and decentralized transactions'
     }
+  ];
+
+  List titles = [
+    "Welcome to Beepo",
+    "E2EE Security",
+    "Scale Your Business",
+  ];
+
+  List lotties = [
+    'assets/lottie/lott_2.json',
+    'assets/lottie/lott_3.json',
+    'assets/lottie/lott_4.json',
+    'assets/lottie/lottie_1.json',
   ];
 
   // static get image => null;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: bg,
-      //   elevation: 0,
-      // ),
-      body: Container(
-        color: bg,
-        padding: EdgeInsets.all(21),
-        child: Column(
-          children: [
-            SizedBox(height: 60),
-            Expanded(
-              // flex: 3,
-              child: PageView.builder(
-                controller: controller,
-                onPageChanged: (int index) {
-                  setState(() {
-                    check = index;
-                  });
-                },
-                itemCount: body.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      Image.asset(
-                        body[index]['image'],
-                        height: 376,
-                        width: 293,
-                      ),
-                      SizedBox(height: 18),
-                      Text(
-                        body[index]['text'],
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Color(0xff0e014c),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
+      body: SafeArea(
+        child: Container(
+          color: bg,
+          padding: const EdgeInsets.all(21),
+          child: Column(
+            children: [
+              Expanded(
+                child: PageView.builder(
+                  controller: controller,
+                  onPageChanged: (int index) {
+                    setState(() {
+                      check = index;
+                    });
+                  },
+                  itemCount: body.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        Spacer(),
+                        Lottie.asset(lotties[index]),
+                        const SizedBox(height: 30),
+                        Text(
+                          titles[index],
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Color(0xff0e014c),
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 40)
-                    ],
-                  );
-                },
+                        const SizedBox(height: 20),
+                        Text(
+                          body[index]['text'],
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Color(0xff0e014c),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const Spacer(),
+                      ],
+                    );
+                  },
+                ),
               ),
-            ),
-            Container(
-              height: 42,
-              child: SizedBox(
+              SizedBox(
                 width: 237,
                 height: 42,
                 child: TextButton(
                   onPressed: () {
                     if (check == body.length - 1) {
-                      Get.to(SignUp());
+                      Get.to(const SignUp());
                     } else {
-                      controller.animateToPage(check + 1,
-                          duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
+                      controller.animateToPage(
+                        check + 1,
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                      );
                     }
 
                     controller.nextPage(
-                        duration: Duration(milliseconds: 500), curve: Curves.easeIn);
-
-                    //     Get.to(
-                    //       Chart(),
-                    //     );
-                    //   } else {
-                    //     Get.to(Onboard(value: check + 1));
-                    //   }
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeIn);
                   },
                   child: Text(
                     check == body.length - 1 ? 'Completed' : 'Next',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -145,15 +153,11 @@ class _OnboardingState extends State<Onboarding> {
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 30)
-          ],
+              const SizedBox(height: 30)
+            ],
+          ),
         ),
       ),
-      // bottomNavigationBar: FilledButton(
-      //   text: 'continue',
-      //   onPressed: () => Get.to(Chart()),
-      // ),
     );
   }
 }

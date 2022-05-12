@@ -149,43 +149,43 @@ class _ChatDmState extends State<ChatDm> {
           ],
         ),
       ),
-      bottomNavigationBar: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(100)),
-        child: Row(
-          children: [
-            SizedBox(
-                // width: MediaQuery.of(context).size.width * 0.8,
-                child: TextFormField(
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: bg,
-                suffixIcon: Icon(
-                  Icons.add_circle_outline_sharp,
-                  color: blue,
-                ),
-                border: InputBorder.none,
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(6),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(6),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            )),
-            SizedBox(width: 10),
-            IconButton(
-              icon: Icon(
-                Icons.send,
-                color: blue,
-              ),
-              onPressed: () {},
-            ),
-          ],
-        ),
-      ),
+      // bottomNavigationBar: Container(
+      //   width: double.infinity,
+      //   decoration: BoxDecoration(borderRadius: BorderRadius.circular(100)),
+      //   child: Row(
+      //     children: [
+      //       SizedBox(
+      //           // width: MediaQuery.of(context).size.width * 0.8,
+      //           child: TextFormField(
+      //         decoration: InputDecoration(
+      //           filled: true,
+      //           fillColor: bg,
+      //           suffixIcon: Icon(
+      //             Icons.add_circle_outline_sharp,
+      //             color: blue,
+      //           ),
+      //           border: InputBorder.none,
+      //           enabledBorder: OutlineInputBorder(
+      //             borderRadius: BorderRadius.circular(6),
+      //             borderSide: BorderSide.none,
+      //           ),
+      //           focusedBorder: OutlineInputBorder(
+      //             borderRadius: BorderRadius.circular(6),
+      //             borderSide: BorderSide.none,
+      //           ),
+      //         ),
+      //       )),
+      //       SizedBox(width: 10),
+      //       IconButton(
+      //         icon: Icon(
+      //           Icons.send,
+      //           color: blue,
+      //         ),
+      //         onPressed: () {},
+      //       ),
+      //     ],
+      //   ),
+      // ),
 
       // bottomNavigationBar: Container(
       //   width: double.infinity,
