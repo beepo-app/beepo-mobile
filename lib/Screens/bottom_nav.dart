@@ -17,7 +17,7 @@ class BottomNav extends StatefulWidget {
 class _BottomNavState extends State<BottomNav> {
   int index = 1;
   List body = [
-    Chart(),
+    ChatScreen(),
     Wallet(),
     Browser(),
     Profile(),

@@ -97,24 +97,21 @@ class _BrowserState extends State<Browser> {
                       Column(
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               BrowserContainer(
                                 image: 'assets/mobius.png',
                                 title: 'mobius',
                               ),
-                              SizedBox(width: 20),
                               BrowserContainer(
                                 image: 'assets/mentofi.png',
                                 title: 'mentoFi',
                               ),
-                              SizedBox(width: 20),
                               BrowserContainer2(
                                 image: 'assets/imMarketer.png',
                                 title: 'impactMarket',
                               ),
-                              SizedBox(width: 20),
                               BrowserContainer(
                                 image: 'assets/immortal.png',
                                 title: 'Immortal',
@@ -123,23 +120,20 @@ class _BrowserState extends State<Browser> {
                           ),
                           SizedBox(height: 30),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              SizedBox(width: 20),
                               BrowserContainer3(
                                 image: 'assets/pancake.png',
                                 title: 'pancakeswap',
                               ),
-                              SizedBox(width: 20),
                               BrowserContainer(
                                 image: 'assets/sanshi.png',
                                 title: 'Sushi',
                               ),
-                              SizedBox(width: 20),
                               BrowserContainer(
                                 image: 'assets/uniswap.png',
                                 title: 'Uniswap',
                               ),
-                              SizedBox(width: 20),
                               BrowserContainer4(
                                 image: 'assets/opensea.png',
                                 title: 'Opensea',

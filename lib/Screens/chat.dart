@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 
 import '../components.dart';
 
-class Chart extends StatefulWidget {
-  Chart({Key key}) : super(key: key);
+class ChatScreen extends StatefulWidget {
+  ChatScreen({Key key}) : super(key: key);
 
   @override
-  State<Chart> createState() => _ChartState();
+  State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChartState extends State<Chart> {
+class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -39,7 +39,7 @@ class _ChartState extends State<Chart> {
                   ),
                   const Tab(
                     child: const Text(
-                      "Call",
+                      "Calls",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -52,11 +52,7 @@ class _ChartState extends State<Chart> {
               const SizedBox(height: 25),
               Expanded(
                 child: TabBarView(
-                  children: [
-                    ChatTab(),
-                    // Call Screen //
-                    CallTab()
-                  ],
+                  children: [ChatTab(), CallTab()],
                 ),
               ),
             ],

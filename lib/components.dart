@@ -96,41 +96,74 @@ class _ChatTabState extends State<ChatTab> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: 80,
-          child: ListView.separated(
-              padding: const EdgeInsets.only(right: 10, left: 10),
-              shrinkWrap: true,
-              itemCount: 6,
-              scrollDirection: Axis.horizontal,
-              separatorBuilder: (ctx, i) => const SizedBox(width: 10),
-              itemBuilder: (ctx, i) {
-                return Column(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(30),
-                      child: Image.asset(
-                        'assets/profile_img.png',
-                        height: 60,
-                        width: 60,
-                      ),
-                    ),
-                    const SizedBox(height: 7),
-                    const Text(
-                      "James",
-                      style: TextStyle(
-                        color: const Color(0xb2ffffff),
-                        fontSize: 9,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    )
-                  ],
-                );
-              }),
+        Row(
+          children: [
+            SizedBox(width: 20),
+            Column(
+              children: [
+                Container(
+                  height: 60,
+                  width: 60,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFC4C4C4),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.add,
+                    size: 35,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 7),
+                const Text(
+                  "Update Status",
+                  style: TextStyle(
+                    color: Color(0xb2ffffff),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                  ),
+                )
+              ],
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              child: SizedBox(
+                height: 80,
+                child: ListView.separated(
+                  padding: const EdgeInsets.only(right: 10),
+                  shrinkWrap: true,
+                  itemCount: 6,
+                  scrollDirection: Axis.horizontal,
+                  separatorBuilder: (ctx, i) => const SizedBox(width: 10),
+                  itemBuilder: (ctx, i) {
+                    return Column(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(30),
+                          child: Image.asset(
+                            'assets/profile_img.png',
+                            height: 60,
+                            width: 60,
+                          ),
+                        ),
+                        const SizedBox(height: 7),
+                        const Text(
+                          "James",
+                          style: TextStyle(
+                            color: const Color(0xb2ffffff),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 40),
-        // Charts Screen //
-
         Expanded(
           child: Container(
             padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
@@ -669,21 +702,25 @@ class BrowserContainer extends StatelessWidget {
         GestureDetector(
           onTap: () => Get.to(BrowserPage()),
           child: Container(
-              padding: const EdgeInsets.all(0),
-              width: 55,
-              height: 53,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  const BoxShadow(
-                    color: Color(0x3f000000),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-                color: Colors.white,
-              ),
-              child: Image.asset(image)),
+            padding: const EdgeInsets.all(0),
+            width: 55,
+            height: 53,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x3f000000),
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
+                ),
+              ],
+              color: Colors.white,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(image),
+            ),
+          ),
         ),
         const SizedBox(height: 8),
         Text(

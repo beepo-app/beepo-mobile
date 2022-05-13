@@ -160,7 +160,7 @@ class _WalletState extends State<Wallet> {
                         'Crypto Assets',
                         style: TextStyle(fontSize: 18, color: Colors.black),
                       ),
-                      const SizedBox(height: 45),
+                      const SizedBox(height: 30),
                       WalletListTile(
                         image: 'assets/bCoin.png',
                         title: 'Bitcoin',
