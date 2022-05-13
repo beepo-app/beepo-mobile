@@ -55,6 +55,12 @@ flutter_native_splash:
   android: true
   ios: true
 
+flutter_icons:
+  ios: true
+  android: true
+  image_path: "assets/beepo_img.png"
+  remove_alpha_ios: true
+
 # The following section is specific to Flutter.
 flutter:
   # The following line ensures that the Material Icons font is
