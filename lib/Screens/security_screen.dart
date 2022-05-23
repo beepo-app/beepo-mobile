@@ -58,87 +58,67 @@ class _SecurityState extends State<Security> {
             ),
             Expanded(
               child: Container(
-                  padding: EdgeInsets.all(20),
-                  color: Colors.white,
-                  child: Column(
-                    children: [
-                      SizedBox(height: 30),
-                      Text(
-                        "Security",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xff0e014c),
-                          fontSize: 14,
+                padding: EdgeInsets.all(20),
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    SizedBox(height: 30),
+                    Text(
+                      "Security",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xff0e014c),
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(height: 60),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "Login with Biometrics",
+                            style: TextStyle(
+                              color: Color(0xff0e014c),
+                              fontSize: 14,
+                            ),
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 60),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "Login with Biometrics",
-                              style: TextStyle(
-                                color: Color(0xff0e014c),
-                                fontSize: 14,
-                              ),
+                        Switch(
+                            value: enable,
+                            activeColor: blue,
+                            onChanged: (value) {
+                              setState(() {
+                                enable = value;
+                              });
+                            })
+                      ],
+                    ),
+                    SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "Auto Lock",
+                            style: TextStyle(
+                              color: Color(0xff0e014c),
+                              fontSize: 14,
                             ),
                           ),
-                          Switch(
-                              value: enable,
-                              activeColor: blue,
-                              onChanged: (value) {
-                                setState(() {
-                                  enable = value;
-                                });
-                              })
-                        ],
-                      ),
-                      SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "Auto Lock",
-                              style: TextStyle(
-                                color: Color(0xff0e014c),
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                          Switch(
-                              value: enable1,
-                              activeColor: blue,
-                              onChanged: (value) {
-                                setState(() {
-                                  enable1 = value;
-                                });
-                              })
-                        ],
-                      ),
-                      SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "Store Media for 30 days",
-                              style: TextStyle(
-                                color: Color(0xff0e014c),
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                          Switch(
-                              value: enable2,
-                              activeColor: blue,
-                              onChanged: (value) {
-                                setState(() {
-                                  enable2 = value;
-                                });
-                              })
-                        ],
-                      ),
-                    ],
-                  )),
+                        ),
+                        Switch(
+                            value: enable1,
+                            activeColor: blue,
+                            onChanged: (value) {
+                              setState(() {
+                                enable1 = value;
+                              });
+                            })
+                      ],
+                    ),
+                    SizedBox(height: 12),
+                  ],
+                ),
+              ),
             ),
           ],
         ),

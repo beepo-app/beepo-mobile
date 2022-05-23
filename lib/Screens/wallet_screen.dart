@@ -209,6 +209,7 @@ class _WalletState extends State<Wallet> {
                         subtext: 'USDT',
                         amount: '0.0234789',
                       ),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),

@@ -69,7 +69,7 @@ class _LanguageState extends State<Language> {
                       children: [
                         Expanded(
                           child: Text(
-                            "Professional Account",
+                            "English",
                             style: TextStyle(
                               color: Color(0xff0e014c),
                               fontSize: 14,

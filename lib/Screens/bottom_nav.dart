@@ -15,7 +15,7 @@ class BottomNav extends StatefulWidget {
 }
 
 class _BottomNavState extends State<BottomNav> {
-  int index = 1;
+  int index = 0;
   List body = [
     ChatScreen(),
     Wallet(),
@@ -36,15 +36,18 @@ class _BottomNavState extends State<BottomNav> {
           setState(() => index = selectedPage);
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Iconsax.chart), label: ''),
-          BottomNavigationBarItem(icon: Icon(Iconsax.wallet), label: ''),
+          BottomNavigationBarItem(
+            icon: Icon(Iconsax.message),
+            label: 'Chats',
+          ),
+          BottomNavigationBarItem(icon: Icon(Iconsax.wallet), label: 'Wallet'),
           BottomNavigationBarItem(
             icon: Icon(Iconsax.global),
-            label: '',
+            label: 'Browser',
           ),
           BottomNavigationBarItem(
             icon: Icon(Iconsax.security_user),
-            label: '',
+            label: 'Profile',
           ),
         ],
       ),
