@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "28726358350",
+    "project_id": "beepo-app",
+    "storage_bucket": "beepo-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:28726358350:android:9a7377c1f6d19b0aa42e1f",
+        "android_client_info": {
+          "package_name": "com.beepo.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "28726358350-2rr53sme7rfs9pvvt2opm2tv193gvn98.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJ1lWAH5-DQzfWcGwnBj4zGy4QEnGUKzA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "28726358350-2rr53sme7rfs9pvvt2opm2tv193gvn98.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

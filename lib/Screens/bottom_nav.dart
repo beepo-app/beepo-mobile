@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
 import 'browser.dart';
-import 'chat.dart';
+import 'Messaging/chat.dart';
 import 'profile_screen.dart';
 import 'wallet_screen.dart';
 

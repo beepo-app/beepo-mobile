@@ -185,7 +185,7 @@ class _BrowserState extends State<Browser> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
+                                    children: const [
                                       Text(
                                         "Here’s Why Blockchain is the Technology For The Future Here’s Why Blockchain is the Technology For The Future, Here’s Why Blockchain is the Technology For The Future",
                                         maxLines: 4,

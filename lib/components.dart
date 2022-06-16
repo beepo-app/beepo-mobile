@@ -3,8 +3,9 @@ import 'package:get/get.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 
 import 'Screens/browser_page.dart';
-import 'Screens/chatDm_screen.dart';
+import 'Screens/Messaging/chat_dm_screen.dart';
 import 'Screens/sendToken_screen.dart';
+import 'Screens/wallet_tokens_screen.dart';
 import 'Utils/styles.dart';
 
 class FilledButton extends StatelessWidget {
@@ -69,7 +70,7 @@ class OutlnButton extends StatelessWidget {
           ),
         ),
         style: ButtonStyle(
-          side: MaterialStateProperty.all(BorderSide(width: 1, color: blue)),
+          side: MaterialStateProperty.all(const BorderSide(width: 1, color: blue)),
           backgroundColor: MaterialStateProperty.all(
             Colors.white,
           ),
@@ -98,7 +99,7 @@ class _ChatTabState extends State<ChatTab> {
       children: [
         Row(
           children: [
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             Column(
               children: [
                 Container(
@@ -108,7 +109,7 @@ class _ChatTabState extends State<ChatTab> {
                     color: Color(0xFFC4C4C4),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.add,
                     size: 35,
                     color: Colors.black,
@@ -125,7 +126,7 @@ class _ChatTabState extends State<ChatTab> {
                 )
               ],
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Expanded(
               child: SizedBox(
                 height: 80,
@@ -351,8 +352,8 @@ class _CallTabState extends State<CallTab> {
   }
 }
 
-class MessageSender1 extends StatelessWidget {
-  const MessageSender1({Key key}) : super(key: key);
+class MessageSender extends StatelessWidget {
+  const MessageSender({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -360,115 +361,11 @@ class MessageSender1 extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: Container(
         decoration: const BoxDecoration(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: const Radius.circular(0),
-            bottomLeft: const Radius.circular(30),
-            bottomRight: const Radius.circular(30),
-          ),
-          color: const Color(0xffFF9C34),
-        ),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.5,
-        ),
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            const Text(
-              "Hey there, you up?",
-              style: const TextStyle(
-                color: const Color(0xff0e014c),
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 5),
-            const Align(
-              alignment: Alignment.bottomRight,
-              child: const Text(
-                "9:13",
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class MessageSender2 extends StatelessWidget {
-  const MessageSender2({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Container(
-        decoration: const BoxDecoration(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: const Radius.circular(30),
-            bottomLeft: const Radius.circular(30),
-            bottomRight: const Radius.circular(30),
-          ),
-          color: const Color(0xffFF9C34),
-        ),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.5,
-        ),
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            const Text(
-              "What’s with the statement about \nthe missing documents today, i\nheard you discussing earlier with\nJane?\n\nuhmmm is there something i \nshould be worried about?\nuh!?",
-              style: TextStyle(
-                color: Color(0xff0e014c),
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 5),
-            const Align(
-              alignment: Alignment.bottomRight,
-              child: const Text(
-                "9:13",
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class MessageSender3 extends StatelessWidget {
-  const MessageSender3({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Container(
-        decoration: const BoxDecoration(
-          borderRadius: const BorderRadius.only(
-            topLeft: const Radius.circular(30),
-            topRight: const Radius.circular(0),
-            bottomLeft: const Radius.circular(30),
-            bottomRight: Radius.circular(30),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12),
+            topRight: Radius.circular(0),
+            bottomLeft: Radius.circular(12),
+            bottomRight: Radius.circular(12),
           ),
           color: Color(0xffFF9C34),
         ),
@@ -481,24 +378,32 @@ class MessageSender3 extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            const Text(
-              "Is rhat funny?",
+            Text(
+              "Hey there, you up?",
               style: TextStyle(
                 color: Color(0xff0e014c),
                 fontSize: 14,
               ),
             ),
-            const SizedBox(height: 5),
-            const Align(
-              alignment: Alignment.bottomRight,
-              child: const Text(
-                "9:13",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w600,
+            SizedBox(height: 5),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: const [
+                Text(
+                  "9:13",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
+                SizedBox(width: 5),
+                Icon(
+                  Icons.done_all,
+                  color: Colors.white,
+                  size: 15,
+                ),
+              ],
             )
           ],
         ),
@@ -514,11 +419,11 @@ class MessageReceiver extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Container(
         decoration: const BoxDecoration(
-          borderRadius: const BorderRadius.only(
-            topLeft: const Radius.circular(0),
-            topRight: const Radius.circular(30),
-            bottomLeft: const Radius.circular(30),
-            bottomRight: const Radius.circular(30),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(0),
+            topRight: Radius.circular(12),
+            bottomLeft: Radius.circular(12),
+            bottomRight: Radius.circular(12),
           ),
           color: Color(0xe50d004c),
         ),
@@ -531,69 +436,19 @@ class MessageReceiver extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               "😂🤣 wdy mean?",
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
                 fontSize: 14,
               ),
             ),
-            const SizedBox(height: 5),
-            const Align(
+            SizedBox(height: 5),
+            Align(
               alignment: Alignment.bottomRight,
-              child: const Text(
+              child: Text(
                 "9:13",
                 style: TextStyle(
-                  color: const Color(0xffe3dede),
-                  fontSize: 9,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class MessageReceiver2 extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        decoration: const BoxDecoration(
-          borderRadius: const BorderRadius.only(
-            topLeft: const Radius.circular(0),
-            topRight: const Radius.circular(30),
-            bottomLeft: const Radius.circular(30),
-            bottomRight: const Radius.circular(30),
-          ),
-          color: const Color(0xe50d004c),
-        ),
-        padding: const EdgeInsets.all(10),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.5,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "😒 chill buddy, it’s no big \ndeal.    We we’re just cruising ‘bout\nto see how you’d react",
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 5),
-            const Align(
-              alignment: Alignment.bottomRight,
-              child: const Text(
-                "9:13",
-                style: const TextStyle(
                   color: Color(0xffe3dede),
                   fontSize: 9,
                   fontWeight: FontWeight.w600,
@@ -618,10 +473,10 @@ class WalletListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 62,
+      // height: 62,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Color(0x3f000000),
             blurRadius: 5,
@@ -630,9 +485,10 @@ class WalletListTile extends StatelessWidget {
         ],
         color: const Color(0xfffffbfb),
       ),
-      margin: EdgeInsets.symmetric(horizontal: 5),
+      margin: const EdgeInsets.symmetric(horizontal: 5),
       child: ListTile(
-        onTap: () => Get.to(SendToken()),
+        onTap: () => Get.to(const WalletToken()),
+        dense: true,
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(17),
           child: Image.asset(
