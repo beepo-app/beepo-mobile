@@ -4,7 +4,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../../Utils/styles.dart';
 import '../../components.dart';
-import '../bottom_nav.dart';
+import '../../bottom_nav.dart';
 
 class VerifyCode extends StatelessWidget {
   VerifyCode({Key key}) : super(key: key);
@@ -90,7 +90,7 @@ class VerifyCode extends StatelessWidget {
               FilledButton(
                 text: 'Continue',
                 onPressed: () {
-                  Get.to(BottomNav());
+                  Get.to(BottomNavHome());
                 },
               ),
               SizedBox(height: 40),

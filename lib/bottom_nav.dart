@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
-import 'browser.dart';
-import 'Messaging/chat.dart';
-import 'profile_screen.dart';
-import 'wallet_screen.dart';
+import 'Screens/browser.dart';
+import 'Screens/Messaging/chat.dart';
+import 'Screens/profile_screen.dart';
+import 'Screens/wallet_screen.dart';
 
-class BottomNav extends StatefulWidget {
-  BottomNav({Key key}) : super(key: key);
+class BottomNavHome extends StatefulWidget {
+  BottomNavHome({Key key}) : super(key: key);
 
   @override
-  State<BottomNav> createState() => _BottomNavState();
+  State<BottomNavHome> createState() => _BottomNavHomeState();
 }
 
-class _BottomNavState extends State<BottomNav> {
+class _BottomNavHomeState extends State<BottomNavHome> {
   int index = 0;
   List body = [
     ChatScreen(),

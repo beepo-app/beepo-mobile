@@ -1,8 +1,9 @@
+import 'package:beepo/Screens/Auth/create_acct.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../components.dart';
-import '../bottom_nav.dart';
+import '../../bottom_nav.dart';
 import 'login_screen.dart';
 
 class SignUp extends StatelessWidget {
@@ -16,22 +17,22 @@ class SignUp extends StatelessWidget {
         child: Container(
           width: double.infinity,
           color: Colors.white,
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Spacer(),
+              const Spacer(),
               Image.asset(
                 'assets/login.png',
                 height: 252,
                 width: 252,
               ),
-              Spacer(),
+              const Spacer(),
               FilledButton(
                 text: 'Create Account',
-                onPressed: () => Get.to(Login()),
+                onPressed: () => Get.to(const CreateAccount()),
               ),
-              SizedBox(height: 35),
+              const SizedBox(height: 35),
               const Text(
                 "Already have an account?",
                 style: TextStyle(
@@ -40,12 +41,12 @@ class SignUp extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               OutlnButton(
                 text: 'Login',
-                onPressed: () => Get.to(BottomNav()),
+                onPressed: () => Get.to(BottomNavHome()),
               ),
-              SizedBox(height: 90),
+              const SizedBox(height: 90),
             ],
           ),
         ),

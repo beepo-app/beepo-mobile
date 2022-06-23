@@ -21,8 +21,6 @@ class _ChatScreenState extends State<ChatScreen> {
       length: 2,
       child: Scaffold(
         body: HawkFabMenu(
-          // openIcon: Iconsax.send_1,
-          // closeIcon: Iconsax.close_circle,
           icon: AnimatedIcons.menu_close,
           fabColor: blue,
           items: [

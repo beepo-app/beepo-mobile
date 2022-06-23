@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../Utils/styles.dart';
@@ -7,7 +6,7 @@ import 'signup_screen.dart';
 import 'package:lottie/lottie.dart';
 
 class Onboarding extends StatefulWidget {
-  Onboarding({Key key}) : super(key: key);
+  const Onboarding({Key key}) : super(key: key);
 
   @override
   State<Onboarding> createState() => _OnboardingState();
@@ -85,7 +84,7 @@ class _OnboardingState extends State<Onboarding> {
                   itemBuilder: (context, index) {
                     return Column(
                       children: [
-                        Spacer(),
+                        const Spacer(),
                         Lottie.asset(lotties[index]),
                         const SizedBox(height: 30),
                         Text(
