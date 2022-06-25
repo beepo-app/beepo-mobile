@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../components.dart';
-import '../user_profile_screen.dart';
+import '../Profile/user_profile_screen.dart';
 
 class ChatDm extends StatefulWidget {
   const ChatDm({Key key}) : super(key: key);

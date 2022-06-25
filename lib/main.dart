@@ -1,4 +1,5 @@
 import 'package:beepo/Screens/Auth/onboarding.dart';
+import 'package:beepo/bottom_nav.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,13 +22,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isLogged = Hive.box('beepo').get('isLogged', defaultValue: false);
+
     return GetMaterialApp(
       title: 'Beepo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Onboarding(),
+      home: const Onboarding(),
+      // home: isLogged ? BottomNavHome() : const Onboarding(),
     );
   }
 }

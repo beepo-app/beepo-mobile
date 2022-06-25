@@ -1,12 +1,13 @@
+import 'package:beepo/Utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
-import '../Utils/styles.dart';
-import 'store_screen.dart';
+import '../../Utils/styles.dart';
+import '../store_screen.dart';
 
 class UserProfile extends StatefulWidget {
-  UserProfile({Key key}) : super(key: key);
+  const UserProfile({Key key}) : super(key: key);
 
   @override
   State<UserProfile> createState() => _UserProfileState();

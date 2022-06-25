@@ -1,8 +1,10 @@
 import 'package:beepo/Screens/Auth/phrase_screen.dart';
 import 'package:beepo/Service/auth.dart';
+import 'package:beepo/Widgets/commons.dart';
 import 'package:beepo/Widgets/toasts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 
 import '../../components.dart';
 import 'pin_code.dart';
@@ -98,6 +100,7 @@ class _CreateAccountState extends State<CreateAccount> {
                   showToast('Please enter a display name');
                   return;
                 } else {
+                  loadingDialog('Creating account...');
                   String backupPhrase =
                       await AuthService.createUser(displayName.text.trim());
                   if (backupPhrase != null) {

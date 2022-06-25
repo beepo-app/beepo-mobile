@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_const
 
+import 'package:beepo/Service/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:iconsax/iconsax.dart';
@@ -49,49 +50,56 @@ class _ChatScreenState extends State<ChatScreen> {
               labelBackgroundColor: blue,
             ),
           ],
-          body: Container(
-            width: double.infinity,
-            color: blue,
-            child: Column(
-              children: [
-                const SizedBox(height: 50),
-                const TabBar(
-                  indicatorColor: Colors.white,
-                  tabs: [
-                    Tab(
-                      child: Text(
-                        "Chats",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                    const Tab(
-                      child: const Text(
-                        "Calls",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 25),
-                Expanded(
-                  child: TabBarView(
+          body: FutureBuilder(
+              future: AuthService.getUser(),
+              builder: (context, AsyncSnapshot snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return Container(
+                  width: double.infinity,
+                  color: blue,
+                  child: Column(
                     children: [
-                      ChatTab(),
-                      CallTab(),
+                      const SizedBox(height: 50),
+                      const TabBar(
+                        indicatorColor: Colors.white,
+                        tabs: [
+                          Tab(
+                            child: Text(
+                              "Chats",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          const Tab(
+                            child: const Text(
+                              "Calls",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 25),
+                      Expanded(
+                        child: TabBarView(
+                          children: [
+                            ChatTab(),
+                            CallTab(),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          ),
+                );
+              }),
         ),
       ),
     );
