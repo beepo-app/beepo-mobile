@@ -47,6 +47,10 @@ dependencies:
   firebase_storage: ^10.2.17
   fluttertoast: ^8.0.9
 
+  # Cryptography
+  cryptography:
+  cryptography_flutter:
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

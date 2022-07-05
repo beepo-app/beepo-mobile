@@ -30,8 +30,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const Onboarding(),
-      // home: isLogged ? BottomNavHome() : const Onboarding(),
+      // home: const Onboarding(),
+      home: isLogged ? BottomNavHome() : const Onboarding(),
     );
   }
 }
