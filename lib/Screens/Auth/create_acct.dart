@@ -1,10 +1,13 @@
 import 'package:beepo/Screens/Auth/phrase_screen.dart';
 import 'package:beepo/Service/auth.dart';
+import 'package:beepo/Utils/functions.dart';
 import 'package:beepo/Widgets/commons.dart';
 import 'package:beepo/Widgets/toasts.dart';
+import 'package:beepo/bottom_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../components.dart';
 import 'pin_code.dart';
@@ -61,17 +64,53 @@ class _CreateAccountState extends State<CreateAccount> {
                 Positioned(
                   right: 17,
                   bottom: 12,
-                  child: Container(
-                    width: 26,
-                    height: 26,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0xff0e014c),
-                    ),
-                    child: const Icon(
-                      Icons.photo_camera_outlined,
-                      color: Colors.white,
-                      size: 15,
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.dialog(Dialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ListTile(
+                                leading: Icon(Icons.photo_camera),
+                                title: Text("Take a photo"),
+                                onTap: () {
+                                  Get.back();
+                                },
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.photo_library),
+                                title: Text("Choose from gallery"),
+                                onTap: () async {
+                                  Get.back();
+                                  XFile image = await ImagePicker()
+                                      .pickImage(source: ImageSource.gallery);
+                                  if (image != null) {
+                                    ImageUtil().cropProfileImage(image);
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ));
+                    },
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xff0e014c),
+                      ),
+                      child: const Icon(
+                        Icons.photo_camera_outlined,
+                        color: Colors.white,
+                        size: 15,
+                      ),
                     ),
                   ),
                 ),
@@ -101,11 +140,13 @@ class _CreateAccountState extends State<CreateAccount> {
                   return;
                 } else {
                   loadingDialog('Creating account...');
-                  String backupPhrase =
-                      await AuthService.createUser(displayName.text.trim());
-                  if (backupPhrase != null) {
-                    showToast('Account created successfully');
-                    Get.to(PhraseScreen(phrase: backupPhrase));
+                  bool result = await AuthService.createUser(displayName.text.trim());
+                  // if (backupPhrase != null) {
+                  //   showToast('Account created successfully');
+                  //   Get.to(PhraseScreen(phrase: backupPhrase));
+                  // }
+                  if (result) {
+                    Get.to(BottomNavHome());
                   }
                 }
               },

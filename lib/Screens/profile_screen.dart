@@ -1,28 +1,35 @@
+import 'package:beepo/Screens/Auth/onboarding.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 
+import '../Utils/styles.dart';
 import 'account_type.dart';
 import 'language_screen.dart';
 import 'security_screen.dart';
 
 class Profile extends StatefulWidget {
-  Profile({Key key}) : super(key: key);
+  const Profile({Key key}) : super(key: key);
 
   @override
   State<Profile> createState() => _ProfileState();
 }
 
 class _ProfileState extends State<Profile> {
+  Map userData;
+
   @override
   Widget build(BuildContext context) {
+    userData = Hive.box('beepo').get('userData');
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
         backgroundColor: Colors.transparent,
-        leading: SizedBox(),
-        title: Text(
+        leading: const SizedBox(),
+        title: const Text(
           "My Profile",
           style: TextStyle(
             color: Colors.white,
@@ -41,81 +48,82 @@ class _ProfileState extends State<Profile> {
               child: Container(
                 height: 100,
                 width: double.infinity,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(20),
-                        bottomRight: Radius.circular(20)),
-                    color: Color(0xff0e014c)),
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
+                  color: Color(0xff0e014c),
+                ),
               ),
             ),
             Expanded(
                 child: Container(
-              padding: EdgeInsets.only(left: 20, right: 20),
+              padding: const EdgeInsets.only(left: 20, right: 20),
               color: Colors.white,
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 53),
+                    const SizedBox(height: 53),
                     Align(
                       alignment: Alignment.center,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(70),
-                        child: Image.asset(
-                          'assets/profile_img1.png',
+                        child: CachedNetworkImage(
+                          imageUrl: userData['profilePhotoUrl'],
                           height: 135,
                           width: 135,
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Yomna Elema",
-                          style: TextStyle(
+                          userData['displayName'],
+                          style: const TextStyle(
                             color: Color(0xffff9c34),
                             fontSize: 18,
                           ),
                         ),
-                        SizedBox(width: 8),
-                        Icon(
+                        const SizedBox(width: 8),
+                        const Icon(
                           Icons.qr_code_scanner_rounded,
                           color: Color(0xffff9c34),
                           size: 25,
                         ),
                       ],
                     ),
-                    SizedBox(height: 50),
+                    const SizedBox(height: 50),
+                    // Row(
+                    //   children: [
+                    //     Expanded(
+                    //       child: GestureDetector(
+                    //         onTap: () => Get.to(AccountType()),
+                    //         child: const Text(
+                    //           "Account Type",
+                    //           style: TextStyle(
+                    //             color: const Color(0xff0e014c),
+                    //             fontSize: 14,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     const Text(
+                    //       "Professional",
+                    //       style: TextStyle(
+                    //         color: Color(0x660e014c),
+                    //         fontSize: 14,
+                    //       ),
+                    //     )
+                    //   ],
+                    // ),
+
+                    // const SizedBox(height: 26),
                     Row(
                       children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => Get.to(AccountType()),
-                            child: Text(
-                              "Account Type",
-                              style: TextStyle(
-                                color: Color(0xff0e014c),
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Text(
-                          "Professional",
-                          style: TextStyle(
-                            color: Color(0x660e014c),
-                            fontSize: 14,
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 26),
-                    Row(
-                      children: [
-                        Expanded(
+                        const Expanded(
                           child: Text(
                             "Theme",
                             style: TextStyle(
@@ -124,7 +132,7 @@ class _ProfileState extends State<Profile> {
                             ),
                           ),
                         ),
-                        Text(
+                        const Text(
                           "System Default",
                           style: TextStyle(
                             color: Color(0x660e014c),
@@ -133,10 +141,11 @@ class _ProfileState extends State<Profile> {
                         )
                       ],
                     ),
-                    SizedBox(height: 26),
+                    const SizedBox(height: 26),
+
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           child: Text(
                             "Store",
                             style: TextStyle(
@@ -145,77 +154,82 @@ class _ProfileState extends State<Profile> {
                             ),
                           ),
                         ),
-                        Icon(Icons.arrow_forward, color: Color(0x660e014c), size: 20),
+                        const Icon(Icons.arrow_forward,
+                            color: const Color(0x660e014c), size: 20),
                       ],
                     ),
-                    SizedBox(height: 26),
+                    const SizedBox(height: 26),
                     Row(
                       children: [
-                        Expanded(
-                          child: Text(
+                        const Expanded(
+                          child: const Text(
                             "Statistics",
                             style: TextStyle(
-                              color: Color(0xff0e014c),
+                              color: const Color(0xff0e014c),
                               fontSize: 14,
                             ),
                           ),
                         ),
-                        Icon(Icons.arrow_forward, color: Color(0x660e014c), size: 20),
+                        const Icon(Icons.arrow_forward,
+                            color: const Color(0x660e014c), size: 20),
                       ],
                     ),
-                    SizedBox(height: 26),
+                    const SizedBox(height: 26),
                     Row(
                       children: [
                         Expanded(
                           child: GestureDetector(
                             onTap: () => Get.to(Security()),
-                            child: Text(
+                            child: const Text(
                               "Security",
                               style: TextStyle(
-                                color: Color(0xff0e014c),
+                                color: const Color(0xff0e014c),
                                 fontSize: 14,
                               ),
                             ),
                           ),
                         ),
-                        Icon(Icons.arrow_forward, color: Color(0x660e014c), size: 20),
+                        const Icon(Icons.arrow_forward,
+                            color: const Color(0x660e014c), size: 20),
                       ],
                     ),
-                    SizedBox(height: 26),
+                    const SizedBox(height: 26),
                     Row(
                       children: [
-                        Expanded(
-                          child: Text(
+                        const Expanded(
+                          child: const Text(
                             "Help",
                             style: TextStyle(
-                              color: Color(0xff0e014c),
+                              color: const Color(0xff0e014c),
                               fontSize: 14,
                             ),
                           ),
                         ),
-                        Icon(Icons.arrow_forward, color: Color(0x660e014c), size: 20),
+                        const Icon(Icons.arrow_forward,
+                            color: Color(0x660e014c), size: 20),
                       ],
                     ),
-                    SizedBox(height: 26),
+                    const SizedBox(height: 26),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           child: Text(
                             "Invite Friends",
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color(0xff0e014c),
                               fontSize: 14,
                             ),
                           ),
                         ),
-                        Icon(Icons.arrow_forward, color: Color(0x660e014c), size: 20),
+                        const Icon(Icons.arrow_forward,
+                            color: const Color(0x660e014c), size: 20),
                       ],
                     ),
-                    SizedBox(height: 26),
+                    const SizedBox(height: 26),
                     Row(
                       children: [
-                        Expanded(
-                          child: Text(
+                        const Expanded(
+                          child: const Text(
                             "Notification",
                             style: TextStyle(
                               color: Color(0xff0e014c),
@@ -223,16 +237,17 @@ class _ProfileState extends State<Profile> {
                             ),
                           ),
                         ),
-                        Icon(Icons.arrow_forward, color: Color(0x660e014c), size: 20),
+                        const Icon(Icons.arrow_forward,
+                            color: const Color(0x660e014c), size: 20),
                       ],
                     ),
-                    SizedBox(height: 26),
+                    const SizedBox(height: 26),
                     Row(
                       children: [
                         Expanded(
                           child: GestureDetector(
                             onTap: () => Get.to(Language()),
-                            child: Text(
+                            child: const Text(
                               "Language",
                               style: TextStyle(
                                 color: Color(0xff0e014c),
@@ -241,12 +256,13 @@ class _ProfileState extends State<Profile> {
                             ),
                           ),
                         ),
-                        Icon(Icons.arrow_forward, color: Color(0x660e014c), size: 20),
+                        const Icon(Icons.arrow_forward,
+                            color: const Color(0x660e014c), size: 20),
                       ],
                     ),
-                    SizedBox(height: 26),
+                    const SizedBox(height: 26),
                     Row(
-                      children: [
+                      children: const [
                         Expanded(
                           child: Text(
                             "About",
@@ -259,7 +275,35 @@ class _ProfileState extends State<Profile> {
                         Icon(Icons.arrow_forward, color: Color(0x660e014c), size: 20),
                       ],
                     ),
-                    SizedBox(height: 20)
+                    const SizedBox(height: 10),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      onTap: () {
+                        Get.dialog(AlertDialog(
+                          title: const Text("Logout"),
+                          content: const Text("Are you sure you want to logout?"),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Get.back(),
+                              child: const Text("No"),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                await Hive.box('beepo').clear();
+                                Get.offAll(const Onboarding());
+                              },
+                              child: const Text("Yes"),
+                            ),
+                          ],
+                        ));
+                      },
+                      title: const Text(
+                        "Log Out",
+                        style: TextStyle(color: blue, fontSize: 14),
+                      ),
+                      trailing: const Icon(Icons.logout, size: 20),
+                    ),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),

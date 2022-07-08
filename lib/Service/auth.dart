@@ -9,7 +9,7 @@ class AuthService {
   static Box box = Hive.box('beepo');
 
   //Create User
-  static Future<String> createUser(String displayName) async {
+  static Future<bool> createUser(String displayName) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/users'),
@@ -19,6 +19,7 @@ class AuthService {
         },
         body: json.encode({
           'displayName': displayName,
+          'profilePhotoUrl': 'https://i.pravatar.cc/300',
         }),
       );
 
@@ -28,7 +29,7 @@ class AuthService {
         box.put('userId', data['identifier']);
         box.put('isLogged', true);
 
-        return data['backupPhrase'];
+        return true;
       } else {
         return null;
       }
@@ -49,10 +50,35 @@ class AuthService {
         },
       );
 
-      print(response.body);
+      // print(response.body);
       if (response.statusCode == 200) {
         Map data = json.decode(response.body);
+        box.put('userData', data);
         return data;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      showToast(e.toString());
+      return null;
+    }
+  }
+
+  //Perform Key Exchange
+  Future<String> keyExchange() async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/new-ecdh-session?user_identifier=${box.get('userId')}'),
+        headers: {'Accept': 'application/json'},
+        body: {
+          'peerPublicKey': '123456',
+        },
+      );
+
+      print(response.body);
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        return data['key'];
       } else {
         return null;
       }

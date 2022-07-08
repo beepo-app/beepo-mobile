@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
+import 'package:local_auth/local_auth.dart';
 
 import '../Utils/styles.dart';
 
 class Security extends StatefulWidget {
-  Security({Key key}) : super(key: key);
+  const Security({Key key}) : super(key: key);
 
   @override
   State<Security> createState() => _SecurityState();
@@ -16,6 +18,8 @@ class _SecurityState extends State<Security> {
 
   bool enable2 = false;
 
+  bool isLocked = Hive.box('beepo').get('isLocked', defaultValue: false);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,14 +30,14 @@ class _SecurityState extends State<Security> {
         backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: (() => Get.back()),
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back,
             color: Colors.white,
             size: 30,
           ),
         ),
-        title: Text(
-          "My Profile",
+        title: const Text(
+          "Security",
           style: TextStyle(
             color: Colors.white,
             fontSize: 24,
@@ -49,7 +53,7 @@ class _SecurityState extends State<Security> {
               child: Container(
                 height: 100,
                 width: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(20),
                         bottomRight: Radius.circular(20)),
@@ -58,23 +62,13 @@ class _SecurityState extends State<Security> {
             ),
             Expanded(
               child: Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 color: Colors.white,
                 child: Column(
                   children: [
-                    SizedBox(height: 30),
-                    Text(
-                      "Security",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xff0e014c),
-                        fontSize: 14,
-                      ),
-                    ),
-                    SizedBox(height: 60),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           child: Text(
                             "Login with Biometrics",
                             style: TextStyle(
@@ -84,19 +78,28 @@ class _SecurityState extends State<Security> {
                           ),
                         ),
                         Switch(
-                            value: enable,
+                            value: isLocked,
                             activeColor: blue,
                             onChanged: (value) {
-                              setState(() {
-                                enable = value;
+                              LocalAuthentication()
+                                  .authenticate(
+                                localizedReason: 'Please authenticate to continue',
+                              )
+                                  .then((val) {
+                                if (val) {
+                                  setState(() {
+                                    isLocked = !isLocked;
+                                  });
+                                  Hive.box('beepo').put('isLocked', isLocked);
+                                }
                               });
                             })
                       ],
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           child: Text(
                             "Auto Lock",
                             style: TextStyle(
@@ -115,7 +118,7 @@ class _SecurityState extends State<Security> {
                             })
                       ],
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                   ],
                 ),
               ),
