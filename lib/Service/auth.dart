@@ -1,15 +1,19 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:beepo/Utils/constants.dart';
 import 'package:beepo/WIdgets/toasts.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
   static Box box = Hive.box('beepo');
+  static Reference storageReference = FirebaseStorage.instance.ref('ProfilePictures');
 
   //Create User
-  static Future<bool> createUser(String displayName) async {
+  static Future<bool> createUser(String displayName, String imgUrl) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/users'),
@@ -19,7 +23,7 @@ class AuthService {
         },
         body: json.encode({
           'displayName': displayName,
-          'profilePhotoUrl': 'https://i.pravatar.cc/300',
+          'profilePhotoUrl': imgUrl,
         }),
       );
 
@@ -83,6 +87,31 @@ class AuthService {
         return null;
       }
     } catch (e) {
+      showToast(e.toString());
+      return null;
+    }
+  }
+
+  static Future<String> updateUserProfileImage(File image) async {
+    try {
+      //Upload image to firebase storage
+      String id = DateTime.now().millisecondsSinceEpoch.toString();
+      UploadTask uploadTask = storageReference.child(id).putFile(image);
+
+      //Get image url
+      //  imageUrl;
+      TaskSnapshot shot = await uploadTask;
+      String imageUrl = await shot.ref.getDownloadURL();
+      // await usersCollection.doc(auth.currentUser!.uid).update({
+      //   'imageLink': imageUrl,
+      //   'imageUploaded': true,
+      // });
+      // auth.currentUser?.updatePhotoURL(imageUrl);
+      // showToast('Profile image updated successfully');
+      print(imageUrl);
+      return imageUrl;
+    } catch (e) {
+      print(e);
       showToast(e.toString());
       return null;
     }

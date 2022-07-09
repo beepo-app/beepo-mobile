@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:beepo/Screens/Auth/phrase_screen.dart';
 import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Utils/functions.dart';
@@ -21,6 +23,7 @@ class CreateAccount extends StatefulWidget {
 
 class _CreateAccountState extends State<CreateAccount> {
   TextEditingController displayName = TextEditingController();
+  File selectedImage;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,11 +58,16 @@ class _CreateAccountState extends State<CreateAccount> {
                     shape: BoxShape.circle,
                     color: Color(0xffc4c4c4),
                   ),
-                  child: Icon(
-                    Icons.person_outlined,
-                    size: 117,
-                    color: Color(0x66000000),
-                  ),
+                  child: selectedImage != null
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: Image.file(selectedImage),
+                        )
+                      : const Icon(
+                          Icons.person_outlined,
+                          size: 117,
+                          color: Color(0x66000000),
+                        ),
                 ),
                 Positioned(
                   right: 17,
@@ -76,21 +84,38 @@ class _CreateAccountState extends State<CreateAccount> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               ListTile(
-                                leading: Icon(Icons.photo_camera),
-                                title: Text("Take a photo"),
-                                onTap: () {
+                                leading: const Icon(Icons.photo_camera),
+                                title: const Text("Take a photo"),
+                                onTap: () async {
                                   Get.back();
+                                  XFile image = await ImagePicker()
+                                      .pickImage(source: ImageSource.camera);
+                                  if (image != null) {
+                                    ImageUtil().cropProfileImage(image).then((value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          selectedImage = value;
+                                        });
+                                      }
+                                    });
+                                  }
                                 },
                               ),
                               ListTile(
-                                leading: Icon(Icons.photo_library),
-                                title: Text("Choose from gallery"),
+                                leading: const Icon(Icons.photo_library),
+                                title: const Text("Choose from gallery"),
                                 onTap: () async {
                                   Get.back();
                                   XFile image = await ImagePicker()
                                       .pickImage(source: ImageSource.gallery);
                                   if (image != null) {
-                                    ImageUtil().cropProfileImage(image);
+                                    ImageUtil().cropProfileImage(image).then((value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          selectedImage = value;
+                                        });
+                                      }
+                                    });
                                   }
                                 },
                               ),
@@ -139,14 +164,27 @@ class _CreateAccountState extends State<CreateAccount> {
                   showToast('Please enter a display name');
                   return;
                 } else {
+                  if (selectedImage == null) {
+                    showToast('Please select a profile picture');
+                    return;
+                  }
                   loadingDialog('Creating account...');
-                  bool result = await AuthService.createUser(displayName.text.trim());
-                  // if (backupPhrase != null) {
-                  //   showToast('Account created successfully');
-                  //   Get.to(PhraseScreen(phrase: backupPhrase));
-                  // }
-                  if (result) {
-                    Get.to(BottomNavHome());
+                  String imageUrl =
+                      await AuthService.updateUserProfileImage(selectedImage);
+                  // // if (backupPhrase != null) {
+                  // //   showToast('Account created successfully');
+                  // //   Get.to(PhraseScreen(phrase: backupPhrase));
+                  // // }
+                  if (imageUrl != null) {
+                    bool result =
+                        await AuthService.createUser(displayName.text.trim(), imageUrl);
+                    Get.back();
+                    if (result) {
+                      showToast('Account created successfully');
+                      Get.offAll(BottomNavHome());
+                    } else {
+                      showToast('Something went wrong');
+                    }
                   }
                 }
               },
