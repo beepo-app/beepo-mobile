@@ -70,7 +70,7 @@ class _SecurityState extends State<Security> {
                       children: [
                         const Expanded(
                           child: Text(
-                            "Login with Biometrics",
+                            "Lock with Biometrics",
                             style: TextStyle(
                               color: Color(0xff0e014c),
                               fontSize: 14,

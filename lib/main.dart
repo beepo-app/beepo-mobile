@@ -1,3 +1,4 @@
+import 'package:beepo/Screens/Auth/lock_screen.dart';
 import 'package:beepo/Screens/Auth/onboarding.dart';
 import 'package:beepo/bottom_nav.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isLogged = Hive.box('beepo').get('isLogged', defaultValue: false);
+    bool isLocked = Hive.box('beepo').get('isLocked', defaultValue: false);
 
     return GetMaterialApp(
       title: 'Beepo',
@@ -30,8 +32,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // home: const Onboarding(),
-      home: isLogged ? BottomNavHome() : const Onboarding(),
+      // home: const LockScreen(),
+      home: isLogged
+          ? isLocked
+              ? const LockScreen()
+              : BottomNavHome()
+          : const Onboarding(),
     );
   }
 }

@@ -381,7 +381,7 @@ class MessageSender extends StatelessWidget {
             Text(
               "Hey there, you up?",
               style: TextStyle(
-                color: Color(0xff0e014c),
+                color: Colors.white,
                 fontSize: 14,
               ),
             ),
@@ -390,7 +390,7 @@ class MessageSender extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: const [
                 Text(
-                  "9:13",
+                  "9:13 am",
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 10,
@@ -400,7 +400,7 @@ class MessageSender extends StatelessWidget {
                 SizedBox(width: 5),
                 Icon(
                   Icons.done_all,
-                  color: Colors.white,
+                  color: blue,
                   size: 15,
                 ),
               ],

@@ -12,6 +12,8 @@ class AuthService {
   static Box box = Hive.box('beepo');
   static Reference storageReference = FirebaseStorage.instance.ref('ProfilePictures');
 
+  String get userPin => box.get('PIN', defaultValue: '');
+
   //Create User
   static Future<bool> createUser(String displayName, String imgUrl) async {
     try {

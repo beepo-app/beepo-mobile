@@ -1,3 +1,4 @@
+import 'package:beepo/Screens/Auth/pin_code.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,7 +16,7 @@ class Login extends StatelessWidget {
         backgroundColor: Colors.white,
         leading: IconButton(
             onPressed: () => Get.back(),
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back_sharp,
               color: Colors.black,
               size: 30,
@@ -31,7 +32,7 @@ class Login extends StatelessWidget {
       ),
       body: Container(
           width: double.infinity,
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           color: Colors.white,
           child: Column(
             children: [
@@ -46,19 +47,19 @@ class Login extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 6),
+              const SizedBox(height: 6),
               Container(
                 width: 315,
                 height: 192,
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color(0xff0e014c),
+                    color: const Color(0xff0e014c),
                     width: 1,
                   ),
-                  color: Color(0x00c4c4c4),
+                  color: const Color(0x00c4c4c4),
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               const Text(
                 "This is usually a 12 word phrase",
                 style: TextStyle(
@@ -67,12 +68,12 @@ class Login extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               FilledButton(
                 text: 'Login',
-                onPressed: () => Get.to(CreateAccount()),
+                onPressed: () => Get.to(const PinCode()),
               ),
-              Spacer()
+              const Spacer()
             ],
           )),
     );

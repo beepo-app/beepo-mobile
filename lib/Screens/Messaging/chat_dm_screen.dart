@@ -1,3 +1,4 @@
+import 'package:beepo/Utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
@@ -28,14 +29,10 @@ class _ChatDmState extends State<ChatDm> {
                 alignment: Alignment.topCenter,
                 child: Container(
                   padding: EdgeInsets.only(left: 5, right: 10),
-                  height: 120,
+                  height: 110,
                   width: double.infinity,
                   decoration: const BoxDecoration(
                     color: Color(0xff0e014c),
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20),
-                    ),
                   ),
                   child: Column(
                     children: [
@@ -180,17 +177,17 @@ class _ChatDmState extends State<ChatDm> {
                     suffixIcon: FittedBox(
                       child: Row(
                         children: [
-                          IconButton(
-                            onPressed: () {},
-                            constraints: const BoxConstraints(
-                              maxWidth: 30,
-                            ),
-                            icon: Icon(
-                              Iconsax.emoji_happy,
-                              size: 20,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
+                          // IconButton(
+                          //   onPressed: () {},
+                          //   constraints: const BoxConstraints(
+                          //     maxWidth: 30,
+                          //   ),
+                          //   icon: Icon(
+                          //     Iconsax.emoji_happy,
+                          //     size: 20,
+                          //     color: Theme.of(context).primaryColor,
+                          //   ),
+                          // ),
                           IconButton(
                             onPressed: () {},
                             constraints: const BoxConstraints(
@@ -218,9 +215,19 @@ class _ChatDmState extends State<ChatDm> {
                   ),
                 ),
               ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.mic),
+              const SizedBox(width: 10),
+              Container(
+                decoration: BoxDecoration(
+                  color: blue,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.send,
+                    color: Colors.white,
+                  ),
+                ),
               )
             ],
           ),

@@ -1,10 +1,10 @@
 import 'package:beepo/Screens/Auth/create_acct.dart';
+import 'package:beepo/Screens/Auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../components.dart';
 import '../../bottom_nav.dart';
-import 'login_screen.dart';
 
 class SignUp extends StatelessWidget {
   const SignUp({Key key}) : super(key: key);
@@ -44,7 +44,7 @@ class SignUp extends StatelessWidget {
               const SizedBox(height: 12),
               OutlnButton(
                 text: 'Login',
-                onPressed: () => Get.to(BottomNavHome()),
+                onPressed: () => Get.to(Login()),
               ),
               const SizedBox(height: 90),
             ],
