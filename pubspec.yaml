@@ -48,6 +48,8 @@ dependencies:
   # Cryptography
   cryptography:
   cryptography_flutter:
+  rsa_encrypt: ^2.0.0
+  pointycastle:
 
 dev_dependencies:
   flutter_test:

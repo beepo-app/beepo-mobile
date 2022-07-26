@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:beepo/Screens/Auth/phrase_screen.dart';
 import 'package:beepo/Service/auth.dart';
+import 'package:beepo/Service/media.dart';
 import 'package:beepo/Utils/functions.dart';
 import 'package:beepo/Widgets/commons.dart';
 import 'package:beepo/Widgets/toasts.dart';
@@ -197,7 +198,10 @@ class _CreateAccountState extends State<CreateAccount> {
                   ));
 
                   String imageUrl =
-                      await AuthService.updateUserProfileImage(selectedImage);
+                      await MediaService.uploadProfilePicture(selectedImage);
+
+                  // String imageUrl =
+                  //     await AuthService.updateUserProfileImage(selectedImage);
                   // if (backupPhrase != null) {
                   //   showToast('Account created successfully');
                   //   Get.to(PhraseScreen(phrase: backupPhrase));

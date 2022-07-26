@@ -22,6 +22,7 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     userData = Hive.box('beepo').get('userData');
+    print(userData);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:beepo/Service/encryption.dart';
 import 'package:beepo/Utils/constants.dart';
 import 'package:beepo/WIdgets/toasts.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -13,6 +14,9 @@ class AuthService {
   static Reference storageReference = FirebaseStorage.instance.ref('ProfilePictures');
 
   String get userPin => box.get('PIN', defaultValue: '');
+
+  //Get UserID
+  String get userID => box.get('userId', defaultValue: '');
 
   //Create User
   static Future<bool> createUser(String displayName, String imgUrl) async {
@@ -34,7 +38,6 @@ class AuthService {
         var data = json.decode(response.body);
         box.put('userId', data['identifier']);
         box.put('isLogged', true);
-
         return true;
       } else {
         return null;
@@ -49,14 +52,14 @@ class AuthService {
   static Future<Map> getUser() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/users/${box.get('userId')}'),
+        Uri.parse('$baseUrl/users/fetch-user?user_identifier=${box.get('userId')}'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
       );
 
-      // print(response.body);
+      print(response.body);
       if (response.statusCode == 200) {
         Map data = json.decode(response.body);
         box.put('userData', data);
@@ -73,18 +76,55 @@ class AuthService {
   //Perform Key Exchange
   Future<String> keyExchange() async {
     try {
+      var key = await getKeyPair();
       final response = await http.post(
-        Uri.parse('$baseUrl/auth/new-ecdh-session?user_identifier=${box.get('userId')}'),
+        Uri.parse(
+            '$baseUrl/auth/new-key-exchange-session?user_identifier=${box.get('userId')}'),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'peerPublicKey': key,
+        }),
+      );
+
+      // print(response.body);
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        box.put('password', data['password']);
+        box.put('peerPublicKey', data['peerPublicKey']);
+        login();
+        return data['peerPublicKey'];
+      } else {
+        return null;
+      }
+    } catch (e) {
+      showToast(e.toString());
+      return null;
+    }
+  }
+
+  //Login for access token
+  Future<bool> login() async {
+    try {
+      print(box.get('password'));
+      print(userID);
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/login'),
         headers: {'Accept': 'application/json'},
         body: {
-          'peerPublicKey': '123456',
+          'username': userID,
+          'password': box.get('password'),
         },
       );
 
       print(response.body);
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
-        return data['key'];
+        box.put('userId', data['identifier']);
+        box.put('isLogged', true);
+        return true;
       } else {
         return null;
       }
