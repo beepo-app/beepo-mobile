@@ -74,9 +74,8 @@ class AuthService {
   }
 
   //Perform Key Exchange
-  Future<String> keyExchange() async {
+  Future<Map> keyExchange(String key) async {
     try {
-      var key = await getKeyPair();
       final response = await http.post(
         Uri.parse(
             '$baseUrl/auth/new-key-exchange-session?user_identifier=${box.get('userId')}'),
@@ -89,13 +88,13 @@ class AuthService {
         }),
       );
 
-      // print(response.body);
+      print(response.body);
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
         box.put('password', data['password']);
+        // print(data['peerPublicKey']);
         box.put('peerPublicKey', data['peerPublicKey']);
-        login();
-        return data['peerPublicKey'];
+        return data;
       } else {
         return null;
       }
@@ -106,16 +105,17 @@ class AuthService {
   }
 
   //Login for access token
-  Future<bool> login() async {
+  Future<bool> login(String pwd) async {
     try {
-      print(box.get('password'));
+      // print(box.get('password'));
       print(userID);
+      // EncryptionService().decryptPassword(box.get('password'));
       final response = await http.post(
         Uri.parse('$baseUrl/auth/login'),
         headers: {'Accept': 'application/json'},
         body: {
           'username': userID,
-          'password': box.get('password'),
+          'password': pwd,
         },
       );
 
@@ -129,6 +129,7 @@ class AuthService {
         return null;
       }
     } catch (e) {
+      print(e);
       showToast(e.toString());
       return null;
     }

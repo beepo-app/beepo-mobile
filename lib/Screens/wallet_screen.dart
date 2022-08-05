@@ -1,4 +1,5 @@
 import 'package:beepo/Service/auth.dart';
+import 'package:beepo/Service/encryption.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -47,7 +48,8 @@ class _WalletState extends State<Wallet> {
         ],
       ),
       body: FutureBuilder(
-          future: AuthService().keyExchange(),
+          // future: AuthService().keyExchange(),
+          future: EncryptionService().encrytionCastle(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Center(

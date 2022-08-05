@@ -13,7 +13,7 @@ class MediaService {
     try {
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('$baseUrl/static/profile-photo'),
+        Uri.parse('$baseUrl/static/profile-photo/upload'),
       );
       request.fields['uid'] = generateRandomString(32);
       request.files.add(await http.MultipartFile.fromPath(
