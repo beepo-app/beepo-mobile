@@ -18,7 +18,7 @@ class _BottomNavHomeState extends State<BottomNavHome> {
   int index = 0;
   List body = [
     ChatScreen(),
-    Wallet(),
+    WalletScreen(),
     Browser(),
     Profile(),
   ];

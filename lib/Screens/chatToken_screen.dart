@@ -48,9 +48,9 @@ class _ChatTokenState extends State<ChatToken> {
                 height: 100,
                 width: double.infinity,
                 decoration: const BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                        bottomLeft: const Radius.circular(20),
-                        bottomRight: const Radius.circular(20)),
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20)),
                     color: Color(0xff0e014c)),
               ),
             ),

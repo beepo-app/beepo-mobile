@@ -15,23 +15,7 @@ import 'package:encrypt/encrypt.dart' as encrypter;
 class EncryptionService {
   Box box = Hive.box('beepo');
 
-  Future<String> getKeyPair() async {
-// Future<crypto.AsymmetricKeyPair<crypto.PublicKey, crypto.PrivateKey>> getKeyPair() async {
-    var helper = RsaKeyHelper();
-    AsymmetricKeyPair<PublicKey, PrivateKey> key =
-        await helper.computeRSAKeyPair(helper.getSecureRandom());
-
-    //Store private key in hive temporarily
-    // String privateKey = helper.encodePrivateKeyToPemPKCS1(key.privateKey);
-    String privateKey = encodePrivateKeyToPem(key.privateKey);
-
-    String publicKey = encodePublicKeyToPem(key.publicKey);
-    box.put('privateKey', privateKey);
-    box.put('publicKey', publicKey);
-    return publicKey;
-  }
-
-  Future<void> encrytionCastle() async {
+  Future<void> encryption() async {
     try {
       var helper = RsaKeyHelper();
 
@@ -64,6 +48,7 @@ class EncryptionService {
       var encryPwd = encrypterer.encrypt(encryptedPwd);
 
       print(encryPwd.base16);
+      box.put('password', encryPwd.base16);
 
       await AuthService().login(encryPwd.base16);
     } catch (e) {

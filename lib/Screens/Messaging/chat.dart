@@ -1,7 +1,9 @@
 // ignore_for_file: unnecessary_const
 
+import 'package:beepo/Screens/Auth/onboarding.dart';
 import 'package:beepo/Service/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:iconsax/iconsax.dart';
 
