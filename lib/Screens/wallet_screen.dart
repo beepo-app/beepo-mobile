@@ -51,7 +51,10 @@ class _WalletScreenState extends State<WalletScreen> {
       ),
       body: FutureBuilder(
         // future: AuthService().keyExchange(),
-        future: WalletsService().getWallets(),
+        future: Future.wait([
+          WalletsService().getWallets(),
+          WalletsService().getWalletBalances(),
+        ]),
         // future: EncryptionService().encryption(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -60,7 +63,15 @@ class _WalletScreenState extends State<WalletScreen> {
             );
           }
 
-          final wallets = snapshot.data;
+          final wallets = snapshot.data[0];
+
+          final List balances = snapshot.data[1];
+
+          //total balance
+          double totalBalance = 0;
+          for (var balance in balances) {
+            totalBalance += balance['balance'];
+          }
 
           return Container(
             color: Colors.white,
@@ -90,12 +101,13 @@ class _WalletScreenState extends State<WalletScreen> {
                               color: Colors.white),
                         ),
                         const SizedBox(height: 11),
-                        const Text(
-                          '\$15,678.13',
-                          style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                        Text(
+                          totalBalance.toString(),
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
                         const SizedBox(height: 43),
                         Row(
@@ -117,7 +129,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                 const SizedBox(height: 7),
                                 const Text(
                                   'Send',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white),
@@ -144,7 +156,7 @@ class _WalletScreenState extends State<WalletScreen> {
                             Column(
                               children: [
                                 IconButton(
-                                  onPressed: () => Get.to(WalletToken()),
+                                  onPressed: () => Get.to(const WalletToken()),
                                   icon: const Icon(Icons.shopping_cart_outlined,
                                       size: 30, color: Colors.white),
                                 ),
@@ -168,13 +180,15 @@ class _WalletScreenState extends State<WalletScreen> {
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.only(top: 10),
-                    margin: EdgeInsets.symmetric(
+                    margin: const EdgeInsets.symmetric(
                       horizontal: 10,
                     ),
                     color: Colors.white,
                     child: ListView.separated(
                       itemCount: wallets.length,
-                      padding: EdgeInsets.zero,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                      ),
                       separatorBuilder: (BuildContext context, int index) {
                         return const SizedBox(height: 10);
                       },
@@ -184,7 +198,13 @@ class _WalletScreenState extends State<WalletScreen> {
                           image: 'assets/bCoin.png',
                           title: wallet.coinName,
                           subtext: wallet.coinTicker,
-                          amount: '0.0234789',
+                          amount: balances
+                              .firstWhere(
+                                (balance) => balance['networkName'] == wallet.networkName,
+                                orElse: () => {'balance': 0.0},
+                              )['balance']
+                              .toString(),
+                          wallet: wallet,
                         );
                       },
                     ),

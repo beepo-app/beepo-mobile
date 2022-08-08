@@ -141,29 +141,4 @@ class AuthService {
       return null;
     }
   }
-
-  static Future<String> updateUserProfileImage(File image) async {
-    try {
-      //Upload image to firebase storage
-      String id = DateTime.now().millisecondsSinceEpoch.toString();
-      UploadTask uploadTask = storageReference.child(id).putFile(image);
-
-      //Get image url
-      //  imageUrl;
-      TaskSnapshot shot = await uploadTask;
-      String imageUrl = await shot.ref.getDownloadURL();
-      // await usersCollection.doc(auth.currentUser!.uid).update({
-      //   'imageLink': imageUrl,
-      //   'imageUploaded': true,
-      // });
-      // auth.currentUser?.updatePhotoURL(imageUrl);
-      // showToast('Profile image updated successfully');
-      print(imageUrl);
-      return imageUrl;
-    } catch (e) {
-      print(e);
-      showToast(e.toString());
-      return null;
-    }
-  }
 }

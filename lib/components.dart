@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 
+import 'Models/wallet.dart';
 import 'Screens/browser_page.dart';
 import 'Screens/Messaging/chat_dm_screen.dart';
 import 'Screens/sendToken_screen.dart';
@@ -467,13 +468,13 @@ class WalletListTile extends StatelessWidget {
   final String title;
   final String subtext;
   final String amount;
+  final Wallet wallet;
 
-  WalletListTile({this.image, this.title, this.subtext, this.amount});
+  WalletListTile({this.image, this.title, this.subtext, this.amount, this.wallet});
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      // height: 62,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         boxShadow: const [
@@ -487,7 +488,10 @@ class WalletListTile extends StatelessWidget {
       ),
       margin: const EdgeInsets.symmetric(horizontal: 5),
       child: ListTile(
-        onTap: () => Get.to(const WalletToken()),
+        onTap: () => Get.to(WalletToken(
+          wallet: wallet,
+          balance: amount,
+        )),
         dense: true,
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(17),
@@ -510,14 +514,14 @@ class WalletListTile extends StatelessWidget {
                 ),
               ),
             ),
-            const Text(
-              "\$3,456",
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            )
+            // const Text(
+            //   "\$3,456",
+            //   style: const TextStyle(
+            //     color: Colors.black,
+            //     fontSize: 14,
+            //     fontWeight: FontWeight.w600,
+            //   ),
+            // )
           ],
         ),
         subtitle: Row(
@@ -534,8 +538,8 @@ class WalletListTile extends StatelessWidget {
             Text(
               amount,
               style: const TextStyle(
-                color: const Color(0xcc000000),
-                fontSize: 12,
+                color: Color(0xcc000000),
+                fontSize: 14,
               ),
             )
           ],

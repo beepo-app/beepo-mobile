@@ -1,10 +1,7 @@
-import 'dart:convert';
-import 'dart:developer' as dev;
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:beepo/Service/auth.dart';
-import 'package:beepo/Service/keys.dart';
 import 'package:hive/hive.dart';
 
 import 'package:pointycastle/export.dart';
@@ -56,42 +53,6 @@ class EncryptionService {
       print(e);
     }
   }
-
-  // Uint8List rsaEncrypt(RSAPublicKey myPublic, Uint8List dataToEncrypt) {
-  //   final encryptor = PKCS1Encoding(RSAEngine())
-  //     ..init(true, PublicKeyParameter<RSAPublicKey>(myPublic)); // true=encrypt
-
-  //   return _processInBlocks(encryptor, dataToEncrypt);
-  // }
-
-  // Uint8List rsaDecrypt(RSAPrivateKey myPrivate, Uint8List cipherText) {
-  //   final decryptor = PKCS1Encoding(RSAEngine())
-  //     ..init(false, PrivateKeyParameter<RSAPrivateKey>(myPrivate)); // false=decrypt
-
-  //   return _processInBlocks(decryptor, cipherText);
-  // }
-
-  // Uint8List _processInBlocks(AsymmetricBlockCipher engine, Uint8List input) {
-  //   final numBlocks = input.length ~/ engine.inputBlockSize +
-  //       ((input.length % engine.inputBlockSize != 0) ? 1 : 0);
-
-  //   final output = Uint8List(numBlocks * engine.outputBlockSize);
-
-  //   var inputOffset = 0;
-  //   var outputOffset = 0;
-  //   while (inputOffset < input.length) {
-  //     final chunkSize = (inputOffset + engine.inputBlockSize <= input.length)
-  //         ? engine.inputBlockSize
-  //         : input.length - inputOffset;
-
-  //     outputOffset +=
-  //         engine.processBlock(input, inputOffset, chunkSize, output, outputOffset);
-
-  //     inputOffset += chunkSize;
-  //   }
-
-  //   return (output.length == outputOffset) ? output : output.sublist(0, outputOffset);
-  // }
 
   static AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> generateRSAkeyPair(
       SecureRandom secureRandom,
