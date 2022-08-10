@@ -4,7 +4,9 @@ import 'package:get/get.dart';
 import '../components.dart';
 
 class SendGlobal extends StatefulWidget {
-  SendGlobal({Key key}) : super(key: key);
+  final List wallets;
+  final List balances;
+  SendGlobal({Key key, this.wallets, this.balances}) : super(key: key);
 
   @override
   State<SendGlobal> createState() => _SendGlobalState();

@@ -119,12 +119,15 @@ class _WalletScreenState extends State<WalletScreen> {
                                 Transform.rotate(
                                   angle: 24.5,
                                   child: IconButton(
-                                      onPressed: () => Get.to(SendGlobal()),
-                                      icon: const Icon(
-                                        Icons.send_outlined,
-                                        size: 30,
-                                        color: Colors.white,
-                                      )),
+                                    onPressed: () => Get.to(
+                                      SendGlobal(),
+                                    ),
+                                    icon: const Icon(
+                                      Icons.send_outlined,
+                                      size: 30,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ),
                                 const SizedBox(height: 7),
                                 const Text(

@@ -43,6 +43,7 @@ class AuthService {
         var data = json.decode(response.body);
         Hive.box('beepo').put('userId', data['identifier']);
         Hive.box('beepo').put('isLogged', true);
+        await EncryptionService().encryption();
         return true;
       } else {
         return null;

@@ -68,4 +68,32 @@ class WalletsService {
       return null;
     }
   }
+
+  Future<List> getWalletCoinData() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/exchange-and-conversion/coin-data'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${AuthService().token}'
+        },
+      );
+
+      print(response.body);
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        return data;
+      } else {
+        String pwd = Hive.box('beepo').get('password');
+        print(pwd);
+        AuthService().login(pwd);
+        return [];
+      }
+    } catch (e) {
+      print(e);
+
+      showToast(e.toString());
+      return null;
+    }
+  }
 }

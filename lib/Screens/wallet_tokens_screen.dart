@@ -89,7 +89,9 @@ class _WalletTokenState extends State<WalletToken> {
                     Column(
                       children: [
                         IconButton(
-                          onPressed: () => Get.to(ReceiveToken()),
+                          onPressed: () => Get.to(ReceiveToken(
+                            wallet: widget.wallet,
+                          )),
                           icon: const Icon(Icons.file_download_sharp,
                               size: 30, color: Colors.white),
                         ),
@@ -143,8 +145,11 @@ class _WalletTokenState extends State<WalletToken> {
                   duration: const Duration(seconds: 2),
                 );
               },
-              icon: const Icon(Icons.copy_outlined,
-                  size: 30, color: const Color(0xff0e014c)),
+              icon: const Icon(
+                Icons.copy_outlined,
+                size: 30,
+                color: Color(0xff0e014c),
+              ),
             ),
           ),
           const Divider(

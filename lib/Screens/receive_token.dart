@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
+import '../Models/wallet.dart';
 import '../Utils/styles.dart';
 
 class ReceiveToken extends StatefulWidget {
-  ReceiveToken({Key key}) : super(key: key);
+  final Wallet wallet;
+  const ReceiveToken({Key key, this.wallet}) : super(key: key);
 
   @override
   State<ReceiveToken> createState() => _ReceiveTokenState();
@@ -70,38 +74,54 @@ class _ReceiveTokenState extends State<ReceiveToken> {
                         ),
                       ),
                       const SizedBox(height: 15),
-                      const Text(
-                        "CELO",
-                        style: TextStyle(
+                      Text(
+                        widget.wallet.coinTicker,
+                        style: const TextStyle(
                           color: Colors.black,
                           fontSize: 36,
                         ),
                       ),
-                      const SizedBox(height: 40),
-                      Image.asset(
-                        'assets/scan.png',
-                        height: 242,
-                        width: 243,
+                      const SizedBox(height: 20),
+                      // Image.asset(
+                      //   'assets/scan.png',
+                      //   height: 242,
+                      //   width: 243,
+                      // ),
+                      QrImage(
+                        data: widget.wallet.address,
+                        version: QrVersions.auto,
+                        size: 200.0,
                       ),
-                      SizedBox(height: 22),
+                      const SizedBox(height: 22),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Text(
-                            "0x0E61830c8e35db159eF8",
-                            style: TextStyle(
+                            widget.wallet.address,
+                            style: const TextStyle(
                               color: Color(0x7f0e014c),
                               fontSize: 14,
                             ),
                           ),
-                          SizedBox(height: 17),
-                          IconButton(
-                              // onPressed: (){},
-                              icon: Icon(
-                            Icons.copy_outlined,
-                            color: blue,
-                          ))
+                          const SizedBox(height: 17),
                         ],
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          Clipboard.setData(ClipboardData(text: widget.wallet.address));
+                          Get.snackbar(
+                            'Copied to clipboard',
+                            'Address copied to clipboard',
+                            backgroundColor: Colors.green,
+                            colorText: Colors.white,
+                            snackPosition: SnackPosition.BOTTOM,
+                            duration: const Duration(seconds: 2),
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.copy_outlined,
+                          color: blue,
+                        ),
                       )
                     ],
                   ),
