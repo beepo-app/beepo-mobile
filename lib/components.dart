@@ -469,8 +469,10 @@ class WalletListTile extends StatelessWidget {
   final String subtext;
   final String amount;
   final Wallet wallet;
+  final VoidCallback onTap;
 
-  WalletListTile({this.image, this.title, this.subtext, this.amount, this.wallet});
+  WalletListTile(
+      {this.image, this.title, this.subtext, this.amount, this.wallet, this.onTap});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -488,10 +490,11 @@ class WalletListTile extends StatelessWidget {
       ),
       margin: const EdgeInsets.symmetric(horizontal: 5),
       child: ListTile(
-        onTap: () => Get.to(WalletToken(
-          wallet: wallet,
-          balance: amount,
-        )),
+        onTap: onTap ??
+            () => Get.to(WalletToken(
+                  wallet: wallet,
+                  balance: amount,
+                )),
         dense: true,
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(17),

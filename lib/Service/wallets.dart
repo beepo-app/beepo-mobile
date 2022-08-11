@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:beepo/Service/auth.dart';
 import 'package:hive/hive.dart';
@@ -22,7 +23,7 @@ class WalletsService {
         },
       );
 
-      print(response.body);
+      log(response.body);
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
         List<Wallet> wallets = walletFromJson(response.body);
@@ -71,12 +72,24 @@ class WalletsService {
 
   Future<List> getWalletCoinData() async {
     try {
-      final response = await http.get(
+      final response = await http.post(
         Uri.parse('$baseUrl/exchange-and-conversion/coin-data'),
         headers: {
           'Accept': 'application/json',
-          'Authorization': 'Bearer ${AuthService().token}'
+          'Authorization': 'Bearer ${AuthService().token}',
+          'Content-Type': 'application/json'
         },
+        body: jsonEncode({
+          "coinIds": [
+            "bitcoin",
+            "celo",
+            "litecoin",
+            "polygon",
+            "ropsten",
+            "binance_testnet",
+          ],
+          "outputFiatCurrencies": ["NGN", "USD"]
+        }),
       );
 
       print(response.body);

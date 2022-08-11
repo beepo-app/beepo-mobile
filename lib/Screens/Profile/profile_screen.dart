@@ -3,11 +3,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:iconsax/iconsax.dart';
 
-import '../Utils/styles.dart';
-import 'account_type.dart';
-import 'language_screen.dart';
-import 'security_screen.dart';
+import '../../Utils/styles.dart';
+import '../account_type.dart';
+import '../language_screen.dart';
+import '../security_screen.dart';
+import '../security_screen.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key key}) : super(key: key);
@@ -74,6 +76,14 @@ class _ProfileState extends State<Profile> {
                           height: 135,
                           width: 135,
                           fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            height: 135,
+                            width: 135,
+                            color: Colors.grey[300],
+                            child: Center(
+                              child: Icon(Iconsax.user, color: blue),
+                            ),
+                          ),
                         ),
                       ),
                     ),

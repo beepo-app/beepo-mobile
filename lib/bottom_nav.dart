@@ -4,7 +4,7 @@ import 'package:iconsax/iconsax.dart';
 
 import 'Screens/browser.dart';
 import 'Screens/Messaging/chat.dart';
-import 'Screens/profile_screen.dart';
+import 'Screens/Profile/profile_screen.dart';
 import 'Screens/wallet_screen.dart';
 
 class BottomNavHome extends StatefulWidget {
