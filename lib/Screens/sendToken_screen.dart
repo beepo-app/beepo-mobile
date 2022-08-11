@@ -162,34 +162,35 @@ class _SendTokenState extends State<SendToken> {
                       SizedBox(
                         height: 80,
                         child: ListView.separated(
-                            padding: EdgeInsets.only(right: 10, left: 10),
-                            shrinkWrap: true,
-                            itemCount: 6,
-                            scrollDirection: Axis.horizontal,
-                            separatorBuilder: (ctx, i) => SizedBox(width: 10),
-                            itemBuilder: (ctx, i) {
-                              return Column(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(30),
-                                    child: Image.asset(
-                                      'assets/profile_img.png',
-                                      height: 60,
-                                      width: 60,
-                                    ),
+                          padding: EdgeInsets.only(right: 10, left: 10),
+                          shrinkWrap: true,
+                          itemCount: 6,
+                          scrollDirection: Axis.horizontal,
+                          separatorBuilder: (ctx, i) => SizedBox(width: 10),
+                          itemBuilder: (ctx, i) {
+                            return Column(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(30),
+                                  child: Image.asset(
+                                    'assets/profile_img.png',
+                                    height: 60,
+                                    width: 60,
                                   ),
-                                  SizedBox(height: 7),
-                                  Text(
-                                    "James",
-                                    style: TextStyle(
-                                      color: blue,
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w700,
-                                    ),
+                                ),
+                                SizedBox(height: 7),
+                                Text(
+                                  "James",
+                                  style: TextStyle(
+                                    color: blue,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w700,
                                   ),
-                                ],
-                              );
-                            }),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
                       ),
                       SizedBox(height: 70),
                       FilledButton(

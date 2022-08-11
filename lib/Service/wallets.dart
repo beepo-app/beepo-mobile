@@ -70,7 +70,7 @@ class WalletsService {
     }
   }
 
-  Future<List> getWalletCoinData() async {
+  Future<Map> getWalletCoinData() async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/exchange-and-conversion/coin-data'),
@@ -84,9 +84,9 @@ class WalletsService {
             "bitcoin",
             "celo",
             "litecoin",
-            "polygon",
-            "ropsten",
-            "binance_testnet",
+            "ethereum",
+            // "ropsten",
+            // "binance_testnet",
           ],
           "outputFiatCurrencies": ["NGN", "USD"]
         }),
@@ -95,12 +95,9 @@ class WalletsService {
       print(response.body);
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
-        return data;
+        return data['coins'];
       } else {
-        String pwd = Hive.box('beepo').get('password');
-        print(pwd);
-        AuthService().login(pwd);
-        return [];
+        return {};
       }
     } catch (e) {
       print(e);

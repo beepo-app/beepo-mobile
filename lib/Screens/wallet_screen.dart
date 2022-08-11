@@ -54,6 +54,7 @@ class _WalletScreenState extends State<WalletScreen> {
         future: Future.wait([
           WalletsService().getWallets(),
           WalletsService().getWalletBalances(),
+          WalletsService().getWalletCoinData(),
         ]),
         // future: EncryptionService().encryption(),
         builder: (context, snapshot) {
@@ -66,6 +67,8 @@ class _WalletScreenState extends State<WalletScreen> {
           final wallets = snapshot.data[0];
 
           final List balances = snapshot.data[1];
+
+          final Map coinData = snapshot.data[2];
 
           //total balance
           double totalBalance = 0;
@@ -197,6 +200,11 @@ class _WalletScreenState extends State<WalletScreen> {
                       },
                       itemBuilder: (BuildContext context, int index) {
                         Wallet wallet = wallets[index];
+                        String currentValue = '0';
+                        if (coinData[wallet.networkName] != null) {
+                          currentValue =
+                              coinData[wallet.networkName]['usd']['price'].toString();
+                        }
                         return WalletListTile(
                           image: 'assets/bCoin.png',
                           title: wallet.coinName,
@@ -208,6 +216,7 @@ class _WalletScreenState extends State<WalletScreen> {
                               )['balance']
                               .toString(),
                           wallet: wallet,
+                          currentValue: currentValue,
                         );
                       },
                     ),
