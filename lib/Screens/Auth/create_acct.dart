@@ -166,39 +166,48 @@ class _CreateAccountState extends State<CreateAccount> {
                   showToast('Please enter a display name');
                   return;
                 } else {
-                  if (selectedImage == null) {
-                    showToast('Please select a profile picture');
-                    return;
-                  }
-                  Get.dialog(Dialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Lottie.asset(
-                              'assets/lottie/lottie_1.json',
-                              height: 150,
-                              width: 150,
+                  // if (selectedImage == null) {
+                  //   showToast('Please select a profile picture');
+                  //   return;
+                  // }
+                  Get.to(
+                    Material(
+                      child: Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        color: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Lottie.asset(
+                                    'assets/lottie/lottie_1.json',
+                                    height: 150,
+                                    width: 150,
+                                  ),
+                                ),
+                                Text(
+                                  'Creating account...',
+                                  style: Get.textTheme.headline6,
+                                ),
+                                const SizedBox(height: 10),
+                              ],
                             ),
                           ),
-                          Text(
-                            'Creating account...',
-                            style: Get.textTheme.headline6,
-                          ),
-                          const SizedBox(height: 10),
-                        ],
+                        ),
                       ),
                     ),
-                  ));
+                    fullscreenDialog: true,
+                  );
 
-                  String imageUrl =
-                      await MediaService.uploadProfilePicture(selectedImage);
+                  String imageUrl = 'https://picsum.photos/200/300.png';
+                  if (selectedImage != null) {
+                    imageUrl = await MediaService.uploadProfilePicture(selectedImage);
+                  }
 
                   // String imageUrl =
                   //     await AuthService.updateUserProfileImage(selectedImage);
@@ -206,17 +215,20 @@ class _CreateAccountState extends State<CreateAccount> {
                   //   showToast('Account created successfully');
                   //   Get.to(PhraseScreen(phrase: backupPhrase));
                   // }
-                  if (imageUrl != null) {
-                    bool result =
-                        await AuthService.createUser(displayName.text.trim(), imageUrl);
-                    Get.back();
-                    if (result) {
-                      showToast('Account created successfully');
-                      Get.offAll(const PinCode());
-                    } else {
-                      showToast('Something went wrong');
-                    }
+
+                  // if (imageUrl != null) {
+                  bool result = await AuthService.createUser(
+                    displayName.text.trim(),
+                    imgUrl: imageUrl,
+                  );
+                  Get.back();
+                  if (result) {
+                    showToast('Account created successfully');
+                    Get.offAll(const PinCode());
+                  } else {
+                    showToast('Something went wrong');
                   }
+                  // }
                 }
               },
             ),

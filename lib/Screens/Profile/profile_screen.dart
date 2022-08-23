@@ -76,14 +76,21 @@ class _ProfileState extends State<Profile> {
                           height: 135,
                           width: 135,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            height: 135,
-                            width: 135,
-                            color: Colors.grey[300],
-                            child: Center(
-                              child: Icon(Iconsax.user, color: blue),
-                            ),
-                          ),
+                          progressIndicatorBuilder: (context, url, progress) {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: progress.progress,
+                              ),
+                            );
+                          },
+                          // placeholder: (context, url) => Container(
+                          //   height: 135,
+                          //   width: 135,
+                          //   color: Colors.grey[300],
+                          //   child: const Center(
+                          //     child: Icon(Iconsax.user, color: blue),
+                          //   ),
+                          // ),
                         ),
                       ),
                     ),

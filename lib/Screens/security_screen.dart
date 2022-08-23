@@ -1,3 +1,4 @@
+import 'package:beepo/Screens/Profile/wallet_phrase.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -65,6 +66,7 @@ class _SecurityState extends State<Security> {
                 padding: const EdgeInsets.all(20),
                 color: Colors.white,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
@@ -119,6 +121,12 @@ class _SecurityState extends State<Security> {
                       ],
                     ),
                     const SizedBox(height: 12),
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(WalletPhraseScreen());
+                      },
+                      child: Text('Wallet Phrase'),
+                    ),
                   ],
                 ),
               ),

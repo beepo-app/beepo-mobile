@@ -21,7 +21,7 @@ class EncryptionService {
       String publicKey = helper.encodePublicKeyToPemPKCS1(key.publicKey);
       // dev.log(publicKey);
 
-      // box.put('privateKey', privateKey);
+      box.put('privateKey', key.privateKey);
       // box.put('publicKey', publicKey);
 
       // String privateKey = helper.encodePrivateKeyToPemPKCS1(key.privateKey);

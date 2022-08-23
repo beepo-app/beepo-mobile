@@ -34,3 +34,7 @@ dynamic loadingDialog(String label) {
     ),
   );
 }
+
+Widget loader() {
+  return const Center(child: CircularProgressIndicator());
+}

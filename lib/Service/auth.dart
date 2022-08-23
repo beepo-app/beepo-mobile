@@ -24,7 +24,7 @@ class AuthService {
   String get token => box.get('token', defaultValue: '');
 
   //Create User
-  static Future<bool> createUser(String displayName, String imgUrl) async {
+  static Future<bool> createUser(String displayName, {String imgUrl}) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/users'),
@@ -57,10 +57,6 @@ class AuthService {
   //Get User
   static Future<Map> getUser() async {
     try {
-      // print(box.get('userId'));
-      // Hive.box('beepo').put('password',
-      //     '3493a28652e18c8c65290411571bd4774ba37ec0e600e079c692688c6ebd27af37abcb1583fb478942c9c610908c994f353cb3c52603a0bf13b02e4503ff043d4c64efa01f51d841099ec4ed1f74953bcfd0d89e4ed45f384c5f8c5703ededf245b0d67282ce933a8089d01226a42fb175def127290a90b91e8a259bb5378801');
-
       final response = await http.get(
         Uri.parse(
             '$baseUrl/users/fetch-user?user_identifier=${Hive.box('beepo').get('userId')}'),
@@ -94,9 +90,7 @@ class AuthService {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
-        body: jsonEncode({
-          'peerPublicKey': key,
-        }),
+        body: jsonEncode({'peerPublicKey': key}),
       );
 
       print(response.body);
@@ -140,6 +134,27 @@ class AuthService {
       print(e);
       showToast(e.toString());
       return null;
+    }
+  }
+
+  //Retrieve Passphrase
+  Future<void> retrievePassphrase() async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/users/retreive-passphrase'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${AuthService().token}',
+          'Content-Type': 'application/json'
+        },
+      );
+      print(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Map result = jsonDecode(response.body);
+        if (result['encrypted_passphrase']) {}
+      }
+    } catch (e) {
+      return {};
     }
   }
 }
