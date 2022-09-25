@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:beepo/Screens/Auth/phrase_screen.dart';
 import 'package:beepo/Service/auth.dart';
+import 'package:beepo/Service/encryption.dart';
 import 'package:beepo/Service/media.dart';
 import 'package:beepo/Utils/functions.dart';
 import 'package:beepo/Widgets/commons.dart';
@@ -205,9 +206,10 @@ class _CreateAccountState extends State<CreateAccount> {
                   );
 
                   String imageUrl = 'https://picsum.photos/200/300.png';
-                  if (selectedImage != null) {
-                    imageUrl = await MediaService.uploadProfilePicture(selectedImage);
-                  }
+
+                  // if (selectedImage != null) {
+                  //   imageUrl = await MediaService.uploadProfilePicture(selectedImage);
+                  // }
 
                   // String imageUrl =
                   //     await AuthService.updateUserProfileImage(selectedImage);
@@ -217,7 +219,8 @@ class _CreateAccountState extends State<CreateAccount> {
                   // }
 
                   // if (imageUrl != null) {
-                  bool result = await AuthService.createUser(
+
+                  bool result = await AuthService().createUser(
                     displayName.text.trim(),
                     imgUrl: imageUrl,
                   );
@@ -228,7 +231,6 @@ class _CreateAccountState extends State<CreateAccount> {
                   } else {
                     showToast('Something went wrong');
                   }
-                  // }
                 }
               },
             ),

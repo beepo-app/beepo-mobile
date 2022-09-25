@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:beepo/Service/auth.dart';
+import 'package:cryptography/dart.dart';
 import 'package:hive/hive.dart';
 
 import 'package:pointycastle/export.dart';
@@ -21,35 +22,61 @@ class EncryptionService {
       String publicKey = helper.encodePublicKeyToPemPKCS1(key.publicKey);
       // dev.log(publicKey);
 
-      box.put('privateKey', key.privateKey);
       // box.put('publicKey', publicKey);
 
-      // String privateKey = helper.encodePrivateKeyToPemPKCS1(key.privateKey);
+      String privateKey = helper.encodePrivateKeyToPemPKCS1(key.privateKey);
+      box.put('privateKey', privateKey);
 
-      Map publics = await AuthService().keyExchange(publicKey);
-      String pwd = publics['password'];
-      String serverPublicKey = publics['peerPublicKey'];
+      Map publics = await AuthService().createContext(publicKey);
+      // String pwd = publics['password'];
+      // String serverPublicKey = publics['peerPublicKey'];
+
+      // final encrypterer = encrypter.Encrypter(
+      //   encrypter.RSA(
+      //     publicKey: helper.parsePublicKeyFromPem(serverPublicKey),
+      //     privateKey: key.privateKey,
+      //     encoding: encrypter.RSAEncoding.PKCS1,
+      //   ),
+      // );
+
+      // //Decrypt the password (ciphertext)
+      // final encryptedPwd = encrypterer.decrypt16(pwd);
+
+      // //Encrypt the password (plaintext)
+      // var encryPwd = encrypterer.encrypt(encryptedPwd);
+
+      // print(encryPwd.base16);
+      // box.put('password', encryPwd.base16);
+
+      // await AuthService().login(encryPwd.base16);
+    } catch (e) {
+      print('error');
+      print(e);
+    }
+  }
+
+  Future<String> decryptSeedPhrase() async {
+    try {
+      String seedphrase = box.get('seedphrase');
+      var helper = RsaKeyHelper();
+
+      String serverPublicKey = box.get('serverPublicKey');
+
+      String privateKey = box.get('privateKey');
 
       final encrypterer = encrypter.Encrypter(
         encrypter.RSA(
           publicKey: helper.parsePublicKeyFromPem(serverPublicKey),
-          privateKey: key.privateKey,
+          privateKey: helper.parsePrivateKeyFromPem(privateKey),
           encoding: encrypter.RSAEncoding.PKCS1,
         ),
       );
 
-      //Decrypt the password (ciphertext)
-      final encryptedPwd = encrypterer.decrypt16(pwd);
+      final encryptedPwd = encrypterer.decrypt16(seedphrase);
 
-      //Encrypt the password (plaintext)
-      var encryPwd = encrypterer.encrypt(encryptedPwd);
-
-      print(encryPwd.base16);
-      box.put('password', encryPwd.base16);
-
-      await AuthService().login(encryPwd.base16);
+      print(encryptedPwd);
+      var hash = await DartSha256().hash(encryptedPwd.codeUnits);
     } catch (e) {
-      print('error');
       print(e);
     }
   }

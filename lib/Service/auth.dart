@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:beepo/Service/encryption.dart';
@@ -24,26 +25,30 @@ class AuthService {
   String get token => box.get('token', defaultValue: '');
 
   //Create User
-  static Future<bool> createUser(String displayName, {String imgUrl}) async {
+  Future<bool> createUser(String displayName, {String imgUrl}) async {
     try {
+      //To generate keys and contextId
+      await EncryptionService().encryption();
       final response = await http.post(
         Uri.parse('$baseUrl/users'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'beepo-core-context-id': box.get('contextId'),
         },
         body: json.encode({
           'displayName': displayName,
-          'profilePhotoUrl': imgUrl,
+          'profilePictureUrl': imgUrl,
         }),
       );
 
       print(response.body);
       if (response.statusCode == 201 || response.statusCode == 200) {
         var data = json.decode(response.body);
-        Hive.box('beepo').put('userId', data['identifier']);
-        Hive.box('beepo').put('isLogged', true);
-        await EncryptionService().encryption();
+        print(data);
+        box.put('seedphrase', data['seedphrase']);
+        box.put('uid', data['user']['uid']);
+        box.put('isLogged', true);
         return true;
       } else {
         return null;
@@ -55,7 +60,7 @@ class AuthService {
   }
 
   //Get User
-  static Future<Map> getUser() async {
+  Future<Map> getUser() async {
     try {
       final response = await http.get(
         Uri.parse(
@@ -66,7 +71,9 @@ class AuthService {
         },
       );
 
-      print(response.body);
+      log(box.get('privateKey'));
+      log(response.body);
+
       if (response.statusCode == 200) {
         Map data = json.decode(response.body);
         Hive.box('beepo').put('userData', data);
@@ -109,6 +116,34 @@ class AuthService {
     }
   }
 
+  //Perform Key Exchange
+  Future<Map> createContext(String key) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/crypto/rsa/new-context'),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'publicKey': key}),
+      );
+
+      print(response.body);
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        print(data);
+        box.put('contextId', data['contextId']);
+        box.put('serverPublicKey', data['serverPublicKey']);
+        return data;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      showToast(e.toString());
+      return null;
+    }
+  }
+
   //Login for access token
   Future<bool> login(String pwd) async {
     try {
@@ -116,8 +151,8 @@ class AuthService {
         Uri.parse('$baseUrl/auth/login'),
         headers: {'Accept': 'application/json'},
         body: {
-          'username': userID,
-          'password': pwd,
+          'encryptedSeedPhraseHash256': userID,
+          'encryptedSeedPhraseHash512': pwd,
         },
       );
 

@@ -54,7 +54,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ],
           body: FutureBuilder(
-              future: AuthService.getUser(),
+              future: EncryptionService().decryptSeedPhrase(),
               builder: (context, AsyncSnapshot snapshot) {
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
