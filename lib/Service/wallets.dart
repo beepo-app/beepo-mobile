@@ -4,8 +4,8 @@ import 'dart:developer';
 import 'package:beepo/Service/auth.dart';
 import 'package:hive/hive.dart';
 
+import '../Constants/network.dart';
 import '../Models/wallet.dart';
-import '../Utils/constants.dart';
 import 'package:http/http.dart' as http;
 
 import '../Widgets/toasts.dart';
@@ -16,10 +16,11 @@ class WalletsService {
       print(AuthService().token);
 
       final response = await http.get(
-        Uri.parse('$baseUrl/wallets'),
+        Uri.parse('$baseUrl/wallets/coins'),
         headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer ${AuthService().token}'
+          // 'Accept': 'application/json',
+          Headers.bearer: AuthService().token,
+          Headers.context: AuthService().contextId,
         },
       );
 
@@ -31,8 +32,8 @@ class WalletsService {
       } else {
         String pwd = Hive.box('beepo').get('password');
         print(pwd);
-        AuthService().login(pwd);
-        return [];
+        // AuthService().login(pwd);
+        // return [];
       }
     } catch (e) {
       print(e);
@@ -59,7 +60,7 @@ class WalletsService {
       } else {
         String pwd = Hive.box('beepo').get('password');
         print(pwd);
-        AuthService().login(pwd);
+        // AuthService().login(pwd);
         return [];
       }
     } catch (e) {

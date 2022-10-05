@@ -5,7 +5,7 @@ import 'package:iconsax/iconsax.dart';
 import 'Screens/browser.dart';
 import 'Screens/Messaging/chat.dart';
 import 'Screens/Profile/profile_screen.dart';
-import 'Screens/wallet_screen.dart';
+import 'Screens/Wallet/wallet_screen.dart';
 
 class BottomNavHome extends StatefulWidget {
   BottomNavHome({Key key}) : super(key: key);

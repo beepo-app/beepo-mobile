@@ -59,6 +59,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
                 }
+
+                print(snapshot.data);
                 return Container(
                   width: double.infinity,
                   color: blue,

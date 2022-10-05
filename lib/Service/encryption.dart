@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:beepo/Service/auth.dart';
+import 'package:convert/convert.dart';
 import 'package:cryptography/dart.dart';
 import 'package:hive/hive.dart';
 
@@ -9,6 +10,7 @@ import 'package:pointycastle/export.dart';
 
 import 'package:rsa_encrypt/rsa_encrypt.dart';
 import 'package:encrypt/encrypt.dart' as encrypter;
+import 'dart:developer' as dev;
 
 class EncryptionService {
   Box box = Hive.box('beepo');
@@ -64,6 +66,8 @@ class EncryptionService {
 
       String privateKey = box.get('privateKey');
 
+      print(serverPublicKey);
+
       final encrypterer = encrypter.Encrypter(
         encrypter.RSA(
           publicKey: helper.parsePublicKeyFromPem(serverPublicKey),
@@ -75,16 +79,33 @@ class EncryptionService {
       final encryptedPwd = encrypterer.decrypt16(seedphrase);
 
       print(encryptedPwd);
-      var hash = await DartSha256().hash(encryptedPwd.codeUnits);
+      var hash256Bytes = await const DartSha256().hash(encryptedPwd.codeUnits);
+
+      var hash512Bytes = await const DartSha512().hash(encryptedPwd.codeUnits);
+
+      String hash256 = hex.encode(hash256Bytes.bytes);
+      String hash512 = hex.encode(hash512Bytes.bytes);
+
+      //Encrypt hash256
+      var encryptedHash256 = encrypterer.encrypt(hash256);
+      var encryptedHash512 = encrypterer.encrypt(hash512);
+
+      dev.log(encryptedHash256.base16);
+
+      await AuthService().login(encryptedHash256.base16, encryptedHash512.base16);
+      // print(hex.encode(hash512.bytes));
+
+      return "true";
     } catch (e) {
       print(e);
+      return '';
     }
   }
 
   static AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> generateRSAkeyPair(
       SecureRandom secureRandom,
       // {int bitLength = 2048}) {
-      {int bitLength = 1024}) {
+      {int bitLength = 4096}) {
     // Create an RSA key generator and initialize it
 
     final keyGen = RSAKeyGenerator()

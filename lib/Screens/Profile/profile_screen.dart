@@ -67,44 +67,45 @@ class _ProfileState extends State<Profile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 53),
-                    Align(
-                      alignment: Alignment.center,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(70),
-                        child: CachedNetworkImage(
-                          imageUrl: userData['profilePhotoUrl'],
-                          height: 135,
-                          width: 135,
-                          fit: BoxFit.cover,
-                          progressIndicatorBuilder: (context, url, progress) {
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value: progress.progress,
-                              ),
-                            );
-                          },
-                          // placeholder: (context, url) => Container(
-                          //   height: 135,
-                          //   width: 135,
-                          //   color: Colors.grey[300],
-                          //   child: const Center(
-                          //     child: Icon(Iconsax.user, color: blue),
-                          //   ),
-                          // ),
-                        ),
-                      ),
-                    ),
+                    // Align(
+                    //   alignment: Alignment.center,
+                    //   child: ClipRRect(
+                    //     borderRadius: BorderRadius.circular(70),
+                    //     child: CachedNetworkImage(
+                    //       imageUrl: userData['profilePhotoUrl'],
+                    //       height: 135,
+                    //       width: 135,
+                    //       fit: BoxFit.cover,
+                    //       progressIndicatorBuilder: (context, url, progress) {
+                    //         return Center(
+                    //           child: CircularProgressIndicator(
+                    //             value: progress.progress,
+                    //           ),
+                    //         );
+                    //       },
+                    //       // placeholder: (context, url) => Container(
+                    //       //   height: 135,
+                    //       //   width: 135,
+                    //       //   color: Colors.grey[300],
+                    //       //   child: const Center(
+                    //       //     child: Icon(Iconsax.user, color: blue),
+                    //       //   ),
+                    //       // ),
+                    //     ),
+                    //   ),
+                    // ),
+
                     const SizedBox(height: 24),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          userData['displayName'],
-                          style: const TextStyle(
-                            color: Color(0xffff9c34),
-                            fontSize: 18,
-                          ),
-                        ),
+                        // Text(
+                        //   userData['displayName'],
+                        //   style: const TextStyle(
+                        //     color: Color(0xffff9c34),
+                        //     fontSize: 18,
+                        //   ),
+                        // ),
                         const SizedBox(width: 8),
                         const Icon(
                           Icons.qr_code_scanner_rounded,

@@ -54,6 +54,7 @@ dependencies:
   rsa_encrypt: ^2.0.0
   pointycastle:
   encrypt: ^5.0.1
+  convert: ^3.0.2
 
 dev_dependencies:
   flutter_test:

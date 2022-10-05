@@ -19,8 +19,13 @@ class _WalletPhraseScreenState extends State<WalletPhraseScreen> {
           if (!snapshot.hasData) {
             return loader();
           }
-          return Column(
-            children: [],
+          return Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Container(),
+              ],
+            ),
           );
         },
       ),
