@@ -401,7 +401,7 @@ class MessageSender extends StatelessWidget {
                 SizedBox(width: 5),
                 Icon(
                   Icons.done_all,
-                  color: blue,
+                  color: Colors.white,
                   size: 15,
                 ),
               ],
@@ -444,14 +444,13 @@ class MessageReceiver extends StatelessWidget {
                 fontSize: 14,
               ),
             ),
-            SizedBox(height: 5),
             Align(
               alignment: Alignment.bottomRight,
               child: Text(
-                "9:13",
+                "9:13am",
                 style: TextStyle(
-                  color: Color(0xffe3dede),
-                  fontSize: 9,
+                  color: Colors.grey,
+                  fontSize: 10,
                   fontWeight: FontWeight.w600,
                 ),
               ),

@@ -57,7 +57,7 @@ class _VerifyCodeState extends State<VerifyCode> {
                 length: 4,
                 obscureText: true,
                 obscuringCharacter: '*',
-                blinkWhenObscuring: true,
+                blinkWhenObscuring: false,
                 animationType: AnimationType.fade,
                 pinTheme: PinTheme(
                   shape: PinCodeFieldShape.circle,

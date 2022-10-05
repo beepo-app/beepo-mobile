@@ -145,7 +145,7 @@ class _UserProfileState extends State<UserProfile> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 53),
+                          SizedBox(height: 30),
                           Text(
                             "Hi there, am a blockchain developer\ni would be glad you patronize my services as listed on the store",
                             textAlign: TextAlign.center,
@@ -155,9 +155,9 @@ class _UserProfileState extends State<UserProfile> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          SizedBox(height: 12),
+                          SizedBox(height: 10),
                           Divider(),
-                          SizedBox(height: 37),
+                          SizedBox(height: 10),
                           Row(
                             children: [
                               Expanded(
@@ -180,12 +180,11 @@ class _UserProfileState extends State<UserProfile> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 37),
                           Row(
                             children: [
                               Expanded(
                                 child: Text(
-                                  "Disappearing messages",
+                                  "Allow Screenshot",
                                   style: TextStyle(
                                     color: Color(0xff0e014c),
                                     fontSize: 14,
@@ -203,7 +202,6 @@ class _UserProfileState extends State<UserProfile> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 35),
                           Row(
                             children: [
                               Expanded(
@@ -226,9 +224,9 @@ class _UserProfileState extends State<UserProfile> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 28),
+                          SizedBox(height: 10),
                           Divider(),
-                          SizedBox(height: 35),
+                          SizedBox(height: 20),
                           Text(
                             "Store",
                             style: TextStyle(

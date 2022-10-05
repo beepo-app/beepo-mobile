@@ -168,26 +168,26 @@ class _ChatDmState extends State<ChatDm> {
                           maxWidth: 30,
                         ),
                         icon: Icon(
-                          Iconsax.microphone,
+                          Iconsax.camera,
                           size: 20,
-                          color: Theme.of(context).primaryColor,
+                          color: blue,
                         ),
                       ),
                     ),
                     suffixIcon: FittedBox(
                       child: Row(
                         children: [
-                          // IconButton(
-                          //   onPressed: () {},
-                          //   constraints: const BoxConstraints(
-                          //     maxWidth: 30,
-                          //   ),
-                          //   icon: Icon(
-                          //     Iconsax.emoji_happy,
-                          //     size: 20,
-                          //     color: Theme.of(context).primaryColor,
-                          //   ),
-                          // ),
+                          IconButton(
+                            onPressed: () {},
+                            constraints: const BoxConstraints(
+                              maxWidth: 30,
+                            ),
+                            icon: Icon(
+                              Iconsax.dollar_circle,
+                              size: 20,
+                              color: blue,
+                            ),
+                          ),
                           IconButton(
                             onPressed: () {},
                             constraints: const BoxConstraints(
@@ -196,7 +196,7 @@ class _ChatDmState extends State<ChatDm> {
                             icon: Icon(
                               Iconsax.gallery,
                               size: 20,
-                              color: Theme.of(context).primaryColor,
+                              color: blue,
                             ),
                           ),
                           SizedBox(width: 10),
@@ -224,7 +224,7 @@ class _ChatDmState extends State<ChatDm> {
                 child: IconButton(
                   onPressed: () {},
                   icon: const Icon(
-                    Icons.send,
+                    Icons.mic,
                     color: Colors.white,
                   ),
                 ),

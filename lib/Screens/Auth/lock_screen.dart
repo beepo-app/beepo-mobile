@@ -28,16 +28,10 @@ class _LockScreenState extends State<LockScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 24),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: blue,
-              ),
-              child: Image.asset(
-                'assets/logo.png',
-                height: 127,
-                width: 127,
-              ),
+            Image.asset(
+              'assets/logo2.png',
+              height: 127,
+              width: 127,
             ),
             const SizedBox(height: 70),
             const Text(
@@ -56,7 +50,7 @@ class _LockScreenState extends State<LockScreen> {
                 length: 4,
                 obscureText: true,
                 obscuringCharacter: '*',
-                blinkWhenObscuring: true,
+                blinkWhenObscuring: false,
                 animationType: AnimationType.fade,
                 pinTheme: PinTheme(
                   shape: PinCodeFieldShape.circle,
