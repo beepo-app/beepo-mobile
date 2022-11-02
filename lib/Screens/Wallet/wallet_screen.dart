@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Service/encryption.dart';
 import 'package:beepo/Service/wallets.dart';
@@ -53,8 +55,8 @@ class _WalletScreenState extends State<WalletScreen> {
         // future: AuthService().keyExchange(),
         future: Future.wait([
           WalletsService().getWallets(),
-          WalletsService().getWalletBalances(),
-          WalletsService().getWalletCoinData(),
+          // WalletsService().getWalletBalances(),
+          // WalletsService().getWalletCoinData(),
         ]),
         // future: EncryptionService().encryption(),
         builder: (context, snapshot) {
@@ -64,17 +66,17 @@ class _WalletScreenState extends State<WalletScreen> {
             );
           }
 
-          final wallets = snapshot.data[0];
+          final List<Wallet> wallets = snapshot.data[0] ?? [];
 
-          final List balances = snapshot.data[1];
+          // final List balances = snapshot.data[1];
 
-          final Map coinData = snapshot.data[2];
+          // final Map coinData = snapshot.data[2];
 
           //total balance
-          double totalBalance = 0;
-          for (var balance in balances) {
-            totalBalance += balance['balance'];
-          }
+          // double totalBalance = 0;
+          // for (var balance in balances) {
+          //   totalBalance += balance['balance'];
+          // }
 
           return Container(
             color: Colors.white,
@@ -105,7 +107,8 @@ class _WalletScreenState extends State<WalletScreen> {
                         ),
                         const SizedBox(height: 11),
                         Text(
-                          totalBalance.toString(),
+                          // totalBalance.toString(),
+                          '',
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -201,20 +204,21 @@ class _WalletScreenState extends State<WalletScreen> {
                       itemBuilder: (BuildContext context, int index) {
                         Wallet wallet = wallets[index];
                         String currentValue = '0';
-                        if (coinData[wallet.networkName] != null) {
-                          currentValue =
-                              coinData[wallet.networkName]['usd']['price'].toString();
-                        }
+                        // if (coinData[wallet.networkName] != null) {
+                        //   currentValue =
+                        //       coinData[wallet.networkName]['usd']['price'].toString();
+                        // }
                         return WalletListTile(
-                          image: 'assets/bCoin.png',
-                          title: wallet.coinName,
-                          subtext: wallet.coinTicker,
-                          amount: balances
-                              .firstWhere(
-                                (balance) => balance['networkName'] == wallet.networkName,
-                                orElse: () => {'balance': 0.0},
-                              )['balance']
-                              .toString(),
+                          image: wallet.logoUrl,
+                          title: wallet.displayName,
+                          subtext: wallet.ticker,
+                          amount: '0.00',
+                          // amount: balances
+                          //     .firstWhere(
+                          //       (balance) => balance['networkName'] == wallet.networkName,
+                          //       orElse: () => {'balance': 0.0},
+                          //     )['balance']
+                          //     .toString(),
                           wallet: wallet,
                           currentValue: currentValue,
                         );

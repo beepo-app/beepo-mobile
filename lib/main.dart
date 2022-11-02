@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       // home: const LockScreen(),
-      home: isLogged
+      home: !isLogged
           ? isLocked
               ? const LockScreen()
               : BottomNavHome()

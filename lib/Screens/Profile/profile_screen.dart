@@ -72,7 +72,7 @@ class _ProfileState extends State<Profile> {
                     //   child: ClipRRect(
                     //     borderRadius: BorderRadius.circular(70),
                     //     child: CachedNetworkImage(
-                    //       imageUrl: userData['profilePhotoUrl'],
+                    //       imageUrl: userData['profilePictureUrl'],
                     //       height: 135,
                     //       width: 135,
                     //       fit: BoxFit.cover,
@@ -99,13 +99,13 @@ class _ProfileState extends State<Profile> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Text(
-                        //   userData['displayName'],
-                        //   style: const TextStyle(
-                        //     color: Color(0xffff9c34),
-                        //     fontSize: 18,
-                        //   ),
-                        // ),
+                        Text(
+                          userData['displayName'],
+                          style: const TextStyle(
+                            color: Color(0xffff9c34),
+                            fontSize: 18,
+                          ),
+                        ),
                         const SizedBox(width: 8),
                         const Icon(
                           Icons.qr_code_scanner_rounded,

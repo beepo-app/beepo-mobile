@@ -75,7 +75,7 @@ class _ReceiveTokenState extends State<ReceiveToken> {
                       ),
                       const SizedBox(height: 15),
                       Text(
-                        widget.wallet.coinTicker,
+                        widget.wallet.ticker,
                         style: const TextStyle(
                           color: Colors.black,
                           fontSize: 36,

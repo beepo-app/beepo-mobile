@@ -1,12 +1,12 @@
-import 'dart:math';
-import 'dart:typed_data';
+import 'dart:isolate';
 
+import 'package:beepo/Constants/app_constants.dart';
 import 'package:beepo/Service/auth.dart';
+import 'package:beepo/Utils/crypto.dart';
 import 'package:convert/convert.dart';
 import 'package:cryptography/dart.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
-
-import 'package:pointycastle/export.dart';
 
 import 'package:rsa_encrypt/rsa_encrypt.dart';
 import 'package:encrypt/encrypt.dart' as encrypter;
@@ -19,7 +19,7 @@ class EncryptionService {
     try {
       var helper = RsaKeyHelper();
 
-      var key = generateRSAkeyPair(exampleSecureRandom());
+      var key = CryptoUtils.generateRSAkeyPair();
 
       String publicKey = helper.encodePublicKeyToPemPKCS1(key.publicKey);
       // dev.log(publicKey);
@@ -29,44 +29,23 @@ class EncryptionService {
       String privateKey = helper.encodePrivateKeyToPemPKCS1(key.privateKey);
       box.put('privateKey', privateKey);
 
-      Map publics = await AuthService().createContext(publicKey);
-      // String pwd = publics['password'];
-      // String serverPublicKey = publics['peerPublicKey'];
-
-      // final encrypterer = encrypter.Encrypter(
-      //   encrypter.RSA(
-      //     publicKey: helper.parsePublicKeyFromPem(serverPublicKey),
-      //     privateKey: key.privateKey,
-      //     encoding: encrypter.RSAEncoding.PKCS1,
-      //   ),
-      // );
-
-      // //Decrypt the password (ciphertext)
-      // final encryptedPwd = encrypterer.decrypt16(pwd);
-
-      // //Encrypt the password (plaintext)
-      // var encryPwd = encrypterer.encrypt(encryptedPwd);
-
-      // print(encryPwd.base16);
-      // box.put('password', encryPwd.base16);
-
-      // await AuthService().login(encryPwd.base16);
+      await AuthService().createContext(publicKey);
     } catch (e) {
       print('error');
       print(e);
     }
   }
 
-  Future<String> decryptSeedPhrase() async {
+  Future<String> decryptSeedPhrase({String seedPhrase}) async {
     try {
-      String seedphrase = box.get('seedphrase');
+      String decryptedSecretPhrase;
       var helper = RsaKeyHelper();
 
       String serverPublicKey = box.get('serverPublicKey');
 
       String privateKey = box.get('privateKey');
 
-      print(serverPublicKey);
+      // print(serverPublicKey);
 
       final encrypterer = encrypter.Encrypter(
         encrypter.RSA(
@@ -76,12 +55,11 @@ class EncryptionService {
         ),
       );
 
-      final encryptedPwd = encrypterer.decrypt16(seedphrase);
+      decryptedSecretPhrase = seedPhrase ?? encrypterer.decrypt16(box.get('seedphrase'));
 
-      print(encryptedPwd);
-      var hash256Bytes = await const DartSha256().hash(encryptedPwd.codeUnits);
+      var hash256Bytes = await const DartSha256().hash(decryptedSecretPhrase.codeUnits);
 
-      var hash512Bytes = await const DartSha512().hash(encryptedPwd.codeUnits);
+      var hash512Bytes = await const DartSha512().hash(decryptedSecretPhrase.codeUnits);
 
       String hash256 = hex.encode(hash256Bytes.bytes);
       String hash512 = hex.encode(hash512Bytes.bytes);
@@ -90,10 +68,15 @@ class EncryptionService {
       var encryptedHash256 = encrypterer.encrypt(hash256);
       var encryptedHash512 = encrypterer.encrypt(hash512);
 
-      dev.log(encryptedHash256.base16);
+      String accessToken = await AuthService().login(
+        encryptedHash256.base16,
+        encryptedHash512.base16,
+      );
 
-      await AuthService().login(encryptedHash256.base16, encryptedHash512.base16);
-      // print(hex.encode(hash512.bytes));
+      //Access token must be decrypted and re-encrypted with the server public key
+      var encryptedAccessToken = encrypterer.encrypt(encrypterer.decrypt16(accessToken));
+
+      box.put('EAT', encryptedAccessToken.base16);
 
       return "true";
     } catch (e) {
@@ -102,41 +85,45 @@ class EncryptionService {
     }
   }
 
-  static AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> generateRSAkeyPair(
-      SecureRandom secureRandom,
-      // {int bitLength = 2048}) {
-      {int bitLength = 4096}) {
-    // Create an RSA key generator and initialize it
+  Future<String> getSeedPhrase() async {
+    String seedphrase = box.get('seedphrase');
+    var helper = RsaKeyHelper();
 
-    final keyGen = RSAKeyGenerator()
-      ..init(
-        ParametersWithRandom(
-            RSAKeyGeneratorParameters(BigInt.parse('65537'), bitLength, 64),
-            secureRandom),
-      );
+    String serverPublicKey = box.get('serverPublicKey');
 
-    // Use the generator
+    String privateKey = box.get('privateKey');
 
-    final pair = keyGen.generateKeyPair();
+    final encrypterer = encrypter.Encrypter(
+      encrypter.RSA(
+        publicKey: helper.parsePublicKeyFromPem(serverPublicKey),
+        privateKey: helper.parsePrivateKeyFromPem(privateKey),
+        encoding: encrypter.RSAEncoding.PKCS1,
+      ),
+    );
 
-    // Cast the generated key pair into the RSA key types
-
-    final myPublic = pair.publicKey as RSAPublicKey;
-    final myPrivate = pair.privateKey as RSAPrivateKey;
-
-    return AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey>(myPublic, myPrivate);
+    return encrypterer.decrypt16(seedphrase);
   }
+}
 
-  static SecureRandom exampleSecureRandom() {
-    final secureRandom = FortunaRandom();
+Future<String> encryption(String box) async {
+  try {
+    var helper = RsaKeyHelper();
 
-    final seedSource = Random.secure();
-    final seeds = <int>[];
-    for (int i = 0; i < 32; i++) {
-      seeds.add(seedSource.nextInt(255));
-    }
-    secureRandom.seed(KeyParameter(Uint8List.fromList(seeds)));
+    var key = CryptoUtils.generateRSAkeyPair();
 
-    return secureRandom;
+    String publicKey = helper.encodePublicKeyToPemPKCS1(key.publicKey);
+    print('this is from isolate');
+
+    String privateKey = helper.encodePrivateKeyToPemPKCS1(key.privateKey);
+    // Hive.box('beepo').put('privateKey', privateKey);
+
+    return publicKey;
+  } catch (e) {
+    print('error');
+    print(e);
   }
+}
+
+Future<String> isolateFunction() async {
+  return await compute(encryption, '');
 }

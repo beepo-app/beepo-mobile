@@ -11,22 +11,20 @@ import 'package:http/http.dart' as http;
 import '../Widgets/toasts.dart';
 
 class WalletsService {
-  Future<List<Wallet>> getWallets() async {
+  Future<List> getWallets() async {
     try {
-      print(AuthService().token);
-
       final response = await http.get(
-        Uri.parse('$baseUrl/wallets/coins'),
+        Uri.parse("$baseUrl/wallet/coins"),
         headers: {
-          // 'Accept': 'application/json',
-          Headers.bearer: AuthService().token,
+          'Accept': 'application/json',
+          Headers.bearer: AuthService().accessToken,
           Headers.context: AuthService().contextId,
         },
       );
 
-      log(response.body);
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
+        log(data.toString());
         List<Wallet> wallets = walletFromJson(response.body);
         return wallets;
       } else {

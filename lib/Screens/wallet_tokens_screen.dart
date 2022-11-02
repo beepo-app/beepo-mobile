@@ -53,7 +53,7 @@ class _WalletTokenState extends State<WalletToken> {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  widget.balance + " " + widget.wallet.coinTicker,
+                  widget.balance + " " + widget.wallet.ticker,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,

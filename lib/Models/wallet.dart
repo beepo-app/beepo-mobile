@@ -12,68 +12,68 @@ String walletToJson(List<Wallet> data) =>
 
 class Wallet {
   Wallet({
-    this.uid,
-    this.coinName,
-    this.coinTicker,
-    this.coinDescription,
-    this.coinLogoUrl,
-    this.networkName,
-    this.networkDisplayName,
-    this.derivationPath,
-    this.created,
-    this.lastUpdated,
-    this.networkId,
-    this.ownerId,
-    this.address,
+    this.id,
+    this.owner,
+    this.ticker,
+    this.description,
+    this.chainId,
+    this.name,
+    this.displayName,
     this.isTestnet,
+    this.derivationPath,
+    this.logoUrl,
+    this.transactionCount,
+    this.publicKey,
+    this.address,
+    this.v,
   });
 
-  String uid;
-  String coinName;
-  String coinTicker;
-  String coinDescription;
-  dynamic coinLogoUrl;
-  String networkName;
-  String networkDisplayName;
-  String derivationPath;
-  double created;
-  double lastUpdated;
-  int networkId;
-  String ownerId;
-  String address;
+  String id;
+  String owner;
+  String ticker;
+  String description;
+  int chainId;
+  String name;
+  String displayName;
   bool isTestnet;
+  String derivationPath;
+  String logoUrl;
+  int transactionCount;
+  String publicKey;
+  String address;
+  int v;
 
   factory Wallet.fromJson(Map<String, dynamic> json) => Wallet(
-        uid: json["uid"],
-        coinName: json["coinName"],
-        coinTicker: json["coinTicker"],
-        coinDescription: json["coinDescription"],
-        coinLogoUrl: json["coinLogoUrl"],
-        networkName: json["networkName"],
-        networkDisplayName: json["networkDisplayName"],
+        id: json["_id"],
+        owner: json["owner"],
+        ticker: json["ticker"],
+        description: json["description"],
+        chainId: json["chainId"],
+        name: json["name"],
+        displayName: json["displayName"],
+        isTestnet: json["isTestnet"],
         derivationPath: json["derivationPath"],
-        created: json["created"].toDouble(),
-        lastUpdated: json["lastUpdated"].toDouble(),
-        networkId: json["networkId"] == null ? null : json["networkId"],
-        ownerId: json["ownerId"],
+        logoUrl: json["logoUrl"],
+        transactionCount: json["transactionCount"],
+        publicKey: json["publicKey"],
         address: json["address"],
-        isTestnet: json["is_testnet"],
+        v: json["__v"],
       );
 
   Map<String, dynamic> toJson() => {
-        "uid": uid,
-        "coinName": coinName,
-        "coinTicker": coinTicker,
-        "coinDescription": coinDescription,
-        "coinLogoUrl": coinLogoUrl,
-        "networkName": networkName,
-        "networkDisplayName": networkDisplayName,
+        "_id": id,
+        "owner": owner,
+        "ticker": ticker,
+        "description": description,
+        "chainId": chainId,
+        "name": name,
+        "displayName": displayName,
+        "isTestnet": isTestnet,
         "derivationPath": derivationPath,
-        "created": created,
-        "lastUpdated": lastUpdated,
-        "networkId": networkId == null ? null : networkId,
-        "ownerId": ownerId,
+        "logoUrl": logoUrl,
+        "transactionCount": transactionCount,
+        "publicKey": publicKey,
         "address": address,
-        "is_testnet": isTestnet,
+        "__v": v,
       };
 }

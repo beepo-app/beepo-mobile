@@ -30,9 +30,7 @@ class _UserProfileState extends State<UserProfile> {
             Icons.arrow_back,
             size: 30,
           ),
-          onPressed: () {
-            Get.back();
-          },
+          onPressed: () => Get.back(),
         ),
         actions: [
           IconButton(

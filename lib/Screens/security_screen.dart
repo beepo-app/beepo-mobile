@@ -120,10 +120,18 @@ class _SecurityState extends State<Security> {
                             })
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 20),
                     GestureDetector(
                       onTap: () {
-                        Get.to(WalletPhraseScreen());
+                        LocalAuthentication()
+                            .authenticate(
+                          localizedReason: 'Please authenticate to continue',
+                        )
+                            .then((val) {
+                          if (val) {
+                            Get.to(WalletPhraseScreen());
+                          }
+                        });
                       },
                       child: Text('Wallet Phrase'),
                     ),

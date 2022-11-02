@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
@@ -504,8 +505,8 @@ class WalletListTile extends StatelessWidget {
         dense: true,
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(17),
-          child: Image.asset(
-            image,
+          child: CachedNetworkImage(
+            imageUrl: image,
             height: 34,
             width: 34,
             fit: BoxFit.cover,
