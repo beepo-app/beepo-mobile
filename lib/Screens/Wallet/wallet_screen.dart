@@ -10,7 +10,7 @@ import '../../Models/wallet.dart';
 import '../../components.dart';
 import '../send_global.dart';
 import '../receive_token.dart';
-import '../wallet_tokens_screen.dart';
+import 'token_screen.dart';
 
 class WalletScreen extends StatefulWidget {
   WalletScreen({Key key}) : super(key: key);

@@ -1,7 +1,9 @@
 import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Service/encryption.dart';
 import 'package:beepo/Widgets/commons.dart';
+import 'package:beepo/Widgets/toasts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../components.dart';
 
@@ -29,7 +31,9 @@ class _WalletPhraseScreenState extends State<WalletPhraseScreen> {
               return loader();
             }
 
-            print(snapshot.data);
+            String walletPhrase = snapshot.data;
+
+            // print(snapshot.data);
             return Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -43,7 +47,7 @@ class _WalletPhraseScreenState extends State<WalletPhraseScreen> {
                     alignment: Alignment.center,
                     child: Text(
                       snapshot.data,
-                      style: TextStyle(
+                      style: const TextStyle(
                         wordSpacing: 24,
                         height: 2,
                         fontWeight: FontWeight.w700,
@@ -54,7 +58,10 @@ class _WalletPhraseScreenState extends State<WalletPhraseScreen> {
                   ),
                   SizedBox(height: 20),
                   FilledButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: walletPhrase));
+                      showToast("Copied to clipboard successfully");
+                    },
                     text: 'Copy to Clipboard',
                   )
                 ],

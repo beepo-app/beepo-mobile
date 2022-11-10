@@ -1,10 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '../Models/wallet.dart';
-import 'send_global.dart';
-import 'receive_token.dart';
+import '../../Models/wallet.dart';
+import '../send_global.dart';
+import '../receive_token.dart';
 
 class WalletToken extends StatefulWidget {
   final Wallet wallet;
@@ -46,12 +47,13 @@ class _WalletTokenState extends State<WalletToken> {
                   color: Color(0xff0e014c)),
               child: Column(children: [
                 const SizedBox(height: 75),
-                Image.asset(
-                  'assets/Celo.png',
-                  height: 53,
-                  width: 53,
+                CircleAvatar(
+                  radius: 28,
+                  backgroundImage: CachedNetworkImageProvider(
+                    widget.wallet.logoUrl,
+                  ),
                 ),
-                const SizedBox(height: 5),
+                const SizedBox(height: 8),
                 Text(
                   widget.balance + " " + widget.wallet.ticker,
                   style: const TextStyle(

@@ -4,8 +4,7 @@ import 'dart:io';
 
 import 'package:beepo/Constants/app_constants.dart';
 import 'package:beepo/Service/encryption.dart';
-import 'package:beepo/Utils/constants.dart';
-import 'package:beepo/WIdgets/toasts.dart';
+import 'package:beepo/Widgets/toasts.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -37,12 +36,16 @@ class AuthService {
     try {
       //To generate keys and contextId
       await EncryptionService().encryption();
+      Map keys = await isolateFunction();
+      box.put('privateKey', keys['privateKey']);
+      // log(key);
+      Map contextResult = await AuthService().createContext(keys['publicKey']);
       final response = await http.post(
         Uri.parse('$baseUrl/users'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'beepo-core-context-id': box.get('contextId'),
+          'beepo-core-context-id': contextResult['contextId'],
         },
         body: json.encode({
           'displayName': displayName,
@@ -50,7 +53,8 @@ class AuthService {
         }),
       );
 
-      print(response.body);
+      print('object');
+      print(response.statusCode);
       if (response.statusCode == 201 || response.statusCode == 200) {
         var data = json.decode(response.body);
         print(data);
@@ -60,28 +64,26 @@ class AuthService {
         box.put('userData', data['user']);
         return true;
       } else {
-        return null;
+        showToast(response.body);
+        return false;
       }
     } catch (e) {
       showToast(e.toString());
-      return null;
+      return false;
     }
   }
 
   //Get User
   Future<Map> getUser() async {
     try {
-      final response = await http.get(
-        Uri.parse(
-            '$baseUrl/users/fetch-user?user_identifier=${Hive.box('beepo').get('userId')}'),
+      final response = await http.post(
+        Uri.parse('$baseUrl/users/authenticated'),
         headers: {
-          'Content-Type': 'application/json',
           'Accept': 'application/json',
+          Headers.bearer: AuthService().accessToken,
+          Headers.context: AuthService().contextId,
         },
       );
-
-      log(box.get('privateKey'));
-      log(response.body);
 
       if (response.statusCode == 200) {
         Map data = json.decode(response.body);
@@ -91,6 +93,7 @@ class AuthService {
         return null;
       }
     } catch (e) {
+      print(e);
       showToast(e.toString());
       return null;
     }
@@ -102,11 +105,17 @@ class AuthService {
       //Step 1. Create keys and context
       //Step 2. Get seedphrase hashes
       // await EncryptionService().encryption();
-      String key = await isolateFunction();
-      print(key);
-      await AuthService().createContext(key);
+      Map keys = await isolateFunction();
+      await AuthService().createContext(keys['publicKey']);
+
+      box.put('privateKey', keys['privateKey']);
 
       await EncryptionService().decryptSeedPhrase(seedPhrase: seedPhrase);
+
+      await getUser();
+
+      print('fuck u');
+
       return true;
     } catch (e) {
       showToast(e.toString());
@@ -125,6 +134,8 @@ class AuthService {
         },
         body: jsonEncode({'publicKey': key}),
       );
+
+      print(response.body);
 
       if (response.statusCode == 200) {
         var data = json.decode(response.body);

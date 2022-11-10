@@ -228,9 +228,10 @@ class _CreateAccountState extends State<CreateAccount> {
                   if (result) {
                     showToast('Account created successfully');
                     Get.offAll(const PinCode());
-                  } else {
-                    showToast('Something went wrong');
                   }
+                  // else {
+                  //   showToast('Something went wrong');
+                  // }
                 }
               },
             ),

@@ -23,17 +23,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isLogged = Hive.box('beepo').get('isLogged', defaultValue: false);
+    bool isLoggedIn = Hive.box('beepo').get('isLogged', defaultValue: false);
     bool isLocked = Hive.box('beepo').get('isLocked', defaultValue: false);
 
     return GetMaterialApp(
       title: 'Beepo',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      // home: const LockScreen(),
-      home: !isLogged
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: isLoggedIn
           ? isLocked
               ? const LockScreen()
               : BottomNavHome()

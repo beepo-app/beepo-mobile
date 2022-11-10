@@ -45,6 +45,8 @@ class EncryptionService {
 
       String privateKey = box.get('privateKey');
 
+      print(privateKey);
+
       // print(serverPublicKey);
 
       final encrypterer = encrypter.Encrypter(
@@ -78,6 +80,8 @@ class EncryptionService {
 
       box.put('EAT', encryptedAccessToken.base16);
 
+      dev.log(encryptedAccessToken.base16);
+
       return "true";
     } catch (e) {
       print(e);
@@ -105,7 +109,7 @@ class EncryptionService {
   }
 }
 
-Future<String> encryption(String box) async {
+Future<Map> encryption(String box) async {
   try {
     var helper = RsaKeyHelper();
 
@@ -117,13 +121,13 @@ Future<String> encryption(String box) async {
     String privateKey = helper.encodePrivateKeyToPemPKCS1(key.privateKey);
     // Hive.box('beepo').put('privateKey', privateKey);
 
-    return publicKey;
+    return {'publicKey': publicKey, 'privateKey': privateKey};
   } catch (e) {
     print('error');
     print(e);
   }
 }
 
-Future<String> isolateFunction() async {
+Future<Map> isolateFunction() async {
   return await compute(encryption, '');
 }

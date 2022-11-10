@@ -7,7 +7,7 @@ import 'Models/wallet.dart';
 import 'Screens/browser_page.dart';
 import 'Screens/Messaging/chat_dm_screen.dart';
 import 'Screens/sendToken_screen.dart';
-import 'Screens/wallet_tokens_screen.dart';
+import 'Screens/Wallet/token_screen.dart';
 import 'Utils/styles.dart';
 
 class FilledButton extends StatelessWidget {

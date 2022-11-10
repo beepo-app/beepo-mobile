@@ -14,8 +14,7 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController phraseController = TextEditingController(
-        text: 'flash orient circle frog put item slab tank little doll effort enlist');
+    TextEditingController phraseController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -66,8 +65,8 @@ class Login extends StatelessWidget {
               onPressed: () async {
                 String phrase = phraseController.text.trim();
                 if (phrase.isEmpty) {
-                  // showToast('Please enter your secret phrase');
-                  connect();
+                  showToast('Please enter your secret phrase');
+                  // connect();
                 } else {
                   Get.to(
                     Material(

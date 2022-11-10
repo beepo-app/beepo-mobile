@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -64,13 +65,10 @@ class _ReceiveTokenState extends State<ReceiveToken> {
                   child: Column(
                     children: [
                       const SizedBox(height: 40),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(40),
-                        child: Image.asset(
-                          "assets/Celo.png",
-                          height: 78,
-                          width: 78,
-                          fit: BoxFit.contain,
+                      CircleAvatar(
+                        radius: 28,
+                        backgroundImage: CachedNetworkImageProvider(
+                          widget.wallet.logoUrl,
                         ),
                       ),
                       const SizedBox(height: 15),
@@ -82,11 +80,6 @@ class _ReceiveTokenState extends State<ReceiveToken> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      // Image.asset(
-                      //   'assets/scan.png',
-                      //   height: 242,
-                      //   width: 243,
-                      // ),
                       QrImage(
                         data: widget.wallet.address,
                         version: QrVersions.auto,
