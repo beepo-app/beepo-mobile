@@ -469,7 +469,7 @@ class WalletListTile extends StatelessWidget {
   final String subtext;
   final String amount;
   final Wallet wallet;
-  final String currentValue;
+  final String fiatValue;
   final VoidCallback onTap;
 
   WalletListTile(
@@ -479,7 +479,7 @@ class WalletListTile extends StatelessWidget {
       this.amount,
       this.wallet,
       this.onTap,
-      this.currentValue = "0"});
+      this.fiatValue = "0"});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -524,9 +524,9 @@ class WalletListTile extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: 5),
+            const SizedBox(width: 5),
             Text(
-              '\$' + currentValue ?? '',
+              '\$' + fiatValue ?? '',
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 14,

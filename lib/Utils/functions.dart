@@ -11,16 +11,6 @@ String generateRandomString(int len) {
   return String.fromCharCodes(List.generate(len, (index) => r.nextInt(33) + 89));
 }
 
-Future<String> generateKey() async {
-  // Generate a keypair.
-  final algorithm = X25519();
-  final keyPair = await algorithm.newKeyPair();
-
-  final key = await keyPair.extract();
-
-  return key.bytes.toString();
-}
-
 class ImageUtil {
   Future<File> cropProfileImage(XFile file) async {
     try {

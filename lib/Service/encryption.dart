@@ -1,6 +1,3 @@
-import 'dart:isolate';
-
-import 'package:beepo/Constants/app_constants.dart';
 import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Utils/crypto.dart';
 import 'package:convert/convert.dart';
@@ -110,22 +107,15 @@ class EncryptionService {
 }
 
 Future<Map> encryption(String box) async {
-  try {
-    var helper = RsaKeyHelper();
+  var helper = RsaKeyHelper();
 
-    var key = CryptoUtils.generateRSAkeyPair();
+  var key = CryptoUtils.generateRSAkeyPair();
 
-    String publicKey = helper.encodePublicKeyToPemPKCS1(key.publicKey);
-    print('this is from isolate');
+  String publicKey = helper.encodePublicKeyToPemPKCS1(key.publicKey);
 
-    String privateKey = helper.encodePrivateKeyToPemPKCS1(key.privateKey);
-    // Hive.box('beepo').put('privateKey', privateKey);
+  String privateKey = helper.encodePrivateKeyToPemPKCS1(key.privateKey);
 
-    return {'publicKey': publicKey, 'privateKey': privateKey};
-  } catch (e) {
-    print('error');
-    print(e);
-  }
+  return {'publicKey': publicKey, 'privateKey': privateKey};
 }
 
 Future<Map> isolateFunction() async {

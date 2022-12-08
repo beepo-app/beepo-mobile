@@ -41,23 +41,24 @@ class WalletsService {
     }
   }
 
-  Future<List> getWalletBalances() async {
+  Future<List> getERCWalletBalances(String address) async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/wallets/balances'),
+      final response = await http.post(
+        Uri.parse('$baseUrl/getallbalance'),
         headers: {
           'Accept': 'application/json',
-          'Authorization': 'Bearer ${AuthService().token}'
+          'Content-Type': 'application/json',
         },
+        body: jsonEncode({"address": address}),
       );
 
       print(response.body);
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
-        return data;
+        return data['balances'];
       } else {
-        String pwd = Hive.box('beepo').get('password');
-        print(pwd);
+        // String pwd = Hive.box('beepo').get('password');
+        // print(pwd);
         // AuthService().login(pwd);
         return [];
       }
@@ -66,6 +67,32 @@ class WalletsService {
 
       showToast(e.toString());
       return null;
+    }
+  }
+
+  Future<Map> getWalletBalance(String networkId, String address) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/addressbalance'),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({"networkId": networkId, "address": address}),
+      );
+
+      print(response.body);
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        return data;
+      } else {
+        return {};
+      }
+    } catch (e) {
+      print(e);
+
+      showToast(e.toString());
+      return {};
     }
   }
 
