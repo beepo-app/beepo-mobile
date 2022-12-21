@@ -1,11 +1,16 @@
+import 'package:beepo/Service/transactions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../Models/wallet.dart';
 import '../Utils/styles.dart';
 import '../components.dart';
 
 class SendToken2 extends StatefulWidget {
-  SendToken2({Key key}) : super(key: key);
+  final Wallet wallet;
+  final double amount;
+  final String address;
+  SendToken2({Key key, this.wallet, this.amount, this.address}) : super(key: key);
 
   @override
   State<SendToken2> createState() => _SendToken2State();
@@ -51,79 +56,89 @@ class _SendToken2State extends State<SendToken2> {
           ],
         ),
       ),
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.topCenter,
-              child: Container(
-                padding: EdgeInsets.only(left: 5, right: 10),
-                height: 132,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Color(0xff0e014c),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
+      body: FutureBuilder<String>(
+          future: TransactionService().estimateGasfee(widget.wallet.chainId.toString()),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            num gasfee = num.parse(snapshot.data);
+
+            return Container(
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      padding: EdgeInsets.only(left: 5, right: 10),
+                      height: 132,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: secondaryColor,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(20),
+                          bottomRight: Radius.circular(20),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  SizedBox(height: 33),
+                  Text(
+                    "You are sending",
+                    style: TextStyle(
+                      color: Color(0x7f0e014c),
+                      fontSize: 14,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "${widget.amount} ${widget.wallet.ticker}",
+                    style: TextStyle(
+                      color: txtColor1,
+                      fontSize: 18,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Text(
+                    "to the following wallet",
+                    style: TextStyle(
+                      color: Color(0x7f0e014c),
+                      fontSize: 14,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 11,
+                  ),
+                  Text(
+                    widget.address,
+                    style: TextStyle(
+                      color: txtColor1,
+                      fontSize: 12,
+                    ),
+                  ),
+                  Spacer(),
+                  Text(
+                    "Gas Fee: $gasfee ${widget.wallet.ticker}",
+                    style: TextStyle(
+                      color: txtColor1,
+                      fontSize: 12,
+                    ),
+                  ),
+                  Spacer(),
+                  FilledButton(
+                    color: secondaryColor,
+                    text: "Approve",
+                    onPressed: () {},
+                  ),
+                  SizedBox(height: 105),
+                ],
               ),
-            ),
-            SizedBox(height: 33),
-            Text(
-              "You are sending",
-              style: TextStyle(
-                color: Color(0x7f0e014c),
-                fontSize: 14,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              "500 CELO",
-              style: TextStyle(
-                color: Color(0xe50d004c),
-                fontSize: 18,
-              ),
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            Text(
-              "to the following wallet",
-              style: TextStyle(
-                color: Color(0x7f0e014c),
-                fontSize: 14,
-              ),
-            ),
-            SizedBox(
-              height: 11,
-            ),
-            Text(
-              "0x0E61830c8e35db159eF816868AfcA1388781796e",
-              style: TextStyle(
-                color: Color(0xe50d004c),
-                fontSize: 12,
-              ),
-            ),
-            Spacer(),
-            Text(
-              "Gas Fee: 0.0098 CELO",
-              style: TextStyle(
-                color: Color(0xe50d004c),
-                fontSize: 12,
-              ),
-            ),
-            Spacer(),
-            FilledButton(
-              color: blue,
-              text: "Approve",
-              onPressed: () {},
-            ),
-            SizedBox(height: 105),
-          ],
-        ),
-      ),
+            );
+          }),
     );
   }
 }

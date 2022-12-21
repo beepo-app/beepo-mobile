@@ -50,7 +50,7 @@ class _RequestTokenState extends State<RequestToken> {
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(20),
                         bottomRight: Radius.circular(20)),
-                    color: Color(0xff0e014c)),
+                    color: secondaryColor),
               ),
             ),
             Expanded(
@@ -74,7 +74,7 @@ class _RequestTokenState extends State<RequestToken> {
                       const Text(
                         "Precious",
                         style: TextStyle(
-                          color: Color(0xff0e014c),
+                          color: secondaryColor,
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
                         ),
@@ -111,7 +111,7 @@ class _RequestTokenState extends State<RequestToken> {
                                 child: IconButton(
                                   icon: const Icon(
                                     Icons.keyboard_arrow_down_rounded,
-                                    color: Color(0xff0e014c),
+                                    color: secondaryColor,
                                     size: 30,
                                   ),
                                   onPressed: () {},
@@ -136,7 +136,7 @@ class _RequestTokenState extends State<RequestToken> {
                       const SizedBox(height: 130),
                       FilledButton(
                         text: 'Request',
-                        color: blue,
+                        color: secondaryColor,
                       )
                     ],
                   ),

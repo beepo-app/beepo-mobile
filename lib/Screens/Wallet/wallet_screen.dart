@@ -7,9 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../Models/wallet.dart';
+import '../../Utils/styles.dart';
 import '../../components.dart';
 import '../send_global.dart';
-import '../receive_token.dart';
+import 'receive_token.dart';
 import 'token_screen.dart';
 
 class WalletScreen extends StatefulWidget {
@@ -64,13 +65,13 @@ class _WalletScreenState extends State<WalletScreen> {
 
           Wallet btcWallet = wallets.firstWhere((e) => e.name == 'Bitcoin');
           Wallet ethWallet = wallets.firstWhere((e) => e.ticker == 'ETH');
-          Wallet solWallet = wallets.firstWhere((e) => e.ticker == 'SOL');
+          // Wallet solWallet = wallets.firstWhere((e) => e.ticker == 'SOL');
           Wallet bnbWallet = wallets.firstWhere((e) => e.ticker == 'BNB');
 
           return FutureBuilder<List>(
               future: Future.wait([
                 WalletsService().getWalletBalance('bitcoin', btcWallet.address),
-                WalletsService().getWalletBalance('solana', solWallet.address),
+                // WalletsService().getWalletBalance('solana', solWallet.address),
                 WalletsService().getWalletBalance('56', bnbWallet.address),
                 WalletsService().getERCWalletBalances(ethWallet.address),
               ]),
@@ -82,9 +83,11 @@ class _WalletScreenState extends State<WalletScreen> {
                 }
 
                 Map btcBalance = snapshot.data[0];
-                Map solBalance = snapshot.data[1];
-                Map bnbBalance = snapshot.data[2];
-                List ercBalances = snapshot.data[3];
+                // Map solBalance = snapshot.data[1];
+                Map bnbBalance = snapshot.data[1];
+                List ercBalances = snapshot.data[2];
+
+                print(bnbBalance);
 
                 return Container(
                   color: Colors.white,
@@ -93,14 +96,14 @@ class _WalletScreenState extends State<WalletScreen> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: Container(
-                          height: 280,
+                          height: 200,
                           width: double.infinity,
                           decoration: const BoxDecoration(
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(20),
                               bottomRight: Radius.circular(20),
                             ),
-                            color: Color(0xff0e014c),
+                            color: secondaryColor,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -123,73 +126,73 @@ class _WalletScreenState extends State<WalletScreen> {
                                   color: Colors.white,
                                 ),
                               ),
-                              const SizedBox(height: 43),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const SizedBox(),
-                                  Column(
-                                    children: [
-                                      Transform.rotate(
-                                        angle: 24.5,
-                                        child: IconButton(
-                                          onPressed: () => Get.to(
-                                            SendGlobal(),
-                                          ),
-                                          icon: const Icon(
-                                            Icons.send_outlined,
-                                            size: 30,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 7),
-                                      const Text(
-                                        'Send',
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      IconButton(
-                                        onPressed: () => Get.to(ReceiveToken()),
-                                        icon: const Icon(Icons.file_download_sharp,
-                                            size: 30, color: Colors.white),
-                                      ),
-                                      const SizedBox(height: 7),
-                                      const Text(
-                                        'Receive',
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      IconButton(
-                                        onPressed: () => Get.to(const WalletToken()),
-                                        icon: const Icon(Icons.shopping_cart_outlined,
-                                            size: 30, color: Colors.white),
-                                      ),
-                                      const SizedBox(height: 7),
-                                      const Text(
-                                        'Buy',
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(),
-                                ],
-                              ),
+                              // const SizedBox(height: 43),
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //   children: [
+                              //     const SizedBox(),
+                              //     Column(
+                              //       children: [
+                              //         Transform.rotate(
+                              //           angle: 24.5,
+                              //           child: IconButton(
+                              //             onPressed: () => Get.to(
+                              //               SendGlobal(),
+                              //             ),
+                              //             icon: const Icon(
+                              //               Icons.send_outlined,
+                              //               size: 30,
+                              //               color: Colors.white,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //         const SizedBox(height: 7),
+                              //         const Text(
+                              //           'Send',
+                              //           style: TextStyle(
+                              //               fontSize: 18,
+                              //               fontWeight: FontWeight.bold,
+                              //               color: Colors.white),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     Column(
+                              //       children: [
+                              //         IconButton(
+                              //           onPressed: () => Get.to(ReceiveToken()),
+                              //           icon: const Icon(Icons.file_download_sharp,
+                              //               size: 30, color: Colors.white),
+                              //         ),
+                              //         const SizedBox(height: 7),
+                              //         const Text(
+                              //           'Receive',
+                              //           style: TextStyle(
+                              //               fontSize: 18,
+                              //               fontWeight: FontWeight.bold,
+                              //               color: Colors.white),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     Column(
+                              //       children: [
+                              //         IconButton(
+                              //           onPressed: () => Get.to(const WalletToken()),
+                              //           icon: const Icon(Icons.shopping_cart_outlined,
+                              //               size: 30, color: Colors.white),
+                              //         ),
+                              //         const SizedBox(height: 7),
+                              //         const Text(
+                              //           'Buy',
+                              //           style: TextStyle(
+                              //               fontSize: 18,
+                              //               fontWeight: FontWeight.bold,
+                              //               color: Colors.white),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     const SizedBox(),
+                              //   ],
+                              // ),
                             ],
                           ),
                         ),
@@ -217,45 +220,29 @@ class _WalletScreenState extends State<WalletScreen> {
 
                               if (wallet.ticker == 'BITCOIN') {
                                 balance = btcBalance['balance'];
-
-                                // if (btcBalance['USD'] != 0) {
-                                //   fiatValue = btcBalance['USD']['value'];
-                                // } else {
-                                //   fiatValue = btcBalance['USD'].toString();
-                                // }
-                                fiatValue = '0';
-                              } else if (wallet.ticker == 'SOL') {
-                                balance = solBalance['balance'];
-                                if (solBalance['USD'] != 0) {
-                                  fiatValue = solBalance['USD']['value'];
+                                if (btcBalance['USD'] == null) {
+                                  fiatValue = "0";
                                 } else {
-                                  fiatValue = solBalance['USD'].toString();
+                                  fiatValue = btcBalance['USD'].toString();
                                 }
                               } else if (wallet.ticker == 'BNB') {
-                                balance = bnbBalance['balance'];
-                                if (bnbBalance['USD'] != 0) {
-                                  fiatValue = bnbBalance['USD']['value'];
-                                } else {
-                                  fiatValue = bnbBalance['USD'].toString();
-                                }
+                                balance = bnbBalance['balance'].toString();
+                                fiatValue = bnbBalance['USD'].toString();
                               } else {
                                 Map bal = ercBalances.firstWhere(
                                   (balance) => balance['symbol'] == wallet.ticker,
                                   orElse: () => {'balance': 0.0},
                                 );
                                 balance = bal['balance'].toString();
-                                if (bal['USD'] != 0) {
-                                  fiatValue = bal['USD']['value'];
-                                } else {
-                                  fiatValue = bal['USD'].toString();
-                                }
+
+                                fiatValue = bal['USD'].toString();
                               }
 
                               return WalletListTile(
                                 image: wallet.logoUrl,
                                 title: wallet.displayName,
                                 subtext: wallet.ticker,
-                                amount: balance,
+                                amount: balance ?? 'N/A',
                                 wallet: wallet,
                                 fiatValue: fiatValue,
                               );

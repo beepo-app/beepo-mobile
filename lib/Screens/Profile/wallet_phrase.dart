@@ -1,10 +1,10 @@
-import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Service/encryption.dart';
 import 'package:beepo/Widgets/commons.dart';
 import 'package:beepo/Widgets/toasts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../Utils/styles.dart';
 import '../../components.dart';
 
 class WalletPhraseScreen extends StatefulWidget {
@@ -20,7 +20,7 @@ class _WalletPhraseScreenState extends State<WalletPhraseScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Wallet Phrase'),
-        backgroundColor: Color(0xff0e014c),
+        backgroundColor: secondaryColor,
         centerTitle: true,
       ),
       body: SafeArea(

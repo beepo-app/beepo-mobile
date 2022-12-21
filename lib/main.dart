@@ -1,7 +1,7 @@
 import 'package:beepo/Screens/Auth/lock_screen.dart';
 import 'package:beepo/Screens/Auth/onboarding.dart';
 import 'package:beepo/bottom_nav.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -10,9 +10,9 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
   await Hive.initFlutter();
   await Hive.openBox('beepo');
   runApp(const MyApp());

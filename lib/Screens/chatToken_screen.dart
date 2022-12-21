@@ -51,7 +51,7 @@ class _ChatTokenState extends State<ChatToken> {
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(20),
                         bottomRight: Radius.circular(20)),
-                    color: Color(0xff0e014c)),
+                    color: secondaryColor),
               ),
             ),
             Expanded(
@@ -75,7 +75,7 @@ class _ChatTokenState extends State<ChatToken> {
                       const Text(
                         "Precious",
                         style: TextStyle(
-                          color: const Color(0xff0e014c),
+                          color: secondaryColor,
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
                         ),
@@ -112,7 +112,7 @@ class _ChatTokenState extends State<ChatToken> {
                                 child: IconButton(
                                   icon: const Icon(
                                     Icons.keyboard_arrow_down_rounded,
-                                    color: Color(0xff0e014c),
+                                    color: secondaryColor,
                                     size: 30,
                                   ),
                                   onPressed: () {},
@@ -137,7 +137,7 @@ class _ChatTokenState extends State<ChatToken> {
                       const SizedBox(height: 130),
                       FilledButton(
                         text: 'Send',
-                        color: blue,
+                        color: secondaryColor,
                         onPressed: () => Get.to(RequestToken()),
                       ),
                     ],

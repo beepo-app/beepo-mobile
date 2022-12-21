@@ -6,8 +6,9 @@ import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'Models/wallet.dart';
 import 'Screens/browser_page.dart';
 import 'Screens/Messaging/chat_dm_screen.dart';
-import 'Screens/sendToken_screen.dart';
+import 'Screens/Wallet/send_token.dart';
 import 'Screens/Wallet/token_screen.dart';
+import 'Utils/functions.dart';
 import 'Utils/styles.dart';
 
 class FilledButton extends StatelessWidget {
@@ -66,7 +67,7 @@ class OutlnButton extends StatelessWidget {
           text,
           textAlign: TextAlign.center,
           style: const TextStyle(
-            color: blue,
+            color: secondaryColor,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
@@ -526,7 +527,7 @@ class WalletListTile extends StatelessWidget {
             ),
             const SizedBox(width: 5),
             Text(
-              '\$' + fiatValue ?? '',
+              formatCurrency(num.parse(fiatValue)) ?? '',
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 14,
@@ -597,7 +598,7 @@ class BrowserContainer extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            color: Color(0xff0e014c),
+            color: secondaryColor,
             fontSize: 11,
           ),
         ),
@@ -642,7 +643,7 @@ class BrowserContainer2 extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            color: const Color(0xff0e014c),
+            color: const secondaryColor,
             fontSize: 11,
           ),
         ),
@@ -690,7 +691,7 @@ class BrowserContainer3 extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            color: const Color(0xff0e014c),
+            color: const secondaryColor,
             fontSize: 11,
           ),
         ),
@@ -738,7 +739,7 @@ class BrowserContainer4 extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            color: Color(0xff0e014c),
+            color: secondaryColor,
             fontSize: 11,
           ),
         ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../Utils/styles.dart';
+
 class Language extends StatefulWidget {
   Language({Key key}) : super(key: key);
 
@@ -46,7 +48,7 @@ class _LanguageState extends State<Language> {
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(20),
                         bottomRight: Radius.circular(20)),
-                    color: Color(0xff0e014c)),
+                    color: secondaryColor),
               ),
             ),
             Expanded(
@@ -60,7 +62,7 @@ class _LanguageState extends State<Language> {
                       "Language",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Color(0xff0e014c),
+                        color: secondaryColor,
                         fontSize: 14,
                       ),
                     ),
@@ -71,7 +73,7 @@ class _LanguageState extends State<Language> {
                           child: Text(
                             "English",
                             style: TextStyle(
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                             ),
                           ),
@@ -88,7 +90,7 @@ class _LanguageState extends State<Language> {
                         child: Text(
                           "Deutsch",
                           style: TextStyle(
-                            color: Color(0xff0e014c),
+                            color: secondaryColor,
                             fontSize: 14,
                           ),
                         )),
@@ -98,7 +100,7 @@ class _LanguageState extends State<Language> {
                       child: Text(
                         "普通话",
                         style: TextStyle(
-                          color: Color(0xff0e014c),
+                          color: secondaryColor,
                           fontSize: 14,
                         ),
                       ),

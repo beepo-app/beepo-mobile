@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../Utils/styles.dart';
 import 'store2_screen.dart';
 
 class Store extends StatefulWidget {
@@ -48,7 +49,7 @@ class _StoreState extends State<Store> {
                       borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(20),
                           bottomRight: Radius.circular(20)),
-                      color: Color(0xff0e014c)),
+                      color: secondaryColor),
                 ),
               ),
               Expanded(
@@ -65,7 +66,7 @@ class _StoreState extends State<Store> {
                           "Save",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Color(0xff0e014c),
+                            color: secondaryColor,
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
                           ),
@@ -76,7 +77,7 @@ class _StoreState extends State<Store> {
                         "About",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Color(0xff0e014c),
+                          color: secondaryColor,
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                         ),
@@ -100,7 +101,7 @@ class _StoreState extends State<Store> {
                         "Store Catalogue",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Color(0xff0e014c),
+                          color: secondaryColor,
                           fontSize: 14,
                         ),
                       ),
@@ -135,7 +136,7 @@ class _StoreState extends State<Store> {
                             onPressed: () => Get.to(Store2()),
                             icon: Icon(
                               Icons.add_circle_outline_outlined,
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                             ),
                           ),
                           SizedBox(height: 8),
@@ -145,7 +146,7 @@ class _StoreState extends State<Store> {
                               "Add items",
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: Color(0xff0e014c),
+                                color: secondaryColor,
                                 fontSize: 14,
                               ),
                             ),

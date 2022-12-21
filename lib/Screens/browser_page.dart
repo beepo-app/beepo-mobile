@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../Utils/styles.dart';
 import '../components.dart';
 
 class BrowserPage extends StatefulWidget {
@@ -68,7 +69,7 @@ class _BrowserPageState extends State<BrowserPage> {
                 height: 100,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Color(0xff0e014c),
+                  color: secondaryColor,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),

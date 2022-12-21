@@ -58,7 +58,7 @@ class _SecurityState extends State<Security> {
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(20),
                         bottomRight: Radius.circular(20)),
-                    color: Color(0xff0e014c)),
+                    color: secondaryColor),
               ),
             ),
             Expanded(
@@ -74,14 +74,14 @@ class _SecurityState extends State<Security> {
                           child: Text(
                             "Lock with Biometrics",
                             style: TextStyle(
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                             ),
                           ),
                         ),
                         Switch(
                             value: isLocked,
-                            activeColor: blue,
+                            activeColor: secondaryColor,
                             onChanged: (value) {
                               LocalAuthentication()
                                   .authenticate(
@@ -105,14 +105,14 @@ class _SecurityState extends State<Security> {
                           child: Text(
                             "Auto Lock",
                             style: TextStyle(
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                             ),
                           ),
                         ),
                         Switch(
                             value: enable1,
-                            activeColor: blue,
+                            activeColor: secondaryColor,
                             onChanged: (value) {
                               setState(() {
                                 enable1 = value;

@@ -51,7 +51,7 @@ class _Store2State extends State<Store2> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-                  color: Color(0xff0e014c)),
+                  color: secondaryColor),
             ),
             Expanded(
                 child: Container(
@@ -67,7 +67,7 @@ class _Store2State extends State<Store2> {
                         "Add items",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Color(0xff0e014c),
+                          color: secondaryColor,
                           fontSize: 14,
                         ),
                       ),
@@ -77,7 +77,7 @@ class _Store2State extends State<Store2> {
                       "Item Name",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Color(0xff0e014c),
+                        color: secondaryColor,
                         fontSize: 14,
                       ),
                     ),
@@ -103,7 +103,7 @@ class _Store2State extends State<Store2> {
                       "Item Details",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Color(0xff0e014c),
+                        color: secondaryColor,
                         fontSize: 14,
                       ),
                     ),
@@ -129,7 +129,7 @@ class _Store2State extends State<Store2> {
                       "Item Value",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Color(0xff0e014c),
+                        color: secondaryColor,
                         fontSize: 14,
                       ),
                     ),
@@ -146,7 +146,7 @@ class _Store2State extends State<Store2> {
                               child: IconButton(
                                 icon: Icon(
                                   Icons.keyboard_arrow_up_outlined,
-                                  color: Color(0xff0e014c),
+                                  color: secondaryColor,
                                   size: 30,
                                 ),
                                 onPressed: () {},
@@ -156,7 +156,7 @@ class _Store2State extends State<Store2> {
                             Text(
                               "USD",
                               style: TextStyle(
-                                color: Color(0xff0e014c),
+                                color: secondaryColor,
                                 fontSize: 14,
                               ),
                             ),
@@ -181,7 +181,7 @@ class _Store2State extends State<Store2> {
                       "Item image",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Color(0xff0e014c),
+                        color: secondaryColor,
                         fontSize: 14,
                       ),
                     ),
@@ -225,7 +225,7 @@ class _Store2State extends State<Store2> {
                     SizedBox(height: 25),
                     Center(
                       child: FilledButton(
-                        color: blue,
+                        color: secondaryColor,
                         text: "Add item",
                         onPressed: () => Get.to(ChatToken()),
                       ),

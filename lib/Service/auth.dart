@@ -1,22 +1,17 @@
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 
 import 'package:beepo/Constants/app_constants.dart';
 import 'package:beepo/Service/encryption.dart';
 import 'package:beepo/Widgets/toasts.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 
 import '../Constants/network.dart';
-import '../Screens/Auth/onboarding.dart';
 
 class AuthService {
   Box box = Hive.box('beepo');
-  static Reference storageReference = FirebaseStorage.instance.ref('ProfilePictures');
 
+  //GETTERS
   String get userPin => box.get('PIN', defaultValue: '');
 
   //Get UserID

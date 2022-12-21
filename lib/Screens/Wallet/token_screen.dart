@@ -4,8 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../Models/wallet.dart';
+import '../../Utils/styles.dart';
+import 'send_token.dart';
 import '../send_global.dart';
-import '../receive_token.dart';
+import 'receive_token.dart';
 
 class WalletToken extends StatefulWidget {
   final Wallet wallet;
@@ -44,7 +46,7 @@ class _WalletTokenState extends State<WalletToken> {
               decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-                  color: Color(0xff0e014c)),
+                  color: secondaryColor),
               child: Column(children: [
                 const SizedBox(height: 75),
                 CircleAvatar(
@@ -71,7 +73,7 @@ class _WalletTokenState extends State<WalletToken> {
                         Transform.rotate(
                           angle: 24.5,
                           child: IconButton(
-                              onPressed: () => Get.to(SendGlobal()),
+                              onPressed: () => Get.to(SendToken(wallet: widget.wallet)),
                               icon: const Icon(
                                 Icons.send_outlined,
                                 size: 30,
@@ -119,12 +121,12 @@ class _WalletTokenState extends State<WalletToken> {
             leading: const Icon(
               Icons.qr_code_scanner_sharp,
               size: 30,
-              color: Color(0xff0e014c),
+              color: secondaryColor,
             ),
             title: const Text(
               "Your address",
               style: TextStyle(
-                color: Color(0xff0e014c),
+                color: secondaryColor,
                 fontSize: 14,
               ),
             ),
@@ -150,7 +152,7 @@ class _WalletTokenState extends State<WalletToken> {
               icon: const Icon(
                 Icons.copy_outlined,
                 size: 30,
-                color: Color(0xff0e014c),
+                color: secondaryColor,
               ),
             ),
           ),
@@ -170,14 +172,14 @@ class _WalletTokenState extends State<WalletToken> {
           //         return ListTile(
           //           minLeadingWidth: 10,
           //           leading: const Icon(Icons.arrow_downward,
-          //               size: 20, color: Color(0xff0e014c)),
+          //               size: 20, color: secondaryColor),
           //           title: Row(
           //             children: [
           //               const Expanded(
           //                 child: const Text(
           //                   "Deposit",
           //                   style: TextStyle(
-          //                     color: const Color(0xff0e014c),
+          //                     color: const secondaryColor,
           //                     fontSize: 13,
           //                   ),
           //                 ),

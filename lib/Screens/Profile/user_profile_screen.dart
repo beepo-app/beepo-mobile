@@ -49,7 +49,7 @@ class _UserProfileState extends State<UserProfile> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-                  color: Color(0xff0e014c)),
+                  color: secondaryColor),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -148,7 +148,7 @@ class _UserProfileState extends State<UserProfile> {
                             "Hi there, am a blockchain developer\ni would be glad you patronize my services as listed on the store",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -162,14 +162,14 @@ class _UserProfileState extends State<UserProfile> {
                                 child: Text(
                                   "Mute notifications",
                                   style: TextStyle(
-                                    color: Color(0xff0e014c),
+                                    color: secondaryColor,
                                     fontSize: 14,
                                   ),
                                 ),
                               ),
                               Switch(
                                 value: enable,
-                                activeColor: blue,
+                                activeColor: secondaryColor,
                                 onChanged: (value) {
                                   setState(() {
                                     enable = value;
@@ -184,14 +184,14 @@ class _UserProfileState extends State<UserProfile> {
                                 child: Text(
                                   "Allow Screenshot",
                                   style: TextStyle(
-                                    color: Color(0xff0e014c),
+                                    color: secondaryColor,
                                     fontSize: 14,
                                   ),
                                 ),
                               ),
                               Switch(
                                 value: enable2,
-                                activeColor: blue,
+                                activeColor: secondaryColor,
                                 onChanged: (val) {
                                   setState(() {
                                     enable2 = val;
@@ -206,14 +206,14 @@ class _UserProfileState extends State<UserProfile> {
                                 child: Text(
                                   "Allow media",
                                   style: TextStyle(
-                                    color: Color(0xff0e014c),
+                                    color: secondaryColor,
                                     fontSize: 14,
                                   ),
                                 ),
                               ),
                               Switch(
                                 value: enable3,
-                                activeColor: blue,
+                                activeColor: secondaryColor,
                                 onChanged: (value) {
                                   setState(() {
                                     enable3 = value;
@@ -228,7 +228,7 @@ class _UserProfileState extends State<UserProfile> {
                           Text(
                             "Store",
                             style: TextStyle(
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                             ),
                           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../Utils/styles.dart';
 import '../components.dart';
 
 class Browser extends StatefulWidget {
@@ -25,7 +26,7 @@ class _BrowserState extends State<Browser> {
                 height: 132,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Color(0xff0e014c),
+                  color: secondaryColor,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
@@ -148,7 +149,7 @@ class _BrowserState extends State<Browser> {
                         child: Text(
                           "NEWS",
                           style: TextStyle(
-                            color: Color(0xff0e014c),
+                            color: secondaryColor,
                             fontSize: 14,
                           ),
                         ),
@@ -167,7 +168,7 @@ class _BrowserState extends State<Browser> {
                             height: 116,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                             ),
                             child: Row(
                               children: [

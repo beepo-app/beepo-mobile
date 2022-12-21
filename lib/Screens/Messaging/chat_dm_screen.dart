@@ -32,7 +32,7 @@ class _ChatDmState extends State<ChatDm> {
                   height: 110,
                   width: double.infinity,
                   decoration: const BoxDecoration(
-                    color: Color(0xff0e014c),
+                    color: secondaryColor,
                   ),
                   child: Column(
                     children: [
@@ -170,7 +170,7 @@ class _ChatDmState extends State<ChatDm> {
                         icon: Icon(
                           Iconsax.camera,
                           size: 20,
-                          color: blue,
+                          color: secondaryColor,
                         ),
                       ),
                     ),
@@ -185,7 +185,7 @@ class _ChatDmState extends State<ChatDm> {
                             icon: Icon(
                               Iconsax.dollar_circle,
                               size: 20,
-                              color: blue,
+                              color: secondaryColor,
                             ),
                           ),
                           IconButton(
@@ -196,7 +196,7 @@ class _ChatDmState extends State<ChatDm> {
                             icon: Icon(
                               Iconsax.gallery,
                               size: 20,
-                              color: blue,
+                              color: secondaryColor,
                             ),
                           ),
                           SizedBox(width: 10),
@@ -218,7 +218,7 @@ class _ChatDmState extends State<ChatDm> {
               const SizedBox(width: 10),
               Container(
                 decoration: BoxDecoration(
-                  color: blue,
+                  color: secondaryColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: IconButton(

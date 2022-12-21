@@ -54,7 +54,7 @@ class _ProfileState extends State<Profile> {
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-                  color: Color(0xff0e014c),
+                  color: secondaryColor,
                 ),
               ),
             ),
@@ -123,7 +123,7 @@ class _ProfileState extends State<Profile> {
                     //         child: const Text(
                     //           "Account Type",
                     //           style: TextStyle(
-                    //             color: const Color(0xff0e014c),
+                    //             color:  secondaryColor,
                     //             fontSize: 14,
                     //           ),
                     //         ),
@@ -146,7 +146,7 @@ class _ProfileState extends State<Profile> {
                           child: Text(
                             "Theme",
                             style: TextStyle(
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                             ),
                           ),
@@ -168,7 +168,7 @@ class _ProfileState extends State<Profile> {
                           child: Text(
                             "Store",
                             style: TextStyle(
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                             ),
                           ),
@@ -184,7 +184,7 @@ class _ProfileState extends State<Profile> {
                           child: const Text(
                             "Statistics",
                             style: TextStyle(
-                              color: const Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                             ),
                           ),
@@ -202,7 +202,7 @@ class _ProfileState extends State<Profile> {
                             child: const Text(
                               "Security",
                               style: TextStyle(
-                                color: const Color(0xff0e014c),
+                                color: secondaryColor,
                                 fontSize: 14,
                               ),
                             ),
@@ -219,7 +219,7 @@ class _ProfileState extends State<Profile> {
                           child: const Text(
                             "Help",
                             style: TextStyle(
-                              color: const Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                             ),
                           ),
@@ -235,7 +235,7 @@ class _ProfileState extends State<Profile> {
                           child: Text(
                             "Invite Friends",
                             style: const TextStyle(
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                             ),
                           ),
@@ -251,7 +251,7 @@ class _ProfileState extends State<Profile> {
                           child: const Text(
                             "Notification",
                             style: TextStyle(
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                             ),
                           ),
@@ -269,7 +269,7 @@ class _ProfileState extends State<Profile> {
                             child: const Text(
                               "Language",
                               style: TextStyle(
-                                color: Color(0xff0e014c),
+                                color: secondaryColor,
                                 fontSize: 14,
                               ),
                             ),
@@ -286,7 +286,7 @@ class _ProfileState extends State<Profile> {
                           child: Text(
                             "About",
                             style: TextStyle(
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                             ),
                           ),
@@ -318,7 +318,7 @@ class _ProfileState extends State<Profile> {
                       },
                       title: const Text(
                         "Log Out",
-                        style: TextStyle(color: blue, fontSize: 14),
+                        style: TextStyle(color: secondaryColor, fontSize: 14),
                       ),
                       trailing: const Icon(Icons.logout, size: 20),
                     ),

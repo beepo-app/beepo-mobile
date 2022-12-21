@@ -108,7 +108,7 @@ class _LockScreenState extends State<LockScreen> {
                 child: const Icon(
                   Icons.fingerprint,
                   size: 40,
-                  color: blue,
+                  color: secondaryColor,
                 ),
               ),
             ),

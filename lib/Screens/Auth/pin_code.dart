@@ -44,7 +44,7 @@ class _PinCodeState extends State<PinCode> {
               "Create a PIN to protect your\ndata and transactions",
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: blue,
+                color: secondaryColor,
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
               ),

@@ -26,31 +26,31 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Scaffold(
         body: HawkFabMenu(
           icon: AnimatedIcons.menu_close,
-          fabColor: blue,
+          fabColor: secondaryColor,
           items: [
             HawkFabMenuItem(
               label: 'New Chat',
               ontap: () {},
               icon: const Icon(Icons.add),
-              color: blue,
+              color: secondaryColor,
               labelColor: Colors.white,
-              labelBackgroundColor: blue,
+              labelBackgroundColor: secondaryColor,
             ),
             HawkFabMenuItem(
               label: 'Join Public Chat',
               ontap: () {},
               icon: const Icon(Iconsax.people),
-              color: blue,
+              color: secondaryColor,
               labelColor: Colors.white,
-              labelBackgroundColor: blue,
+              labelBackgroundColor: secondaryColor,
             ),
             HawkFabMenuItem(
               label: 'Share',
               ontap: () {},
               icon: const Icon(Icons.share),
-              color: blue,
+              color: secondaryColor,
               labelColor: Colors.white,
-              labelBackgroundColor: blue,
+              labelBackgroundColor: secondaryColor,
             ),
           ],
           body: FutureBuilder(
@@ -63,7 +63,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 print(snapshot.data);
                 return Container(
                   width: double.infinity,
-                  color: blue,
+                  color: secondaryColor,
                   child: Column(
                     children: [
                       const SizedBox(height: 50),

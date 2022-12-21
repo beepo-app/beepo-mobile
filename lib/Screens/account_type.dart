@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../Utils/styles.dart';
+
 class AccountType extends StatefulWidget {
   AccountType({Key key}) : super(key: key);
 
@@ -46,7 +48,7 @@ class _AccountTypeState extends State<AccountType> {
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(20),
                         bottomRight: Radius.circular(20)),
-                    color: Color(0xff0e014c)),
+                    color: secondaryColor),
               ),
             ),
             Expanded(
@@ -60,7 +62,7 @@ class _AccountTypeState extends State<AccountType> {
                       "Account Type",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Color(0xff0e014c),
+                        color: secondaryColor,
                         fontSize: 14,
                       ),
                     ),
@@ -80,7 +82,7 @@ class _AccountTypeState extends State<AccountType> {
                           child: Text(
                             "Professional Account",
                             style: TextStyle(
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                             ),
                           ),
@@ -97,7 +99,7 @@ class _AccountTypeState extends State<AccountType> {
                       child: Text(
                         "Standard Account",
                         style: TextStyle(
-                          color: Color(0xff0e014c),
+                          color: secondaryColor,
                           fontSize: 14,
                         ),
                       ),

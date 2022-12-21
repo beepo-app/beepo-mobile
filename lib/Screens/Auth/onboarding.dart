@@ -91,7 +91,7 @@ class _OnboardingState extends State<Onboarding> {
                           titles[index],
                           textAlign: TextAlign.center,
                           style: const TextStyle(
-                            color: Color(0xff0e014c),
+                            color: secondaryColor,
                             fontSize: 24,
                             fontWeight: FontWeight.w700,
                           ),
@@ -101,7 +101,7 @@ class _OnboardingState extends State<Onboarding> {
                           body[index]['text'],
                           textAlign: TextAlign.center,
                           style: const TextStyle(
-                            color: Color(0xff0e014c),
+                            color: secondaryColor,
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
                           ),

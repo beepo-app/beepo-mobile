@@ -24,7 +24,6 @@ class WalletsService {
 
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
-        log(data.toString());
         List<Wallet> wallets = walletFromJson(response.body);
         return wallets;
       } else {
@@ -81,7 +80,7 @@ class WalletsService {
         body: jsonEncode({"networkId": networkId, "address": address}),
       );
 
-      print(response.body);
+      log(response.body);
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
         return data;

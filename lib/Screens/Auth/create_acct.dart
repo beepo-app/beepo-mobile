@@ -132,7 +132,7 @@ class _CreateAccountState extends State<CreateAccount> {
                       height: 30,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Color(0xff0e014c),
+                        color: secondaryColor,
                       ),
                       child: const Icon(
                         Icons.photo_camera_outlined,
