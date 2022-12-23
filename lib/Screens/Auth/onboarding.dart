@@ -142,7 +142,7 @@ class _OnboardingState extends State<Onboarding> {
                   ),
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
-                      check == body.length - 1 ? blue : primaryColor,
+                      check == body.length - 1 ? secondaryColor : primaryColor,
                     ),
                     shape: MaterialStateProperty.all(
                       RoundedRectangleBorder(

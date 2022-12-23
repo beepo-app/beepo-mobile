@@ -73,7 +73,8 @@ class OutlnButton extends StatelessWidget {
           ),
         ),
         style: ButtonStyle(
-          side: MaterialStateProperty.all(const BorderSide(width: 1, color: blue)),
+          side: MaterialStateProperty.all(
+              const BorderSide(width: 1, color: secondaryColor)),
           backgroundColor: MaterialStateProperty.all(
             Colors.white,
           ),
@@ -643,7 +644,7 @@ class BrowserContainer2 extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            color: const secondaryColor,
+            color: secondaryColor,
             fontSize: 11,
           ),
         ),
@@ -691,7 +692,7 @@ class BrowserContainer3 extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            color: const secondaryColor,
+            color: secondaryColor,
             fontSize: 11,
           ),
         ),

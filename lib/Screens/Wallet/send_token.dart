@@ -117,6 +117,7 @@ class _SendTokenState extends State<SendToken> {
                       SizedBox(height: 12),
                       TextField(
                         controller: address,
+                        textInputAction: TextInputAction.done,
                         decoration: InputDecoration(
                           isDense: true,
                           prefixIcon: IconButton(

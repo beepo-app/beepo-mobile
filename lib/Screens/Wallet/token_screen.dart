@@ -1,3 +1,4 @@
+import 'package:beepo/Service/transactions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -159,6 +160,16 @@ class _WalletTokenState extends State<WalletToken> {
           const Divider(
             height: 2,
             thickness: 2,
+          ),
+
+          StreamBuilder(
+            stream: TransactionService().channel.stream,
+            builder: (_, AsyncSnapshot snapshot) {
+              print(snapshot);
+              return Container(
+                child: Text(''),
+              );
+            },
           ),
 
           // Expanded(

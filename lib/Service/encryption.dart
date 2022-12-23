@@ -12,6 +12,13 @@ import 'dart:developer' as dev;
 class EncryptionService {
   Box box = Hive.box('beepo');
 
+  //GETTERS
+  String get privateKey => box.get('privateKey');
+
+  String get publicKey => box.get('serverPublicKey');
+
+  String get seedPhrase => box.get('seedphrase');
+
   Future<void> encryption() async {
     try {
       var helper = RsaKeyHelper();

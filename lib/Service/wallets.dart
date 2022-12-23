@@ -51,14 +51,11 @@ class WalletsService {
         body: jsonEncode({"address": address}),
       );
 
-      print(response.body);
+      // print(response.body);
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
         return data['balances'];
       } else {
-        // String pwd = Hive.box('beepo').get('password');
-        // print(pwd);
-        // AuthService().login(pwd);
         return [];
       }
     } catch (e) {
@@ -89,7 +86,6 @@ class WalletsService {
       }
     } catch (e) {
       print(e);
-
       showToast(e.toString());
       return {};
     }
@@ -110,8 +106,6 @@ class WalletsService {
             "celo",
             "litecoin",
             "ethereum",
-            // "ropsten",
-            // "binance_testnet",
           ],
           "outputFiatCurrencies": ["NGN", "USD"]
         }),

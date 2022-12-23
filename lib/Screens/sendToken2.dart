@@ -10,16 +10,13 @@ class SendToken2 extends StatefulWidget {
   final Wallet wallet;
   final double amount;
   final String address;
-  SendToken2({Key key, this.wallet, this.amount, this.address}) : super(key: key);
+  const SendToken2({Key key, this.wallet, this.amount, this.address}) : super(key: key);
 
   @override
   State<SendToken2> createState() => _SendToken2State();
 }
 
 class _SendToken2State extends State<SendToken2> {
-  final TextEditingController amount = TextEditingController();
-  final TextEditingController address = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,88 +54,98 @@ class _SendToken2State extends State<SendToken2> {
         ),
       ),
       body: FutureBuilder<String>(
-          future: TransactionService().estimateGasfee(widget.wallet.chainId.toString()),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
-            }
+        future: TransactionService().estimateGasFee(widget.wallet.chainId.toString()),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
 
-            num gasfee = num.parse(snapshot.data);
+          String gasFee = snapshot.data;
 
-            return Container(
-              color: Colors.white,
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      padding: EdgeInsets.only(left: 5, right: 10),
-                      height: 132,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: secondaryColor,
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(20),
-                          bottomRight: Radius.circular(20),
-                        ),
+          return Container(
+            color: Colors.white,
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    padding: EdgeInsets.only(left: 5, right: 10),
+                    height: 132,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: secondaryColor,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
                       ),
                     ),
                   ),
-                  SizedBox(height: 33),
-                  Text(
-                    "You are sending",
-                    style: TextStyle(
-                      color: Color(0x7f0e014c),
-                      fontSize: 14,
-                    ),
+                ),
+                SizedBox(height: 33),
+                Text(
+                  "You are sending",
+                  style: TextStyle(
+                    color: Color(0x7f0e014c),
+                    fontSize: 14,
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    "${widget.amount} ${widget.wallet.ticker}",
-                    style: TextStyle(
-                      color: txtColor1,
-                      fontSize: 18,
-                    ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  "${widget.amount} ${widget.wallet.ticker}",
+                  style: TextStyle(
+                    color: txtColor1,
+                    fontSize: 18,
                   ),
-                  SizedBox(
-                    height: 12,
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                Text(
+                  "to the following wallet",
+                  style: TextStyle(
+                    color: Color(0x7f0e014c),
+                    fontSize: 14,
                   ),
-                  Text(
-                    "to the following wallet",
-                    style: TextStyle(
-                      color: Color(0x7f0e014c),
-                      fontSize: 14,
-                    ),
+                ),
+                SizedBox(
+                  height: 11,
+                ),
+                Text(
+                  widget.address,
+                  style: TextStyle(
+                    color: txtColor1,
+                    fontSize: 12,
                   ),
-                  SizedBox(
-                    height: 11,
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                Text(
+                  "Gas Fee: $gasFee ${widget.wallet.ticker}",
+                  style: TextStyle(
+                    color: txtColor1,
+                    fontSize: 12,
                   ),
-                  Text(
-                    widget.address,
-                    style: TextStyle(
-                      color: txtColor1,
-                      fontSize: 12,
-                    ),
-                  ),
-                  Spacer(),
-                  Text(
-                    "Gas Fee: $gasfee ${widget.wallet.ticker}",
-                    style: TextStyle(
-                      color: txtColor1,
-                      fontSize: 12,
-                    ),
-                  ),
-                  Spacer(),
-                  FilledButton(
-                    color: secondaryColor,
-                    text: "Approve",
-                    onPressed: () {},
-                  ),
-                  SizedBox(height: 105),
-                ],
-              ),
-            );
-          }),
+                ),
+                Spacer(),
+                FilledButton(
+                  color: secondaryColor,
+                  text: "Approve",
+                  onPressed: () {
+                    TransactionService().sendToken(
+                      address: widget.address,
+                      amount: widget.amount.toString(),
+                      gasFee: gasFee,
+                      networkId: widget.wallet.chainId.toString(),
+                    );
+                  },
+                ),
+                SizedBox(height: 105),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

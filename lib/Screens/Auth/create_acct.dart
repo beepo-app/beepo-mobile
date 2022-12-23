@@ -14,6 +14,7 @@ import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 
+import '../../Utils/styles.dart';
 import '../../components.dart';
 import 'pin_code.dart';
 

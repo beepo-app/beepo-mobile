@@ -1,3 +1,4 @@
+import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Service/encryption.dart';
 import 'package:beepo/Widgets/commons.dart';
 import 'package:beepo/Widgets/toasts.dart';
@@ -25,7 +26,8 @@ class _WalletPhraseScreenState extends State<WalletPhraseScreen> {
       ),
       body: SafeArea(
         child: FutureBuilder(
-          future: EncryptionService().getSeedPhrase(),
+          // future: EncryptionService().getSeedPhrase(),
+          future: AuthService().retrievePassphrase(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return loader();

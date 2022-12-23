@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:beepo/Constants/app_constants.dart';
 import 'package:beepo/Service/encryption.dart';
@@ -16,6 +17,7 @@ class AuthService {
 
   //Get UserID
   String get userID => box.get('userId', defaultValue: '');
+  String get uid => box.get('uid', defaultValue: '');
 
   //Get User token
   String get token => box.get('token', defaultValue: '');
@@ -104,12 +106,11 @@ class AuthService {
       await AuthService().createContext(keys['publicKey']);
 
       box.put('privateKey', keys['privateKey']);
+      box.put('publicKey', keys['publicKey']);
 
       await EncryptionService().decryptSeedPhrase(seedPhrase: seedPhrase);
 
       await getUser();
-
-      print('fuck u');
 
       return true;
     } catch (e) {
@@ -187,9 +188,12 @@ class AuthService {
           Headers.context: AuthService().contextId,
         },
       );
+
+      log(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map result = jsonDecode(response.body);
-        if (result['encrypted_passphrase']) {}
+
+        box.put('seedphrase', result['seedPhrase']);
       }
     } catch (e) {
       return {};
