@@ -15,6 +15,11 @@ String formatCurrency(num num) {
   return NumberFormat.currency(symbol: '\$').format(num);
 }
 
+//format date
+String formatDate(DateTime date) {
+  return DateFormat('dd/MM/yyyy').add_jm().format(date);
+}
+
 class ImageUtil {
   Future<File> cropProfileImage(XFile file) async {
     try {

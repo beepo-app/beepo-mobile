@@ -1,8 +1,13 @@
+import 'package:beepo/Models/transaction.dart';
 import 'package:beepo/Service/transactions.dart';
+import 'package:beepo/Utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../Models/wallet.dart';
 import '../../Utils/styles.dart';
@@ -116,14 +121,8 @@ class _WalletTokenState extends State<WalletToken> {
               ]),
             ),
           ),
-          const SizedBox(height: 22),
+          const SizedBox(height: 8),
           ListTile(
-            minLeadingWidth: 10,
-            leading: const Icon(
-              Icons.qr_code_scanner_sharp,
-              size: 30,
-              color: secondaryColor,
-            ),
             title: const Text(
               "Your address",
               style: TextStyle(
@@ -161,61 +160,96 @@ class _WalletTokenState extends State<WalletToken> {
             height: 2,
             thickness: 2,
           ),
+          FutureBuilder<List<Transaction>>(
+            future: TransactionService().transactionHistory(
+              widget.wallet.chainId.toString(),
+              widget.wallet.address.toLowerCase(),
+            ),
+            builder: (_, snapshot) {
+              if (!snapshot.hasData) {
+                return const Expanded(child: Center(child: CircularProgressIndicator()));
+              }
 
-          StreamBuilder(
-            stream: TransactionService().channel.stream,
-            builder: (_, AsyncSnapshot snapshot) {
-              print(snapshot);
-              return Container(
-                child: Text(''),
+              return Expanded(
+                child: Container(
+                  color: Colors.white,
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      setState(() {});
+                    },
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (ctx, i) {
+                        final transaction = snapshot.data[i];
+                        bool isSent = transaction.type == 'transfer';
+                        return ListTile(
+                          minLeadingWidth: 10,
+                          leading: Icon(
+                            isSent ? Icons.arrow_upward : Icons.arrow_downward,
+                            size: 20,
+                            color: isSent ? Colors.red : Colors.green,
+                          ),
+                          onTap: () {
+                            launchUrlString(
+                              "https://explorer.binance.org/tx/${transaction.hash}",
+                            );
+                          },
+                          title: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  transaction.type.capitalizeFirst,
+                                  style: TextStyle(
+                                    color: secondaryColor,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                (isSent ? '-' : '+') +
+                                    "${transaction.value.toPrecision(5)} ${widget.wallet.ticker}",
+                                style: TextStyle(
+                                  color: isSent ? Colors.red : Colors.green,
+                                  fontSize: 13,
+                                ),
+                              )
+                            ],
+                          ),
+                          subtitle: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  isSent
+                                      ? "To: ${transaction.to}"
+                                      : "From: ${transaction.from}",
+                                  style: TextStyle(
+                                    color: Color(0x7f0e014c),
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                formatDate(DateTime.fromMillisecondsSinceEpoch(
+                                  transaction.timestamp * 1000,
+                                )),
+                                style: TextStyle(
+                                  color: Color(0x7f0e014c),
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
               );
             },
           ),
-
-          // Expanded(
-          //   child: Container(
-          //     color: Colors.white,
-          //     child: ListView.builder(
-          //       shrinkWrap: true,
-          //       padding: EdgeInsets.zero,
-          //       itemCount: 7,
-          //       itemBuilder: (ctx, i) {
-          //         return ListTile(
-          //           minLeadingWidth: 10,
-          //           leading: const Icon(Icons.arrow_downward,
-          //               size: 20, color: secondaryColor),
-          //           title: Row(
-          //             children: [
-          //               const Expanded(
-          //                 child: const Text(
-          //                   "Deposit",
-          //                   style: TextStyle(
-          //                     color: const secondaryColor,
-          //                     fontSize: 13,
-          //                   ),
-          //                 ),
-          //               ),
-          //               const Text(
-          //                 "+0.23 CELO",
-          //                 style: TextStyle(
-          //                   color:  Color(0xff08aa48),
-          //                   fontSize: 13,
-          //                 ),
-          //               )
-          //             ],
-          //           ),
-          //           subtitle: const Text(
-          //             "From: 0x0G61836c8e35db159eG816868AfcA1388781796e",
-          //             style: TextStyle(
-          //               color: Color(0x7f0e014c),
-          //               fontSize: 11,
-          //             ),
-          //           ),
-          //         );
-          //       },
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );

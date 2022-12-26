@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:beepo/Models/transaction.dart';
 import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Service/encryption.dart';
 import 'package:http/http.dart' as http;
@@ -66,9 +67,22 @@ class TransactionService {
     }
   }
 
-  //listen to websocket for transactions
-
-  final channel = WebSocketChannel.connect(
-    Uri.parse('wss://core.api.beepoapp.net/${AuthService().contextId}'),
-  );
+  //Transaction history
+  Future<List<Transaction>> transactionHistory(String networkId, String address) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${baseUrl}transaction/history'),
+        headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+        body: jsonEncode({"networkId": networkId, "address": address}),
+      );
+      if (response.statusCode == 200) {
+        return transactionFromJson(jsonDecode(response.body)['data']);
+      } else {
+        return [];
+      }
+    } catch (e) {
+      log(e);
+      return [];
+    }
+  }
 }
