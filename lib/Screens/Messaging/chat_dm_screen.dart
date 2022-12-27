@@ -1,13 +1,27 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 
+import '../../Models/user_model.dart';
+import '../../Service/auth.dart';
+import '../../chat_methods.dart';
 import '../../components.dart';
+import '../../generate_keywords.dart';
+import '../../provider.dart';
 import '../Profile/user_profile_screen.dart';
 
 class ChatDm extends StatefulWidget {
-  const ChatDm({Key key}) : super(key: key);
+  final UserModel model;
+
+  const ChatDm({this.model});
 
   @override
   State<ChatDm> createState() => _ChatDmState();
@@ -16,23 +30,33 @@ class ChatDm extends StatefulWidget {
 class _ChatDmState extends State<ChatDm> {
   TextEditingController messageController = TextEditingController();
   bool isTyping = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    messageController.addListener(() {
+      setState(() {});
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Scaffold(
-        backgroundColor: Color(0xffECE5DD),
+        backgroundColor: const Color(0xffECE5DD),
         body: Container(
-          color: Color(0xffECE5DD),
+          color: const Color(0xffECE5DD),
           child: Column(
             children: [
               Align(
                 alignment: Alignment.topCenter,
                 child: Container(
-                  padding: EdgeInsets.only(left: 5, right: 10),
+                  padding: const EdgeInsets.only(left: 5, right: 10),
                   height: 110,
                   width: double.infinity,
                   decoration: const BoxDecoration(
-                    color: secondaryColor,
+                    color: Color(0xff0e014c),
                   ),
                   child: Column(
                     children: [
@@ -52,24 +76,44 @@ class _ChatDmState extends State<ChatDm> {
                           SizedBox(width: 6),
                           GestureDetector(
                             onTap: () {
-                              Get.to(UserProfile());
+                              Get.to(UserProfile(
+                                model: UserModel(
+                                    uid: widget.model.uid,
+                                    name: widget.model.name,
+                                    userName: widget.model.userName,
+                                    image: widget.model.image,
+                                    searchKeywords:
+                                        widget.model.searchKeywords),
+                              ));
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(19),
-                              child: Image.asset(
-                                'assets/profile_img.png',
+                              child: SizedBox(
                                 height: 35,
                                 width: 35,
+                                child: CachedNetworkImage(
+                                  height: 35,
+                                  width: 35,
+                                  imageUrl: widget.model.image,
+                                ),
                               ),
                             ),
                           ),
                           SizedBox(width: 6),
                           GestureDetector(
                             onTap: () {
-                              Get.to(UserProfile());
+                              Get.to(UserProfile(
+                                model: UserModel(
+                                    uid: widget.model.uid,
+                                    name: widget.model.name,
+                                    userName: widget.model.userName,
+                                    image: widget.model.image,
+                                    searchKeywords:
+                                        widget.model.searchKeywords),
+                              ));
                             },
                             child: Text(
-                              "Precious ",
+                              widget.model.name,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
@@ -86,16 +130,12 @@ class _ChatDmState extends State<ChatDm> {
                             ),
                           ),
                           Spacer(),
-                          Icon(
-                            Icons.video_call,
-                            color: Colors.white,
-                            size: 25,
-                          ),
+                          SvgPicture.asset('assets/video_call.svg'),
                           SizedBox(width: 15),
                           Icon(
                             Icons.call,
+                            size: 20,
                             color: Colors.white,
-                            size: 25,
                           ),
                           SizedBox(width: 15),
                           Icon(
@@ -116,23 +156,55 @@ class _ChatDmState extends State<ChatDm> {
                     right: 20,
                   ),
                   color: Color(0xffECE5DD),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        SizedBox(height: 20),
-                        MessageSender(),
-                        SizedBox(height: 18),
-                        SizedBox(height: 18),
-                        MessageReceiver(),
-                        SizedBox(height: 18),
-                        MessageSender(),
-                        SizedBox(height: 18),
-                        MessageReceiver(),
-                        SizedBox(height: 18),
-                        MessageReceiver(),
-                      ],
-                    ),
-                  ),
+                  child: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('messages')
+                          .doc(AuthService().uid)
+                          .collection("userMessages")
+                          .doc(widget.model.uid)
+                          .collection("messageList")
+                          .orderBy("created", descending: true)
+                          .snapshots(),
+                      builder: (context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                            reverse: true,
+                            itemCount: snapshot.data.docs.length,
+                            itemBuilder: (context, index) {
+                              return Column(
+                                children: [
+                                  MessageSender(
+                                    isMe: AuthService().uid ==
+                                        snapshot.data.docs[index]["sender"],
+                                    displayname: widget.model.name,
+                                    text: snapshot.data.docs[index]["text"],
+                                    time: snapshot.data.docs[index]["created"],
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  )
+                                ],
+                              );
+                            },
+                            // SizedBox(height: 20),
+                            // MessageSender(),
+                            // SizedBox(height: 18),
+                            // SizedBox(height: 18),
+                            // MessageReceiver(),
+                            // SizedBox(height: 18),
+                            // MessageSender(),
+                            // SizedBox(height: 18),
+                            // MessageReceiver(),
+                            // SizedBox(height: 18),
+                            // MessageReceiver(),
+                          );
+                        }
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColor,
+                          ),
+                        );
+                      }),
                 ),
               ),
             ],
@@ -155,7 +227,8 @@ class _ChatDmState extends State<ChatDm> {
                     fillColor: Colors.white,
                     hintText: 'Message',
                     isDense: false,
-                    hintStyle: TextStyle(color: Color(0xff697077), fontSize: 14),
+                    hintStyle:
+                        TextStyle(color: Color(0xff697077), fontSize: 14),
                     prefixIcon: GestureDetector(
                       onTap: () {
                         setState(() {
@@ -163,16 +236,11 @@ class _ChatDmState extends State<ChatDm> {
                         });
                       },
                       child: IconButton(
-                        onPressed: () {},
-                        constraints: BoxConstraints(
-                          maxWidth: 30,
-                        ),
-                        icon: Icon(
-                          Iconsax.camera,
-                          size: 20,
-                          color: secondaryColor,
-                        ),
-                      ),
+                          onPressed: () {},
+                          constraints: BoxConstraints(
+                            maxWidth: 30,
+                          ),
+                          icon: SvgPicture.asset('assets/Camera.svg')),
                     ),
                     suffixIcon: FittedBox(
                       child: Row(
@@ -215,20 +283,39 @@ class _ChatDmState extends State<ChatDm> {
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
-              Container(
-                decoration: BoxDecoration(
-                  color: secondaryColor,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.mic,
-                    color: Colors.white,
-                  ),
-                ),
-              )
+              messageController.text.isEmpty
+                  ? IconButton(
+                      onPressed: () {},
+                      icon: SvgPicture.asset(
+                        'assets/microphone.svg',
+                        width: 27,
+                        height: 27,
+                      ))
+                  : IconButton(
+                      onPressed: () async {
+                        context
+                            .read<ChatNotifier>()
+                            .storeText(messageController.text.trim());
+                        messageController.clear();
+                        ChatMethods().storeMessages(
+                          context: context,
+                          text: context.read<ChatNotifier>().chatText,
+                          userID: AuthService().uid,
+                          receiverID: widget.model.uid,
+                          searchKeywords:
+                              createKeywords(widget.model.userName),
+                          img: widget.model.image,
+                          displayName: widget.model.name,
+                          userName: widget.model.userName,
+                        );
+                        context.read<ChatNotifier>().clearText();
+                      },
+                      icon: const Icon(
+                        Icons.send,
+                        color: secondaryColor,
+                        size: 30,
+                      ),
+                    ),
             ],
           ),
         ),

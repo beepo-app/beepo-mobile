@@ -1,15 +1,18 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
+import 'package:beepo/Service/auth.dart';
+import 'package:beepo/provider.dart';
+import 'package:beepo/search.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hawk_fab_menu/hawk_fab_menu.dart';
+import 'package:provider/provider.dart';
 
 import 'Models/wallet.dart';
 import 'Screens/browser_page.dart';
-import 'Screens/Messaging/chat_dm_screen.dart';
-import 'Screens/Wallet/send_token.dart';
-import 'Screens/Wallet/token_screen.dart';
-import 'Utils/functions.dart';
 import 'Utils/styles.dart';
+import 'myMessages.dart';
 
 class FilledButton extends StatelessWidget {
   final String text;
@@ -25,6 +28,16 @@ class FilledButton extends StatelessWidget {
       height: 42,
       child: TextButton(
         onPressed: onPressed,
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(
+            color,
+          ),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(22),
+            ),
+          ),
+        ),
         child: Text(
           text,
           textAlign: TextAlign.center,
@@ -32,16 +45,6 @@ class FilledButton extends StatelessWidget {
             color: Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.w600,
-          ),
-        ),
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(
-            color ?? primaryColor,
-          ),
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(22),
-            ),
           ),
         ),
       ),
@@ -52,9 +55,14 @@ class FilledButton extends StatelessWidget {
 class OutlnButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
-  final Color color;
 
-  OutlnButton({this.text, this.color, this.onPressed});
+  // final Color color;
+
+  OutlnButton({
+    @required this.text,
+    // required this.color,
+    @required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +74,7 @@ class OutlnButton extends StatelessWidget {
         child: Text(
           text,
           textAlign: TextAlign.center,
-          style: const TextStyle(
+          style: TextStyle(
             color: secondaryColor,
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -74,7 +82,11 @@ class OutlnButton extends StatelessWidget {
         ),
         style: ButtonStyle(
           side: MaterialStateProperty.all(
-              const BorderSide(width: 1, color: secondaryColor)),
+            BorderSide(
+              width: 1,
+              color: secondaryColor,
+            ),
+          ),
           backgroundColor: MaterialStateProperty.all(
             Colors.white,
           ),
@@ -90,13 +102,24 @@ class OutlnButton extends StatelessWidget {
 }
 
 class ChatTab extends StatefulWidget {
-  ChatTab({Key key}) : super(key: key);
+  // ChatTab({Key key}) : super(key: key);
 
   @override
   State<ChatTab> createState() => _ChatTabState();
 }
 
 class _ChatTabState extends State<ChatTab> {
+  String receiver;
+  bool showInput = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    // context.read<ChatNotifier>().getUsers();
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -184,7 +207,7 @@ class _ChatTabState extends State<ChatTab> {
               child: Column(
                 children: [
                   Row(
-                    children: const [
+                    children: [
                       Expanded(
                         child: Text(
                           "Messages",
@@ -194,10 +217,17 @@ class _ChatTabState extends State<ChatTab> {
                           ),
                         ),
                       ),
-                      Icon(
-                        Icons.search,
-                        color: Color(0xff908f8d),
-                        size: 20,
+                      IconButton(
+                        onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SearchSearch2(),
+                            )),
+                        icon: Icon(
+                          Icons.search,
+                          color: Color(0xff908f8d),
+                          size: 20,
+                        ),
                       ),
                       SizedBox(width: 20),
                       Icon(
@@ -209,58 +239,37 @@ class _ChatTabState extends State<ChatTab> {
                   ),
 
                   // SizedBox(height: 4),
-                  Column(
-                    children: [
-                      ListView.separated(
-                        padding: const EdgeInsets.only(top: 10),
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: 8,
-                        separatorBuilder: (ctx, i) => const SizedBox(height: 0),
-                        itemBuilder: (ctx, i) {
-                          return ListTile(
-                            onTap: () => Get.to(const ChatDm()),
-                            contentPadding: EdgeInsets.zero,
-                            leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(25),
-                              child: Image.asset(
-                                'assets/profile.png',
-                                height: 50,
-                                width: 50,
-                              ),
-                            ),
-                            title: Row(
-                              children: const [
-                                Expanded(
-                                  child: Text(
-                                    "Precious ",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  "9:13",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            subtitle: const Text(
-                              "Hey Buddy, got the contract ready for deployment yet?",
-                              style: TextStyle(
-                                color: Color(0x82000000),
-                                fontSize: 11,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                  Consumer<ChatNotifier>(
+                    builder: (context, pro, _) => Column(
+                      children: [
+                        StreamBuilder(
+                            stream: FirebaseFirestore.instance
+                                .collection('conversation')
+                                .doc(AuthService().uid)
+                                .collection("currentConversation")
+                                .snapshots(),
+                            builder: (context, AsyncSnapshot snapshot) {
+                              if (snapshot.hasData) {
+                                return ListView.separated(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data.docs.length,
+                                  separatorBuilder: (ctx, i) =>
+                                      const SizedBox(height: 0),
+                                  itemBuilder: (ctx, index) {
+                                    return MyMessages(
+                                      uid: snapshot.data.docs[index].id,
+                                    );
+                                  },
+                                );
+                              }
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }),
+                      ],
+                    ),
                   ),
 
                   //),
@@ -275,13 +284,22 @@ class _ChatTabState extends State<ChatTab> {
 }
 
 class CallTab extends StatefulWidget {
-  CallTab({Key key}) : super(key: key);
+  // CallTab({Key key}) : super(key: key);
 
   @override
   State<CallTab> createState() => _CallTabState();
 }
 
 class _CallTabState extends State<CallTab> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _searchController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -292,7 +310,7 @@ class _CallTabState extends State<CallTab> {
           children: [
             const SizedBox(height: 25),
             Row(
-              children: const [
+              children: [
                 Expanded(
                   child: Text(
                     "Messages",
@@ -357,21 +375,31 @@ class _CallTabState extends State<CallTab> {
 }
 
 class MessageSender extends StatelessWidget {
-  const MessageSender({Key key}) : super(key: key);
+  final bool isMe;
+  final String text;
+  final Timestamp time;
+  final String displayname;
+
+  const MessageSender({
+    @required this.isMe,
+    @required this.text,
+    @required this.time,
+    @required this.displayname,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.centerRight,
+      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(12),
-            topRight: Radius.circular(0),
+            topLeft: isMe ? Radius.circular(12) : Radius.circular(0),
+            topRight: isMe ? Radius.circular(0) : Radius.circular(12),
             bottomLeft: Radius.circular(12),
             bottomRight: Radius.circular(12),
           ),
-          color: Color(0xffFF9C34),
+          color: isMe ? Color(0xffFF9C34) : Color(0xe50d004c),
         ),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.5,
@@ -380,10 +408,11 @@ class MessageSender extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment:
+              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             Text(
-              "Hey there, you up?",
+              text,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 14,
@@ -392,21 +421,29 @@ class MessageSender extends StatelessWidget {
             SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: const [
+              children: [
                 Text(
-                  "9:13 am",
+                  '${time.toDate().hour} : ${time.toDate().minute}',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(width: 5),
-                Icon(
-                  Icons.done_all,
-                  color: Colors.white,
-                  size: 15,
-                ),
+                isMe
+                    ? SizedBox(width: 5)
+                    : SizedBox(
+                        width: 0,
+                      ),
+                isMe
+                    ? Icon(
+                        Icons.done_all,
+                        color: Colors.white,
+                        size: 15,
+                      )
+                    : SizedBox(
+                        width: 0,
+                      ),
               ],
             )
           ],
@@ -474,14 +511,16 @@ class WalletListTile extends StatelessWidget {
   final String fiatValue;
   final VoidCallback onTap;
 
-  WalletListTile(
-      {this.image,
-      this.title,
-      this.subtext,
-      this.amount,
-      this.wallet,
-      this.onTap,
-      this.fiatValue = "0"});
+  WalletListTile({
+    @required this.image,
+    @required this.title,
+    @required this.subtext,
+    @required this.amount,
+    this.wallet,
+    @required this.onTap,
+    this.fiatValue,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -499,11 +538,7 @@ class WalletListTile extends StatelessWidget {
       ),
       margin: const EdgeInsets.symmetric(horizontal: 5),
       child: ListTile(
-        onTap: onTap ??
-            () => Get.to(WalletToken(
-                  wallet: wallet,
-                  balance: amount,
-                )),
+        onTap: onTap,
         dense: true,
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(17),
@@ -528,7 +563,7 @@ class WalletListTile extends StatelessWidget {
             ),
             const SizedBox(width: 5),
             Text(
-              formatCurrency(num.parse(fiatValue)) ?? '',
+              '\$$fiatValue',
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 14,
@@ -599,7 +634,7 @@ class BrowserContainer extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            color: secondaryColor,
+            color: Color(0xff0e014c),
             fontSize: 11,
           ),
         ),
@@ -644,7 +679,7 @@ class BrowserContainer2 extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            color: secondaryColor,
+            color: const Color(0xff0e014c),
             fontSize: 11,
           ),
         ),
@@ -692,7 +727,7 @@ class BrowserContainer3 extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            color: secondaryColor,
+            color: const Color(0xff0e014c),
             fontSize: 11,
           ),
         ),
@@ -740,7 +775,7 @@ class BrowserContainer4 extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            color: secondaryColor,
+            color: Color(0xff0e014c),
             fontSize: 11,
           ),
         ),
@@ -750,7 +785,7 @@ class BrowserContainer4 extends StatelessWidget {
 }
 
 class ContainerButton extends StatelessWidget {
-  const ContainerButton({Key key}) : super(key: key);
+  // const ContainerButton({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -790,7 +825,9 @@ class ContainerButton extends StatelessWidget {
                   const Text(
                     'Swap',
                     style: TextStyle(
-                        fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey),
                   ),
                   const Spacer(),
                   const VerticalDivider(),
@@ -814,7 +851,9 @@ class ContainerButton extends StatelessWidget {
                   const Text(
                     'Granda',
                     style: const TextStyle(
-                        fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey),
                   ),
                   const Spacer(),
                   const VerticalDivider(),
@@ -838,7 +877,9 @@ class ContainerButton extends StatelessWidget {
               child: const Text(
                 'About',
                 style: const TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey),
               ),
             ),
           ),

@@ -1,13 +1,22 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
+import 'package:beepo/Models/user_model.dart';
+import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
 import 'package:beepo/Utils/styles.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
+import '../../Models/user_model.dart';
 import '../../Utils/styles.dart';
 import '../store_screen.dart';
 
 class UserProfile extends StatefulWidget {
-  const UserProfile({Key key}) : super(key: key);
+  // const UserProfile({Key key}) : super(key: key);
+  final UserModel model;
+
+  UserProfile({@required this.model});
 
   @override
   State<UserProfile> createState() => _UserProfileState();
@@ -48,20 +57,25 @@ class _UserProfileState extends State<UserProfile> {
               width: double.infinity,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-                  color: secondaryColor),
+                      bottomLeft: Radius.circular(20),
+                      bottomRight: Radius.circular(20)),
+                  color: Color(0xff0e014c)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: 56),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(60),
-                    child: Image.asset('assets/profile.png',
-                        height: 111, width: 113, fit: BoxFit.cover),
+                    child: CachedNetworkImage(
+                      width: 110,
+                      height: 110,
+                      imageUrl: widget.model.image,
+                      // fit: BoxFit.cover,
+                    ),
                   ),
                   SizedBox(height: 12),
                   Text(
-                    "Precious",
+                    widget.model.name,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -69,7 +83,7 @@ class _UserProfileState extends State<UserProfile> {
                   ),
                   SizedBox(height: 6),
                   Text(
-                    "Professional Account",
+                    widget.model.userName,
                     style: TextStyle(
                       color: Color(0x66ffffff),
                       fontSize: 13,
@@ -81,10 +95,25 @@ class _UserProfileState extends State<UserProfile> {
                     children: [
                       Column(
                         children: [
-                          Icon(
-                            Iconsax.message_2,
-                            size: 35,
-                            color: Color(0xffFF9C34),
+                          IconButton(
+                            icon: Icon(
+                              Iconsax.message_2,
+                              size: 35,
+                              color: Color(0xffFF9C34),
+                            ),
+                            onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatDm(
+                                    model: UserModel(
+                                        uid: widget.model.uid,
+                                        name: widget.model.name,
+                                        userName: widget.model.userName,
+                                        image: widget.model.image,
+                                        searchKeywords:
+                                            widget.model.searchKeywords),
+                                  ),
+                                )),
                           ),
                           SizedBox(height: 12),
                           Text(
@@ -144,13 +173,15 @@ class _UserProfileState extends State<UserProfile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: 30),
-                          Text(
-                            "Hi there, am a blockchain developer\ni would be glad you patronize my services as listed on the store",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: secondaryColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                          Center(
+                            child: Text(
+                              "Hi there, am new to Beepo and I love it",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color(0xff0e014c),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                           SizedBox(height: 10),
@@ -162,7 +193,7 @@ class _UserProfileState extends State<UserProfile> {
                                 child: Text(
                                   "Mute notifications",
                                   style: TextStyle(
-                                    color: secondaryColor,
+                                    color: Color(0xff0e014c),
                                     fontSize: 14,
                                   ),
                                 ),
@@ -184,7 +215,7 @@ class _UserProfileState extends State<UserProfile> {
                                 child: Text(
                                   "Allow Screenshot",
                                   style: TextStyle(
-                                    color: secondaryColor,
+                                    color: Color(0xff0e014c),
                                     fontSize: 14,
                                   ),
                                 ),
@@ -206,7 +237,7 @@ class _UserProfileState extends State<UserProfile> {
                                 child: Text(
                                   "Allow media",
                                   style: TextStyle(
-                                    color: secondaryColor,
+                                    color: Color(0xff0e014c),
                                     fontSize: 14,
                                   ),
                                 ),
@@ -225,36 +256,36 @@ class _UserProfileState extends State<UserProfile> {
                           SizedBox(height: 10),
                           Divider(),
                           SizedBox(height: 20),
-                          Text(
-                            "Store",
-                            style: TextStyle(
-                              color: secondaryColor,
-                              fontSize: 14,
-                            ),
-                          ),
+                          // Text(
+                          //   "Store",
+                          //   style: TextStyle(
+                          //     color: Color(0xff0e014c),
+                          //     fontSize: 14,
+                          //   ),
+                          // ),
                           SizedBox(height: 22),
-                          GridView.count(
-                            physics: NeverScrollableScrollPhysics(),
-                            padding: const EdgeInsets.only(bottom: 20),
-                            mainAxisSpacing: 20,
-                            shrinkWrap: true,
-                            crossAxisSpacing: 15,
-                            crossAxisCount: 3,
-                            children: List.generate(9, (index) {
-                              return GestureDetector(
-                                onTap: () => Get.to(Store()),
-                                child: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  height: 91,
-                                  width: 102,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey,
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                ),
-                              );
-                            }),
-                          ),
+                          // GridView.count(
+                          //   physics: NeverScrollableScrollPhysics(),
+                          //   padding: const EdgeInsets.only(bottom: 20),
+                          //   mainAxisSpacing: 20,
+                          //   shrinkWrap: true,
+                          //   crossAxisSpacing: 15,
+                          //   crossAxisCount: 3,
+                          //   children: List.generate(9, (index) {
+                          //     return GestureDetector(
+                          //       onTap: () => Get.to(Store()),
+                          //       child: Container(
+                          //         padding: const EdgeInsets.all(10),
+                          //         height: 91,
+                          //         width: 102,
+                          //         decoration: BoxDecoration(
+                          //           color: Colors.grey,
+                          //           borderRadius: BorderRadius.circular(15),
+                          //         ),
+                          //       ),
+                          //     );
+                          //   }),
+                          // ),
                         ],
                       ),
                     )))

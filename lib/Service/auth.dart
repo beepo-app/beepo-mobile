@@ -4,10 +4,13 @@ import 'dart:developer';
 import 'package:beepo/Constants/app_constants.dart';
 import 'package:beepo/Service/encryption.dart';
 import 'package:beepo/Widgets/toasts.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 
 import '../Constants/network.dart';
+import '../Models/user_model.dart';
+import '../generate_keywords.dart';
 
 class AuthService {
   Box box = Hive.box('beepo');
@@ -59,6 +62,18 @@ class AuthService {
         box.put('uid', data['user']['uid']);
         box.put('isLogged', true);
         box.put('userData', data['user']);
+
+        UserModel user = UserModel(
+            uid: data['user']['uid'],
+            searchKeywords: createKeywords(data['user']['username']),
+            name: displayName,
+            image: imgUrl,
+            userName: data['user']['username']);
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(data['user']['uid'])
+            .set(user.toJson());
+
         return true;
       } else {
         showToast(response.body);
