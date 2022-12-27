@@ -94,7 +94,10 @@ class EncryptionService {
   }
 
   Future<String> getSeedPhrase() async {
-    String seedphrase = box.get('seedphrase');
+    String seedphrase = box.get('seedphrase', defaultValue: '');
+    if (seedphrase == '') {
+      await AuthService().retrievePassphrase();
+    }
     var helper = RsaKeyHelper();
 
     String serverPublicKey = box.get('serverPublicKey');

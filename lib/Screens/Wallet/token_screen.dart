@@ -18,7 +18,8 @@ import 'receive_token.dart';
 class WalletToken extends StatefulWidget {
   final Wallet wallet;
   final String balance;
-  const WalletToken({Key key, this.wallet, this.balance}) : super(key: key);
+  final String value;
+  const WalletToken({Key key, this.wallet, this.balance, this.value}) : super(key: key);
 
   @override
   State<WalletToken> createState() => _WalletTokenState();
@@ -69,7 +70,15 @@ class _WalletTokenState extends State<WalletToken> {
                     fontSize: 24,
                   ),
                 ),
-                const SizedBox(height: 26),
+                const SizedBox(height: 5),
+                Text(
+                  "\$" + widget.value,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+                const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -82,11 +91,11 @@ class _WalletTokenState extends State<WalletToken> {
                               onPressed: () => Get.to(SendToken(wallet: widget.wallet)),
                               icon: const Icon(
                                 Icons.send_outlined,
-                                size: 30,
+                                size: 25,
                                 color: Colors.white,
                               )),
                         ),
-                        const SizedBox(height: 7),
+                        const SizedBox(height: 4),
                         const Text(
                           'Send',
                           style: TextStyle(
@@ -103,9 +112,9 @@ class _WalletTokenState extends State<WalletToken> {
                             wallet: widget.wallet,
                           )),
                           icon: const Icon(Icons.file_download_sharp,
-                              size: 30, color: Colors.white),
+                              size: 25, color: Colors.white),
                         ),
-                        const SizedBox(height: 7),
+                        const SizedBox(height: 4),
                         const Text(
                           'Receive',
                           style: TextStyle(
@@ -192,9 +201,7 @@ class _WalletTokenState extends State<WalletToken> {
                             color: isSent ? Colors.red : Colors.green,
                           ),
                           onTap: () {
-                            launchUrlString(
-                              "https://explorer.binance.org/tx/${transaction.hash}",
-                            );
+                            launchUrlString(transaction.url);
                           },
                           title: Row(
                             children: [

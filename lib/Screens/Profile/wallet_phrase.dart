@@ -26,8 +26,8 @@ class _WalletPhraseScreenState extends State<WalletPhraseScreen> {
       ),
       body: SafeArea(
         child: FutureBuilder(
-          // future: EncryptionService().getSeedPhrase(),
-          future: AuthService().retrievePassphrase(),
+          future: EncryptionService().getSeedPhrase(),
+          // future: AuthService().retrievePassphrase(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return loader();
@@ -64,6 +64,7 @@ class _WalletPhraseScreenState extends State<WalletPhraseScreen> {
                       Clipboard.setData(ClipboardData(text: walletPhrase));
                       showToast("Copied to clipboard successfully");
                     },
+                    color: secondaryColor,
                     text: 'Copy to Clipboard',
                   )
                 ],

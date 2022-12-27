@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import 'Models/wallet.dart';
+import 'Screens/Wallet/token_screen.dart';
 import 'Screens/browser_page.dart';
 import 'Utils/styles.dart';
 import 'myMessages.dart';
@@ -30,7 +31,7 @@ class FilledButton extends StatelessWidget {
         onPressed: onPressed,
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(
-            color,
+            color ?? secondaryColor,
           ),
           shape: MaterialStateProperty.all(
             RoundedRectangleBorder(
@@ -255,8 +256,7 @@ class _ChatTabState extends State<ChatTab> {
                                   physics: const NeverScrollableScrollPhysics(),
                                   shrinkWrap: true,
                                   itemCount: snapshot.data.docs.length,
-                                  separatorBuilder: (ctx, i) =>
-                                      const SizedBox(height: 0),
+                                  separatorBuilder: (ctx, i) => const SizedBox(height: 0),
                                   itemBuilder: (ctx, index) {
                                     return MyMessages(
                                       uid: snapshot.data.docs[index].id,
@@ -408,8 +408,7 @@ class MessageSender extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment:
-              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             Text(
               text,
@@ -538,7 +537,12 @@ class WalletListTile extends StatelessWidget {
       ),
       margin: const EdgeInsets.symmetric(horizontal: 5),
       child: ListTile(
-        onTap: onTap,
+        onTap: onTap ??
+            () => Get.to(WalletToken(
+                  wallet: wallet,
+                  balance: amount,
+                  value: fiatValue,
+                )),
         dense: true,
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(17),
@@ -825,9 +829,7 @@ class ContainerButton extends StatelessWidget {
                   const Text(
                     'Swap',
                     style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey),
+                        fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey),
                   ),
                   const Spacer(),
                   const VerticalDivider(),
@@ -851,9 +853,7 @@ class ContainerButton extends StatelessWidget {
                   const Text(
                     'Granda',
                     style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey),
+                        fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey),
                   ),
                   const Spacer(),
                   const VerticalDivider(),
@@ -877,9 +877,7 @@ class ContainerButton extends StatelessWidget {
               child: const Text(
                 'About',
                 style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey),
+                    fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey),
               ),
             ),
           ),

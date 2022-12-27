@@ -249,7 +249,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                 subtext: wallet.ticker,
                                 amount: balance ?? 'N/A',
                                 wallet: wallet,
-                                fiatValue: fiatValue,
+                                fiatValue: double.parse(fiatValue).toStringAsFixed(2),
                               );
                             },
                           ),

@@ -1,19 +1,19 @@
-import 'package:beepo/snack.dart';
+import 'package:beepo/Widgets/snack.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 // import 'package:voster/utils/snack.dart';
 
 class ChatMethods {
-  void storeMessages(
-      { BuildContext context,
-         String text,
-         String userID,
-         String receiverID,
-         List searchKeywords,
-         String userName,
-         String img,
-         String displayName,
-      }) async {
+  void storeMessages({
+    BuildContext context,
+    String text,
+    String userID,
+    String receiverID,
+    List searchKeywords,
+    String userName,
+    String img,
+    String displayName,
+  }) async {
     try {
       await FirebaseFirestore.instance
           .collection("conversation")
@@ -24,11 +24,11 @@ class ChatMethods {
         'text': text,
         'sender': userID,
         'receiver': receiverID,
-        'name' : userName,
-        'displayName' : displayName,
-        'image' : img,
+        'name': userName,
+        'displayName': displayName,
+        'image': img,
         'created': Timestamp.now(),
-        'searchKeywords' : searchKeywords,
+        'searchKeywords': searchKeywords,
       });
       await FirebaseFirestore.instance
           .collection("conversation")
@@ -40,7 +40,7 @@ class ChatMethods {
         'sender': userID,
         'receiver': receiverID,
         'created': Timestamp.now(),
-        'searchKeywords' : searchKeywords,
+        'searchKeywords': searchKeywords,
       });
 
       await FirebaseFirestore.instance
