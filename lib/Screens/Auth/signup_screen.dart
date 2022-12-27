@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../components.dart';
-import '../../bottom_nav.dart';
 
 class SignUp extends StatelessWidget {
   const SignUp({Key key}) : super(key: key);
@@ -30,7 +29,7 @@ class SignUp extends StatelessWidget {
               const Spacer(),
               FilledButton(
                 text: 'Create Account',
-                onPressed: () => Get.to(const CreateAccount()),
+                onPressed: () => Get.to( CreateAccount()),
               ),
               const SizedBox(height: 35),
               const Text(

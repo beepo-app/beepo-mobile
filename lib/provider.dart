@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:beepo/Models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
@@ -16,41 +16,41 @@ class ChatNotifier extends ChangeNotifier {
 
   String imageUrl = ' ';
 
-  // Reference ref = FirebaseStorage.instance.ref().child('profilepic.jpg');
+  Reference ref = FirebaseStorage.instance.ref().child('profilepic.jpg');
 
-  //  pickUploadImage() async {
-  //   final image = await ImagePicker().pickImage(
-  //       source: ImageSource.gallery,
-  //       maxWidth: 512,
-  //       maxHeight: 512,
-  //       imageQuality: 75);
-  //   ref = FirebaseStorage.instance.ref().child(image!.path);
-  //   notifyListeners();
-  //   await ref.putFile(File(image.path));
-  //   ref.getDownloadURL().then((value) {
-  //     print(value);
-  //     imageUrl = value;
-  //     notifyListeners();
-  //
-  //   });
-  // }
-  //
-  // cameraUploadImage() async {
-  //   final image = await ImagePicker().pickImage(
-  //       source: ImageSource.camera,
-  //       maxWidth: 512,
-  //       maxHeight: 512,
-  //       imageQuality: 75);
-  //   ref = FirebaseStorage.instance.ref().child(image!.path);
-  //   notifyListeners();
-  //   await ref.putFile(File(image.path));
-  //   ref.getDownloadURL().then((value) {
-  //     print(value);
-  //     imageUrl = value;
-  //     notifyListeners();
-  //
-  //   });
-  // }
+   pickUploadImage() async {
+    final image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 75);
+    ref = FirebaseStorage.instance.ref().child(image.path);
+    notifyListeners();
+    await ref.putFile(File(image.path));
+    ref.getDownloadURL().then((value) {
+      print(value);
+      imageUrl = value;
+      notifyListeners();
+
+    });
+  }
+
+  cameraUploadImage() async {
+    final image = await ImagePicker().pickImage(
+        source: ImageSource.camera,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 75);
+    ref = FirebaseStorage.instance.ref().child(image.path);
+    notifyListeners();
+    await ref.putFile(File(image.path));
+    ref.getDownloadURL().then((value) {
+      print(value);
+      imageUrl = value;
+      notifyListeners();
+
+    });
+  }
 
 
   void storeText(newText) {

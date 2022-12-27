@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
-import '../../Service/mqtt.dart';
 import '../../components.dart';
-import 'create_acct.dart';
 
 class Login extends StatelessWidget {
   const Login({Key key}) : super(key: key);
@@ -101,7 +99,8 @@ class Login extends StatelessWidget {
                     ),
                     fullscreenDialog: true,
                   );
-                  bool result = await AuthService().loginWithSecretPhrase(phrase);
+                  bool result =
+                      await AuthService().loginWithSecretPhrase(phrase);
                   Get.back();
                   if (result) {
                     showToast('Logged in successfully');

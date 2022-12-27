@@ -1,18 +1,17 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+
 import 'package:beepo/Screens/Auth/onboarding.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:iconsax/iconsax.dart';
 
 import '../../Utils/styles.dart';
-import '../account_type.dart';
 import '../language_screen.dart';
-import '../security_screen.dart';
 import '../security_screen.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({Key key}) : super(key: key);
+  // const Profile({Key key}) : super(key: key);
 
   @override
   State<Profile> createState() => _ProfileState();
@@ -53,8 +52,9 @@ class _ProfileState extends State<Profile> {
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-                  color: secondaryColor,
+                      bottomLeft: Radius.circular(20),
+                      bottomRight: Radius.circular(20)),
+                  color: Color(0xff0e014c),
                 ),
               ),
             ),
@@ -67,40 +67,40 @@ class _ProfileState extends State<Profile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 53),
-                    // Align(
-                    //   alignment: Alignment.center,
-                    //   child: ClipRRect(
-                    //     borderRadius: BorderRadius.circular(70),
-                    //     child: CachedNetworkImage(
-                    //       imageUrl: userData['profilePictureUrl'],
-                    //       height: 135,
-                    //       width: 135,
-                    //       fit: BoxFit.cover,
-                    //       progressIndicatorBuilder: (context, url, progress) {
-                    //         return Center(
-                    //           child: CircularProgressIndicator(
-                    //             value: progress.progress,
-                    //           ),
-                    //         );
-                    //       },
-                    //       // placeholder: (context, url) => Container(
-                    //       //   height: 135,
-                    //       //   width: 135,
-                    //       //   color: Colors.grey[300],
-                    //       //   child: const Center(
-                    //       //     child: Icon(Iconsax.user, color: blue),
-                    //       //   ),
-                    //       // ),
-                    //     ),
-                    //   ),
-                    // ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(70),
+                        child: CachedNetworkImage(
+                          imageUrl: userData['profilePictureUrl'],
+                          height: 135,
+                          width: 135,
+                          fit: BoxFit.cover,
+                          progressIndicatorBuilder: (context, url, progress) {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: progress.progress,
+                              ),
+                            );
+                          },
+                          // placeholder: (context, url) => Container(
+                          //   height: 135,
+                          //   width: 135,
+                          //   color: Colors.grey[300],
+                          //   child: const Center(
+                          //     child: Icon(Iconsax.user, color: blue),
+                          //   ),
+                          // ),
+                        ),
+                      ),
+                    ),
 
                     const SizedBox(height: 24),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          userData['displayName'],
+                          userData['displayName'].toString(),
                           style: const TextStyle(
                             color: Color(0xffff9c34),
                             fontSize: 18,
@@ -114,6 +114,18 @@ class _ProfileState extends State<Profile> {
                         ),
                       ],
                     ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Center(
+                      child: Text(
+                        userData['username'].toString(),
+                        style: TextStyle(
+                          color: secondaryColor,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 50),
                     // Row(
                     //   children: [
@@ -123,7 +135,7 @@ class _ProfileState extends State<Profile> {
                     //         child: const Text(
                     //           "Account Type",
                     //           style: TextStyle(
-                    //             color:  secondaryColor,
+                    //             color: const Color(0xff0e014c),
                     //             fontSize: 14,
                     //           ),
                     //         ),
@@ -146,7 +158,7 @@ class _ProfileState extends State<Profile> {
                           child: Text(
                             "Theme",
                             style: TextStyle(
-                              color: secondaryColor,
+                              color: Color(0xff0e014c),
                               fontSize: 14,
                             ),
                           ),
@@ -161,39 +173,6 @@ class _ProfileState extends State<Profile> {
                       ],
                     ),
                     const SizedBox(height: 26),
-
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            "Store",
-                            style: TextStyle(
-                              color: secondaryColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                        const Icon(Icons.arrow_forward,
-                            color: const Color(0x660e014c), size: 20),
-                      ],
-                    ),
-                    const SizedBox(height: 26),
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: const Text(
-                            "Statistics",
-                            style: TextStyle(
-                              color: secondaryColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                        const Icon(Icons.arrow_forward,
-                            color: const Color(0x660e014c), size: 20),
-                      ],
-                    ),
-                    const SizedBox(height: 26),
                     Row(
                       children: [
                         Expanded(
@@ -202,24 +181,24 @@ class _ProfileState extends State<Profile> {
                             child: const Text(
                               "Security",
                               style: TextStyle(
-                                color: secondaryColor,
+                                color: Color(0xff0e014c),
                                 fontSize: 14,
                               ),
                             ),
                           ),
                         ),
                         const Icon(Icons.arrow_forward,
-                            color: const Color(0x660e014c), size: 20),
+                            color: Color(0x660e014c), size: 20),
                       ],
                     ),
                     const SizedBox(height: 26),
                     Row(
                       children: [
                         const Expanded(
-                          child: const Text(
+                          child: Text(
                             "Help",
                             style: TextStyle(
-                              color: secondaryColor,
+                              color: Color(0xff0e014c),
                               fontSize: 14,
                             ),
                           ),
@@ -234,30 +213,30 @@ class _ProfileState extends State<Profile> {
                         const Expanded(
                           child: Text(
                             "Invite Friends",
-                            style: const TextStyle(
-                              color: secondaryColor,
+                            style: TextStyle(
+                              color: Color(0xff0e014c),
                               fontSize: 14,
                             ),
                           ),
                         ),
                         const Icon(Icons.arrow_forward,
-                            color: const Color(0x660e014c), size: 20),
+                            color: Color(0x660e014c), size: 20),
                       ],
                     ),
                     const SizedBox(height: 26),
                     Row(
                       children: [
                         const Expanded(
-                          child: const Text(
+                          child: Text(
                             "Notification",
                             style: TextStyle(
-                              color: secondaryColor,
+                              color: Color(0xff0e014c),
                               fontSize: 14,
                             ),
                           ),
                         ),
                         const Icon(Icons.arrow_forward,
-                            color: const Color(0x660e014c), size: 20),
+                            color: Color(0x660e014c), size: 20),
                       ],
                     ),
                     const SizedBox(height: 26),
@@ -269,14 +248,14 @@ class _ProfileState extends State<Profile> {
                             child: const Text(
                               "Language",
                               style: TextStyle(
-                                color: secondaryColor,
+                                color: Color(0xff0e014c),
                                 fontSize: 14,
                               ),
                             ),
                           ),
                         ),
                         const Icon(Icons.arrow_forward,
-                            color: const Color(0x660e014c), size: 20),
+                            color: Color(0x660e014c), size: 20),
                       ],
                     ),
                     const SizedBox(height: 26),
@@ -286,12 +265,13 @@ class _ProfileState extends State<Profile> {
                           child: Text(
                             "About",
                             style: TextStyle(
-                              color: secondaryColor,
+                              color: Color(0xff0e014c),
                               fontSize: 14,
                             ),
                           ),
                         ),
-                        Icon(Icons.arrow_forward, color: Color(0x660e014c), size: 20),
+                        Icon(Icons.arrow_forward,
+                            color: Color(0x660e014c), size: 20),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -300,7 +280,8 @@ class _ProfileState extends State<Profile> {
                       onTap: () {
                         Get.dialog(AlertDialog(
                           title: const Text("Logout"),
-                          content: const Text("Are you sure you want to logout?"),
+                          content:
+                              const Text("Are you sure you want to logout?"),
                           actions: [
                             TextButton(
                               onPressed: () => Get.back(),
@@ -309,7 +290,7 @@ class _ProfileState extends State<Profile> {
                             TextButton(
                               onPressed: () async {
                                 await Hive.box('beepo').clear();
-                                Get.offAll(const Onboarding());
+                                Get.offAll(Onboarding());
                               },
                               child: const Text("Yes"),
                             ),

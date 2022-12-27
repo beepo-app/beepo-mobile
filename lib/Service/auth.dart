@@ -32,7 +32,7 @@ class AuthService {
   String get contextId => box.get('contextId', defaultValue: '');
 
   //Create User
-  Future<bool> createUser(String displayName, {String imgUrl}) async {
+  Future<bool> createUser(String displayName, String imgUrl) async {
     try {
       //To generate keys and contextId
       await EncryptionService().encryption();

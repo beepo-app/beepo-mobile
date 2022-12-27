@@ -1,25 +1,21 @@
+// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors
+
 import 'dart:io';
 
-import 'package:beepo/Screens/Auth/phrase_screen.dart';
 import 'package:beepo/Service/auth.dart';
-import 'package:beepo/Service/encryption.dart';
-import 'package:beepo/Service/media.dart';
-import 'package:beepo/Utils/functions.dart';
-import 'package:beepo/Widgets/commons.dart';
 import 'package:beepo/Widgets/toasts.dart';
-import 'package:beepo/bottom_nav.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
-import '../../Utils/styles.dart';
 import '../../components.dart';
+import '../../provider.dart';
 import 'pin_code.dart';
 
 class CreateAccount extends StatefulWidget {
-  const CreateAccount({Key key}) : super(key: key);
+  // const CreateAccount({Key key}) : super(key: key);
 
   @override
   State<CreateAccount> createState() => _CreateAccountState();
@@ -28,6 +24,7 @@ class CreateAccount extends StatefulWidget {
 class _CreateAccountState extends State<CreateAccount> {
   TextEditingController displayName = TextEditingController();
   File selectedImage;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,10 +59,12 @@ class _CreateAccountState extends State<CreateAccount> {
                     shape: BoxShape.circle,
                     color: Color(0xffc4c4c4),
                   ),
-                  child: selectedImage != null
+                  child: context.read<ChatNotifier>().imageUrl != ' '
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(100),
-                          child: Image.file(selectedImage),
+                          child: CachedNetworkImage(
+                            imageUrl: context.watch<ChatNotifier>().imageUrl,
+                          ),
                         )
                       : const Icon(
                           Icons.person_outlined,
@@ -91,36 +90,45 @@ class _CreateAccountState extends State<CreateAccount> {
                                 leading: const Icon(Icons.photo_camera),
                                 title: const Text("Take a photo"),
                                 onTap: () async {
+                                  context
+                                      .read<ChatNotifier>()
+                                      .cameraUploadImage();
                                   Get.back();
-                                  XFile image = await ImagePicker()
-                                      .pickImage(source: ImageSource.camera);
-                                  if (image != null) {
-                                    ImageUtil().cropProfileImage(image).then((value) {
-                                      if (value != null) {
-                                        setState(() {
-                                          selectedImage = value;
-                                        });
-                                      }
-                                    });
-                                  }
+                                  // XFile? image = await ImagePicker()
+                                  //     .pickImage(source: ImageSource.camera);
+                                  // if (image != null) {
+                                  //   ImageUtil().cropProfileImage(image).then((value) {
+                                  //     if (value != null) {
+                                  //       setState(() {
+                                  //         selectedImage = value;
+                                  //       });
+                                  //     }
+                                  //   });
+                                  // }
                                 },
                               ),
                               ListTile(
                                 leading: const Icon(Icons.photo_library),
                                 title: const Text("Choose from gallery"),
-                                onTap: () async {
+                                onTap: () {
+                                  // setState(() {
+                                  context
+                                      .read<ChatNotifier>()
+                                      .pickUploadImage();
+                                  // });
+
                                   Get.back();
-                                  XFile image = await ImagePicker()
-                                      .pickImage(source: ImageSource.gallery);
-                                  if (image != null) {
-                                    ImageUtil().cropProfileImage(image).then((value) {
-                                      if (value != null) {
-                                        setState(() {
-                                          selectedImage = value;
-                                        });
-                                      }
-                                    });
-                                  }
+                                  // final image = await ImagePicker()
+                                  //     .pickImage(source: ImageSource.gallery);
+                                  // if (image != null) {
+                                  //   ImageUtil().cropProfileImage(image).then((value) {
+                                  //     if (value != null) {
+                                  //       setState(() {
+                                  //         selectedImage = value;
+                                  //       });
+                                  //     }
+                                  //   });
+                                  // }
                                 },
                               ),
                             ],
@@ -133,7 +141,7 @@ class _CreateAccountState extends State<CreateAccount> {
                       height: 30,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        color: secondaryColor,
+                        color: Color(0xff0e014c),
                       ),
                       child: const Icon(
                         Icons.photo_camera_outlined,
@@ -163,15 +171,16 @@ class _CreateAccountState extends State<CreateAccount> {
             const Spacer(),
             FilledButton(
               text: 'Next',
+              color: Color(0xffFF9C34),
               onPressed: () async {
                 if (displayName.text.trim().isEmpty) {
                   showToast('Please enter a display name');
                   return;
                 } else {
-                  // if (selectedImage == null) {
-                  //   showToast('Please select a profile picture');
-                  //   return;
-                  // }
+                  if (context.read<ChatNotifier>().imageUrl == ' ') {
+                    showToast('Please select a profile picture');
+                    return;
+                  }
                   Get.to(
                     Material(
                       child: Container(
@@ -206,7 +215,9 @@ class _CreateAccountState extends State<CreateAccount> {
                     fullscreenDialog: true,
                   );
 
-                  String imageUrl = 'https://picsum.photos/200/300.png';
+                  String imageUrl2 =
+                      'https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80';
+                  // 'https://picsum.photos/200/300.png';
 
                   // if (selectedImage != null) {
                   //   imageUrl = await MediaService.uploadProfilePicture(selectedImage);
@@ -223,16 +234,15 @@ class _CreateAccountState extends State<CreateAccount> {
 
                   bool result = await AuthService().createUser(
                     displayName.text.trim(),
-                    imgUrl: imageUrl,
+                    context.read<ChatNotifier>().imageUrl,
                   );
                   Get.back();
                   if (result) {
                     showToast('Account created successfully');
-                    Get.offAll(const PinCode());
+                    Get.offAll(PinCode());
+                  } else {
+                    showToast('Something went wrong');
                   }
-                  // else {
-                  //   showToast('Something went wrong');
-                  // }
                 }
               },
             ),
