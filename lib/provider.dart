@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
 
+import 'Utils/functions.dart';
+
 class ChatNotifier extends ChangeNotifier {
   List<String> _users = [];
 
@@ -17,6 +19,7 @@ class ChatNotifier extends ChangeNotifier {
   String imageUrl = ' ';
 
   Reference ref = FirebaseStorage.instance.ref().child('profilepic.jpg');
+  File selectedImage;
 
    pickUploadImage() async {
     final image = await ImagePicker().pickImage(
@@ -26,15 +29,29 @@ class ChatNotifier extends ChangeNotifier {
         imageQuality: 75);
     ref = FirebaseStorage.instance.ref().child(image.path);
     notifyListeners();
-    await ref.putFile(File(image.path));
-    ref.getDownloadURL().then((value) {
-      print(value);
-      imageUrl = value;
-      notifyListeners();
 
-    });
+    if (image != null) {
+      ImageUtil()
+          .cropProfileImage(image)
+          .then((value) {
+        if (value != null) {
+          // setState(() {
+            selectedImage = value;
+            notifyListeners();
+          // });
+        }
+      });
+
+      await ref.putFile(File(image.path));
+      ref.getDownloadURL().then((value) {
+        print(value);
+        imageUrl = value;
+        notifyListeners();
+
+      });
+    }
+
   }
-
   cameraUploadImage() async {
     final image = await ImagePicker().pickImage(
         source: ImageSource.camera,
@@ -43,6 +60,19 @@ class ChatNotifier extends ChangeNotifier {
         imageQuality: 75);
     ref = FirebaseStorage.instance.ref().child(image.path);
     notifyListeners();
+
+    if (image != null) {
+      ImageUtil()
+          .cropProfileImage(image)
+          .then((value) {
+        if (value != null) {
+          // setState(() {
+            selectedImage = value;
+            notifyListeners();
+          // });
+        }
+      });
+    }
     await ref.putFile(File(image.path));
     ref.getDownloadURL().then((value) {
       print(value);

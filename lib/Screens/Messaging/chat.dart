@@ -7,9 +7,10 @@ import 'package:iconsax/iconsax.dart';
 
 import '../../Utils/styles.dart';
 import '../../components.dart';
+import '../../search.dart';
 
 class ChatScreen extends StatefulWidget {
-  ChatScreen({Key key}) : super(key: key);
+  // ChatScreen({Key key}) : super(key: key);
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -23,31 +24,36 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Scaffold(
         body: HawkFabMenu(
           icon: AnimatedIcons.menu_close,
-          fabColor: secondaryColor,
+          fabColor: txtColor1,
           items: [
             HawkFabMenuItem(
               label: 'New Chat',
-              ontap: () {},
+              ontap: ()=> Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SearchSearch(),
+                  )
+              ),
               icon: const Icon(Icons.add),
-              color: secondaryColor,
+              color: txtColor1,
               labelColor: Colors.white,
-              labelBackgroundColor: secondaryColor,
+              labelBackgroundColor: txtColor1,
             ),
             HawkFabMenuItem(
               label: 'Join Public Chat',
               ontap: () {},
               icon: const Icon(Iconsax.people),
-              color: secondaryColor,
+              color: txtColor1,
               labelColor: Colors.white,
-              labelBackgroundColor: secondaryColor,
+              labelBackgroundColor: txtColor1,
             ),
             HawkFabMenuItem(
               label: 'Share',
               ontap: () {},
               icon: const Icon(Icons.share),
-              color: secondaryColor,
+              color: txtColor1,
               labelColor: Colors.white,
-              labelBackgroundColor: secondaryColor,
+              labelBackgroundColor: txtColor1,
             ),
           ],
           body: FutureBuilder(
@@ -60,7 +66,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 print(snapshot.data);
                 return Container(
                   width: double.infinity,
-                  color: secondaryColor,
+                  color: txtColor1,
                   child: Column(
                     children: [
                       const SizedBox(height: 50),

@@ -59,7 +59,7 @@ class _CreateAccountState extends State<CreateAccount> {
                     shape: BoxShape.circle,
                     color: Color(0xffc4c4c4),
                   ),
-                  child: context.read<ChatNotifier>().imageUrl != ' '
+                  child: context.watch<ChatNotifier>().imageUrl != ' '
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(100),
                           child: CachedNetworkImage(
