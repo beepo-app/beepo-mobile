@@ -10,13 +10,13 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 
-import '../../Models/user_model.dart';
 import '../../Service/auth.dart';
 import '../../chat_methods.dart';
 import '../../components.dart';
 import '../../generate_keywords.dart';
 import '../../provider.dart';
 import '../Profile/user_profile_screen.dart';
+import 'chat.dart';
 
 class ChatDm extends StatefulWidget {
   final UserModel model;
@@ -71,7 +71,10 @@ class _ChatDmState extends State<ChatDm> {
                               size: 30,
                               color: Colors.white,
                             ),
-                            onPressed: () => Get.back(),
+                            onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ChatScreen())),
                           ),
                           SizedBox(width: 6),
                           GestureDetector(
@@ -240,7 +243,7 @@ class _ChatDmState extends State<ChatDm> {
                           constraints: BoxConstraints(
                             maxWidth: 30,
                           ),
-                          icon: SvgPicture.asset('assets/Camera.svg')),
+                          icon: SvgPicture.asset('assets/camera.svg')),
                     ),
                     suffixIcon: FittedBox(
                       child: Row(
@@ -302,8 +305,7 @@ class _ChatDmState extends State<ChatDm> {
                           text: context.read<ChatNotifier>().chatText,
                           userID: AuthService().uid,
                           receiverID: widget.model.uid,
-                          searchKeywords:
-                              createKeywords(widget.model.userName),
+                          searchKeywords: createKeywords(widget.model.userName),
                           img: widget.model.image,
                           displayName: widget.model.name,
                           userName: widget.model.userName,

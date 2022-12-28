@@ -39,7 +39,7 @@ class _MyMessagesState extends State<MyMessages> {
     setState(() {});
   }
 
-  bool isTapped = false;
+  bool isTapped = true;
 
   @override
   void initState() {
@@ -73,9 +73,9 @@ class _MyMessagesState extends State<MyMessages> {
                       searchKeywords: createKeywords(userName),
                     ),
                   ));
-                  setState(() {
+                  // setState(() {
                     isTapped = true;
-                  });
+                  // });
                 },
                 contentPadding: EdgeInsets.zero,
                 leading: SizedBox(
