@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:beepo/Service/auth.dart';
+import 'package:beepo/Widgets/toasts.dart';
 import 'package:beepo/provider.dart';
 import 'package:beepo/search.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -128,68 +129,73 @@ class _ChatTabState extends State<ChatTab> {
         Row(
           children: [
             const SizedBox(width: 20),
-            Column(
-              children: [
-                Container(
-                  height: 60,
-                  width: 60,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFC4C4C4),
-                    shape: BoxShape.circle,
+            GestureDetector(
+              onTap: () {
+                showToast('Coming soon');
+              },
+              child: Column(
+                children: [
+                  Container(
+                    height: 60,
+                    width: 60,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFC4C4C4),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.add,
+                      size: 35,
+                      color: Colors.black,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.add,
-                    size: 35,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 7),
-                const Text(
-                  "Update Status",
-                  style: TextStyle(
-                    color: Color(0xb2ffffff),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: SizedBox(
-                height: 80,
-                child: ListView.separated(
-                  padding: const EdgeInsets.only(right: 10),
-                  shrinkWrap: true,
-                  itemCount: 6,
-                  scrollDirection: Axis.horizontal,
-                  separatorBuilder: (ctx, i) => const SizedBox(width: 10),
-                  itemBuilder: (ctx, i) {
-                    return Column(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(30),
-                          child: Image.asset(
-                            'assets/profile_img.png',
-                            height: 60,
-                            width: 60,
-                          ),
-                        ),
-                        const SizedBox(height: 7),
-                        const Text(
-                          "James",
-                          style: TextStyle(
-                            color: const Color(0xb2ffffff),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        )
-                      ],
-                    );
-                  },
-                ),
+                  const SizedBox(height: 7),
+                  const Text(
+                    "Update Moment",
+                    style: TextStyle(
+                      color: Color(0xb2ffffff),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )
+                ],
               ),
             ),
+            // const SizedBox(width: 10),
+            // Expanded(
+            //   child: SizedBox(
+            //     height: 80,
+            //     child: ListView.separated(
+            //       padding: const EdgeInsets.only(right: 10),
+            //       shrinkWrap: true,
+            //       itemCount: 6,
+            //       scrollDirection: Axis.horizontal,
+            //       separatorBuilder: (ctx, i) => const SizedBox(width: 10),
+            //       itemBuilder: (ctx, i) {
+            //         return Column(
+            //           children: [
+            //             ClipRRect(
+            //               borderRadius: BorderRadius.circular(30),
+            //               child: Image.asset(
+            //                 'assets/profile_img.png',
+            //                 height: 60,
+            //                 width: 60,
+            //               ),
+            //             ),
+            //             const SizedBox(height: 7),
+            //             const Text(
+            //               "James",
+            //               style: TextStyle(
+            //                 color: const Color(0xb2ffffff),
+            //                 fontSize: 10,
+            //                 fontWeight: FontWeight.w700,
+            //               ),
+            //             )
+            //           ],
+            //         );
+            //       },
+            //     ),
+            //   ),
+            // ),
           ],
         ),
         const SizedBox(height: 40),
@@ -238,36 +244,35 @@ class _ChatTabState extends State<ChatTab> {
                       ),
                     ],
                   ),
-
-                  // SizedBox(height: 4),
                   Consumer<ChatNotifier>(
                     builder: (context, pro, _) => Column(
                       children: [
                         StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('conversation')
-                                .doc(AuthService().uid)
-                                .collection("currentConversation")
-                                .snapshots(),
-                            builder: (context, AsyncSnapshot snapshot) {
-                              if (snapshot.hasData) {
-                                return ListView.separated(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: snapshot.data.docs.length,
-                                  separatorBuilder: (ctx, i) => const SizedBox(height: 0),
-                                  itemBuilder: (ctx, index) {
-                                    return MyMessages(
-                                      uid: snapshot.data.docs[index].id,
-                                    );
-                                  },
-                                );
-                              }
-                              return const Center(
-                                child: CircularProgressIndicator(),
+                          stream: FirebaseFirestore.instance
+                              .collection('conversation')
+                              .doc(AuthService().uid)
+                              .collection("currentConversation")
+                              .snapshots(),
+                          builder: (context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData) {
+                              return ListView.separated(
+                                padding: const EdgeInsets.only(top: 10),
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: snapshot.data.docs.length,
+                                separatorBuilder: (ctx, i) => const SizedBox(height: 0),
+                                itemBuilder: (ctx, index) {
+                                  return MyMessages(
+                                    uid: snapshot.data.docs[index].id,
+                                  );
+                                },
                               );
-                            }),
+                            }
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -508,7 +513,6 @@ class WalletListTile extends StatelessWidget {
   final String amount;
   final Wallet wallet;
   final String fiatValue;
-  final VoidCallback onTap;
 
   WalletListTile({
     @required this.image,
@@ -516,7 +520,6 @@ class WalletListTile extends StatelessWidget {
     @required this.subtext,
     @required this.amount,
     this.wallet,
-    @required this.onTap,
     this.fiatValue,
   });
 
@@ -537,12 +540,11 @@ class WalletListTile extends StatelessWidget {
       ),
       margin: const EdgeInsets.symmetric(horizontal: 5),
       child: ListTile(
-        onTap: onTap ??
-            () => Get.to(WalletToken(
-                  wallet: wallet,
-                  balance: amount,
-                  value: fiatValue,
-                )),
+        onTap: () => Get.to(WalletToken(
+          wallet: wallet,
+          balance: amount,
+          value: fiatValue,
+        )),
         dense: true,
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(17),

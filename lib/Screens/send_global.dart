@@ -106,9 +106,6 @@ class _SendGlobalState extends State<SendGlobal> {
                         title: 'Bitcoin',
                         subtext: 'BTC',
                         amount: '0.0234789',
-                        onTap: () {
-                          Get.to(SendToken());
-                        },
                       ),
                       // SizedBox(height: 20),
                       // WalletListTile(

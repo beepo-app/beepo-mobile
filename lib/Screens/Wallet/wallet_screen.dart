@@ -65,14 +65,10 @@ class _WalletScreenState extends State<WalletScreen> {
 
           Wallet btcWallet = wallets.firstWhere((e) => e.name == 'Bitcoin');
           Wallet ethWallet = wallets.firstWhere((e) => e.ticker == 'ETH');
-          // Wallet solWallet = wallets.firstWhere((e) => e.ticker == 'SOL');
-          Wallet bnbWallet = wallets.firstWhere((e) => e.ticker == 'BNB');
 
           return FutureBuilder<List>(
             future: Future.wait([
               WalletsService().getWalletBalance('bitcoin', btcWallet.address),
-              // WalletsService().getWalletBalance('solana', solWallet.address),
-              WalletsService().getWalletBalance('56', bnbWallet.address),
               WalletsService().getERCWalletBalances(ethWallet.address),
             ]),
             builder: (context, snapshot) {
@@ -83,9 +79,7 @@ class _WalletScreenState extends State<WalletScreen> {
               }
 
               Map btcBalance = snapshot.data[0];
-              // Map solBalance = snapshot.data[1];
-              Map bnbBalance = snapshot.data[1];
-              List ercBalances = snapshot.data[2];
+              List ercBalances = snapshot.data[1];
 
               return Container(
                 color: Colors.white,
@@ -224,19 +218,16 @@ class _WalletScreenState extends State<WalletScreen> {
                               String balance;
 
                               if (wallet.ticker == 'BITCOIN') {
-                                balance = btcBalance['balance'];
+                                balance = btcBalance['balance'].toString();
                                 if (btcBalance['USD'] == null) {
                                   fiatValue = "0";
                                 } else {
                                   fiatValue = btcBalance['USD'].toString();
                                 }
-                              } else if (wallet.ticker == 'BNB') {
-                                balance = bnbBalance['balance'].toString();
-                                fiatValue = bnbBalance['USD'].toString();
                               } else {
                                 Map bal = ercBalances.firstWhere(
                                   (balance) => balance['symbol'] == wallet.ticker,
-                                  orElse: () => {'balance': 0.0},
+                                  orElse: () => {'balance': "0.0"},
                                 );
                                 balance = bal['balance'].toString();
 
@@ -249,7 +240,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                 subtext: wallet.ticker,
                                 amount: balance ?? 'N/A',
                                 wallet: wallet,
-                                fiatValue: double.parse(fiatValue).toStringAsFixed(2),
+                                fiatValue: num.parse(fiatValue).toStringAsFixed(2),
                               );
                             },
                           ),
