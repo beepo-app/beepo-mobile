@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:beepo/Service/auth.dart';
+import 'package:beepo/Widgets/textfields.dart';
 import 'package:beepo/Widgets/toasts.dart';
 import 'package:beepo/provider.dart';
 import 'package:beepo/search.dart';
@@ -12,7 +13,7 @@ import 'package:provider/provider.dart';
 
 import 'Models/wallet.dart';
 import 'Screens/Wallet/token_screen.dart';
-import 'Screens/browser_page.dart';
+import 'Screens/Browser/browser_page.dart';
 import 'Utils/styles.dart';
 import 'myMessages.dart';
 
@@ -21,7 +22,7 @@ class FilledButton extends StatelessWidget {
   final VoidCallback onPressed;
   final Color color;
 
-  FilledButton({@required this.text, @required this.color, @required this.onPressed});
+  FilledButton({@required this.text, this.color, @required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -213,48 +214,73 @@ class _ChatTabState extends State<ChatTab> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Messages",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
+                  showInput
+                      ? TextField(
+                          onSubmitted: (value) {
+                            setState(() {
+                              showInput = !showInput;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            hintText: 'Search messages',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
+                        )
+                      : Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                "Messages",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  showInput = !showInput;
+                                });
+                              },
+                              icon: Icon(
+                                Icons.search,
+                                color: Color(0xff908f8d),
+                                size: 20,
+                              ),
+                            ),
+                            // SizedBox(width: 20),
+                            // Icon(
+                            //   Icons.more_vert_outlined,
+                            //   color: Color(0xff908f8d),
+                            //   size: 18,
+                            // ),
+                          ],
                         ),
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SearchSearch2(),
-                            )),
-                        icon: Icon(
-                          Icons.search,
-                          color: Color(0xff908f8d),
-                          size: 20,
-                        ),
-                      ),
-                      SizedBox(width: 20),
-                      Icon(
-                        Icons.more_vert_outlined,
-                        color: Color(0xff908f8d),
-                        size: 18,
-                      ),
-                    ],
-                  ),
                   Consumer<ChatNotifier>(
                     builder: (context, pro, _) => Column(
                       children: [
                         StreamBuilder(
                           stream: FirebaseFirestore.instance
                               .collection('conversation')
-                              .doc(AuthService().uid)
+                              .doc(AuthService().uid.isEmpty ? ' ' : AuthService().uid)
                               .collection("currentConversation")
                               .snapshots(),
-                          builder: (context, AsyncSnapshot snapshot) {
+                          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                             if (snapshot.hasData) {
+                              if (snapshot.data.docs.isEmpty) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 50),
+                                  child: const Center(
+                                    child: Text(
+                                      'No Messages\n Tap on the + icon to start a conversation',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                );
+                              }
                               return ListView.separated(
                                 padding: const EdgeInsets.only(top: 10),
                                 physics: const NeverScrollableScrollPhysics(),

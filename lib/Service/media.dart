@@ -13,18 +13,16 @@ class MediaService {
     try {
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('$baseUrl/static/profile-photo/upload'),
+        Uri.parse('$baseUrl/users/upload'),
       );
-      request.fields['uid'] = generateRandomString(32);
       request.files.add(await http.MultipartFile.fromPath(
-        'photo',
+        '',
         image.path,
       ));
 
       http.StreamedResponse response = await request.send();
 
       var data = json.decode(await response.stream.bytesToString());
-      print(data);
       if (response.statusCode == 200) {
         return data['url'];
       } else {

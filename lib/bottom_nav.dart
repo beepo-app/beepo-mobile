@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
-import 'Screens/browser.dart';
+import 'Screens/Browser/browser.dart';
 import 'Screens/Messaging/chat.dart';
 import 'Screens/Profile/profile_screen.dart';
 import 'Screens/Wallet/wallet_screen.dart';

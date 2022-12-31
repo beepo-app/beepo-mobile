@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../Utils/styles.dart';
+
 dynamic loadingDialog(String label) {
   Get.dialog(
     Material(
@@ -37,4 +39,26 @@ dynamic loadingDialog(String label) {
 
 Widget loader() {
   return const Center(child: CircularProgressIndicator());
+}
+
+//custom appbar
+AppBar appBar(String title, {bool centerTitle = true}) {
+  return AppBar(
+    elevation: 0,
+    centerTitle: centerTitle,
+    backgroundColor: secondaryColor,
+    title: Text(
+      title,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 24,
+      ),
+    ),
+    foregroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        bottom: Radius.circular(15),
+      ),
+    ),
+  );
 }

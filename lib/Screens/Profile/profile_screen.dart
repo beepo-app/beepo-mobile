@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:beepo/Screens/Auth/onboarding.dart';
+import 'package:beepo/Screens/Profile/edit_profile.dart';
+import 'package:beepo/Service/auth.dart';
+import 'package:beepo/Widgets/commons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,51 +25,26 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    userData = Hive.box('beepo').get('userData');
+    // userData = Hive.box('beepo').get('userData');
     print(userData);
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        leading: const SizedBox(),
-        title: const Text(
-          "My Profile",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-          ),
-        ),
-      ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: Colors.white,
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.centerRight,
-              child: Container(
-                height: 100,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20)),
-                  color: Color(0xff0e014c),
-                ),
-              ),
-            ),
-            Expanded(
-                child: Container(
-              padding: const EdgeInsets.only(left: 20, right: 20),
-              color: Colors.white,
-              child: SingleChildScrollView(
+      appBar: appBar('My Profile'),
+      body: FutureBuilder(
+          future: AuthService().getUser(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            print(snapshot.data);
+            userData = snapshot.data;
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 53),
                     Align(
                       alignment: Alignment.center,
                       child: ClipRRect(
@@ -107,10 +85,14 @@ class _ProfileState extends State<Profile> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        const Icon(
-                          Icons.qr_code_scanner_rounded,
-                          color: Color(0xffff9c34),
-                          size: 25,
+                        GestureDetector(
+                          onTap: () => Get.to(() => EditProfile(userData))
+                              .then((value) => setState(() {})),
+                          child: const Icon(
+                            Icons.mode_edit_outlined,
+                            color: Color(0xffff9c34),
+                            size: 20,
+                          ),
                         ),
                       ],
                     ),
@@ -119,7 +101,7 @@ class _ProfileState extends State<Profile> {
                     ),
                     Center(
                       child: Text(
-                        userData['username'].toString(),
+                        "@" + userData['username'].toString(),
                         style: TextStyle(
                           color: secondaryColor,
                           fontSize: 15,
@@ -270,8 +252,7 @@ class _ProfileState extends State<Profile> {
                             ),
                           ),
                         ),
-                        Icon(Icons.arrow_forward,
-                            color: Color(0x660e014c), size: 20),
+                        Icon(Icons.arrow_forward, color: Color(0x660e014c), size: 20),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -280,8 +261,7 @@ class _ProfileState extends State<Profile> {
                       onTap: () {
                         Get.dialog(AlertDialog(
                           title: const Text("Logout"),
-                          content:
-                              const Text("Are you sure you want to logout?"),
+                          content: const Text("Are you sure you want to logout?"),
                           actions: [
                             TextButton(
                               onPressed: () => Get.back(),
@@ -307,10 +287,8 @@ class _ProfileState extends State<Profile> {
                   ],
                 ),
               ),
-            ))
-          ],
-        ),
-      ),
+            );
+          }),
     );
   }
 }

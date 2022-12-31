@@ -81,6 +81,16 @@ class _WalletScreenState extends State<WalletScreen> {
               Map btcBalance = snapshot.data[0];
               List ercBalances = snapshot.data[1];
 
+              //Calculate total balance
+              double totalBalance = 0;
+
+              for (var balance in ercBalances) {
+                var balanceDouble = num.parse(balance['USD']?.toString() ?? '0');
+                totalBalance += balanceDouble;
+              }
+
+              totalBalance += num.parse(btcBalance['USD'] ?? '0');
+
               return Container(
                 color: Colors.white,
                 child: Column(
@@ -110,8 +120,7 @@ class _WalletScreenState extends State<WalletScreen> {
                             ),
                             const SizedBox(height: 11),
                             Text(
-                              // totalBalance.toString(),
-                              '',
+                              "\$" + totalBalance.toStringAsFixed(2),
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -208,10 +217,10 @@ class _WalletScreenState extends State<WalletScreen> {
                             padding: const EdgeInsets.symmetric(
                               vertical: 10,
                             ),
-                            separatorBuilder: (BuildContext context, int index) {
+                            separatorBuilder: (_, int index) {
                               return const SizedBox(height: 10);
                             },
-                            itemBuilder: (BuildContext context, int index) {
+                            itemBuilder: (_, int index) {
                               Wallet wallet = wallets[index];
                               String fiatValue = '0';
 

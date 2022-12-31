@@ -51,9 +51,12 @@ class _WalletTokenState extends State<WalletToken> {
               height: 280,
               width: double.infinity,
               decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-                  color: secondaryColor),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+                color: secondaryColor,
+              ),
               child: Column(children: [
                 const SizedBox(height: 75),
                 CircleAvatar(
@@ -186,72 +189,74 @@ class _WalletTokenState extends State<WalletToken> {
                     onRefresh: () async {
                       setState(() {});
                     },
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (ctx, i) {
-                        final transaction = snapshot.data[i];
-                        bool isSent = transaction.type == 'transfer';
-                        return ListTile(
-                          minLeadingWidth: 10,
-                          leading: Icon(
-                            isSent ? Icons.arrow_upward : Icons.arrow_downward,
-                            size: 20,
-                            color: isSent ? Colors.red : Colors.green,
-                          ),
-                          onTap: () {
-                            launchUrlString(transaction.url);
-                          },
-                          title: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  transaction.type.capitalizeFirst,
-                                  style: TextStyle(
-                                    color: secondaryColor,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                (isSent ? '-' : '+') +
-                                    "${transaction.value.toPrecision(5)} ${widget.wallet.ticker}",
-                                style: TextStyle(
+                    child: snapshot.data.isEmpty
+                        ? const Text("No Transactions yet")
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            padding: EdgeInsets.zero,
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (ctx, i) {
+                              final transaction = snapshot.data[i];
+                              bool isSent = transaction.type == 'transfer';
+                              return ListTile(
+                                minLeadingWidth: 10,
+                                leading: Icon(
+                                  isSent ? Icons.arrow_upward : Icons.arrow_downward,
+                                  size: 20,
                                   color: isSent ? Colors.red : Colors.green,
-                                  fontSize: 13,
                                 ),
-                              )
-                            ],
+                                onTap: () {
+                                  launchUrlString(transaction.url);
+                                },
+                                title: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        transaction.type.capitalizeFirst,
+                                        style: TextStyle(
+                                          color: secondaryColor,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      (isSent ? '-' : '+') +
+                                          "${transaction.value.toPrecision(5)} ${widget.wallet.ticker}",
+                                      style: TextStyle(
+                                        color: isSent ? Colors.red : Colors.green,
+                                        fontSize: 13,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                subtitle: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        isSent
+                                            ? "To: ${transaction.to}"
+                                            : "From: ${transaction.from}",
+                                        style: TextStyle(
+                                          color: Color(0x7f0e014c),
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      formatDate(DateTime.fromMillisecondsSinceEpoch(
+                                        transaction.timestamp * 1000,
+                                      )),
+                                      style: TextStyle(
+                                        color: Color(0x7f0e014c),
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
-                          subtitle: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  isSent
-                                      ? "To: ${transaction.to}"
-                                      : "From: ${transaction.from}",
-                                  style: TextStyle(
-                                    color: Color(0x7f0e014c),
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                formatDate(DateTime.fromMillisecondsSinceEpoch(
-                                  transaction.timestamp * 1000,
-                                )),
-                                style: TextStyle(
-                                  color: Color(0x7f0e014c),
-                                  fontSize: 11,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
                   ),
                 ),
               );

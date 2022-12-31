@@ -40,7 +40,7 @@ class EncryptionService {
     }
   }
 
-  Future<String> decryptSeedPhrase({String seedPhrase}) async {
+  Future<bool> decryptSeedPhrase({String seedPhrase}) async {
     try {
       String decryptedSecretPhrase;
       var helper = RsaKeyHelper();
@@ -86,10 +86,10 @@ class EncryptionService {
 
       dev.log(encryptedAccessToken.base16);
 
-      return "true";
+      return true;
     } catch (e) {
       print(e);
-      return '';
+      return false;
     }
   }
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../Utils/styles.dart';
-import '../components.dart';
+import '../../Utils/styles.dart';
+import '../../components.dart';
 
 class Browser extends StatefulWidget {
   Browser({Key key}) : super(key: key);

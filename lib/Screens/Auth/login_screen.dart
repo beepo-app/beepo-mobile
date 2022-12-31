@@ -62,9 +62,9 @@ class Login extends StatelessWidget {
               text: 'Login',
               onPressed: () async {
                 String phrase = phraseController.text.trim();
+
                 if (phrase.isEmpty) {
                   showToast('Please enter your secret phrase');
-                  // connect();
                 } else {
                   Get.to(
                     Material(
@@ -99,8 +99,7 @@ class Login extends StatelessWidget {
                     ),
                     fullscreenDialog: true,
                   );
-                  bool result =
-                      await AuthService().loginWithSecretPhrase(phrase);
+                  bool result = await AuthService().loginWithSecretPhrase(phrase);
                   Get.back();
                   if (result) {
                     showToast('Logged in successfully');

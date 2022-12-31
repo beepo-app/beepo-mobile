@@ -21,23 +21,18 @@ class ChatNotifier extends ChangeNotifier {
   Reference ref = FirebaseStorage.instance.ref().child('profilepic.jpg');
   File selectedImage;
 
-   pickUploadImage() async {
+  pickUploadImage() async {
     final image = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 512,
-        maxHeight: 512,
-        imageQuality: 75);
+        source: ImageSource.gallery, maxWidth: 512, maxHeight: 512, imageQuality: 75);
     ref = FirebaseStorage.instance.ref().child(image.path);
     notifyListeners();
 
     if (image != null) {
-      ImageUtil()
-          .cropProfileImage(image)
-          .then((value) {
+      ImageUtil().cropProfileImage(image as File).then((value) {
         if (value != null) {
           // setState(() {
-            selectedImage = value;
-            notifyListeners();
+          selectedImage = value;
+          notifyListeners();
           // });
         }
       });
@@ -47,28 +42,22 @@ class ChatNotifier extends ChangeNotifier {
         print(value);
         imageUrl = value;
         notifyListeners();
-
       });
     }
-
   }
+
   cameraUploadImage() async {
     final image = await ImagePicker().pickImage(
-        source: ImageSource.camera,
-        maxWidth: 512,
-        maxHeight: 512,
-        imageQuality: 75);
+        source: ImageSource.camera, maxWidth: 512, maxHeight: 512, imageQuality: 75);
     ref = FirebaseStorage.instance.ref().child(image.path);
     notifyListeners();
 
     if (image != null) {
-      ImageUtil()
-          .cropProfileImage(image)
-          .then((value) {
+      ImageUtil().cropProfileImage(image as File).then((value) {
         if (value != null) {
           // setState(() {
-            selectedImage = value;
-            notifyListeners();
+          selectedImage = value;
+          notifyListeners();
           // });
         }
       });
@@ -78,10 +67,8 @@ class ChatNotifier extends ChangeNotifier {
       print(value);
       imageUrl = value;
       notifyListeners();
-
     });
   }
-
 
   void storeText(newText) {
     chatText = newText;
@@ -96,10 +83,8 @@ class ChatNotifier extends ChangeNotifier {
   Map chosen = {};
 
   getUsers(UserModel model) async {
-    final snap = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(model.uid)
-        .get();
+    final snap =
+        await FirebaseFirestore.instance.collection('users').doc(model.uid).get();
     //
     // snap.listen((event) {
     //   _users.clear();

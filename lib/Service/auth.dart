@@ -97,6 +97,8 @@ class AuthService {
         },
       );
 
+      print(AuthService().accessToken);
+
       if (response.statusCode == 200) {
         Map data = json.decode(response.body);
         Hive.box('beepo').put('userData', data);
@@ -116,18 +118,25 @@ class AuthService {
     try {
       //Step 1. Create keys and context
       //Step 2. Get seedphrase hashes
-      // await EncryptionService().encryption();
       Map keys = await isolateFunction();
       await AuthService().createContext(keys['publicKey']);
 
       box.put('privateKey', keys['privateKey']);
       box.put('publicKey', keys['publicKey']);
 
-      await EncryptionService().decryptSeedPhrase(seedPhrase: seedPhrase);
+      bool logIn = await EncryptionService().decryptSeedPhrase(seedPhrase: seedPhrase);
 
-      await getUser();
+      if (logIn) {
+        Map result = await getUser();
 
-      return true;
+        if (result != null) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
     } catch (e) {
       showToast(e.toString());
       return false;
@@ -184,7 +193,7 @@ class AuthService {
         box.put('isLogged', true);
         return data['accessToken'];
       } else {
-        return '';
+        throw Exception("Invalid Credentials");
       }
     } catch (e) {
       print(e);
@@ -216,23 +225,75 @@ class AuthService {
   }
 
   //Retrieve Passphrase
-  Future<void> retrievePassphraseLocal() async {
+  // Future<void> retrievePassphraseLocal() async {
+  //   try {
+  //     final response = await http.get(
+  //       Uri.parse('$baseUrl/wallet/recover-seedphrase'),
+  //       headers: {
+  //         // 'Accept': 'application/json',
+  //         Headers.bearer: AuthService().accessToken,
+  //         Headers.context: AuthService().contextId,
+  //       },
+  //     );
+  //     print(response.body);
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       Map result = jsonDecode(response.body);
+  //       if (result['encrypted_passphrase']) {}
+  //     }
+  //   } catch (e) {
+  //     return {};
+  //   }
+  // }
+
+  //Edit profile
+  Future<bool> editProfile({
+    String displayName,
+    String username,
+    String imgUrl,
+  }) async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/wallet/recover-seedphrase'),
+      final response = await http.post(
+        Uri.parse('$baseUrl/users/edit'),
         headers: {
-          // 'Accept': 'application/json',
-          Headers.bearer: AuthService().accessToken,
+          'Accept': 'application/json',
           Headers.context: AuthService().contextId,
+          // 'Content-Type': 'application/json',
+        },
+        body: {
+          'displayName': displayName,
+          'username': username,
+          'profilePictureUrl': imgUrl,
         },
       );
+
       print(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Map result = jsonDecode(response.body);
-        if (result['encrypted_passphrase']) {}
+        var data = json.decode(response.body);
+        print(data);
+        // box.put('seedphrase', data['seedphrase']);
+        // box.put('uid', data['user']['uid']);
+        // box.put('isLogged', true);
+        // box.put('userData', data['user']);
+
+        // UserModel user = UserModel(
+        //     uid: data['user']['uid'],
+        //     searchKeywords: createKeywords(data['user']['username']),
+        //     name: displayName,
+        //     image: imgUrl,
+        //     userName: data['user']['username']);
+        // await FirebaseFirestore.instance
+        //     .collection('users')
+        //     .doc(data['user']['uid'])
+        //     .set(user.toJson());
+
+        return true;
+      } else {
+        showToast(response.body);
+        return false;
       }
     } catch (e) {
-      return {};
+      showToast(e.toString());
+      return false;
     }
   }
 }
