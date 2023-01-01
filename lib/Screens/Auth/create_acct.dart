@@ -3,13 +3,17 @@
 import 'dart:io';
 
 import 'package:beepo/Service/auth.dart';
+import 'package:beepo/Utils/styles.dart';
 import 'package:beepo/Widgets/toasts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
+import '../../Service/media.dart';
+import '../../Utils/functions.dart';
 import '../../components.dart';
 import '../../provider.dart';
 import 'pin_code.dart';
@@ -59,13 +63,15 @@ class _CreateAccountState extends State<CreateAccount> {
                     shape: BoxShape.circle,
                     color: Color(0xffc4c4c4),
                   ),
-                  child: context.watch<ChatNotifier>().imageUrl != ' '
+                  child: selectedImage != null
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(100),
-                          child: CachedNetworkImage(
-                            imageUrl: context.watch<ChatNotifier>().imageUrl,
-                          ),
-                        )
+                          child: Image.file(
+                            selectedImage,
+                            height: 120,
+                            width: 120,
+                            fit: BoxFit.cover,
+                          ))
                       : const Icon(
                           Icons.person_outlined,
                           size: 117,
@@ -73,80 +79,29 @@ class _CreateAccountState extends State<CreateAccount> {
                         ),
                 ),
                 Positioned(
-                  right: 17,
-                  bottom: 12,
+                  right: 10,
+                  bottom: 10,
                   child: GestureDetector(
                     onTap: () {
-                      Get.dialog(Dialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              ListTile(
-                                leading: const Icon(Icons.photo_camera),
-                                title: const Text("Take a photo"),
-                                onTap: () async {
-                                  context
-                                      .read<ChatNotifier>()
-                                      .cameraUploadImage();
-                                  Get.back();
-                                  // XFile? image = await ImagePicker()
-                                  //     .pickImage(source: ImageSource.camera);
-                                  // if (image != null) {
-                                  //   ImageUtil().cropProfileImage(image).then((value) {
-                                  //     if (value != null) {
-                                  //       setState(() {
-                                  //         selectedImage = value;
-                                  //       });
-                                  //     }
-                                  //   });
-                                  // }
-                                },
-                              ),
-                              ListTile(
-                                leading: const Icon(Icons.photo_library),
-                                title: const Text("Choose from gallery"),
-                                onTap: () {
-                                  // setState(() {
-                                  context
-                                      .read<ChatNotifier>()
-                                      .pickUploadImage();
-                                  // });
-
-                                  Get.back();
-                                  // final image = await ImagePicker()
-                                  //     .pickImage(source: ImageSource.gallery);
-                                  // if (image != null) {
-                                  //   ImageUtil().cropProfileImage(image).then((value) {
-                                  //     if (value != null) {
-                                  //       setState(() {
-                                  //         selectedImage = value;
-                                  //       });
-                                  //     }
-                                  //   });
-                                  // }
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ));
+                      ImageUtil().pickProfileImage(context: context).then((value) {
+                        if (value != null) {
+                          setState(() {
+                            selectedImage = value;
+                          });
+                        }
+                      });
                     },
                     child: Container(
-                      width: 30,
-                      height: 30,
+                      width: 40,
+                      height: 40,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Color(0xff0e014c),
+                        color: secondaryColor,
                       ),
                       child: const Icon(
                         Icons.photo_camera_outlined,
                         color: Colors.white,
-                        size: 15,
+                        size: 20,
                       ),
                     ),
                   ),
@@ -177,10 +132,6 @@ class _CreateAccountState extends State<CreateAccount> {
                   showToast('Please enter a display name');
                   return;
                 } else {
-                  if (context.read<ChatNotifier>().imageUrl == ' ') {
-                    showToast('Please select a profile picture');
-                    return;
-                  }
                   Get.to(
                     Material(
                       child: Container(
@@ -215,27 +166,16 @@ class _CreateAccountState extends State<CreateAccount> {
                     fullscreenDialog: true,
                   );
 
-                  String imageUrl2 =
-                      'https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80';
-                  // 'https://picsum.photos/200/300.png';
-
-                  // if (selectedImage != null) {
-                  //   imageUrl = await MediaService.uploadProfilePicture(selectedImage);
-                  // }
-
-                  // String imageUrl =
-                  //     await AuthService.updateUserProfileImage(selectedImage);
-                  // if (backupPhrase != null) {
-                  //   showToast('Account created successfully');
-                  //   Get.to(PhraseScreen(phrase: backupPhrase));
-                  // }
-
-                  // if (imageUrl != null) {
+                  String imageUrl = "";
+                  if (selectedImage != null) {
+                    imageUrl = await MediaService.uploadProfilePicture(selectedImage);
+                  }
 
                   bool result = await AuthService().createUser(
                     displayName.text.trim(),
-                    context.read<ChatNotifier>().imageUrl,
+                    imageUrl,
                   );
+
                   Get.back();
                   if (result) {
                     showToast('Account created successfully');

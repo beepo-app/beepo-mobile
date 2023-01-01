@@ -89,7 +89,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 totalBalance += balanceDouble;
               }
 
-              totalBalance += num.parse(btcBalance['USD'] ?? '0');
+              totalBalance += num.parse(btcBalance['USD']?.toString() ?? '0');
 
               return Container(
                 color: Colors.white,

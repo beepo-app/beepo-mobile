@@ -75,12 +75,8 @@ class _EditProfileState extends State<EditProfile> {
                       right: 0,
                       child: GestureDetector(
                         onTap: () async {
-                          print('Edit profile picture');
                           //pick image
                           file = await ImageUtil().pickProfileImage(context: context);
-
-                          //upload image
-                          MediaService.uploadProfilePicture(file);
                         },
                         child: Container(
                           height: 40,

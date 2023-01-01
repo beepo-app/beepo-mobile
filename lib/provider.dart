@@ -18,7 +18,7 @@ class ChatNotifier extends ChangeNotifier {
 
   String imageUrl = ' ';
 
-  Reference ref = FirebaseStorage.instance.ref().child('profilepic.jpg');
+  Reference ref = FirebaseStorage.instance.ref();
   File selectedImage;
 
   pickUploadImage() async {
