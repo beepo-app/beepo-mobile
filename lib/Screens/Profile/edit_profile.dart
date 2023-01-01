@@ -24,6 +24,7 @@ class EditProfile extends StatefulWidget {
 class _EditProfileState extends State<EditProfile> {
   TextEditingController displayNameController = TextEditingController();
   TextEditingController userNameController = TextEditingController();
+  TextEditingController bioController = TextEditingController();
   File file;
 
   @override
@@ -138,6 +139,26 @@ class _EditProfileState extends State<EditProfile> {
               CustomTextField(
                 hintText: 'Enter your username',
                 controller: userNameController,
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Bio',
+                style: TextStyle(
+                  color: secondaryColor,
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                "Max 100 Characters",
+                style: TextStyle(
+                  color: Color(0x660e014c),
+                  fontSize: 10,
+                ),
+              ),
+              SizedBox(height: 10),
+              CustomTextField(
+                hintText: 'Enter your bio',
+                controller: bioController,
               ),
               SizedBox(height: 40),
               Center(
