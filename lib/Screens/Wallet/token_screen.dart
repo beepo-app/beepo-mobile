@@ -91,7 +91,10 @@ class _WalletTokenState extends State<WalletToken> {
                         Transform.rotate(
                           angle: 24.5,
                           child: IconButton(
-                              onPressed: () => Get.to(SendToken(wallet: widget.wallet)),
+                              onPressed: () => Get.to(SendToken(
+                                    wallet: widget.wallet,
+                                    balance: widget.balance,
+                                  )),
                               icon: const Icon(
                                 Icons.send_outlined,
                                 size: 25,

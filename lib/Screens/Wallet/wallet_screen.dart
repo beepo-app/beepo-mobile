@@ -37,12 +37,12 @@ class _WalletScreenState extends State<WalletScreen> {
         actions: [
           Row(
             children: const [
-              Icon(
-                Icons.search,
-                color: Color(0xff908f8d),
-                size: 25,
-              ),
-              SizedBox(width: 20),
+              // Icon(
+              //   Icons.search,
+              //   color: Color(0xff908f8d),
+              //   size: 25,
+              // ),
+              // SizedBox(width: 20),
               Icon(
                 Icons.more_vert_outlined,
                 color: Color(0xff908f8d),

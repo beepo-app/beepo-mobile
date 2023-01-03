@@ -11,7 +11,8 @@ import 'preview_transfer.dart';
 
 class SendToken extends StatefulWidget {
   final Wallet wallet;
-  SendToken({Key key, this.wallet}) : super(key: key);
+  final String balance;
+  SendToken({Key key, this.wallet, this.balance}) : super(key: key);
 
   @override
   State<SendToken> createState() => _SendTokenState();
@@ -61,6 +62,14 @@ class _SendTokenState extends State<SendToken> {
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                     borderSide: BorderSide(width: 1, color: Colors.grey),
                   ),
+                ),
+              ),
+              SizedBox(height: 5),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Text(
+                  'Balance:  \$${widget.balance ?? 0.0}',
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ),
               SizedBox(height: 18),
