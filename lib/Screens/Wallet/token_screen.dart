@@ -185,12 +185,13 @@ class _WalletTokenState extends State<WalletToken> {
               return Expanded(
                 child: Container(
                   color: Colors.white,
+                  width: double.infinity,
                   child: RefreshIndicator(
                     onRefresh: () async {
                       setState(() {});
                     },
                     child: snapshot.data.isEmpty
-                        ? const Text("No Transactions yet")
+                        ? const Center(child: Text("No Transactions yet"))
                         : ListView.builder(
                             shrinkWrap: true,
                             padding: EdgeInsets.zero,

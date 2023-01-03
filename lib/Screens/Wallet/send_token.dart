@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 
 import '../../Utils/styles.dart';
 import '../../components.dart';
-import '../sendToken2.dart';
+import 'preview_transfer.dart';
 
 class SendToken extends StatefulWidget {
   final Wallet wallet;
@@ -155,21 +155,23 @@ class _SendTokenState extends State<SendToken> {
               //   ),
               // ),
 
-              SizedBox(height: 70),
+              const SizedBox(height: 70),
               FilledButton(
                 color: secondaryColor,
                 text: "Continue",
                 onPressed: () {
                   if (amount.text.isEmpty) {
                     showToast('Please enter amount');
-                  } else if (address.text.trim().isEmpty) {
-                    showToast('Please enter address');
+                  } else if (address.text.trim().isEmpty ||
+                      address.text.trim().length < 16) {
+                    showToast('Please enter a valid address');
                   } else {
                     Get.to(
                       SendToken2(
-                          wallet: widget.wallet,
-                          amount: double.parse(amount.text),
-                          address: address.text),
+                        wallet: widget.wallet,
+                        amount: double.parse(amount.text),
+                        address: address.text,
+                      ),
                     );
                   }
                 },

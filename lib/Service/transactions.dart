@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:beepo/Models/transaction.dart';
 import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Service/encryption.dart';
+import 'package:beepo/Widgets/toasts.dart';
 import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -30,7 +31,7 @@ class TransactionService {
   }
 
   //Send token
-  Future<void> sendToken(
+  Future<bool> sendToken(
       {String amount, String gasFee, String address, String networkId}) async {
     try {
       log(address);
@@ -61,9 +62,18 @@ class TransactionService {
 
       log(response.body);
 
-      if (response.statusCode == 200) {}
+      var data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        showToast(data['message'].toString());
+        return false;
+      }
     } catch (e) {
       print(e);
+      showToast('Error sending token');
+      return false;
     }
   }
 

@@ -264,7 +264,6 @@ class AuthService {
         },
       );
 
-      print(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         var data = json.decode(response.body);
         print(data);

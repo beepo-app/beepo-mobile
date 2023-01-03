@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:beepo/Screens/Wallet/transfer_success.dart';
 import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Widgets/textfields.dart';
 import 'package:beepo/Widgets/toasts.dart';
