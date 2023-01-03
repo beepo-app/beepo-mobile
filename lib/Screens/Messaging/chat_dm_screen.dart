@@ -1,24 +1,16 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:io';
-
-import 'package:audioplayers/audioplayers.dart';
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:record_mp3/record_mp3.dart';
 
 import '../../Service/auth.dart';
 import '../../Widgets/toasts.dart';
@@ -41,7 +33,6 @@ class ChatDm extends StatefulWidget {
 class _ChatDmState extends State<ChatDm> {
   TextEditingController messageController = TextEditingController();
   bool isTyping = true;
-
 
   @override
   void initState() {
@@ -185,7 +176,8 @@ class _ChatDmState extends State<ChatDm> {
                         if (snapshot.hasData) {
                           return ListView.builder(
                             reverse: true,
-                            controller: context.read<ChatNotifier>().scrollController,
+                            controller:
+                                context.read<ChatNotifier>().scrollController,
                             itemCount: snapshot.data.docs.length,
                             itemBuilder: (context, index) {
                               Timestamp time =
@@ -242,10 +234,9 @@ class _ChatDmState extends State<ChatDm> {
                                             padding: EdgeInsets.all(10),
                                             decoration: BoxDecoration(
                                               color: (snapshot.data.docs[index]
-                                                          ['sender'] ==
+                                                          ['sender'] !=
                                                       AuthService().uid)
-                                                  ? Color(0xffFF9C34)
-                                                  : Color(0xe50d004c),
+                                                  ? Color(0xffc4c4c4) : Color(0xff0E014C),
                                               borderRadius: BorderRadius.only(
                                                 topLeft:
                                                     (snapshot.data.docs[index]
@@ -264,36 +255,56 @@ class _ChatDmState extends State<ChatDm> {
                                                     Radius.circular(12),
                                               ),
                                             ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
+                                            child: Column(
                                               children: [
                                                 Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
                                                   children: [
-                                                    context.watch<ChatNotifier>().isPlayingMsg
+                                                    context
+                                                            .watch<
+                                                                ChatNotifier>()
+                                                            .isPlayingMsg
                                                         ? GestureDetector(
-                                                            child: Icon(Icons
-                                                                .cancel),
+                                                            child: Icon(
+                                                                Icons.cancel),
                                                             onTap: () {
-                                                              context.read<ChatNotifier>().stopRecord(widget.model.uid);
-                                                              context.read<ChatNotifier>().isPlayingMsg = false;
+                                                              // context.read<ChatNotifier>().isPlayingMsg = false;
+                                                              context
+                                                                  .read<
+                                                                      ChatNotifier>()
+                                                                  .stopRecord(
+                                                                      widget
+                                                                          .model
+                                                                          .uid);
                                                             },
                                                           )
                                                         : GestureDetector(
                                                             child: Icon(Icons
                                                                 .play_arrow),
                                                             onTap: () async {
-                                                              await context.read<ChatNotifier>().loadFile(snapshot
-                                                                      .data
-                                                                      .docs[index]
-                                                                  [
-                                                                  'content']);
-
+                                                              context
+                                                                  .read<
+                                                                      ChatNotifier>()
+                                                                  .isPlayingMsg = true;
+                                                              await context
+                                                                  .read<
+                                                                      ChatNotifier>()
+                                                                  .loadFile(snapshot
+                                                                          .data
+                                                                          .docs[index]
+                                                                      [
+                                                                      'content']);
+                                                              // Future.delayed(duration)
+                                                              context
+                                                                  .read<
+                                                                      ChatNotifier>()
+                                                                  .isPlayingMsg = false;
+                                                              // notifyListeners();
                                                             },
-
                                                           ),
                                                     SizedBox(
                                                       width: 10,
@@ -303,21 +314,40 @@ class _ChatDmState extends State<ChatDm> {
                                                         'assets/lottie/waves.json',
                                                         height: 40,
                                                         width: 80,
-                                                        animate: context.watch<ChatNotifier>().isPlayingMsg? true:false,
+                                                        animate: context
+                                                                .watch<
+                                                                    ChatNotifier>()
+                                                                .isPlayingMsg
+                                                            ? true
+                                                            : false,
                                                         fit: BoxFit.fitHeight,
                                                       ),
                                                     ),
                                                   ],
                                                 ),
-                                                Text(
-                                                  // date +
-                                                  //     " " +
-                                                  hour.toString() +
-                                                      ":" +
-                                                      min.toString() +
-                                                      ampm,
-                                                  style: TextStyle(
-                                                      fontSize: 10),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      '${snapshot.data.docs[index]['duration']} seconds',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      // date +
+                                                      //     " " +
+                                                      hour.toString() +
+                                                          ":" +
+                                                          min.toString() +
+                                                          ampm,
+                                                      style: TextStyle(
+                                                          fontSize: 10),
+                                                    ),
+                                                  ],
                                                 )
                                               ],
                                             ),
@@ -428,21 +458,26 @@ class _ChatDmState extends State<ChatDm> {
                         });
                       },
                       onLongPressEnd: (hey) {
-                        context.read<ChatNotifier>().stopRecord(widget.model.uid);
+                        context
+                            .read<ChatNotifier>()
+                            .stopRecord(widget.model.uid);
                         setState(() {
                           context.read<ChatNotifier>().isRecording = false;
                           showToast('Sent!');
                         });
+                        context.read<ChatNotifier>().durationCalc();
                       },
-                      child: context.watch<ChatNotifier>().isRecording? Lottie.asset(
-                        'assets/lottie/mic.json',
-                        height: 47,
-                        width: 27,
-                      ): SvgPicture.asset(
-                        'assets/microphone.svg',
-                        width: 27,
-                        height: 27,
-                      ),
+                      child: context.watch<ChatNotifier>().isRecording
+                          ? Lottie.asset(
+                              'assets/lottie/mic.json',
+                              height: 47,
+                              width: 27,
+                            )
+                          : SvgPicture.asset(
+                              'assets/microphone.svg',
+                              width: 27,
+                              height: 27,
+                            ),
                     )
                   : IconButton(
                       onPressed: () async {

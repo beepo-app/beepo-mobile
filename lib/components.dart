@@ -431,7 +431,7 @@ class MessageSender extends StatelessWidget {
             bottomLeft: Radius.circular(12),
             bottomRight: Radius.circular(12),
           ),
-          color: isMe ? Color(0xffFF9C34) : Color(0xe50d004c),
+          color: !isMe ? Color(0xffc4c4c4) : Color(0xff0E014C),
         ),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.5,

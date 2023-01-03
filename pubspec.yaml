@@ -61,6 +61,7 @@ dependencies:
   provider: ^6.0.5
   firebase_core_platform_interface: 4.5.1
   firebase_storage: ^10.3.11
+  just_audio: ^0.9.31
 
 #
 

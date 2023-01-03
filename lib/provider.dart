@@ -117,15 +117,14 @@ class ChatNotifier extends ChangeNotifier {
       // setState(() {
         recordFilePath = file.path;
         notifyListeners();
-        isPlayingMsg = true;
-        notifyListeners();
+        // isPlayingMsg = true;
+        // notifyListeners();
         print(isPlayingMsg);
       // });
       await play();
 
       // setState(() {
-        isPlayingMsg = false;
-        notifyListeners();
+
       //   print(isPlayingMsg);
       // });
     }
@@ -171,6 +170,17 @@ class ChatNotifier extends ChangeNotifier {
     }
   }
 
+  Duration dure = const Duration();
+  durationCalc(){
+    AudioPlayer audioPlayer = AudioPlayer();
+    audioPlayer.setUrl(recordFilePath, isLocal: true);
+    audioPlayer.onDurationChanged.listen((Duration event) {
+      dure = event;
+      notifyListeners();
+      print(event);
+    });
+  }
+
   Future<void> play() async {
     if (recordFilePath != null && File(recordFilePath).existsSync()) {
       AudioPlayer audioPlayer = AudioPlayer();
@@ -178,10 +188,7 @@ class ChatNotifier extends ChangeNotifier {
         recordFilePath,
         isLocal: true,
       );
-      // setState(() {
-      //   isPlayingMsg = false;
-      // });
-      // audioPlayer;
+
     }
   }
 
@@ -218,6 +225,7 @@ class ChatNotifier extends ChangeNotifier {
           "receiver": receiverId,
           "created": Timestamp.now(),
           "content": audioMsg,
+          "duration": dure.inSeconds.toString(),
           "type": 'audio'
         });
       }).then((value) {
@@ -240,6 +248,7 @@ class ChatNotifier extends ChangeNotifier {
           "receiver": receiverId,
           "created": Timestamp.now(),
           "content": audioMsg,
+          "duration": dure.inSeconds.toString(),
           "type": 'audio'
         });
       }).then((value) {
@@ -260,6 +269,7 @@ class ChatNotifier extends ChangeNotifier {
           "receiver": receiverId,
           "created": Timestamp.now(),
           "content": audioMsg,
+          "duration": dure.inSeconds.toString(),
           "type": 'audio'
         });
       }).then((value) {
@@ -280,6 +290,7 @@ class ChatNotifier extends ChangeNotifier {
           "receiver": receiverId,
           "created": Timestamp.now(),
           "content": audioMsg,
+          "duration": dure.inSeconds.toString(),
           "type": 'audio'
         });
       }).then((value) {
