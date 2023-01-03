@@ -456,7 +456,7 @@ class MessageSender extends StatelessWidget {
                 Text(
                   '${time.toDate().hour} : ${time.toDate().minute}',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: Colors.white,
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                   ),

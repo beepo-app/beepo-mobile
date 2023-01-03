@@ -236,7 +236,8 @@ class _ChatDmState extends State<ChatDm> {
                                               color: (snapshot.data.docs[index]
                                                           ['sender'] !=
                                                       AuthService().uid)
-                                                  ? Color(0xffc4c4c4) : Color(0xff0E014C),
+                                                  ? Color(0xffc4c4c4)
+                                                  : Color(0xff0E014C),
                                               borderRadius: BorderRadius.only(
                                                 topLeft:
                                                     (snapshot.data.docs[index]
@@ -262,7 +263,7 @@ class _ChatDmState extends State<ChatDm> {
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
+                                                      CrossAxisAlignment.center,
                                                   children: [
                                                     context
                                                             .watch<
@@ -270,7 +271,10 @@ class _ChatDmState extends State<ChatDm> {
                                                             .isPlayingMsg
                                                         ? GestureDetector(
                                                             child: Icon(
-                                                                Icons.cancel),
+                                                              Icons.cancel,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
                                                             onTap: () {
                                                               // context.read<ChatNotifier>().isPlayingMsg = false;
                                                               context
@@ -283,8 +287,11 @@ class _ChatDmState extends State<ChatDm> {
                                                             },
                                                           )
                                                         : GestureDetector(
-                                                            child: Icon(Icons
-                                                                .play_arrow),
+                                                            child: Icon(
+                                                              Icons.play_arrow,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
                                                             onTap: () async {
                                                               context
                                                                   .read<
@@ -306,14 +313,12 @@ class _ChatDmState extends State<ChatDm> {
                                                               // notifyListeners();
                                                             },
                                                           ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
+
                                                     Center(
                                                       child: Lottie.asset(
                                                         'assets/lottie/waves.json',
-                                                        height: 40,
-                                                        width: 80,
+                                                        height: 30,
+                                                        width: 100,
                                                         animate: context
                                                                 .watch<
                                                                     ChatNotifier>()
@@ -345,7 +350,9 @@ class _ChatDmState extends State<ChatDm> {
                                                           min.toString() +
                                                           ampm,
                                                       style: TextStyle(
-                                                          fontSize: 10),
+                                                        color: Colors.white,
+                                                        fontSize: 10,
+                                                      ),
                                                     ),
                                                   ],
                                                 )
