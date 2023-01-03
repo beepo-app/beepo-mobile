@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
+import 'package:beepo/Widgets/toasts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -545,14 +547,20 @@ class _ChatDmState extends State<ChatDm> {
                         setState(() {
                           isRecording = true;
                         });
+                        showToast('Recording!');
                       },
                       onLongPressEnd: (hey) {
                         stopRecord(widget.model.uid);
                         setState(() {
                           isRecording = false;
                         });
+                        showToast('Sent!');
                       },
-                      child: SvgPicture.asset(
+                      child: isRecording? Lottie.asset(
+                        'assets/lottie/mic_wave.json',
+                        height: 47,
+                        width: 27,
+                      ): SvgPicture.asset(
                         'assets/microphone.svg',
                         width: 27,
                         height: 27,
