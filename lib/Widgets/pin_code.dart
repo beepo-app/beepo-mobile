@@ -12,8 +12,6 @@ class NumberKeyboard extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
       child: Column(
         children: [
-          Text(''),
-          SizedBox(height: 20),
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

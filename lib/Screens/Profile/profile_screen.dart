@@ -8,6 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../Utils/styles.dart';
 import '../language_screen.dart';
@@ -117,7 +118,7 @@ class _ProfileState extends State<Profile> {
                     //         child: const Text(
                     //           "Account Type",
                     //           style: TextStyle(
-                    //             color: const Color(0xff0e014c),
+                    //             color: const secondaryColor,
                     //             fontSize: 14,
                     //           ),
                     //         ),
@@ -140,7 +141,7 @@ class _ProfileState extends State<Profile> {
                           child: Text(
                             "Theme",
                             style: TextStyle(
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                             ),
                           ),
@@ -163,7 +164,7 @@ class _ProfileState extends State<Profile> {
                             child: const Text(
                               "Security",
                               style: TextStyle(
-                                color: Color(0xff0e014c),
+                                color: secondaryColor,
                                 fontSize: 14,
                               ),
                             ),
@@ -180,7 +181,7 @@ class _ProfileState extends State<Profile> {
                           child: Text(
                             "Help",
                             style: TextStyle(
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                             ),
                           ),
@@ -196,7 +197,7 @@ class _ProfileState extends State<Profile> {
                           child: Text(
                             "Invite Friends",
                             style: TextStyle(
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                             ),
                           ),
@@ -212,7 +213,7 @@ class _ProfileState extends State<Profile> {
                           child: Text(
                             "Notification",
                             style: TextStyle(
-                              color: Color(0xff0e014c),
+                              color: secondaryColor,
                               fontSize: 14,
                             ),
                           ),
@@ -230,7 +231,7 @@ class _ProfileState extends State<Profile> {
                             child: const Text(
                               "Language",
                               style: TextStyle(
-                                color: Color(0xff0e014c),
+                                color: secondaryColor,
                                 fontSize: 14,
                               ),
                             ),
@@ -241,19 +242,22 @@ class _ProfileState extends State<Profile> {
                       ],
                     ),
                     const SizedBox(height: 26),
-                    Row(
-                      children: const [
-                        Expanded(
-                          child: Text(
-                            "About",
-                            style: TextStyle(
-                              color: Color(0xff0e014c),
-                              fontSize: 14,
+                    InkWell(
+                      onTap: () => launchUrlString('https://www.beepoapp.net'),
+                      child: Row(
+                        children: const [
+                          Expanded(
+                            child: Text(
+                              "About",
+                              style: TextStyle(
+                                color: secondaryColor,
+                                fontSize: 14,
+                              ),
                             ),
                           ),
-                        ),
-                        Icon(Icons.arrow_forward, color: Color(0x660e014c), size: 20),
-                      ],
+                          Icon(Icons.arrow_forward, color: Color(0x660e014c), size: 20),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 10),
                     ListTile(

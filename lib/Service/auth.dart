@@ -250,38 +250,26 @@ class AuthService {
     String imgUrl,
   }) async {
     try {
+      print(AuthService().contextId);
+
       final response = await http.post(
         Uri.parse('$baseUrl/users/edit'),
         headers: {
           'Accept': 'application/json',
           Headers.context: AuthService().contextId,
-          // 'Content-Type': 'application/json',
+          'Content-Type': 'application/json',
         },
-        body: {
+        body: jsonEncode({
           'displayName': displayName,
           'username': username,
           'profilePictureUrl': imgUrl,
-        },
+          'description': 'nnn'
+        }),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         var data = json.decode(response.body);
         print(data);
-        // box.put('seedphrase', data['seedphrase']);
-        // box.put('uid', data['user']['uid']);
-        // box.put('isLogged', true);
-        // box.put('userData', data['user']);
-
-        // UserModel user = UserModel(
-        //     uid: data['user']['uid'],
-        //     searchKeywords: createKeywords(data['user']['username']),
-        //     name: displayName,
-        //     image: imgUrl,
-        //     userName: data['user']['username']);
-        // await FirebaseFirestore.instance
-        //     .collection('users')
-        //     .doc(data['user']['uid'])
-        //     .set(user.toJson());
 
         return true;
       } else {
