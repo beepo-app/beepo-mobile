@@ -444,8 +444,11 @@ class MessageSender extends StatelessWidget {
           children: [
             Text(
               text,
-              style: TextStyle(
+              style: isMe? TextStyle(
                 color: Colors.white,
+                fontSize: 14,
+              ): TextStyle(
+                color: Colors.black,
                 fontSize: 14,
               ),
             ),
@@ -455,10 +458,12 @@ class MessageSender extends StatelessWidget {
               children: [
                 Text(
                   '${time.toDate().hour} : ${time.toDate().minute}',
-                  style: TextStyle(
+                  style: isMe? TextStyle(
                     color: Colors.white,
                     fontSize: 10,
-                    fontWeight: FontWeight.w600,
+                  ): TextStyle(
+                    color: Colors.black,
+                    fontSize: 10,
                   ),
                 ),
                 isMe

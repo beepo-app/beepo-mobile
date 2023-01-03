@@ -337,9 +337,14 @@ class _ChatDmState extends State<ChatDm> {
                                                   children: [
                                                     Text(
                                                       '${snapshot.data.docs[index]['duration']} seconds',
-                                                      style: TextStyle(
+                                                      style: (snapshot.data.docs[index]
+                                                      ['sender'] ==
+                                                          AuthService().uid)? TextStyle(
                                                         color: Colors.white,
-                                                        fontSize: 14,
+                                                        fontSize: 10,
+                                                      ): TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 10,
                                                       ),
                                                     ),
                                                     Text(
