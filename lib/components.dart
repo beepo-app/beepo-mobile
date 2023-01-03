@@ -420,6 +420,7 @@ class MessageSender extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(

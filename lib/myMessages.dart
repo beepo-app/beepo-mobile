@@ -113,7 +113,8 @@ class _MyMessagesState extends State<MyMessages> {
                   ],
                 ),
                 subtitle: Text(
-                  '${snapshot.data.docs[0]['text']}',
+                  snapshot.data.docs[0]['type'] == 'message'
+                      ?'${snapshot.data.docs[0]['text']}' : 'Voice Note',
                   style: isTapped == false
                       ? TextStyle(
                           color: Colors.black,

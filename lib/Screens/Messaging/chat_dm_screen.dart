@@ -1,14 +1,23 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:io';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:record_mp3/record_mp3.dart';
 
 import '../../Service/auth.dart';
 import '../../chat_methods.dart';
@@ -32,9 +41,138 @@ class _ChatDmState extends State<ChatDm> {
   bool isTyping = true;
   ScrollController scrollController = ScrollController();
 
+  bool isPlayingMsg = false, isRecording = false, isSending = false;
+
+  Future _loadFile(String url) async {
+    final bytes = await readBytes(Uri.parse(url));
+    final dir = await getApplicationDocumentsDirectory();
+    final file = File('${dir.path}/audio.mp3');
+
+    await file.writeAsBytes(bytes);
+    if (await file.exists()) {
+      setState(() {
+        recordFilePath = file.path;
+        isPlayingMsg = true;
+        print(isPlayingMsg);
+      });
+      await play();
+      setState(() {
+        isPlayingMsg = false;
+        print(isPlayingMsg);
+      });
+    }
+  }
+
+  Future<bool> checkPermission() async {
+    if (!await Permission.microphone.isGranted) {
+      PermissionStatus status = await Permission.microphone.request();
+      if (status != PermissionStatus.granted) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void startRecord() async {
+    bool hasPermission = await checkPermission();
+    if (hasPermission) {
+      recordFilePath = await getFilePath();
+
+      RecordMp3.instance.start(recordFilePath, (type) {
+        setState(() {});
+      });
+    } else {}
+    setState(() {});
+  }
+
+  void stopRecord(String receiverId) async {
+    bool s = RecordMp3.instance.stop();
+    if (s) {
+      setState(() {
+        isSending = true;
+      });
+      await uploadAudio(receiverId);
+
+      setState(() {
+        isPlayingMsg = false;
+      });
+    }
+  }
+
+  Future<void> play() async {
+    if (recordFilePath != null && File(recordFilePath).existsSync()) {
+      AudioPlayer audioPlayer = AudioPlayer();
+      await audioPlayer.play(
+        recordFilePath,
+        isLocal: true,
+      );
+    }
+  }
+
+  String recordFilePath;
+
+  // = ScrollController();
+
+  int i = 0;
+
+  Future<String> getFilePath() async {
+    Directory storageDirectory = await getApplicationDocumentsDirectory();
+    String sdPath = storageDirectory.path + "/record";
+    var d = Directory(sdPath);
+    if (!d.existsSync()) {
+      d.createSync(recursive: true);
+    }
+    return sdPath + "/test_${i++}.mp3";
+  }
+
+  sendAudioMsg(String audioMsg, {String receiverId}) async {
+    if (audioMsg.isNotEmpty) {
+      var ref = FirebaseFirestore.instance
+          .collection('messages')
+          .doc(AuthService().uid)
+          .collection('userMessages')
+          .doc(receiverId)
+          .collection('messageList')
+          .doc(DateTime.now().millisecondsSinceEpoch.toString());
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        await transaction.set(ref, {
+          "sender": AuthService().uid,
+          "receiver": receiverId,
+          "created": Timestamp.now(),
+          "content": audioMsg,
+          "type": 'audio'
+        });
+      }).then((value) {
+        setState(() {
+          isSending = false;
+        });
+      });
+      scrollController.animateTo(0.0,
+          duration: Duration(milliseconds: 100), curve: Curves.bounceInOut);
+    } else {
+      print("Hello");
+    }
+  }
+
+  uploadAudio(String id) {
+    final Reference firebaseStorageRef = FirebaseStorage.instance.ref().child(
+        'profilepics/audio${DateTime.now().millisecondsSinceEpoch.toString()}}.jpg');
+
+    UploadTask task = firebaseStorageRef.putFile(File(recordFilePath));
+    task.then((value) async {
+      print('##############done#########');
+      var audioURL = await value.ref.getDownloadURL();
+      String strVal = audioURL.toString();
+      await sendAudioMsg(strVal, receiverId: id);
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
+    FirebaseAuth.instance.signInAnonymously();
     messageController.addListener(() {
       setState(() {});
     });
@@ -173,35 +311,144 @@ class _ChatDmState extends State<ChatDm> {
                         if (snapshot.hasData) {
                           return ListView.builder(
                             reverse: true,
-                            // controller: ,
+                            controller: scrollController,
                             itemCount: snapshot.data.docs.length,
                             itemBuilder: (context, index) {
+                              Timestamp time =
+                                  snapshot.data.docs[index]['created'];
+                              var day = time.toDate().day.toString();
+                              var month = time.toDate().month.toString();
+                              var year = time.toDate().toString().substring(2);
+                              var date = day + '-' + month + '-' + year;
+                              var hour = time.toDate().hour;
+                              var min = time.toDate().minute;
+
+                              var ampm;
+                              if (hour > 12) {
+                                hour = hour % 12;
+                                ampm = 'pm';
+                              } else if (hour == 12) {
+                                ampm = 'pm';
+                              } else if (hour == 0) {
+                                hour = 12;
+                                ampm = 'am';
+                              } else {
+                                ampm = 'am';
+                              }
                               return Column(
                                 children: [
-                                  MessageSender(
-                                    isMe: AuthService().uid ==
-                                        snapshot.data.docs[index]["sender"],
-                                    displayname: widget.model.name,
-                                    text: snapshot.data.docs[index]["text"],
-                                    time: snapshot.data.docs[index]["created"],
-                                  ),
+                                  snapshot.data.docs[index]["type"] != 'audio'
+                                      ? MessageSender(
+                                          isMe: AuthService().uid ==
+                                              snapshot.data.docs[index]
+                                                  ["sender"],
+                                          displayname: widget.model.name,
+                                          text: snapshot.data.docs[index]
+                                              ["text"],
+                                          time: snapshot.data.docs[index]
+                                              ["created"],
+                                        )
+                                      : Align(
+                                          alignment: (snapshot.data.docs[index]
+                                                      ['sender'] ==
+                                                  AuthService().uid)
+                                              ? Alignment.centerRight
+                                              : Alignment.centerLeft,
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.5,
+                                            constraints: BoxConstraints(
+                                              maxWidth: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.5,
+                                            ),
+                                            padding: EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              color: (snapshot.data.docs[index]
+                                                          ['sender'] ==
+                                                      AuthService().uid)
+                                                  ? Color(0xffFF9C34)
+                                                  : Color(0xe50d004c),
+                                              borderRadius: BorderRadius.only(
+                                                topLeft:
+                                                    (snapshot.data.docs[index]
+                                                                ['sender'] ==
+                                                            AuthService().uid)
+                                                        ? Radius.circular(12)
+                                                        : Radius.circular(0),
+                                                topRight:
+                                                    (snapshot.data.docs[index]
+                                                                ['sender'] ==
+                                                            AuthService().uid)
+                                                        ? Radius.circular(0)
+                                                        : Radius.circular(12),
+                                                bottomLeft: Radius.circular(12),
+                                                bottomRight:
+                                                    Radius.circular(12),
+                                              ),
+                                            ),
+                                            child: GestureDetector(
+                                                onTap: () {},
+                                                onSecondaryTap: () {
+                                                  stopRecord(widget.model.uid);
+                                                },
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        isPlayingMsg
+                                                            ? GestureDetector(
+                                                                child: Icon(Icons
+                                                                    .cancel),
+                                                                onTap: () {
+                                                                  stopRecord(widget.model.uid);
+                                                                },
+                                                              )
+                                                            : GestureDetector(
+                                                                child: Icon(Icons
+                                                                    .play_arrow),
+                                                                onTap: () {
+                                                                  _loadFile(snapshot
+                                                                          .data
+                                                                          .docs[index]
+                                                                      [
+                                                                      'content']);
+                                                                },
+                                                              ),
+                                                        Text(
+                                                          'Audio-Message',
+                                                          maxLines: 10,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Text(
+                                                      // date +
+                                                      //     " " +
+                                                      hour.toString() +
+                                                          ":" +
+                                                          min.toString() +
+                                                          ampm,
+                                                      style: TextStyle(
+                                                          fontSize: 10),
+                                                    )
+                                                  ],
+                                                )),
+                                          ),
+                                        ),
                                   SizedBox(
                                     height: 5,
                                   )
                                 ],
                               );
                             },
-                            // SizedBox(height: 20),
-                            // MessageSender(),
-                            // SizedBox(height: 18),
-                            // SizedBox(height: 18),
-                            // MessageReceiver(),
-                            // SizedBox(height: 18),
-                            // MessageSender(),
-                            // SizedBox(height: 18),
-                            // MessageReceiver(),
-                            // SizedBox(height: 18),
-                            // MessageReceiver(),
                           );
                         }
                         return Center(
@@ -288,14 +535,29 @@ class _ChatDmState extends State<ChatDm> {
                   ),
                 ),
               ),
+              SizedBox(
+                width: 10,
+              ),
               messageController.text.isEmpty
-                  ? IconButton(
-                      onPressed: () {},
-                      icon: SvgPicture.asset(
+                  ? GestureDetector(
+                      onLongPress: () {
+                        startRecord();
+                        setState(() {
+                          isRecording = true;
+                        });
+                      },
+                      onLongPressEnd: (hey) {
+                        stopRecord(widget.model.uid);
+                        setState(() {
+                          isRecording = false;
+                        });
+                      },
+                      child: SvgPicture.asset(
                         'assets/microphone.svg',
                         width: 27,
                         height: 27,
-                      ))
+                      ),
+                    )
                   : IconButton(
                       onPressed: () async {
                         context

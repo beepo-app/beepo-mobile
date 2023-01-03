@@ -29,6 +29,7 @@ class ChatMethods {
         'image': img,
         'created': Timestamp.now(),
         'searchKeywords': searchKeywords,
+        'type': 'message',
       });
       await FirebaseFirestore.instance
           .collection("conversation")
@@ -41,6 +42,7 @@ class ChatMethods {
         'receiver': receiverID,
         'created': Timestamp.now(),
         'searchKeywords': searchKeywords,
+        'type': 'message',
       });
 
       await FirebaseFirestore.instance
@@ -53,7 +55,8 @@ class ChatMethods {
         'text': text,
         'sender': userID,
         'receiver': receiverID,
-        'created': Timestamp.now()
+        'created': Timestamp.now(),
+        'type': 'message',
       });
 
       await FirebaseFirestore.instance
@@ -66,7 +69,8 @@ class ChatMethods {
         'text': text,
         'sender': userID,
         'receiver': receiverID,
-        'created': Timestamp.now()
+        'created': Timestamp.now(),
+        'type': 'message',
       });
     } catch (e) {
       displaySnack(context, "Please check your internet connection");
