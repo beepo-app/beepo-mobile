@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
-import 'package:beepo/Widgets/toasts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,6 +21,7 @@ import 'package:provider/provider.dart';
 import 'package:record_mp3/record_mp3.dart';
 
 import '../../Service/auth.dart';
+import '../../Widgets/toasts.dart';
 import '../../chat_methods.dart';
 import '../../components.dart';
 import '../../generate_keywords.dart';
@@ -41,135 +41,7 @@ class ChatDm extends StatefulWidget {
 class _ChatDmState extends State<ChatDm> {
   TextEditingController messageController = TextEditingController();
   bool isTyping = true;
-  ScrollController scrollController = ScrollController();
 
-  bool isPlayingMsg = false, isRecording = false, isSending = false;
-
-  Future _loadFile(String url) async {
-    final bytes = await readBytes(Uri.parse(url));
-    final dir = await getApplicationDocumentsDirectory();
-    final file = File('${dir.path}/audio.mp3');
-
-    await file.writeAsBytes(bytes);
-    if (await file.exists()) {
-      setState(() {
-        recordFilePath = file.path;
-        isPlayingMsg = true;
-        print(isPlayingMsg);
-      });
-      await play();
-      setState(() {
-        isPlayingMsg = false;
-        print(isPlayingMsg);
-      });
-    }
-  }
-
-  Future<bool> checkPermission() async {
-    if (!await Permission.microphone.isGranted) {
-      PermissionStatus status = await Permission.microphone.request();
-      if (status != PermissionStatus.granted) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  void startRecord() async {
-    bool hasPermission = await checkPermission();
-    if (hasPermission) {
-      recordFilePath = await getFilePath();
-
-      RecordMp3.instance.start(recordFilePath, (type) {
-        setState(() {});
-      });
-    } else {}
-    setState(() {});
-  }
-
-  void stopRecord(String receiverId) async {
-    bool s = RecordMp3.instance.stop();
-    if (s) {
-      setState(() {
-        isSending = true;
-      });
-      await uploadAudio(receiverId);
-
-      setState(() {
-        isPlayingMsg = false;
-      });
-    }
-  }
-
-  Future<void> play() async {
-    if (recordFilePath != null && File(recordFilePath).existsSync()) {
-      AudioPlayer audioPlayer = AudioPlayer();
-      await audioPlayer.play(
-        recordFilePath,
-        isLocal: true,
-      );
-    }
-  }
-
-  String recordFilePath;
-
-  // = ScrollController();
-
-  int i = 0;
-
-  Future<String> getFilePath() async {
-    Directory storageDirectory = await getApplicationDocumentsDirectory();
-    String sdPath = storageDirectory.path + "/record";
-    var d = Directory(sdPath);
-    if (!d.existsSync()) {
-      d.createSync(recursive: true);
-    }
-    return sdPath + "/test_${i++}.mp3";
-  }
-
-  sendAudioMsg(String audioMsg, {String receiverId}) async {
-    if (audioMsg.isNotEmpty) {
-      var ref = FirebaseFirestore.instance
-          .collection('messages')
-          .doc(AuthService().uid)
-          .collection('userMessages')
-          .doc(receiverId)
-          .collection('messageList')
-          .doc(DateTime.now().millisecondsSinceEpoch.toString());
-      await FirebaseFirestore.instance.runTransaction((transaction) async {
-        await transaction.set(ref, {
-          "sender": AuthService().uid,
-          "receiver": receiverId,
-          "created": Timestamp.now(),
-          "content": audioMsg,
-          "type": 'audio'
-        });
-      }).then((value) {
-        setState(() {
-          isSending = false;
-        });
-      });
-      scrollController.animateTo(0.0,
-          duration: Duration(milliseconds: 100), curve: Curves.bounceInOut);
-    } else {
-      print("Hello");
-    }
-  }
-
-  uploadAudio(String id) {
-    final Reference firebaseStorageRef = FirebaseStorage.instance.ref().child(
-        'profilepics/audio${DateTime.now().millisecondsSinceEpoch.toString()}}.jpg');
-
-    UploadTask task = firebaseStorageRef.putFile(File(recordFilePath));
-    task.then((value) async {
-      print('##############done#########');
-      var audioURL = await value.ref.getDownloadURL();
-      String strVal = audioURL.toString();
-      await sendAudioMsg(strVal, receiverId: id);
-    }).catchError((e) {
-      print(e);
-    });
-  }
 
   @override
   void initState() {
@@ -313,7 +185,7 @@ class _ChatDmState extends State<ChatDm> {
                         if (snapshot.hasData) {
                           return ListView.builder(
                             reverse: true,
-                            controller: scrollController,
+                            controller: context.read<ChatNotifier>().scrollController,
                             itemCount: snapshot.data.docs.length,
                             itemBuilder: (context, index) {
                               Timestamp time =
@@ -392,57 +264,63 @@ class _ChatDmState extends State<ChatDm> {
                                                     Radius.circular(12),
                                               ),
                                             ),
-                                            child: GestureDetector(
-                                                onTap: () {},
-                                                onSecondaryTap: () {
-                                                  stopRecord(widget.model.uid);
-                                                },
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                Row(
                                                   children: [
-                                                    Row(
-                                                      children: [
-                                                        isPlayingMsg
-                                                            ? GestureDetector(
-                                                                child: Icon(Icons
-                                                                    .cancel),
-                                                                onTap: () {
-                                                                  stopRecord(widget.model.uid);
-                                                                },
-                                                              )
-                                                            : GestureDetector(
-                                                                child: Icon(Icons
-                                                                    .play_arrow),
-                                                                onTap: () {
-                                                                  _loadFile(snapshot
-                                                                          .data
-                                                                          .docs[index]
-                                                                      [
-                                                                      'content']);
-                                                                },
-                                                              ),
-                                                        Text(
-                                                          'Audio-Message',
-                                                          maxLines: 10,
-                                                        ),
-                                                      ],
+                                                    context.watch<ChatNotifier>().isPlayingMsg
+                                                        ? GestureDetector(
+                                                            child: Icon(Icons
+                                                                .cancel),
+                                                            onTap: () {
+                                                              context.read<ChatNotifier>().stopRecord(widget.model.uid);
+                                                              context.read<ChatNotifier>().isPlayingMsg = false;
+                                                            },
+                                                          )
+                                                        : GestureDetector(
+                                                            child: Icon(Icons
+                                                                .play_arrow),
+                                                            onTap: () async {
+                                                              await context.read<ChatNotifier>().loadFile(snapshot
+                                                                      .data
+                                                                      .docs[index]
+                                                                  [
+                                                                  'content']);
+
+                                                            },
+
+                                                          ),
+                                                    SizedBox(
+                                                      width: 10,
                                                     ),
-                                                    Text(
-                                                      // date +
-                                                      //     " " +
-                                                      hour.toString() +
-                                                          ":" +
-                                                          min.toString() +
-                                                          ampm,
-                                                      style: TextStyle(
-                                                          fontSize: 10),
-                                                    )
+                                                    Center(
+                                                      child: Lottie.asset(
+                                                        'assets/lottie/waves.json',
+                                                        height: 40,
+                                                        width: 80,
+                                                        animate: context.watch<ChatNotifier>().isPlayingMsg? true:false,
+                                                        fit: BoxFit.fitHeight,
+                                                      ),
+                                                    ),
                                                   ],
-                                                )),
+                                                ),
+                                                Text(
+                                                  // date +
+                                                  //     " " +
+                                                  hour.toString() +
+                                                      ":" +
+                                                      min.toString() +
+                                                      ampm,
+                                                  style: TextStyle(
+                                                      fontSize: 10),
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         ),
                                   SizedBox(
@@ -543,21 +421,21 @@ class _ChatDmState extends State<ChatDm> {
               messageController.text.isEmpty
                   ? GestureDetector(
                       onLongPress: () {
-                        startRecord();
+                        context.read<ChatNotifier>().startRecord();
                         setState(() {
-                          isRecording = true;
+                          context.read<ChatNotifier>().isRecording = true;
+                          showToast('Recording!');
                         });
-                        showToast('Recording!');
                       },
                       onLongPressEnd: (hey) {
-                        stopRecord(widget.model.uid);
+                        context.read<ChatNotifier>().stopRecord(widget.model.uid);
                         setState(() {
-                          isRecording = false;
+                          context.read<ChatNotifier>().isRecording = false;
+                          showToast('Sent!');
                         });
-                        showToast('Sent!');
                       },
-                      child: isRecording? Lottie.asset(
-                        'assets/lottie/mic_wave.json',
+                      child: context.watch<ChatNotifier>().isRecording? Lottie.asset(
+                        'assets/lottie/mic.json',
                         height: 47,
                         width: 27,
                       ): SvgPicture.asset(
