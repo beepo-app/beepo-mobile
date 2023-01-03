@@ -30,6 +30,7 @@ class ChatDm extends StatefulWidget {
 class _ChatDmState extends State<ChatDm> {
   TextEditingController messageController = TextEditingController();
   bool isTyping = true;
+  ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
@@ -172,6 +173,7 @@ class _ChatDmState extends State<ChatDm> {
                         if (snapshot.hasData) {
                           return ListView.builder(
                             reverse: true,
+                            // controller: ,
                             itemCount: snapshot.data.docs.length,
                             itemBuilder: (context, index) {
                               return Column(

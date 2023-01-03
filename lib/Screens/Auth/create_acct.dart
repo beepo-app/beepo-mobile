@@ -5,17 +5,13 @@ import 'dart:io';
 import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:beepo/Widgets/toasts.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
 
 import '../../Service/media.dart';
 import '../../Utils/functions.dart';
 import '../../components.dart';
-import '../../provider.dart';
 import 'pin_code.dart';
 
 class CreateAccount extends StatefulWidget {
@@ -83,7 +79,9 @@ class _CreateAccountState extends State<CreateAccount> {
                   bottom: 10,
                   child: GestureDetector(
                     onTap: () {
-                      ImageUtil().pickProfileImage(context: context).then((value) {
+                      ImageUtil()
+                          .pickProfileImage(context: context)
+                          .then((value) {
                         if (value != null) {
                           setState(() {
                             selectedImage = value;
@@ -168,7 +166,8 @@ class _CreateAccountState extends State<CreateAccount> {
 
                   String imageUrl = "";
                   if (selectedImage != null) {
-                    imageUrl = await MediaService.uploadProfilePicture(selectedImage);
+                    imageUrl =
+                        await MediaService.uploadProfilePicture(selectedImage);
                   }
 
                   bool result = await AuthService().createUser(

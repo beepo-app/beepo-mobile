@@ -58,7 +58,8 @@ class _BrowserState extends State<Browser> {
                             fontSize: 14,
                           ),
                         ),
-                        Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white)
+                        Icon(Icons.keyboard_arrow_down_sharp,
+                            color: Colors.white)
                       ],
                     ),
                   ],
@@ -83,14 +84,16 @@ class _BrowserState extends State<Browser> {
                             color: Colors.grey,
                           ),
                           border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
                               borderSide: BorderSide(
                                 color: Colors.grey,
                                 width: 1,
                               )),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(15)),
-                            borderSide: BorderSide(width: 1, color: Colors.grey),
+                            borderSide:
+                                BorderSide(width: 1, color: Colors.grey),
                           ),
                         ),
                       ),
@@ -185,7 +188,8 @@ class _BrowserState extends State<Browser> {
                                 Expanded(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: const [
                                       Text(
                                         "Here’s Why Blockchain is the Technology For The Future Here’s Why Blockchain is the Technology For The Future, Here’s Why Blockchain is the Technology For The Future",

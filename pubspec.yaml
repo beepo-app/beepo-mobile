@@ -13,10 +13,10 @@ dependencies:
     sdk: flutter
   get: ^4.6.1
   intl: ^0.17.0
-  hive:
+  hive: any
   url_launcher: ^6.0.12
-  share_plus: ^6.3.0
-  hive_flutter: ^1.1.0
+  share_plus: any
+  hive_flutter: any
   http: ^0.13.4
   iconsax: ^0.0.8
   flutter_svg: ^1.0.3
@@ -30,6 +30,12 @@ dependencies:
   local_auth: ^2.1.0
   mqtt_client: 9.4.1
   web_socket_channel: ^2.2.0
+  path_provider: any
+  #audio_recorder: any
+  path: any
+  permission_handler: any
+  record_mp3: ^2.1.0
+  audioplayers: ^0.18.1
 
   qr_flutter: ^4.0.0
   qr_code_scanner: ^1.0.1
@@ -55,6 +61,8 @@ dependencies:
   provider: ^6.0.5
   firebase_core_platform_interface: 4.5.1
   firebase_storage: ^10.3.11
+
+#
 
 dev_dependencies:
   flutter_test:
