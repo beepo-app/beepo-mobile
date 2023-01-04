@@ -360,13 +360,41 @@ class _ChatDmState extends State<ChatDm> {
                                       ),
                                     )
                                   else
-                                    Container(
-                                      child: ClipRRect(
-                                        child: Image.network(
-                                          snapshot.data.docs[index]["content"],
-                                          fit: BoxFit.cover,
+                                    Align(
+                                      alignment: (snapshot.data.docs[index]
+                                                  ['sender'] ==
+                                              AuthService().uid)
+                                          ? Alignment.centerRight
+                                          : Alignment.centerLeft,
+                                      child: SizedBox(
+                                        width: 150,
+                                        height: 150,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(context,
+                                                MaterialPageRoute(builder: (_) {
+                                              return FullScreenImage(
+                                                imageUrl: snapshot.data
+                                                    .docs[index]["content"],
+                                                tag: "image",
+                                              );
+                                            }
+                                            )
+                                            );
+                                          },
+                                          child: ClipRRect(
+                                            child: Hero(
+                                              tag: 'image',
+                                              child: Image.network(
+                                                snapshot.data.docs[index]
+                                                    ["content"],
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
                                         ),
-                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                     ),
                                   SizedBox(
@@ -415,7 +443,7 @@ class _ChatDmState extends State<ChatDm> {
                       },
                       child: IconButton(
                           onPressed: () {
-                            context.read<ChatNotifier>().pickUploadImageChat(widget.model.uid);
+                            context.read<ChatNotifier>().cameraUploadImageChat(widget.model.uid);
                           },
                           constraints: BoxConstraints(
                             maxWidth: 30,
@@ -437,7 +465,11 @@ class _ChatDmState extends State<ChatDm> {
                             ),
                           ),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              context
+                                  .read<ChatNotifier>()
+                                  .pickUploadImageChat(widget.model.uid);
+                            },
                             constraints: const BoxConstraints(
                               maxWidth: 30,
                             ),
@@ -524,6 +556,35 @@ class _ChatDmState extends State<ChatDm> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class FullScreenImage extends StatelessWidget {
+  final String imageUrl;
+  final String tag;
+
+  const FullScreenImage({Key key, this.imageUrl, this.tag}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black87,
+      body: GestureDetector(
+        child: Center(
+          child: Hero(
+            tag: tag,
+            child: CachedNetworkImage(
+              width: MediaQuery.of(context).size.width,
+              fit: BoxFit.contain,
+              imageUrl: imageUrl,
+            ),
+          ),
+        ),
+        onTap: () {
+          Navigator.pop(context);
+        },
       ),
     );
   }

@@ -31,6 +31,7 @@ class ChatNotifier extends ChangeNotifier {
   File selectedImageForChat;
 
   pickUploadImage() async {
+
     final image = await ImagePicker().pickImage(
         source: ImageSource.gallery, maxWidth: 512, maxHeight: 512, imageQuality: 75);
     ref = FirebaseStorage.instance.ref().child(image.path);
@@ -56,29 +57,36 @@ class ChatNotifier extends ChangeNotifier {
   }
 
   pickUploadImageChat(String id) async {
+    // bool hasPermission = await checkPermissionImage();
+// if(hasPermission){
+    Reference reg = FirebaseStorage.instance.ref();
+
     final image = await ImagePicker().pickImage(
-        source: ImageSource.gallery, maxWidth: 512, maxHeight: 512, imageQuality: 75);
-    ref = FirebaseStorage.instance.ref().child(image.path);
-    notifyListeners();
+      source: ImageSource.gallery, maxWidth: 512, maxHeight: 512, imageQuality: 100);
+  reg = FirebaseStorage.instance.ref().child(image.path);
+  // notifyListeners();
 
-    if (image != null) {
-      ImageUtil().cropProfileImage(image as File).then((value) {
-        if (value != null) {
-          // setState(() {
-          selectedImageForChat = value;
-          notifyListeners();
-          // });
-        }
-      });
-
-      await ref.putFile(File(image.path));
-      ref.getDownloadURL().then((value) async {
-        print(value);
-        photoUrl = value;
+  if (image != null) {
+    File file = File( image.path );
+    await ImageUtil().cropProfileImage(file).then((value) {
+      if (value != null) {
+        // setState(() {
+        selectedImageForChat = value;
         notifyListeners();
-        await sendPhotoMsg(photoUrl, receiverId: id);
-      });
-    }
+        // });
+      }
+    });
+
+    await reg.putFile(File(image.path));
+    reg.getDownloadURL().then((value) {
+      print(value);
+      photoUrl = value;
+      notifyListeners();
+       sendPhotoMsg(photoUrl, receiverId: id);
+    });
+  }
+// }
+
   }
 
   sendPhotoMsg(String photoMsg, {String receiverId}) async {
@@ -197,6 +205,34 @@ class ChatNotifier extends ChangeNotifier {
       print(value);
       imageUrl = value;
       notifyListeners();
+    });
+  }
+
+  cameraUploadImageChat(String id) async {
+    Reference reh = FirebaseStorage.instance.ref();
+
+    final image = await ImagePicker().pickImage(
+        source: ImageSource.camera, maxWidth: 512, maxHeight: 512, imageQuality: 75);
+    reh = FirebaseStorage.instance.ref().child(image.path);
+    notifyListeners();
+
+    if (image != null) {
+      File file = File( image.path );
+      await ImageUtil().cropProfileImage(file).then((value) {
+        if (value != null) {
+          // setState(() {
+          selectedImageForChat = value;
+          notifyListeners();
+          // });
+        }
+      });
+    }
+    await reh.putFile(File(image.path));
+    reh.getDownloadURL().then((value) {
+      print(value);
+      photoUrl = value;
+      notifyListeners();
+      sendPhotoMsg(photoUrl, receiverId: id);
     });
   }
 

@@ -420,7 +420,25 @@ class MessageSender extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var day = time.toDate().day.toString();
+    var month = time.toDate().month.toString();
+    var year = time.toDate().toString().substring(2);
+    var date = day + '-' + month + '-' + year;
+    var hour = time.toDate().hour;
+    var min = time.toDate().minute;
 
+    var ampm;
+    if (hour > 12) {
+      hour = hour % 12;
+      ampm = 'pm';
+    } else if (hour == 12) {
+      ampm = 'pm';
+    } else if (hour == 0) {
+      hour = 12;
+      ampm = 'am';
+    } else {
+      ampm = 'am';
+    }
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -457,7 +475,10 @@ class MessageSender extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  '${time.toDate().hour} : ${time.toDate().minute}',
+                hour.toString() +
+                ":" +
+                min.toString() +
+                ampm,
                   style: isMe? TextStyle(
                     color: Colors.white,
                     fontSize: 10,

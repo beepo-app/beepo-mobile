@@ -74,7 +74,7 @@ class _MyMessagesState extends State<MyMessages> {
                     ),
                   ));
                   // setState(() {
-                    isTapped = true;
+                  isTapped = true;
                   // });
                 },
                 contentPadding: EdgeInsets.zero,
@@ -114,7 +114,10 @@ class _MyMessagesState extends State<MyMessages> {
                 ),
                 subtitle: Text(
                   snapshot.data.docs[0]['type'] == 'message'
-                      ?'${snapshot.data.docs[0]['text']}' : 'Voice Note',
+                      ? '${snapshot.data.docs[0]['text']}'
+                      : snapshot.data.docs[0]['sender'] == AuthService().uid
+                          ? 'Media sent '
+                          : 'Media recieved',
                   style: isTapped == false
                       ? TextStyle(
                           color: Colors.black,
