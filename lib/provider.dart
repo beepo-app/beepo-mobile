@@ -24,8 +24,11 @@ class ChatNotifier extends ChangeNotifier {
 
   String imageUrl = ' ';
 
+  String photoUrl;
+
   Reference ref = FirebaseStorage.instance.ref();
   File selectedImage;
+  File selectedImageForChat;
 
   pickUploadImage() async {
     final image = await ImagePicker().pickImage(
@@ -52,6 +55,127 @@ class ChatNotifier extends ChangeNotifier {
     }
   }
 
+  pickUploadImageChat(String id) async {
+    final image = await ImagePicker().pickImage(
+        source: ImageSource.gallery, maxWidth: 512, maxHeight: 512, imageQuality: 75);
+    ref = FirebaseStorage.instance.ref().child(image.path);
+    notifyListeners();
+
+    if (image != null) {
+      ImageUtil().cropProfileImage(image as File).then((value) {
+        if (value != null) {
+          // setState(() {
+          selectedImageForChat = value;
+          notifyListeners();
+          // });
+        }
+      });
+
+      await ref.putFile(File(image.path));
+      ref.getDownloadURL().then((value) async {
+        print(value);
+        photoUrl = value;
+        notifyListeners();
+        await sendPhotoMsg(photoUrl, receiverId: id);
+      });
+    }
+  }
+
+  sendPhotoMsg(String photoMsg, {String receiverId}) async {
+    if (photoMsg.isNotEmpty) {
+      var ref = FirebaseFirestore.instance
+          .collection('messages')
+          .doc(AuthService().uid)
+          .collection('userMessages')
+          .doc(receiverId)
+          .collection('messageList')
+          .doc(DateTime.now().millisecondsSinceEpoch.toString());
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        await transaction.set(ref, {
+          "sender": AuthService().uid,
+          "receiver": receiverId,
+          "created": Timestamp.now(),
+          "content": photoMsg,
+          // "duration": dure.inSeconds.toString(),
+          "type": 'photo'
+        });
+      }).then((value) {
+        // setState(() {
+        isSending = false;
+        notifyListeners();
+        // });
+      });
+
+      var ref1 = FirebaseFirestore.instance
+          .collection('messages')
+          .doc(receiverId)
+          .collection('userMessages')
+          .doc(AuthService().uid)
+          .collection('messageList')
+          .doc(DateTime.now().millisecondsSinceEpoch.toString());
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        await transaction.set(ref1, {
+          "sender": AuthService().uid,
+          "receiver": receiverId,
+          "created": Timestamp.now(),
+          "content": photoMsg,
+          // "duration": dure.inSeconds.toString(),
+          "type": 'photo'
+        });
+      }).then((value) {
+        // setState(() {
+        isSending = false;
+        notifyListeners();
+        // });
+      });
+
+      var ref2 = FirebaseFirestore.instance
+          .collection("conversation")
+          .doc(AuthService().uid)
+          .collection("currentConversation")
+          .doc(receiverId);
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        await transaction.set(ref2, {
+          "sender": AuthService().uid,
+          "receiver": receiverId,
+          "created": Timestamp.now(),
+          "content": photoMsg,
+          // "duration": dure.inSeconds.toString(),
+          "type": 'photo'
+        });
+      }).then((value) {
+        // setState(() {
+        isSending = false;
+        notifyListeners();
+        // });
+      });
+
+      var ref3 = FirebaseFirestore.instance
+          .collection("conversation")
+          .doc(receiverId)
+          .collection("currentConversation")
+          .doc(AuthService().uid);
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        await transaction.set(ref3, {
+          "sender": AuthService().uid,
+          "receiver": receiverId,
+          "created": Timestamp.now(),
+          "content": photoMsg,
+          // "duration": dure.inSeconds.toString(),
+          "type": 'photo'
+        });
+      }).then((value) {
+        // setState(() {
+        isSending = false;
+        notifyListeners();
+        // });
+      });
+      scrollController.animateTo(0.0,
+          duration: Duration(milliseconds: 100), curve: Curves.bounceInOut);
+    } else {
+      print("Hello");
+    }
+  }
   cameraUploadImage() async {
     final image = await ImagePicker().pickImage(
         source: ImageSource.camera, maxWidth: 512, maxHeight: 512, imageQuality: 75);
@@ -133,6 +257,16 @@ class ChatNotifier extends ChangeNotifier {
   Future<bool> checkPermission() async {
     if (!await Permission.microphone.isGranted) {
       PermissionStatus status = await Permission.microphone.request();
+      if (status != PermissionStatus.granted) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  Future<bool> checkPermissionImage() async {
+    if (!await Permission.photos.isGranted) {
+      PermissionStatus status = await Permission.photos.request();
       if (status != PermissionStatus.granted) {
         return false;
       }
@@ -305,6 +439,8 @@ class ChatNotifier extends ChangeNotifier {
       print("Hello");
     }
   }
+
+
 
   uploadAudio(String id) {
     final Reference firebaseStorageRef = FirebaseStorage.instance.ref().child(

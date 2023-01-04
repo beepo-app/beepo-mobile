@@ -203,168 +203,172 @@ class _ChatDmState extends State<ChatDm> {
                               }
                               return Column(
                                 children: [
-                                  snapshot.data.docs[index]["type"] != 'audio'
-                                      ? MessageSender(
-                                          isMe: AuthService().uid ==
-                                              snapshot.data.docs[index]
-                                                  ["sender"],
-                                          displayname: widget.model.name,
-                                          text: snapshot.data.docs[index]
-                                              ["text"],
-                                          time: snapshot.data.docs[index]
-                                              ["created"],
-                                        )
-                                      : Align(
-                                          alignment: (snapshot.data.docs[index]
-                                                      ['sender'] ==
-                                                  AuthService().uid)
-                                              ? Alignment.centerRight
-                                              : Alignment.centerLeft,
-                                          child: Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                  if (snapshot.data.docs[index]["type"] ==
+                                      'message')
+                                    MessageSender(
+                                      isMe: AuthService().uid ==
+                                          snapshot.data.docs[index]["sender"],
+                                      displayname: widget.model.name,
+                                      text: snapshot.data.docs[index]["text"],
+                                      time: snapshot.data.docs[index]
+                                          ["created"],
+                                    )
+                                  else if (snapshot.data.docs[index]["type"] ==
+                                      'audio')
+                                    Align(
+                                      alignment: (snapshot.data.docs[index]
+                                                  ['sender'] ==
+                                              AuthService().uid)
+                                          ? Alignment.centerRight
+                                          : Alignment.centerLeft,
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
                                                 0.5,
-                                            constraints: BoxConstraints(
-                                              maxWidth: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.5,
-                                            ),
-                                            padding: EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                              color: (snapshot.data.docs[index]
-                                                          ['sender'] !=
-                                                      AuthService().uid)
-                                                  ? Color(0xffc4c4c4)
-                                                  : Color(0xff0E014C),
-                                              borderRadius: BorderRadius.only(
-                                                topLeft:
-                                                    (snapshot.data.docs[index]
-                                                                ['sender'] ==
-                                                            AuthService().uid)
-                                                        ? Radius.circular(12)
-                                                        : Radius.circular(0),
-                                                topRight:
-                                                    (snapshot.data.docs[index]
-                                                                ['sender'] ==
-                                                            AuthService().uid)
-                                                        ? Radius.circular(0)
-                                                        : Radius.circular(12),
-                                                bottomLeft: Radius.circular(12),
-                                                bottomRight:
-                                                    Radius.circular(12),
-                                              ),
-                                            ),
-                                            child: Column(
+                                        constraints: BoxConstraints(
+                                          maxWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.5,
+                                        ),
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: (snapshot.data.docs[index]
+                                                      ['sender'] !=
+                                                  AuthService().uid)
+                                              ? Color(0xffc4c4c4)
+                                              : Color(0xff0E014C),
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: (snapshot.data.docs[index]
+                                                        ['sender'] ==
+                                                    AuthService().uid)
+                                                ? Radius.circular(12)
+                                                : Radius.circular(0),
+                                            topRight: (snapshot.data.docs[index]
+                                                        ['sender'] ==
+                                                    AuthService().uid)
+                                                ? Radius.circular(0)
+                                                : Radius.circular(12),
+                                            bottomLeft: Radius.circular(12),
+                                            bottomRight: Radius.circular(12),
+                                          ),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
                                               children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    context
+                                                context
+                                                        .watch<ChatNotifier>()
+                                                        .isPlayingMsg
+                                                    ? GestureDetector(
+                                                        child: Icon(
+                                                          Icons.cancel,
+                                                          color: Colors.white,
+                                                        ),
+                                                        onTap: () {
+                                                          // context.read<ChatNotifier>().isPlayingMsg = false;
+                                                          context
+                                                              .read<
+                                                                  ChatNotifier>()
+                                                              .stopRecord(widget
+                                                                  .model.uid);
+                                                        },
+                                                      )
+                                                    : GestureDetector(
+                                                        child: Icon(
+                                                          Icons.play_arrow,
+                                                          color: Colors.white,
+                                                        ),
+                                                        onTap: () async {
+                                                          context
+                                                              .read<
+                                                                  ChatNotifier>()
+                                                              .isPlayingMsg = true;
+                                                          await context
+                                                              .read<
+                                                                  ChatNotifier>()
+                                                              .loadFile(snapshot
+                                                                          .data
+                                                                          .docs[
+                                                                      index]
+                                                                  ['content']);
+                                                          // Future.delayed(duration)
+                                                          context
+                                                              .read<
+                                                                  ChatNotifier>()
+                                                              .isPlayingMsg = false;
+                                                          // notifyListeners();
+                                                        },
+                                                      ),
+                                                Center(
+                                                  child: Lottie.asset(
+                                                    'assets/lottie/waves.json',
+                                                    height: 30,
+                                                    width: 100,
+                                                    animate: context
                                                             .watch<
                                                                 ChatNotifier>()
                                                             .isPlayingMsg
-                                                        ? GestureDetector(
-                                                            child: Icon(
-                                                              Icons.cancel,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                            onTap: () {
-                                                              // context.read<ChatNotifier>().isPlayingMsg = false;
-                                                              context
-                                                                  .read<
-                                                                      ChatNotifier>()
-                                                                  .stopRecord(
-                                                                      widget
-                                                                          .model
-                                                                          .uid);
-                                                            },
-                                                          )
-                                                        : GestureDetector(
-                                                            child: Icon(
-                                                              Icons.play_arrow,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                            onTap: () async {
-                                                              context
-                                                                  .read<
-                                                                      ChatNotifier>()
-                                                                  .isPlayingMsg = true;
-                                                              await context
-                                                                  .read<
-                                                                      ChatNotifier>()
-                                                                  .loadFile(snapshot
-                                                                          .data
-                                                                          .docs[index]
-                                                                      [
-                                                                      'content']);
-                                                              // Future.delayed(duration)
-                                                              context
-                                                                  .read<
-                                                                      ChatNotifier>()
-                                                                  .isPlayingMsg = false;
-                                                              // notifyListeners();
-                                                            },
-                                                          ),
-
-                                                    Center(
-                                                      child: Lottie.asset(
-                                                        'assets/lottie/waves.json',
-                                                        height: 30,
-                                                        width: 100,
-                                                        animate: context
-                                                                .watch<
-                                                                    ChatNotifier>()
-                                                                .isPlayingMsg
-                                                            ? true
-                                                            : false,
-                                                        fit: BoxFit.fitHeight,
-                                                      ),
-                                                    ),
-                                                  ],
+                                                        ? true
+                                                        : false,
+                                                    fit: BoxFit.fitHeight,
+                                                  ),
                                                 ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      '${snapshot.data.docs[index]['duration']} seconds',
-                                                      style: (snapshot.data.docs[index]
-                                                      ['sender'] ==
-                                                          AuthService().uid)? TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 10,
-                                                      ): TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 10,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      // date +
-                                                      //     " " +
-                                                      hour.toString() +
-                                                          ":" +
-                                                          min.toString() +
-                                                          ampm,
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 10,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )
                                               ],
                                             ),
-                                          ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  '${snapshot.data.docs[index]['duration']} seconds',
+                                                  style: (snapshot.data
+                                                                  .docs[index]
+                                                              ['sender'] ==
+                                                          AuthService().uid)
+                                                      ? TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 10,
+                                                        )
+                                                      : TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 10,
+                                                        ),
+                                                ),
+                                                Text(
+                                                  // date +
+                                                  //     " " +
+                                                  hour.toString() +
+                                                      ":" +
+                                                      min.toString() +
+                                                      ampm,
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 10,
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
                                         ),
+                                      ),
+                                    )
+                                  else
+                                    Container(
+                                      child: ClipRRect(
+                                        child: Image.network(
+                                          snapshot.data.docs[index]["content"],
+                                          fit: BoxFit.cover,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
                                   SizedBox(
                                     height: 5,
                                   )
@@ -410,7 +414,9 @@ class _ChatDmState extends State<ChatDm> {
                         });
                       },
                       child: IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            context.read<ChatNotifier>().pickUploadImageChat(widget.model.uid);
+                          },
                           constraints: BoxConstraints(
                             maxWidth: 30,
                           ),
