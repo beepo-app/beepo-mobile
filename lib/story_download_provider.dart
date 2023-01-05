@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:beepo/models/story_model/story.dart';
-import 'package:beepo/models/user_model.dart';
+import 'package:beepo/Models/story_model/story.dart';
+import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/story_download_method.dart';
 import 'package:beepo/extensions.dart';
 

@@ -1,8 +1,8 @@
 import 'package:beepo/Service/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:beepo/models/story_model/story.dart';
-import 'package:beepo/models/user_model.dart';
+import 'package:beepo/Models/story_model/story.dart';
+import 'package:beepo/Models/user_model.dart';
 import 'package:flutter/material.dart';
 
 class StoryDownloadMethod {
@@ -51,11 +51,11 @@ class StoryDownloadMethod {
   }
 
   Stream<List<UserModel>> _getFollowingUsers() async* {
-    _getFollowingUsersId().map((followingUsersId) async* {
+    // _getFollowingUsersId().map((followingUsersId) async* {
       final usersCollection = _firestore.collection('users');
-      final users = usersCollection.where('uid', whereIn: followingUsersId);
+      final users = usersCollection.where('uid', isNotEqualTo: AuthService().uid);
       yield* users.snapshots().map((snapshot) => snapshot.docs.map((doc) => UserModel.fromJson(doc.data())).toList());
-    });
+    // });
   }
 
   Stream<List<String>> _getFollowingUsersId() async* {

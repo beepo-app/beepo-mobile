@@ -123,15 +123,15 @@ class _ChatTabState extends State<ChatTab> {
   String receiver;
   bool showInput = false;
 
-   // Stream<List<Story>> currentUserStories;
-   // Stream<List<UserModel>> currentUserFollowingStories;
+   Stream<List<Story>> currentUserStories;
+   Stream<List<UserModel>> currentUserFollowingStories;
 
   @override
   void initState() {
     // TODO: implement initState
     // context.read<ChatNotifier>().getUsers();
-    // currentUserStories = context.read<StoryDownloadProvider>().getCurrentUserStories();
-    // currentUserFollowingStories = context.read<StoryDownloadProvider>().getFollowingUsersStories();
+    currentUserStories = context.read<StoryDownloadProvider>().getCurrentUserStories();
+    currentUserFollowingStories = context.read<StoryDownloadProvider>().getFollowingUsersStories();
 
 
     super.initState();
@@ -141,12 +141,13 @@ class _ChatTabState extends State<ChatTab> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
+        ListView(
+          scrollDirection: Axis.horizontal,
           children: [
             const SizedBox(width: 20),
             GestureDetector(
               onTap: () {
-                showToast('Coming soon');
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>AddStory()));
               },
               child: Column(
                 children: [
@@ -176,7 +177,7 @@ class _ChatTabState extends State<ChatTab> {
               ),
             ),
             StreamBuilder(
-                stream: FirebaseFirestore.instance.collection('stories').snapshots(),
+                stream: currentUserStories,
                 initialData: const [],
                 builder: (context, snapshot) {
                   // if (!snapshot.hasData) {
