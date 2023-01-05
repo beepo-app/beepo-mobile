@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:beepo/Service/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,7 +24,7 @@ class StoryUploadMethod {
         _storage = storage;
 
   factory StoryUploadMethod.initialize() => StoryUploadMethod(
-        auth: FirebaseAuth.instance,
+        // auth: FirebaseAuth.instance,
         firestore: FirebaseFirestore.instance,
         storage: FirebaseStorage.instance,
       );
@@ -31,7 +32,7 @@ class StoryUploadMethod {
   Future<Either<Failure, Success>> uploadStory(
       {@required Story story, @required File file}) async {
     try {
-      final user = _auth.currentUser;
+      // final user = _auth.currentUser;
       final storiesCollection = _firestore.collection('stories');
 
       // Get media url
@@ -63,7 +64,7 @@ class StoryUploadMethod {
       // Creates a reference to where the file will be stored
       final storageRef = _storage
           .ref()
-          .child('stories/${user.uid}/${file.path.split('/').last}');
+          .child('stories/${AuthService().uid}/${file.path.split('/').last}');
       // Uploads the file to firebase storage
       await storageRef.putFile(file);
 

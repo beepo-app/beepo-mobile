@@ -1,3 +1,4 @@
+import 'package:beepo/Service/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:beepo/models/story_model/story.dart';
@@ -27,9 +28,9 @@ class StoryDownloadMethod {
   }
 
   Stream<List<Story>> getCurrentUserStories() async* {
-    final user = _auth.currentUser;
+    // final user = _auth.currentUser;
     final storiesCollection = _firestore.collection('stories');
-    final stories = storiesCollection.where('uid', isEqualTo: user.uid);
+    final stories = storiesCollection.where('uid', isEqualTo: AuthService().uid);
     // final snapshot = stories.orderBy('createdDate', descending: true).snapshots();
     yield* stories.snapshots().map((snapshot) => snapshot.docs.map((doc) => Story.fromJson(doc.data())).toList());
     // yield* storiesStream;

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:beepo/Service/auth.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -23,19 +24,19 @@ enum StoryUploadStatus {
 //? Movie media selection to a separate class
 class StoryUploadProvider extends ChangeNotifier {
   final StoryUploadMethod _storyMethod;
-  final FirebaseAuth _firebaseAuth;
+  // final FirebaseAuth _firebaseAuth;
   final ImagePicker _imagePicker;
   StoryUploadProvider({
     @required StoryUploadMethod storyMethod,
-    @required FirebaseAuth firebaseAuth,
+    // @required FirebaseAuth firebaseAuth,
     @required ImagePicker imagePicker,
   })  : _storyMethod = storyMethod,
-        _firebaseAuth = firebaseAuth,
+        // _firebaseAuth = firebaseAuth,
         _imagePicker = imagePicker;
 
   factory StoryUploadProvider.initialize() => StoryUploadProvider(
         storyMethod: StoryUploadMethod.initialize(),
-        firebaseAuth: FirebaseAuth.instance,
+        // firebaseAuth: FirebaseAuth.instance,
         imagePicker: ImagePicker(),
       );
 
@@ -86,7 +87,7 @@ class StoryUploadProvider extends ChangeNotifier {
           _setMediaType(MediaType.image);
           final story = Story(
             mediaType: _mediaType,
-            uid: _firebaseAuth.currentUser.uid,
+            uid: AuthService().uid,
           );
           _setStory(story);
           if (_story != null) {
@@ -119,7 +120,7 @@ class StoryUploadProvider extends ChangeNotifier {
           _setMediaType(MediaType.image);
           final story = Story(
             mediaType: _mediaType,
-            uid: _firebaseAuth.currentUser.uid,
+            uid: AuthService().uid,
           );
           _setStory(story);
           if (_story != null) {
@@ -163,7 +164,7 @@ class StoryUploadProvider extends ChangeNotifier {
           _setMediaType(MediaType.video);
           final story = Story(
             mediaType: _mediaType,
-            uid: _firebaseAuth.currentUser.uid,
+            uid: AuthService().uid,
           );
           _setStory(story);
           if (_story != null) {

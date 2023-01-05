@@ -1,4 +1,4 @@
-import 'package:beepo/models/story_model/story.dart';
+import 'package:beepo/Models/story_model/story.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:voster/models/story_model/story.dart';
 import 'package:flutter/material.dart';

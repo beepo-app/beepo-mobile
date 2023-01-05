@@ -17,11 +17,12 @@ import 'package:provider/provider.dart';
 import 'Models/story_model/story.dart';
 import 'Models/user_model.dart';
 import 'Models/wallet.dart';
-import 'Screens/Wallet/token_screen.dart';
 import 'Screens/Browser/browser_page.dart';
+import 'Screens/Wallet/token_screen.dart';
 import 'Utils/styles.dart';
 import 'add_story.dart';
 import 'bubble_stories.dart';
+import 'constants.dart';
 import 'myMessages.dart';
 
 class FilledButton extends StatelessWidget {
@@ -122,15 +123,15 @@ class _ChatTabState extends State<ChatTab> {
   String receiver;
   bool showInput = false;
 
-   Stream<List<Story>> currentUserStories;
-   Stream<List<UserModel>> currentUserFollowingStories;
+   // Stream<List<Story>> currentUserStories;
+   // Stream<List<UserModel>> currentUserFollowingStories;
 
   @override
   void initState() {
     // TODO: implement initState
     // context.read<ChatNotifier>().getUsers();
-    currentUserStories = context.read<StoryDownloadProvider>().getCurrentUserStories();
-    currentUserFollowingStories = context.read<StoryDownloadProvider>().getFollowingUsersStories();
+    // currentUserStories = context.read<StoryDownloadProvider>().getCurrentUserStories();
+    // currentUserFollowingStories = context.read<StoryDownloadProvider>().getFollowingUsersStories();
 
 
     super.initState();
@@ -174,14 +175,14 @@ class _ChatTabState extends State<ChatTab> {
                 ],
               ),
             ),
-            StreamBuilder<List<Story>>(
-                stream: currentUserStories,
+            StreamBuilder(
+                stream: FirebaseFirestore.instance.collection('stories').snapshots(),
                 initialData: const [],
                 builder: (context, snapshot) {
                   // if (!snapshot.hasData) {
                   //   return const CurrentUserStoryBubble(stories: []);
                   // }
-                  List<Story> userStories = snapshot.data;
+                  List<Story> userStories = snapshot.data.docs;
                   'UserStories: $userStories'.log();
                   UserModel userf;
                   final user = userf.copyWith(stories: userStories, uid: AuthService().uid);
@@ -207,7 +208,7 @@ class _ChatTabState extends State<ChatTab> {
                         child: BubbleStories(
                           text: user.name,
                           image: user.image,
-                          useNetworkImage: true,
+                          // useNetworkImage: true,
                         ),
                       );
                     },
@@ -648,8 +649,9 @@ class CurrentUserStoryBubble extends StatelessWidget {
               backgroundColor: AppColors.primaryColor,
               child: Center(
                 child: Icon(
-                  size: 11,
+
                   Icons.add,
+                  size: 11,
                   color: context.themeData.primaryColor,
                 ),
               ),
