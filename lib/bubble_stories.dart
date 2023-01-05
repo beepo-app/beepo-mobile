@@ -1,9 +1,6 @@
+import 'package:beepo/text_styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-// import 'package:voster/screens/social/my_widgets/profile_picture.dart';
-import 'package:beepo/sizing.dart';
-import 'package:beepo/constants.dart';
-import 'package:beepo/text_styles.dart';
 
 class BubbleStories extends StatelessWidget {
   const BubbleStories({
@@ -17,6 +14,7 @@ class BubbleStories extends StatelessWidget {
   final String text;
   final String image;
   final bool hasStory;
+
   // final bool useNetworkImage;
 
   @override
@@ -24,18 +22,19 @@ class BubbleStories extends StatelessWidget {
     return Column(
       children: [
         Container(
-          margin: const EdgeInsets.only(right: 7.0),
-          padding: const EdgeInsets.all(2.0),
-          width: 60,
-          height: 60,
-          decoration: BoxDecoration(
-            gradient: hasStory ? AppColors.pinkTextGradient : null,
-            shape: BoxShape.circle,
-          ),
-          child: CachedNetworkImage(imageUrl: image,)
-        ),
+            margin: const EdgeInsets.only(right: 7.0, top: 10),
+            padding: const EdgeInsets.all(2.0),
+            // width: 60,
+            // height: 60,
+            child: CircleAvatar(
+              child: CachedNetworkImage(
+                imageUrl: image,
+                fit: BoxFit.cover,
+              ),
+              radius: 30,
+            )),
         Text(
-          hasStory? text : ' ',
+          hasStory ? text : ' ',
           style: kstoryTextStyle,
         ),
       ],

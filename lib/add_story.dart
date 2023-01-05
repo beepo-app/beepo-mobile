@@ -2,17 +2,18 @@
 
 import 'dart:io';
 
+import 'package:beepo/constants.dart';
+import 'package:beepo/extensions.dart';
+import 'package:beepo/models/story_model/story.dart';
+import 'package:beepo/story_settings_modal.dart';
+import 'package:beepo/story_upload_provider.dart';
+import 'package:beepo/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
-import 'package:beepo/constants.dart';
-import 'package:beepo/models/story_model/story.dart';
-import 'package:beepo/story_upload_provider.dart';
-import 'package:beepo/story_settings_modal.dart';
-import 'package:beepo/extensions.dart';
-import 'package:beepo/sizing.dart';
-import 'package:beepo/text_styles.dart';
+
+import 'Utils/styles.dart';
 
 class AddStory extends StatefulWidget {
   const AddStory({Key key}) : super(key: key);
@@ -77,13 +78,16 @@ class _AddStoryState extends State<AddStory> {
                         // If no media is selected, decoration image will be null.
 
                         // If image is selected (file is not null)
-                        image: (selectedFile != null && selectedMediaType == MediaType.image)
+                        image: (selectedFile != null &&
+                                selectedMediaType == MediaType.image)
                             ? DecorationImage(
                                 image: FileImage(File(selectedFile.path)),
                                 fit: BoxFit.cover,
                               )
-                              // If video is selected (file is not null)
-                            : (selectedFile != null && selectedMediaType == MediaType.video && videoThumbnail != null)
+                            // If video is selected (file is not null)
+                            : (selectedFile != null &&
+                                    selectedMediaType == MediaType.video &&
+                                    videoThumbnail != null)
                                 ? DecorationImage(
                                     image: MemoryImage(videoThumbnail),
                                     fit: BoxFit.cover,
@@ -103,17 +107,21 @@ class _AddStoryState extends State<AddStory> {
                         top: 40,
                         right: 15,
                         child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor),
                           onPressed: () async {
                             if (status == StoryUploadStatus.uploading) {
                               // If the user is uploading a story, we don't want to do anything,
                               // so we show a snackbar to let them know that they are already uploading
-                              _showSnackBar(context, message: 'Upload in progress');
+                              _showSnackBar(context,
+                                  message: 'Upload in progress');
                             } else {
                               final result = await uploader.uploadStory();
                               result.fold(
-                                (failure) => _showSnackBar(context, message: failure.message),
-                                (success) => _showSnackBar(context, message: 'Story uploaded successfully'),
+                                (failure) => _showSnackBar(context,
+                                    message: failure.message),
+                                (success) => _showSnackBar(context,
+                                    message: 'Story uploaded successfully'),
                               );
                             }
                           },
@@ -123,7 +131,8 @@ class _AddStoryState extends State<AddStory> {
                                   height: 25,
                                   width: 25,
                                   child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
                                   ),
                                 )
                               : const Text('Upload'),
@@ -157,13 +166,17 @@ class _AddStoryState extends State<AddStory> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 0, left: 20.0, right: 20.0, bottom: 0),
+            padding: const EdgeInsets.only(
+                top: 0, left: 20.0, right: 20.0, bottom: 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 InkWell(
                   onTap: () async {
-                    await context.read<StoryUploadProvider>().pickImageGallery();
+                    await context
+                        .read<StoryUploadProvider>()
+                        .pickImageGallery();
+                    Navigator.pop(context);
                   },
                   child: Row(
                     children: [
@@ -182,18 +195,27 @@ class _AddStoryState extends State<AddStory> {
                   onPressed: () async {
                     await context.read<StoryUploadProvider>().pickVideo();
                     if (mounted) {
-                      final selectedFile = context.read<StoryUploadProvider>().file;
-                      final selectedMediaType = context.read<StoryUploadProvider>().mediaType;
-                      if (selectedFile != null && selectedMediaType == MediaType.video) {
-                        final isVideoDurationNotLong = await _checkVideoDurationIsNotLong(selectedFile);
+                      final selectedFile =
+                          context.read<StoryUploadProvider>().file;
+                      final selectedMediaType =
+                          context.read<StoryUploadProvider>().mediaType;
+                      if (selectedFile != null &&
+                          selectedMediaType == MediaType.video) {
+                        final isVideoDurationNotLong =
+                            await _checkVideoDurationIsNotLong(selectedFile);
                         if (isVideoDurationNotLong && mounted) {
-                          final result = await context.read<StoryUploadProvider>().getVideoThumbnail();
+                          final result = await context
+                              .read<StoryUploadProvider>()
+                              .getVideoThumbnail();
                           result.fold(
-                            (failure) => _showSnackBar(context, message: failure.message),
+                            (failure) => _showSnackBar(context,
+                                message: failure.message),
                             (success) {},
                           );
                         } else {
-                          _showSnackBar(context, message: 'Video duration cannot be more than 30 seconds');
+                          _showSnackBar(context,
+                              message:
+                                  'Video duration cannot be more than 30 seconds');
                           context.read<StoryUploadProvider>().reset();
                         }
                       }

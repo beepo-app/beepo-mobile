@@ -43,7 +43,7 @@ class StoryDownloadMethod {
       final stories = storiesCollection.where('uid', whereIn: users.map((user) => user.uid).toList());
       // return users with their stories
       users.map((user) async* {
-        final userStories = stories.where('uid', isEqualTo: user.uid);
+        final userStories = storiesCollection.where('uid', isEqualTo: user.uid);
         final uStories = userStories.snapshots().map((snapshot) => snapshot.docs.map((doc) => Story.fromJson(doc.data())).toList());
         yield* uStories.map((stories) => user.copyWith(stories: stories));
       });

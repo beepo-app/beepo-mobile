@@ -174,14 +174,15 @@ class _ChatTabState extends State<ChatTab> {
                 ],
               ),
             ),
-            SizedBox(width: 10,),
+            SizedBox(
+              width: 10,
+            ),
             Expanded(
-              child: SizedBox(
+              child: Container(
+                margin: EdgeInsets.only(top: 10),
                 height: 100,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    StreamBuilder<List<Story>>(
+                child: ListView(scrollDirection: Axis.horizontal, children: [
+                  StreamBuilder<List<Story>>(
                       stream: currentUserStories,
                       initialData: const [],
                       builder: (context, snapshot) {
@@ -197,10 +198,17 @@ class _ChatTabState extends State<ChatTab> {
                                   'UserStories: $userStories'.log();
                                   Map userData;
                                   userData = fuck.data;
-                                  UserModel userf = UserModel.fromJson(userData);
+                                  UserModel userf =
+                                  UserModel(uid: userData['uid'],
+                                      name: userData['name'],
+                                      userName: userData['userName'],
+                                      image: userData['image'],
+                                      searchKeywords: userData['searchKeywords'],);
 
                                   final user = userf.copyWith(
-                                      stories: userStories, uid: AuthService().uid);
+                                      stories: userStories,
+                                      // uid: AuthService().uid,
+                                  );
                                   return CurrentUserStoryBubble(user: user);
                                 }
                                 return Center(
@@ -216,45 +224,43 @@ class _ChatTabState extends State<ChatTab> {
                           ),
                         );
                       }),
-
-                    StreamBuilder<List<UserModel>>(
-                        stream: currentUserFollowingStories,
-                        initialData: const [],
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            final followingUsers = snapshot.data;
-                            return ListView.builder(
-                              primary: false,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              scrollDirection: Axis.horizontal,
-                              itemCount: followingUsers.length,
-                              itemBuilder: (context, index) {
-                                final user = followingUsers[index];
-                                return InkWell(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context, StoryScreen.routeName,
-                                        arguments: user);
-                                  },
-                                  child: BubbleStories(
-                                    text: user.name,
-                                    image: user.image,
-                                    // useNetworkImage: true,
-                                  ),
-                                );
-                              },
-                            );
-                          }
-
-                          return Center(
-                            child: CircularProgressIndicator(
-                              color: primaryColor,
-                            ),
+                  StreamBuilder<List<UserModel>>(
+                      stream: currentUserFollowingStories,
+                      initialData: const [],
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          final followingUsers = snapshot.data;
+                          return ListView.builder(
+                            primary: false,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: followingUsers.length,
+                            itemBuilder: (context, index) {
+                              final user = followingUsers[index];
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(
+                                      builder: (context) =>
+                                          StoryScreen(user: user)));
+                                },
+                                child: BubbleStories(
+                                  text: user.name,
+                                  image: user.image,
+                                  // useNetworkImage: true,
+                                ),
+                              );
+                            },
                           );
-                        }),
-                  ]
-                ),
+                        }
+
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColor,
+                          ),
+                        );
+                      }),
+                ]),
               ),
             ),
             // const SizedBox(width: 10),
@@ -312,95 +318,97 @@ class _ChatTabState extends State<ChatTab> {
                 children: [
                   showInput
                       ? TextField(
-                          onSubmitted: (value) {
-                            setState(() {
-                              showInput = !showInput;
-                            });
-                          },
-                          decoration: InputDecoration(
-                            hintText: 'Search messages',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        )
+                    onSubmitted: (value) {
+                      setState(() {
+                        showInput = !showInput;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Search messages',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  )
                       : Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                "Messages",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  showInput = !showInput;
-                                });
-                              },
-                              icon: Icon(
-                                Icons.search,
-                                color: Color(0xff908f8d),
-                                size: 20,
-                              ),
-                            ),
-                            // SizedBox(width: 20),
-                            // Icon(
-                            //   Icons.more_vert_outlined,
-                            //   color: Color(0xff908f8d),
-                            //   size: 18,
-                            // ),
-                          ],
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Messages",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                          ),
                         ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            showInput = !showInput;
+                          });
+                        },
+                        icon: Icon(
+                          Icons.search,
+                          color: Color(0xff908f8d),
+                          size: 20,
+                        ),
+                      ),
+                      // SizedBox(width: 20),
+                      // Icon(
+                      //   Icons.more_vert_outlined,
+                      //   color: Color(0xff908f8d),
+                      //   size: 18,
+                      // ),
+                    ],
+                  ),
                   Consumer<ChatNotifier>(
-                    builder: (context, pro, _) => Column(
-                      children: [
-                        StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection('conversation')
-                              .doc(AuthService().uid.isEmpty
+                    builder: (context, pro, _) =>
+                        Column(
+                          children: [
+                            StreamBuilder(
+                              stream: FirebaseFirestore.instance
+                                  .collection('conversation')
+                                  .doc(AuthService().uid.isEmpty
                                   ? ' '
                                   : AuthService().uid)
-                              .collection("currentConversation")
-                              .snapshots(),
-                          builder:
-                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                            if (snapshot.hasData) {
-                              if (snapshot.data.docs.isEmpty) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(top: 50),
-                                  child: const Center(
-                                    child: Text(
-                                      'No Messages\n Tap on the + icon to start a conversation',
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                );
-                              }
-                              return ListView.separated(
-                                padding: const EdgeInsets.only(top: 10),
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: snapshot.data.docs.length,
-                                separatorBuilder: (ctx, i) =>
+                                  .collection("currentConversation")
+                                  .snapshots(),
+                              builder:
+                                  (context, AsyncSnapshot<
+                                  QuerySnapshot> snapshot) {
+                                if (snapshot.hasData) {
+                                  if (snapshot.data.docs.isEmpty) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 50),
+                                      child: const Center(
+                                        child: Text(
+                                          'No Messages\n Tap on the + icon to start a conversation',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  return ListView.separated(
+                                    padding: const EdgeInsets.only(top: 10),
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: snapshot.data.docs.length,
+                                    separatorBuilder: (ctx, i) =>
                                     const SizedBox(height: 0),
-                                itemBuilder: (ctx, index) {
-                                  return MyMessages(
-                                    uid: snapshot.data.docs[index].id,
+                                    itemBuilder: (ctx, index) {
+                                      return MyMessages(
+                                        uid: snapshot.data.docs[index].id,
+                                      );
+                                    },
                                   );
-                                },
-                              );
-                            }
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          },
+                                }
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
                   ),
 
                   //),
@@ -520,12 +528,22 @@ class MessageSender extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var day = time.toDate().day.toString();
-    var month = time.toDate().month.toString();
+    var day = time
+        .toDate()
+        .day
+        .toString();
+    var month = time
+        .toDate()
+        .month
+        .toString();
     var year = time.toDate().toString().substring(2);
     var date = day + '-' + month + '-' + year;
-    var hour = time.toDate().hour;
-    var min = time.toDate().minute;
+    var hour = time
+        .toDate()
+        .hour;
+    var min = time
+        .toDate()
+        .minute;
 
     var ampm;
     if (hour > 12) {
@@ -552,26 +570,29 @@ class MessageSender extends StatelessWidget {
           color: !isMe ? Color(0xffc4c4c4) : Color(0xff0E014C),
         ),
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.5,
+          maxWidth: MediaQuery
+              .of(context)
+              .size
+              .width * 0.5,
         ),
         padding: const EdgeInsets.all(10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment:
-              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             Text(
               text,
               style: isMe
                   ? TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    )
+                color: Colors.white,
+                fontSize: 14,
+              )
                   : TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                    ),
+                color: Colors.black,
+                fontSize: 14,
+              ),
             ),
             SizedBox(height: 5),
             Row(
@@ -581,28 +602,28 @@ class MessageSender extends StatelessWidget {
                   hour.toString() + ":" + min.toString() + ampm,
                   style: isMe
                       ? TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                        )
+                    color: Colors.white,
+                    fontSize: 10,
+                  )
                       : TextStyle(
-                          color: Colors.black,
-                          fontSize: 10,
-                        ),
+                    color: Colors.black,
+                    fontSize: 10,
+                  ),
                 ),
                 isMe
                     ? SizedBox(width: 5)
                     : SizedBox(
-                        width: 0,
-                      ),
+                  width: 0,
+                ),
                 isMe
                     ? Icon(
-                        Icons.done_all,
-                        color: Colors.white,
-                        size: 15,
-                      )
+                  Icons.done_all,
+                  color: Colors.white,
+                  size: 15,
+                )
                     : SizedBox(
-                        width: 0,
-                      ),
+                  width: 0,
+                ),
               ],
             )
           ],
@@ -629,7 +650,10 @@ class MessageReceiver extends StatelessWidget {
         ),
         padding: const EdgeInsets.all(10),
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.5,
+          maxWidth: MediaQuery
+              .of(context)
+              .size
+              .width * 0.5,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -673,23 +697,26 @@ class CurrentUserStoryBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return
-        // Stack(
-        // children: [
-        InkWell(
-      onTap: () {
-        if (user.stories.isEmpty) {
-          Navigator.pushNamed(context, AddStory.routeName);
-        } else {
-          Navigator.pushNamed(context, StoryScreen.routeName, arguments: user);
-        }
-      },
-      child: BubbleStories(
-        hasStory: user.stories.isNotEmpty,
-        text: 'Your story',
-        image: user.image,
-        // useNetworkImage: true,
-      ),
-    );
+      // Stack(
+      // children: [
+      InkWell(
+        onTap: () {
+          if (user.stories.isEmpty) {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => AddStory()));
+          } else {
+            Navigator.push(context,
+                MaterialPageRoute(
+                    builder: (context) => StoryScreen(user: user)));
+          }
+        },
+        child: BubbleStories(
+          hasStory: user.stories.isNotEmpty,
+          text: 'Your story',
+          image: user.image,
+          // useNetworkImage: true,
+        ),
+      );
     // if (user.stories.isEmpty)
     //   Positioned(
     //     right: 8,
@@ -745,11 +772,12 @@ class WalletListTile extends StatelessWidget {
       ),
       margin: const EdgeInsets.symmetric(horizontal: 5),
       child: ListTile(
-        onTap: () => Get.to(WalletToken(
-          wallet: wallet,
-          balance: amount,
-          value: fiatValue,
-        )),
+        onTap: () =>
+            Get.to(WalletToken(
+              wallet: wallet,
+              balance: amount,
+              value: fiatValue,
+            )),
         dense: true,
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(17),
