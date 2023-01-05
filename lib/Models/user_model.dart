@@ -1,3 +1,4 @@
+import 'package:beepo/models/story_model/story.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:voster/models/story_model/story.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ class UserModel {
     String name,
     String image,
     String userName,
-    List searchKeywords,
+    List searchKeywords, List<Story> stories,
   }) =>
       UserModel(
           uid: uid ?? this.uid,

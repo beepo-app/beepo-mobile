@@ -63,6 +63,10 @@ dependencies:
   firebase_storage: ^10.3.11
   just_audio: ^0.9.31
   videosdk: ^1.0.10
+  freezed_annotation: ^2.2.0
+  video_player: ^2.4.10
+  video_thumbnail: ^0.5.3
+  dartz: ^0.10.1
 
 #
 
