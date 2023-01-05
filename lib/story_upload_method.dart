@@ -60,7 +60,7 @@ class StoryUploadMethod {
   Future<Either<Failure, _MediaMetaData>> _uploadMediaToStorage(
       File file) async {
     try {
-      final user = _auth.currentUser;
+      // final user = _auth.currentUser;
       // Creates a reference to where the file will be stored
       final storageRef = _storage
           .ref()

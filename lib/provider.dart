@@ -19,7 +19,6 @@ class ChatNotifier extends ChangeNotifier {
   List<String> _users = [];
 
   List<String> get chatUsers => _users;
-
   String chatText = "";
 
   String imageUrl = ' ';

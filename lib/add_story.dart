@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -167,7 +169,7 @@ class _AddStoryState extends State<AddStory> {
                     children: [
                       SvgPicture.asset(AppImages.newGallery),
                       SizedBox(
-                        width: 8.w,
+                        width: 8,
                       ),
                       const Text(
                         'Gallery',

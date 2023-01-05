@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 // import 'package:voster/screens/social/my_widgets/profile_picture.dart';
 import 'package:beepo/sizing.dart';
@@ -25,16 +26,16 @@ class BubbleStories extends StatelessWidget {
         Container(
           margin: const EdgeInsets.only(right: 7.0),
           padding: const EdgeInsets.all(2.0),
-          width: 60.h,
-          height: 60.h,
+          width: 60,
+          height: 60,
           decoration: BoxDecoration(
             gradient: hasStory ? AppColors.pinkTextGradient : null,
             shape: BoxShape.circle,
           ),
-          child: Image.network(image)
+          child: CachedNetworkImage(imageUrl: image,)
         ),
         Text(
-          text,
+          hasStory? text : ' ',
           style: kstoryTextStyle,
         ),
       ],
