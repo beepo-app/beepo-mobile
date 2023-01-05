@@ -3,18 +3,25 @@
 import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Widgets/textfields.dart';
 import 'package:beepo/Widgets/toasts.dart';
+import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
 import 'package:beepo/search.dart';
+import 'package:beepo/story_download_provider.dart';
+import 'package:beepo/story_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import 'Models/story_model/story.dart';
+import 'Models/user_model.dart';
 import 'Models/wallet.dart';
 import 'Screens/Wallet/token_screen.dart';
 import 'Screens/Browser/browser_page.dart';
 import 'Utils/styles.dart';
+import 'add_story.dart';
+import 'bubble_stories.dart';
 import 'myMessages.dart';
 
 class FilledButton extends StatelessWidget {
@@ -115,10 +122,16 @@ class _ChatTabState extends State<ChatTab> {
   String receiver;
   bool showInput = false;
 
+   Stream<List<Story>> currentUserStories;
+   Stream<List<UserModel>> currentUserFollowingStories;
+
   @override
   void initState() {
     // TODO: implement initState
     // context.read<ChatNotifier>().getUsers();
+    currentUserStories = context.read<StoryDownloadProvider>().getCurrentUserStories();
+    currentUserFollowingStories = context.read<StoryDownloadProvider>().getFollowingUsersStories();
+
 
     super.initState();
   }
@@ -161,6 +174,45 @@ class _ChatTabState extends State<ChatTab> {
                 ],
               ),
             ),
+            StreamBuilder<List<Story>>(
+                stream: currentUserStories,
+                initialData: const [],
+                builder: (context, snapshot) {
+                  // if (!snapshot.hasData) {
+                  //   return const CurrentUserStoryBubble(stories: []);
+                  // }
+                  List<Story> userStories = snapshot.data;
+                  'UserStories: $userStories'.log();
+                  UserModel userf;
+                  final user = userf.copyWith(stories: userStories, uid: AuthService().uid);
+                  return CurrentUserStoryBubble(user: user);
+                }),
+            StreamBuilder<List<UserModel>>(
+                stream: currentUserFollowingStories,
+                initialData: const [],
+                builder: (context, snapshot) {
+                  final followingUsers = snapshot.data;
+                  return ListView.builder(
+                    primary: false,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: followingUsers.length,
+                    itemBuilder: (context, index) {
+                      final user = followingUsers[index];
+                      return InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(context, StoryScreen.routeName, arguments: user);
+                        },
+                        child: BubbleStories(
+                          text: user.name,
+                          image: user.image,
+                          useNetworkImage: true,
+                        ),
+                      );
+                    },
+                  );
+                }),
             // const SizedBox(width: 10),
             // Expanded(
             //   child: SizedBox(
@@ -555,6 +607,55 @@ class MessageReceiver extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+
+class CurrentUserStoryBubble extends StatelessWidget {
+  const CurrentUserStoryBubble({
+    Key key,
+    @required this.user,
+  }) : super(key: key);
+  // final List<Story> stories;
+  final UserModel user;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        InkWell(
+          onTap: () {
+            if (user.stories.isEmpty) {
+              Navigator.pushNamed(context, AddStory.routeName);
+            } else {
+              Navigator.pushNamed(context, StoryScreen.routeName, arguments: user);
+            }
+          },
+          child: BubbleStories(
+            hasStory: user.stories.isNotEmpty,
+            text: 'Your story',
+            image: user.image,
+            // useNetworkImage: true,
+          ),
+        ),
+        if (user.stories.isEmpty)
+          Positioned(
+            right: 8,
+            bottom: 30,
+            child: CircleAvatar(
+              radius: 6,
+              backgroundColor: AppColors.primaryColor,
+              child: Center(
+                child: Icon(
+                  size: 11,
+                  Icons.add,
+                  color: context.themeData.primaryColor,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

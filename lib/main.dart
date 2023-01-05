@@ -1,4 +1,8 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:beepo/provider.dart';
+import 'package:beepo/story_download_provider.dart';
+import 'package:beepo/story_upload_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,7 +26,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  // const MyApp({Key key}) : super(key: key);
+  const MyApp({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +36,12 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ChatNotifier()),
+        ChangeNotifierProvider<StoryUploadProvider>(
+          create: (_) => StoryUploadProvider.initialize(),
+        ),
+        ChangeNotifierProvider<StoryDownloadProvider>(
+          create: (_) => StoryDownloadProvider.initialize(),
+        ),
       ],
       builder: (context, _) => GetMaterialApp(
         title: 'Beepo',

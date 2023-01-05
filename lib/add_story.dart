@@ -13,7 +13,7 @@ import 'package:beepo/sizing.dart';
 import 'package:beepo/text_styles.dart';
 
 class AddStory extends StatefulWidget {
-  // const AddStory({Key? key}) : super(key: key);
+  const AddStory({Key key}) : super(key: key);
   static const String routeName = '/add-story';
 
   @override
