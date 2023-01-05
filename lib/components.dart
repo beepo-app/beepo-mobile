@@ -701,14 +701,14 @@ class CurrentUserStoryBubble extends StatelessWidget {
       // children: [
       InkWell(
         onTap: () {
-          if (user.stories.isEmpty) {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => AddStory()));
-          } else {
+          // if (user.stories.isEmpty) {
+          //   Navigator.push(
+          //       context, MaterialPageRoute(builder: (context) => AddStory()));
+          // } else {
             Navigator.push(context,
                 MaterialPageRoute(
                     builder: (context) => StoryScreen(user: user)));
-          }
+          // }
         },
         child: BubbleStories(
           hasStory: user.stories.isNotEmpty,
