@@ -108,7 +108,7 @@ class _AddStoryState extends State<AddStory> {
                         right: 15,
                         child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor),
+                              backgroundColor: primaryColor,),
                           onPressed: () async {
                             if (status == StoryUploadStatus.uploading) {
                               // If the user is uploading a story, we don't want to do anything,
@@ -123,6 +123,7 @@ class _AddStoryState extends State<AddStory> {
                                 (success) => _showSnackBar(context,
                                     message: 'Story uploaded successfully'),
                               );
+                              Navigator.pop(context);
                             }
                           },
                           icon: const Icon(Icons.upload_rounded),
@@ -176,7 +177,7 @@ class _AddStoryState extends State<AddStory> {
                     await context
                         .read<StoryUploadProvider>()
                         .pickImageGallery();
-                    Navigator.pop(context);
+                    // Navigator.pop(context);
                   },
                   child: Row(
                     children: [

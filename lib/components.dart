@@ -196,14 +196,15 @@ class _ChatTabState extends State<ChatTab> {
                                 if (fuck.hasData) {
                                   List<Story> userStories = snapshot.data;
                                   'UserStories: $userStories'.log();
-                                  Map userData;
-                                  userData = fuck.data;
+                                  // Map userData;
+                                  // userData = fuck.data;
                                   UserModel userf =
-                                  UserModel(uid: userData['uid'],
-                                      name: userData['name'],
-                                      userName: userData['userName'],
-                                      image: userData['image'],
-                                      searchKeywords: userData['searchKeywords'],);
+                                  UserModel(uid: fuck.data['uid'],
+                                      name: fuck.data['name'],
+                                      userName: fuck.data['userName'],
+                                      image: fuck.data['image'],
+                                      searchKeywords: fuck.data['searchKeywords'],
+                                  );
 
                                   final user = userf.copyWith(
                                       stories: userStories,
