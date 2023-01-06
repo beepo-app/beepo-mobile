@@ -120,6 +120,7 @@ class _ChatTabState extends State<ChatTab> {
   bool showInput = false;
 
   Stream<List<Story>> currentUserStories;
+  Stream<List<Story>> friendsStories;
   Stream<List<UserModel>> currentUserFollowingStories;
 
   @override
@@ -130,6 +131,8 @@ class _ChatTabState extends State<ChatTab> {
         context.read<StoryDownloadProvider>().getCurrentUserStories();
     currentUserFollowingStories =
         context.read<StoryDownloadProvider>().getFollowingUsersStories();
+    friendsStories =         context.read<StoryDownloadProvider>().getFriendStories();
+
 
     super.initState();
   }
@@ -198,17 +201,17 @@ class _ChatTabState extends State<ChatTab> {
                                   'UserStories: $userStories'.log();
                                   // Map userData;
                                   // userData = fuck.data;
-                                  UserModel userf =
-                                  UserModel(uid: fuck.data['uid'],
-                                      name: fuck.data['name'],
-                                      userName: fuck.data['userName'],
-                                      image: fuck.data['image'],
-                                      searchKeywords: fuck.data['searchKeywords'],
+                                  UserModel userf = UserModel(
+                                    uid: fuck.data['uid'],
+                                    name: fuck.data['displayName'],
+                                    userName: fuck.data['username'],
+                                    image: fuck.data['profilePictureUrl'],
+                                    // searchKeywords: fuck.data['searchKeywords'],
                                   );
 
                                   final user = userf.copyWith(
-                                      stories: userStories,
-                                      // uid: AuthService().uid,
+                                    stories: userStories,
+                                    uid: AuthService().uid,
                                   );
                                   return CurrentUserStoryBubble(user: user);
                                 }
@@ -225,34 +228,66 @@ class _ChatTabState extends State<ChatTab> {
                           ),
                         );
                       }),
-                  StreamBuilder<List<UserModel>>(
-                      stream: currentUserFollowingStories,
+                  StreamBuilder<List<Story>>(
+                      stream: friendsStories,
                       initialData: const [],
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          final followingUsers = snapshot.data;
-                          return ListView.builder(
-                            primary: false,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: followingUsers.length,
-                            itemBuilder: (context, index) {
-                              final user = followingUsers[index];
-                              return InkWell(
-                                onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(
-                                      builder: (context) =>
-                                          StoryScreen(user: user)));
-                                },
-                                child: BubbleStories(
-                                  text: user.name,
-                                  image: user.image,
-                                  // useNetworkImage: true,
-                                ),
-                              );
-                            },
-                          );
+                          return StreamBuilder(
+                              stream: FirebaseFirestore.instance
+                                  .collection('users')
+                                  .where('uid', isNotEqualTo: AuthService().uid)
+                                  .snapshots(),
+                              builder: (context, stream) {
+                                if (stream.hasData) {
+                                  final followingUsers = stream.data.docs;
+                                  // final storyPeaople = snapshot.data.docs;
+                                  List<Story> stoty = snapshot.data;
+
+                                  return ListView.builder(
+                                    primary: false,
+                                    shrinkWrap: true,
+                                    physics:
+                                    const NeverScrollableScrollPhysics(),
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: followingUsers.length,
+                                    itemBuilder: (context, index) {
+                                      final user = UserModel(
+                                        uid: followingUsers[index]['uid'],
+                                        name: followingUsers[index]['name'],
+                                        userName: followingUsers[index]
+                                        ['userName'],
+                                        image: followingUsers[index]['image'],
+                                        // stories: followingUsers[index].stories,
+                                      );
+                                      UserModel people = user.copyWith(
+                                          stories: stoty);
+                                      return InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      StoryScreen(
+                                                          user: people)));
+                                        },
+                                        child: BubbleStories(
+                                          text: people.name,
+                                          image: people.image,
+                                          hasStory: people.stories.isNotEmpty,
+                                          // useNetworkImage: true,
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }
+
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: primaryColor,
+                                  ),
+                                );
+                              });
                         }
 
                         return Center(
@@ -706,9 +741,8 @@ class CurrentUserStoryBubble extends StatelessWidget {
           //   Navigator.push(
           //       context, MaterialPageRoute(builder: (context) => AddStory()));
           // } else {
-            Navigator.push(context,
-                MaterialPageRoute(
-                    builder: (context) => StoryScreen(user: user)));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => StoryScreen(user: user)));
           // }
         },
         child: BubbleStories(

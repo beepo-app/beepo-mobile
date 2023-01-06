@@ -36,6 +36,15 @@ class StoryDownloadMethod {
     // yield* storiesStream;
   }
 
+  Stream<List<Story>> getFriendsStories() async* {
+    // final user = _auth.currentUser;
+    final storiesCollection = _firestore.collection('stories');
+    final stories = storiesCollection.where('uid', isNotEqualTo: AuthService().uid);
+    // final snapshot = stories.orderBy('createdDate', descending: true).snapshots();
+    yield* stories.snapshots().map((snapshot) => snapshot.docs.map((doc) => Story.fromJson(doc.data())).toList());
+    // yield* storiesStream;
+  }
+
   // get stories of users that the current user is following
   Stream<List<UserModel>> getFollowingUsersStories() async* {
     _getFollowingUsers().map((users) async* {
@@ -43,7 +52,7 @@ class StoryDownloadMethod {
       final stories = storiesCollection.where('uid', whereIn: users.map((user) => user.uid).toList());
       // return users with their stories
       users.map((user) async* {
-        final userStories = storiesCollection.where('uid', isEqualTo: user.uid);
+        final userStories = stories.where('uid', isEqualTo: user.uid);
         final uStories = userStories.snapshots().map((snapshot) => snapshot.docs.map((doc) => Story.fromJson(doc.data())).toList());
         yield* uStories.map((stories) => user.copyWith(stories: stories));
       });

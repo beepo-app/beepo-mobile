@@ -1,4 +1,3 @@
-import 'package:beepo/text_styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -21,21 +20,30 @@ class BubbleStories extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-            margin: const EdgeInsets.only(right: 7.0, top: 10),
-            padding: const EdgeInsets.all(2.0),
-            // width: 60,
-            // height: 60,
-            child: CircleAvatar(
-              child: CachedNetworkImage(
-                imageUrl: image,
-                fit: BoxFit.cover,
+        hasStory
+            ? Container(
+                margin: const EdgeInsets.only(right: 7.0, top: 10),
+                padding: const EdgeInsets.all(2.0),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                width: 60,
+                height: 60,
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(image),
+                  // child: CachedNetworkImage(
+                  //   imageUrl: image,
+                  //   fit: BoxFit.fill,
+                  // ),
+                  radius: 30,
+                ),
+              )
+            : const SizedBox(
+                width: 1,
               ),
-              radius: 30,
-            )),
         Text(
           hasStory ? text : ' ',
-          style: kstoryTextStyle,
+          style: const TextStyle(color: Colors.white, fontSize: 10),
         ),
       ],
     );

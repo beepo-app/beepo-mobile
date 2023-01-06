@@ -172,6 +172,7 @@ class _StoryScreenState extends State<StoryScreen>
           //   });
           // },
           onTapDown: (details) => _onTapDown(details, story),
+
           // onLongPressEnd: (details) => _onLongPressCancel(story),
           // onLongPress: () {
           //   _onLongPress(story);
@@ -330,7 +331,7 @@ class _StoryScreenState extends State<StoryScreen>
   void _onTapDown(TapDownDetails details, Story story) {
     final double dx = details.globalPosition.dx;
     FocusScope.of(context).requestFocus(FocusNode());
-    if (dx < 1.sw / 3) {
+    if (dx < 1 / 3) {
       setState(() {
         if (_currentIndex - 1 >= 0) {
           _currentIndex -= 1;
@@ -339,7 +340,7 @@ class _StoryScreenState extends State<StoryScreen>
         }
         _loadStory(story: widget.user.stories[_currentIndex]);
       });
-    } else if (dx > 2 * 1.sw / 3) {
+    } else if (dx > 2 * 1 / 3) {
       setState(() {
         if (_currentIndex + 1 < widget.user.stories.length) {
           _currentIndex += 1;
