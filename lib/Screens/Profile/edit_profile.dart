@@ -10,6 +10,7 @@ import 'package:beepo/components.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 
 import '../../Widgets/toasts.dart';
 
@@ -56,19 +57,28 @@ class _EditProfileState extends State<EditProfile> {
                               width: 120,
                               fit: BoxFit.cover,
                             )
-                          : CachedNetworkImage(
-                              imageUrl: widget.data['profilePictureUrl'],
-                              height: 120,
-                              width: 120,
-                              fit: BoxFit.cover,
-                              progressIndicatorBuilder: (context, url, progress) {
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    value: progress.progress,
+                          : widget.data['profilePictureUrl'] == null
+                              ? Container(
+                                  height: 120,
+                                  width: 120,
+                                  color: Colors.grey[300],
+                                  child: const Center(
+                                    child: Icon(Iconsax.user, color: primaryColor),
                                   ),
-                                );
-                              },
-                            ),
+                                )
+                              : CachedNetworkImage(
+                                  imageUrl: widget.data['profilePictureUrl'],
+                                  height: 120,
+                                  width: 120,
+                                  fit: BoxFit.cover,
+                                  progressIndicatorBuilder: (context, url, progress) {
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        value: progress.progress,
+                                      ),
+                                    );
+                                  },
+                                ),
                     ),
                     Positioned(
                       bottom: 0,

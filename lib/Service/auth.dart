@@ -51,6 +51,14 @@ class AuthService {
         imageUrl = await MediaService.uploadProfilePicture(img);
       }
 
+      //If image was selected, add to the body of the request
+
+      var body = {'displayName': displayName, "encrypted_pin": encryptedPin};
+
+      if (img != null) {
+        body['profilePictureUrl'] = imageUrl;
+      }
+
       final response = await http.post(
         Uri.parse('$baseUrl/users'),
         headers: {
@@ -58,19 +66,12 @@ class AuthService {
           'Accept': 'application/json',
           Headers.context: contextResult['contextId'],
         },
-        body: json.encode({
-          'displayName': displayName,
-          // 'profilePictureUrl': imageUrl,
-          // "description": "vv",
-          "encrypted_pin": encryptedPin,
-        }),
+        body: json.encode(body),
       );
 
       log(response.body);
-      log(response.statusCode.toString());
       if (response.statusCode == 201 || response.statusCode == 200) {
         var data = json.decode(response.body);
-        Map user = data['user'];
 
         box.put('seedphrase', data['encrypted_seedphrase']);
         box.put('accessToken', data['access_token']);
