@@ -68,7 +68,7 @@ class _SendTokenState extends State<SendToken> {
               Align(
                 alignment: Alignment.bottomRight,
                 child: Text(
-                  'Balance:  \$${widget.balance ?? 0.0}',
+                  'Balance: \$${widget.balance ?? 0.0}',
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ),

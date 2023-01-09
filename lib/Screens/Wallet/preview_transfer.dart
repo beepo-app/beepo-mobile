@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:beepo/Constants/app_constants.dart';
 import 'package:beepo/Screens/Wallet/transfer_success.dart';
 import 'package:beepo/Service/transactions.dart';
@@ -89,6 +91,8 @@ class _SendToken2State extends State<SendToken2> {
                   color: secondaryColor,
                   text: "Approve",
                   onPressed: () async {
+                    log(Hive.box(kAppName).get('PIN').toString());
+
                     TextEditingController controller = TextEditingController();
                     Get.bottomSheet(
                       BottomSheet(
@@ -140,7 +144,8 @@ class _SendToken2State extends State<SendToken2> {
                                   ),
                                   onCompleted: (value) async {
                                     //confirm pin
-                                    String pin = Hive.box(kAppName).get('pin');
+                                    String pin = Hive.box(kAppName).get('PIN');
+
                                     if (pin == value) {
                                       Get.back();
                                       loadingDialog('Sending Token...');
@@ -153,7 +158,12 @@ class _SendToken2State extends State<SendToken2> {
                                       );
                                       Get.back();
                                       if (result) {
-                                        Get.off(TransferSuccess(widget.address));
+                                        Get.off(
+                                          TransferSuccess(
+                                              widget.address,
+                                              widget.amount.toString(),
+                                              widget.wallet.ticker),
+                                        );
                                         return;
                                       }
                                     } else {

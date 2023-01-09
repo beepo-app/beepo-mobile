@@ -6,7 +6,9 @@ import 'package:lottie/lottie.dart';
 
 class TransferSuccess extends StatefulWidget {
   final String address;
-  const TransferSuccess(this.address);
+  final String amount;
+  final String ticker;
+  const TransferSuccess(this.address, this.amount, this.ticker);
 
   @override
   State<TransferSuccess> createState() => _TransferSuccessState();
@@ -28,7 +30,7 @@ class _TransferSuccessState extends State<TransferSuccess> {
                 width: 300,
                 fit: BoxFit.fitWidth,
               ),
-              Text('Amount'),
+              Text(widget.amount + '' + widget.ticker),
               SizedBox(height: 5),
               Text('is on it’s way to:'),
               SizedBox(height: 10),
