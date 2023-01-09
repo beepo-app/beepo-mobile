@@ -1,5 +1,6 @@
 import 'package:beepo/Screens/Auth/pin_code.dart';
 import 'package:beepo/Service/auth.dart';
+import 'package:beepo/Widgets/commons.dart';
 import 'package:beepo/Widgets/toasts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -66,47 +67,21 @@ class Login extends StatelessWidget {
                 if (phrase.isEmpty) {
                   showToast('Please enter your secret phrase');
                 } else {
-                  Get.to(
-                    Material(
-                      child: Container(
-                        width: double.infinity,
-                        height: double.infinity,
-                        color: Colors.white,
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Lottie.asset(
-                                    'assets/lottie/lottie_1.json',
-                                    height: 150,
-                                    width: 150,
-                                  ),
-                                ),
-                                Text(
-                                  'Logging in...',
-                                  style: Get.textTheme.headline6,
-                                ),
-                                const SizedBox(height: 10),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    fullscreenDialog: true,
-                  );
-                  bool result = await AuthService().loginWithSecretPhrase(phrase);
-                  Get.back();
-                  if (result) {
-                    showToast('Logged in successfully');
-                    Get.offAll(const PinCode());
-                  } else {
-                    showToast('Something went wrong');
-                  }
+                  // Get.to(
+                  //   fullScreenLoader('Verifying Seedphrase...'),
+                  //   fullscreenDialog: true,
+                  // );
+                  // bool result = await AuthService().loginWithSecretPhrase(phrase);
+
+                  // AuthService().verifyPhrase(phrase);
+                  Get.to(PinCode(isSignUp: false, seedPhrase: phrase));
+
+                  // Get.back();
+                  // if (result) {
+                  //   showToast('Logged in successfully');
+                  // } else {
+                  //   showToast('Something went wrong');
+                  // }
                 }
               },
             ),

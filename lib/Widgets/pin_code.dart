@@ -67,9 +67,7 @@ class _NumberKey extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        onPressed(number);
-      },
+      onTap: () => onPressed(number),
       child: Container(
         decoration: BoxDecoration(
           color: secondaryColor,

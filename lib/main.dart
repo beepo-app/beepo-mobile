@@ -12,10 +12,10 @@ import 'bottom_nav.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    // name: "Beepo Project",
-    // options: DefaultF
-    // options: DefaultFirebaseOptions.currentPlatform,
-  );
+      // name: "Beepo Project",
+      // options: DefaultF
+      // options: DefaultFirebaseOptions.currentPlatform,
+      );
   await Hive.initFlutter();
   await Hive.openBox('beepo');
   runApp(MyApp());
@@ -39,8 +39,8 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(primarySwatch: Colors.blue),
         home: isLoggedIn
             ? isLocked
-            ? LockScreen()
-            : BottomNavHome()
+                ? LockScreen()
+                : BottomNavHome()
             : Onboarding(),
       ),
     );

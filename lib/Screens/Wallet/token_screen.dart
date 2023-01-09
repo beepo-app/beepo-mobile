@@ -93,7 +93,7 @@ class _WalletTokenState extends State<WalletToken> {
                           child: IconButton(
                               onPressed: () => Get.to(SendToken(
                                     wallet: widget.wallet,
-                                    balance: widget.balance,
+                                    balance: widget.value,
                                   )),
                               icon: const Icon(
                                 Icons.send_outlined,

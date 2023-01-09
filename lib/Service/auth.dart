@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:beepo/Constants/app_constants.dart';
 import 'package:beepo/Service/encryption.dart';
@@ -11,6 +12,7 @@ import 'package:http/http.dart' as http;
 import '../Constants/network.dart';
 import '../Models/user_model.dart';
 import '../generate_keywords.dart';
+import 'media.dart';
 
 class AuthService {
   Box box = Hive.box('beepo');
@@ -26,51 +28,65 @@ class AuthService {
   String get token => box.get('token', defaultValue: '');
 
   //Get Access token
-  String get accessToken => box.get('EAT', defaultValue: '');
+  // String get accessToken => box.get('EAT', defaultValue: '');
+  String get accessToken => box.get('accessToken', defaultValue: '');
 
   //Get Context Id
   String get contextId => box.get('contextId', defaultValue: '');
 
   //Create User
-  Future<bool> createUser(String displayName, String imgUrl) async {
+  Future<bool> createUser(String displayName, File img, String pin) async {
     try {
       //To generate keys and contextId
-      await EncryptionService().encryption();
       Map keys = await isolateFunction();
       box.put('privateKey', keys['privateKey']);
-      // log(key);
       Map contextResult = await AuthService().createContext(keys['publicKey']);
+
+      //Encrypt PIN
+      String encryptedPin = await EncryptionService().encrypt(pin);
+
+      // Upload image and get image url
+      String imageUrl = "";
+      if (img != null) {
+        imageUrl = await MediaService.uploadProfilePicture(img);
+      }
+
       final response = await http.post(
         Uri.parse('$baseUrl/users'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'beepo-core-context-id': contextResult['contextId'],
+          Headers.context: contextResult['contextId'],
         },
         body: json.encode({
           'displayName': displayName,
-          'profilePictureUrl': imgUrl,
+          // 'profilePictureUrl': imageUrl,
+          // "description": "vv",
+          "encrypted_pin": encryptedPin,
         }),
       );
 
+      log(response.body);
+      log(response.statusCode.toString());
       if (response.statusCode == 201 || response.statusCode == 200) {
         var data = json.decode(response.body);
-        print(data);
-        box.put('seedphrase', data['seedphrase']);
-        box.put('uid', data['user']['uid']);
+        Map user = data['user'];
+
+        box.put('seedphrase', data['encrypted_seedphrase']);
+        box.put('accessToken', data['access_token']);
         box.put('isLogged', true);
         box.put('userData', data['user']);
 
-        UserModel user = UserModel(
-            uid: data['user']['uid'],
-            searchKeywords: createKeywords(data['user']['username']),
-            name: displayName,
-            image: imgUrl,
-            userName: data['user']['username']);
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(data['user']['uid'])
-            .set(user.toJson());
+        // UserModel user = UserModel(
+        //     uid: data['user']['uid'],
+        //     searchKeywords: createKeywords(data['user']['username']),
+        //     name: displayName,
+        //     image: imgUrl,
+        //     userName: data['user']['username']);
+        // await FirebaseFirestore.instance
+        //     .collection('users')
+        //     .doc(data['user']['uid'])
+        //     .set(user.toJson());
 
         return true;
       } else {
@@ -78,6 +94,7 @@ class AuthService {
         return false;
       }
     } catch (e) {
+      print(e);
       showToast(e.toString());
       return false;
     }
@@ -95,12 +112,12 @@ class AuthService {
         },
       );
 
-      print(AuthService().accessToken);
+      log(response.body.toString());
 
       if (response.statusCode == 200) {
-        Map data = json.decode(response.body);
-        Hive.box('beepo').put('userData', data);
-        return data;
+        // Map data = json.decode(response.body);
+        // Hive.box('beepo').put('userData', data);
+        return {};
       } else {
         return null;
       }
@@ -112,26 +129,22 @@ class AuthService {
   }
 
   //Login user with secret phrase
-  Future<bool> loginWithSecretPhrase(String seedPhrase) async {
+  Future<bool> loginWithSecretPhrase(String seedPhrase, String pin) async {
     try {
-      //Step 1. Create keys and context
-      //Step 2. Get seedphrase hashes
+      //Step 1. Create RSA keys and context
       Map keys = await isolateFunction();
       await AuthService().createContext(keys['publicKey']);
 
       box.put('privateKey', keys['privateKey']);
       box.put('publicKey', keys['publicKey']);
 
-      bool logIn = await EncryptionService().decryptSeedPhrase(seedPhrase: seedPhrase);
+      String encryptedSeedphrase = await EncryptionService().encrypt(seedPhrase);
+      String encryptedPin = await EncryptionService().encrypt(pin);
 
-      if (logIn) {
-        Map result = await getUser();
+      bool acctFound = await verifyPhrase(encryptedSeedphrase);
 
-        if (result != null) {
-          return true;
-        } else {
-          return false;
-        }
+      if (acctFound != null) {
+        return await login(encryptedSeedphrase, encryptedPin);
       } else {
         return false;
       }
@@ -169,8 +182,33 @@ class AuthService {
     }
   }
 
+  //Verify Seedphrase is from beepo
+  Future<bool> verifyPhrase(String seedPhrase) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/verify'),
+        headers: {
+          Headers.context: contextId,
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({"encrypted_seedphrase": seedPhrase}),
+      );
+
+      print(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      showToast(e.toString());
+      return false;
+    }
+  }
+
   //Login for access token
-  Future<String> login(String hash256, String hash512) async {
+  Future<bool> login(String encryptedSeedphrase, String encryptedPin) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/auth/login'),
@@ -179,69 +217,63 @@ class AuthService {
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
-          "encryptedSeedPhraseHash256": hash256,
-          "encryptedSeedPhraseHash512": hash512,
+          "encrypted_seedphrase": encryptedSeedphrase,
+          "encrypted_pin": encryptedPin,
         }),
       );
 
       print(response.body);
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
-        box.put('token', data['accessToken']);
+        box.put('accessToken', data['access_token']);
+        box.put('seedphrase', data['encrypted_seedphrase']);
         box.put('isLogged', true);
-        return data['accessToken'];
+        box.put('userData', data['user']);
+        return true;
       } else {
         throw Exception("Invalid Credentials");
       }
     } catch (e) {
       print(e);
       showToast(e.toString());
-      return '';
+      return false;
     }
   }
 
   //Retrieve Passphrase
-  Future<void> retrievePassphrase() async {
+  Future<String> retrievePassphrase() async {
     try {
-      final response = await http.get(
+      String encryptedPin = await EncryptionService().encrypt('1234');
+      print(AuthService().accessToken);
+      final response = await http.post(
         Uri.parse('$baseUrl/wallet/recover-seedphrase'),
         headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
           Headers.bearer: AuthService().accessToken,
-          Headers.context: AuthService().contextId,
         },
+        body: jsonEncode({
+          'encrypted_pin': encryptedPin,
+          'encrypted_seedphrase': box.get('seedphrase'),
+        }),
       );
 
       log(response.body);
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map result = jsonDecode(response.body);
 
-        box.put('seedphrase', result['seedPhrase']);
+        String dd =
+            await EncryptionService().getSeedPhrase(seedPhrase: result['seedPhrase']);
+        return dd;
+      } else {
+        print(response.body);
+        return "";
       }
     } catch (e) {
-      return {};
+      return "";
     }
   }
-
-  //Retrieve Passphrase
-  // Future<void> retrievePassphraseLocal() async {
-  //   try {
-  //     final response = await http.get(
-  //       Uri.parse('$baseUrl/wallet/recover-seedphrase'),
-  //       headers: {
-  //         // 'Accept': 'application/json',
-  //         Headers.bearer: AuthService().accessToken,
-  //         Headers.context: AuthService().contextId,
-  //       },
-  //     );
-  //     print(response.body);
-  //     if (response.statusCode == 200 || response.statusCode == 201) {
-  //       Map result = jsonDecode(response.body);
-  //       if (result['encrypted_passphrase']) {}
-  //     }
-  //   } catch (e) {
-  //     return {};
-  //   }
-  // }
 
   //Edit profile
   Future<bool> editProfile({
@@ -256,8 +288,8 @@ class AuthService {
         Uri.parse('$baseUrl/users/edit'),
         headers: {
           'Accept': 'application/json',
-          Headers.context: AuthService().contextId,
           'Content-Type': 'application/json',
+          Headers.bearer: AuthService().accessToken,
         },
         body: jsonEncode({
           'displayName': displayName,

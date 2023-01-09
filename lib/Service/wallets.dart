@@ -18,7 +18,7 @@ class WalletsService {
         headers: {
           'Accept': 'application/json',
           Headers.bearer: AuthService().accessToken,
-          Headers.context: AuthService().contextId,
+          // Headers.context: AuthService().contextId,
         },
       );
 
@@ -26,12 +26,7 @@ class WalletsService {
         var data = json.decode(response.body);
         List<Wallet> wallets = walletFromJson(response.body);
         return wallets;
-      } else {
-        String pwd = Hive.box('beepo').get('password');
-        print(pwd);
-        // AuthService().login(pwd);
-        // return [];
-      }
+      } else {}
     } catch (e) {
       print(e);
 

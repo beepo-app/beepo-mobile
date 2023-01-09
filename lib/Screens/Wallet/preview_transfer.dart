@@ -164,12 +164,21 @@ class _SendToken2State extends State<SendToken2> {
                               ),
                               Expanded(
                                 child: NumberKeyboard(onPressed: (p0) {
-                                  if (p0 == -1 && controller.text.isNotEmpty) {
-                                    controller.text = controller.text
-                                        .substring(0, controller.text.length - 1);
-                                    return;
+                                  if (p0 == -1) {
+                                    if (controller.text.isEmpty) {
+                                      return;
+                                    } else {
+                                      controller.text = controller.text
+                                          .substring(0, controller.text.length - 1);
+                                      return;
+                                    }
+                                  } else {
+                                    if (controller.text.length == 4) {
+                                      return;
+                                    } else {
+                                      controller.text += p0.toString();
+                                    }
                                   }
-                                  controller.text += p0.toString();
                                 }),
                               ),
                             ],

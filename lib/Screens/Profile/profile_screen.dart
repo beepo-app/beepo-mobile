@@ -8,6 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../Utils/styles.dart';
@@ -26,20 +27,19 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    // userData = Hive.box('beepo').get('userData');
-    print(userData);
+    userData = Hive.box('beepo').get('userData');
     return Scaffold(
       appBar: appBar('My Profile'),
       body: FutureBuilder(
-          future: AuthService().getUser(),
+          future: Future.delayed(const Duration(seconds: 1)),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            print(snapshot.data);
-            userData = snapshot.data;
+            // if (!snapshot.hasData) {
+            //   return const Center(
+            //     child: CircularProgressIndicator(),
+            //   );
+            // }
+            // print(snapshot.data);
+            // userData = snapshot.data;
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(20),
@@ -50,27 +50,28 @@ class _ProfileState extends State<Profile> {
                       alignment: Alignment.center,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(70),
-                        child: CachedNetworkImage(
-                          imageUrl: userData['profilePictureUrl'],
-                          height: 135,
-                          width: 135,
-                          fit: BoxFit.cover,
-                          progressIndicatorBuilder: (context, url, progress) {
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value: progress.progress,
+                        child: userData['profilePictureUrl'] == null
+                            ? Container(
+                                height: 135,
+                                width: 135,
+                                color: Colors.grey[300],
+                                child: const Center(
+                                  child: Icon(Iconsax.user, color: primaryColor),
+                                ),
+                              )
+                            : CachedNetworkImage(
+                                imageUrl: userData['profilePictureUrl'],
+                                height: 135,
+                                width: 135,
+                                fit: BoxFit.cover,
+                                progressIndicatorBuilder: (context, url, progress) {
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value: progress.progress,
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                          // placeholder: (context, url) => Container(
-                          //   height: 135,
-                          //   width: 135,
-                          //   color: Colors.grey[300],
-                          //   child: const Center(
-                          //     child: Icon(Iconsax.user, color: blue),
-                          //   ),
-                          // ),
-                        ),
                       ),
                     ),
 

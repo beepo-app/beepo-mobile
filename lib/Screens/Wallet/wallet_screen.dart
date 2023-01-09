@@ -62,6 +62,7 @@ class _WalletScreenState extends State<WalletScreen> {
           }
 
           final List<Wallet> wallets = snapshot.data[0] ?? [];
+          log(wallets.toString());
 
           Wallet btcWallet = wallets.firstWhere((e) => e.name == 'Bitcoin');
           Wallet ethWallet = wallets.firstWhere((e) => e.ticker == 'ETH');

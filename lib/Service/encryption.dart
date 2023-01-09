@@ -74,17 +74,17 @@ class EncryptionService {
       var encryptedHash256 = encrypterer.encrypt(hash256);
       var encryptedHash512 = encrypterer.encrypt(hash512);
 
-      String accessToken = await AuthService().login(
-        encryptedHash256.base16,
-        encryptedHash512.base16,
-      );
+      // String accessToken = await AuthService().login(
+      //   encryptedHash256.base16,
+      //   encryptedHash512.base16,
+      // );
 
       //Access token must be decrypted and re-encrypted with the server public key
-      var encryptedAccessToken = encrypterer.encrypt(encrypterer.decrypt16(accessToken));
+      // var encryptedAccessToken = encrypterer.encrypt(encrypterer.decrypt16(accessToken));
+//
+      // box.put('EAT', encryptedAccessToken.base16);
 
-      box.put('EAT', encryptedAccessToken.base16);
-
-      dev.log(encryptedAccessToken.base16);
+      // dev.log(encryptedAccessToken.base16);
 
       return true;
     } catch (e) {
@@ -93,11 +93,41 @@ class EncryptionService {
     }
   }
 
-  Future<String> getSeedPhrase() async {
-    String seedphrase = box.get('seedphrase', defaultValue: '');
-    if (seedphrase == '') {
-      await AuthService().retrievePassphrase();
+  Future<String> getSeedPhrase({String seedPhrase}) async {
+    try {
+      // String seedphrase = box.get('seedphrase', defaultValue: '');
+      String seedphrase = seedPhrase ?? box.get('seedphrase', defaultValue: '');
+      print(seedphrase);
+
+      if (seedphrase == '') {
+        await AuthService().retrievePassphrase();
+      }
+      var helper = RsaKeyHelper();
+
+      String serverPublicKey = box.get('serverPublicKey');
+
+      String privateKey = box.get('privateKey');
+
+      final encrypterer = encrypter.Encrypter(
+        encrypter.RSA(
+          publicKey: helper.parsePublicKeyFromPem(serverPublicKey),
+          privateKey: helper.parsePrivateKeyFromPem(privateKey),
+          encoding: encrypter.RSAEncoding.PKCS1,
+        ),
+      );
+
+      return encrypterer.decrypt16(seedphrase);
+    } catch (e) {
+      print(e);
+      return '';
     }
+  }
+
+  Future<String> encrypt(String pin) async {
+    // String seedphrase = box.get('seedphrase', defaultValue: '');
+    // if (seedphrase == '') {
+    //   await AuthService().retrievePassphrase();
+    // }
     var helper = RsaKeyHelper();
 
     String serverPublicKey = box.get('serverPublicKey');
@@ -112,7 +142,7 @@ class EncryptionService {
       ),
     );
 
-    return encrypterer.decrypt16(seedphrase);
+    return encrypterer.encrypt(pin).base16;
   }
 }
 
