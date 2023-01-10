@@ -39,7 +39,7 @@ class StoryDownloadMethod {
   Stream<List<Story>> getFriendsStories() async* {
     // final user = _auth.currentUser;
     final storiesCollection = _firestore.collection('stories');
-    final stories = storiesCollection.where('uid', isNotEqualTo: AuthService().uid);
+    final stories = storiesCollection.where('uid', isNotEqualTo: AuthService().uid).orderBy('createdDate');
     // final snapshot = stories.orderBy('createdDate', descending: true).snapshots();
     yield* stories.snapshots().map((snapshot) => snapshot.docs.map((doc) => Story.fromJson(doc.data())).toList());
     // yield* storiesStream;

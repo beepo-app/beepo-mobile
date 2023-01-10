@@ -233,6 +233,7 @@ class _ChatTabState extends State<ChatTab> {
                       initialData: const [],
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
+                          List<Story> stoty = snapshot.data;
                           return StreamBuilder(
                               stream: FirebaseFirestore.instance
                                   .collection('users')
@@ -242,7 +243,6 @@ class _ChatTabState extends State<ChatTab> {
                                 if (stream.hasData) {
                                   final followingUsers = stream.data.docs;
                                   // final storyPeaople = snapshot.data.docs;
-                                  List<Story> stoty = snapshot.data;
 
                                   return ListView.builder(
                                     primary: false,
