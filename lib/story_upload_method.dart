@@ -33,16 +33,14 @@ class StoryUploadMethod {
   Future<Either<Failure, Success>> uploadStory(
       {@required Story story,
       @required File file,
-      String uid,
-      String friendId}) async {
+      @required String uid,
+      // @required String friendId,
+      }) async {
     try {
       // final user = _auth.currentUser;
       final storiesCollection =
           _firestore.collection('stories').doc(uid).collection('myStories');
-      final friendsStories = _firestore
-          .collection('stories')
-          .doc(friendId)
-          .collection('PeopleStories');
+
       // Get media url
       final mediaUrl = await _uploadMediaToStorage(file);
       return mediaUrl.fold(
@@ -58,6 +56,7 @@ class StoryUploadMethod {
               .toJson();
           await storiesCollection.add(storyData);
           return right(const Success());
+
         },
       );
     } on FirebaseException catch (e) {

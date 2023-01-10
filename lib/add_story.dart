@@ -124,6 +124,7 @@ class _AddStoryState extends State<AddStory> {
                                     message: 'Story uploaded successfully'),
                               );
                               Navigator.pop(context);
+                              context.read<StoryUploadProvider>().reset();
                             }
                           },
                           icon: const Icon(Icons.upload_rounded),

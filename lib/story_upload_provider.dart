@@ -61,7 +61,7 @@ class StoryUploadProvider extends ChangeNotifier {
     try {
       _setStoryUploadStatus(StoryUploadStatus.uploading);
       final response =
-          await _storyMethod.uploadStory(story: _story, file: _file);
+          await _storyMethod.uploadStory(story: _story, file: _file, uid: userM['uid'],);
       return response.fold(
         (failure) async {
           _setStoryUploadStatus(StoryUploadStatus.failure);
@@ -71,11 +71,13 @@ class StoryUploadProvider extends ChangeNotifier {
           _setStoryUploadStatus(StoryUploadStatus.success);
           return right(const Success('Story uploaded successfully'));
         },
+
       );
     } on Failure catch (e) {
       _setStoryUploadStatus(StoryUploadStatus.failure);
       return left(e);
     }
+
   }
 
   //TODO: Request permission to access media and camera

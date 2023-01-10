@@ -25,15 +25,15 @@ class StoryDownloadMethod {
 
   Stream<bool> currentUserHasStory() async* {
     final user = _auth.currentUser;
-    final storiesCollection = _firestore.collection('stories');
+    final storiesCollection = _firestore.collection('stories').doc(userM['uid']).collection('myStories');
     final stories = storiesCollection.where('uid', isEqualTo: user.uid);
     yield* stories.snapshots().map((snapshot) => snapshot.docs.isNotEmpty);
   }
 
   Stream<List<Story>> getCurrentUserStories() async* {
     // final user = _auth.currentUser;
-    final storiesCollection = _firestore.collection('stories');
-    final stories = storiesCollection.where('uid', isEqualTo: userM['uid']);
+    final storiesCollection = _firestore.collection('stories').doc(userM['uid']).collection('myStories');
+    final stories = storiesCollection.where('uid', isEqualTo: userM['uid']).orderBy('createdDate', descending: true);
     // final snapshot = stories.orderBy('createdDate', descending: true).snapshots();
     yield* stories.snapshots().map((snapshot) => snapshot.docs.map((doc) => Story.fromJson(doc.data())).toList());
     // yield* storiesStream;
@@ -41,7 +41,7 @@ class StoryDownloadMethod {
 
   Stream<List<Story>> getFriendsStories() async* {
     // final user = _auth.currentUser;
-    final storiesCollection = _firestore.collection('stories');
+    final storiesCollection = _firestore.collection('stories').doc(userM['uid']).collection('myStories');
     final stories = storiesCollection.where('uid', isNotEqualTo: userM['uid']).orderBy('createdDate');
     // final snapshot = stories.orderBy('createdDate', descending: true).snapshots();
     yield* stories.snapshots().map((snapshot) => snapshot.docs.map((doc) => Story.fromJson(doc.data())).toList());
@@ -51,7 +51,7 @@ class StoryDownloadMethod {
   // get stories of users that the current user is following
   Stream<List<UserModel>> getFollowingUsersStories() async* {
     _getFollowingUsers().map((users) async* {
-      final storiesCollection = _firestore.collection('stories');
+      final storiesCollection = _firestore.collection('stories').doc(userM['uid']).collection('myStories');
       final stories = storiesCollection.where('uid', whereIn: users.map((user) => user.uid).toList());
       // return users with their stories
       users.map((user) async* {

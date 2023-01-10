@@ -224,21 +224,21 @@ class _ChatTabState extends State<ChatTab> {
                           ),
                         );
                       }),
-                  StreamBuilder<List<Story>>(
-                      stream: friendsStories,
-                      initialData: const [],
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          List<Story> stoty = snapshot.data;
-                          return StreamBuilder(
-                              stream: FirebaseFirestore.instance
-                                  .collection('users')
-                                  .where('uid', isNotEqualTo: userM['uid'])
-                                  .snapshots(),
-                              builder: (context, stream) {
+                  StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('users')
+                          .where('uid', isNotEqualTo: userM['uid'])
+                          .snapshots(),
+                      builder: (context, stream) {
+                        if (stream.hasData) {
+                          return StreamBuilder <List<Story>>(
+                              stream: friendsStories,
+                              initialData: const [],
+                              builder: (context, snapshot){
                                 if (stream.hasData) {
                                   final followingUsers = stream.data.docs;
                                   // final storyPeaople = snapshot.data.docs;
+                                  List<Story> stoty = snapshot.data;
 
                                   return ListView.builder(
                                     primary: false,
