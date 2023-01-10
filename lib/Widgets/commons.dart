@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 import '../Utils/styles.dart';
 
@@ -51,13 +52,46 @@ AppBar appBar(String title, {bool centerTitle = true}) {
       title,
       style: const TextStyle(
         color: Colors.white,
-        fontSize: 24,
+        fontSize: 20,
       ),
     ),
     foregroundColor: Colors.white,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
         bottom: Radius.circular(15),
+      ),
+    ),
+  );
+}
+
+Widget fullScreenLoader(String title) {
+  return Material(
+    child: Container(
+      width: double.infinity,
+      height: double.infinity,
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Lottie.asset(
+                  'assets/lottie/lottie_1.json',
+                  height: 150,
+                  width: 150,
+                ),
+              ),
+              Text(
+                title,
+                style: Get.textTheme.headline6,
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        ),
       ),
     ),
   );

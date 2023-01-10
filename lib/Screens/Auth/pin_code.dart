@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -9,7 +11,17 @@ import '../../components.dart';
 import 'verify_pin.dart';
 
 class PinCode extends StatefulWidget {
-  const PinCode({Key key}) : super(key: key);
+  final File image;
+  final String name;
+  final bool isSignUp;
+  final String seedPhrase;
+  const PinCode({
+    Key key,
+    this.image,
+    this.name,
+    this.isSignUp = true,
+    this.seedPhrase,
+  }) : super(key: key);
 
   @override
   State<PinCode> createState() => _PinCodeState();
@@ -91,7 +103,12 @@ class _PinCodeState extends State<PinCode> {
               onPressed: () {
                 if (otp.text.length == 4) {
                   Hive.box('beepo').put('PIN', otp.text);
-                  Get.to(const VerifyCode());
+                  Get.to(VerifyCode(
+                    name: widget.name,
+                    image: widget.image,
+                    isSignUp: widget.isSignUp,
+                    seedPhrase: widget.seedPhrase,
+                  ));
                 } else {
                   showToast('Please enter a valid PIN');
                 }

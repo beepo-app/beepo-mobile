@@ -5,13 +5,17 @@ import 'dart:io';
 import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:beepo/Widgets/toasts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 import '../../Service/media.dart';
 import '../../Utils/functions.dart';
 import '../../components.dart';
+import '../../provider.dart';
 import 'pin_code.dart';
 
 class CreateAccount extends StatefulWidget {
@@ -79,9 +83,7 @@ class _CreateAccountState extends State<CreateAccount> {
                   bottom: 10,
                   child: GestureDetector(
                     onTap: () {
-                      ImageUtil()
-                          .pickProfileImage(context: context)
-                          .then((value) {
+                      ImageUtil().pickProfileImage(context: context).then((value) {
                         if (value != null) {
                           setState(() {
                             selectedImage = value;
@@ -130,58 +132,58 @@ class _CreateAccountState extends State<CreateAccount> {
                   showToast('Please enter a display name');
                   return;
                 } else {
-                  Get.to(
-                    Material(
-                      child: Container(
-                        width: double.infinity,
-                        height: double.infinity,
-                        color: Colors.white,
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Lottie.asset(
-                                    'assets/lottie/lottie_1.json',
-                                    height: 150,
-                                    width: 150,
-                                  ),
-                                ),
-                                Text(
-                                  'Creating account...',
-                                  style: Get.textTheme.headline6,
-                                ),
-                                const SizedBox(height: 10),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    fullscreenDialog: true,
-                  );
+                  // Get.to(
+                  //   Material(
+                  //     child: Container(
+                  //       width: double.infinity,
+                  //       height: double.infinity,
+                  //       color: Colors.white,
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.all(20),
+                  //         child: Center(
+                  //           child: Column(
+                  //             mainAxisSize: MainAxisSize.min,
+                  //             children: [
+                  //               Padding(
+                  //                 padding: const EdgeInsets.all(8.0),
+                  //                 child: Lottie.asset(
+                  //                   'assets/lottie/lottie_1.json',
+                  //                   height: 150,
+                  //                   width: 150,
+                  //                 ),
+                  //               ),
+                  //               Text(
+                  //                 'Creating account...',
+                  //                 style: Get.textTheme.headline6,
+                  //               ),
+                  //               const SizedBox(height: 10),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  //   fullscreenDialog: true,
+                  // );
 
-                  String imageUrl = "";
-                  if (selectedImage != null) {
-                    imageUrl =
-                        await MediaService.uploadProfilePicture(selectedImage);
-                  }
+                  // String imageUrl = "https://steveii.png";
+                  // if (selectedImage != null) {
+                  //   imageUrl = await MediaService.uploadProfilePicture(selectedImage);
+                  // }
 
-                  bool result = await AuthService().createUser(
-                    displayName.text.trim(),
-                    imageUrl,
-                  );
+                  // bool result = await AuthService().createUser(
+                  //   displayName.text.trim(),
+                  //   imageUrl,
+                  // );
 
-                  Get.back();
-                  if (result) {
-                    showToast('Account created successfully');
-                    Get.offAll(PinCode());
-                  } else {
-                    showToast('Something went wrong');
-                  }
+                  // Get.back();
+                  // if (result) {
+                  //   showToast('Account created successfully');
+                  // }
+                  Get.to(PinCode(
+                    image: selectedImage,
+                    name: displayName.text.trim(),
+                  ));
                 }
               },
             ),

@@ -1,15 +1,25 @@
+import 'dart:io';
+
+import 'package:beepo/Widgets/commons.dart';
 import 'package:beepo/Widgets/toasts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
+import '../../Service/auth.dart';
 import '../../Utils/styles.dart';
 import '../../components.dart';
 import '../../bottom_nav.dart';
 
 class VerifyCode extends StatefulWidget {
-  const VerifyCode({Key key}) : super(key: key);
+  final File image;
+  final String name;
+  final bool isSignUp;
+  final String seedPhrase;
+  const VerifyCode({Key key, this.image, this.name, this.isSignUp, this.seedPhrase})
+      : super(key: key);
 
   @override
   State<VerifyCode> createState() => _VerifyCodeState();
@@ -81,10 +91,45 @@ class _VerifyCodeState extends State<VerifyCode> {
             const Spacer(),
             FilledButton(
               text: 'Continue',
-              onPressed: () {
+              onPressed: () async {
                 String pin = Hive.box('beepo').get('PIN');
                 if (pin == otp.text) {
-                  Get.offAll(BottomNavHome());
+                  if (widget.isSignUp) {
+                    //Signup
+
+                    Get.to(
+                      fullScreenLoader('Creating Account...'),
+                      fullscreenDialog: true,
+                    );
+
+                    bool result = await AuthService().createUser(
+                      widget.name,
+                      widget.image,
+                      pin,
+                    );
+
+                    Get.back();
+                    if (result) {
+                      showToast('Account created successfully');
+                      Get.offAll(BottomNavHome());
+                    }
+                  } else {
+                    //Login with seedphrase
+                    Get.to(
+                      fullScreenLoader('Logging in...'),
+                      fullscreenDialog: true,
+                    );
+
+                    bool result = await AuthService().loginWithSecretPhrase(
+                      widget.seedPhrase,
+                      pin,
+                    );
+
+                    if (result) {
+                      showToast('Login successful');
+                      Get.offAll(BottomNavHome());
+                    }
+                  }
                 } else {
                   showToast('PIN does not match');
                 }

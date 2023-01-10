@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:beepo/Constants/app_constants.dart';
 import 'package:beepo/Models/transaction.dart';
 import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Service/encryption.dart';
+import 'package:beepo/Widgets/toasts.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -30,7 +33,7 @@ class TransactionService {
   }
 
   //Send token
-  Future<void> sendToken(
+  Future<bool> sendToken(
       {String amount, String gasFee, String address, String networkId}) async {
     try {
       log(address);
@@ -42,28 +45,48 @@ class TransactionService {
       log(networkId);
       log(base64SeedPhrase);
 
+      var body = {
+        "receiverAddress": address,
+        "value": num.parse(amount),
+        "networkId": networkId,
+        "pin": "1234",
+      };
+
+      //convert to base64
+      var base64Body = base64Encode(utf8.encode(jsonEncode(body)));
+
+      String encryptedBody = await EncryptionService().encrypt(base64Body);
+
       final response = await http.post(
         Uri.parse('$baseUrl/transaction/send'),
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
+          Headers.bearer: AuthService().accessToken,
         },
         body: jsonEncode({
-          // "publickey": EncryptionService().publicKey,
-          // "sender_id": AuthService().contextId,
-          "encrypted_seedphrase": base64SeedPhrase,
-          "receiverAddress": address,
-          "networkId": networkId,
-          "value": num.parse(amount),
-          // "gasfee": gasFee,
+          "encrypted_transactionData": encryptedBody,
+          // "receiverAddress": address,
+          // "networkId": networkId,
+          // "value": num.parse(amount),
+          "encrypted_seedphrase": Hive.box(kAppName).get('seedphrase'),
         }),
       );
 
       log(response.body);
 
-      if (response.statusCode == 200) {}
+      var data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        showToast(data['message'].toString());
+        return false;
+      }
     } catch (e) {
       print(e);
+      showToast('Error sending token');
+      return false;
     }
   }
 

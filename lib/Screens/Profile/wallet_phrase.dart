@@ -26,8 +26,8 @@ class _WalletPhraseScreenState extends State<WalletPhraseScreen> {
       ),
       body: SafeArea(
         child: FutureBuilder(
-          future: EncryptionService().getSeedPhrase(),
-          // future: AuthService().retrievePassphrase(),
+          // future: EncryptionService().getSeedPhrase(),
+          future: AuthService().retrievePassphrase(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return loader();

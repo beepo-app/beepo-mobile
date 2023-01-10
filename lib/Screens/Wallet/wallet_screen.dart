@@ -37,12 +37,12 @@ class _WalletScreenState extends State<WalletScreen> {
         actions: [
           Row(
             children: const [
-              Icon(
-                Icons.search,
-                color: Color(0xff908f8d),
-                size: 25,
-              ),
-              SizedBox(width: 20),
+              // Icon(
+              //   Icons.search,
+              //   color: Color(0xff908f8d),
+              //   size: 25,
+              // ),
+              // SizedBox(width: 20),
               Icon(
                 Icons.more_vert_outlined,
                 color: Color(0xff908f8d),
@@ -62,6 +62,7 @@ class _WalletScreenState extends State<WalletScreen> {
           }
 
           final List<Wallet> wallets = snapshot.data[0] ?? [];
+          log(wallets.toString());
 
           Wallet btcWallet = wallets.firstWhere((e) => e.name == 'Bitcoin');
           Wallet ethWallet = wallets.firstWhere((e) => e.ticker == 'ETH');
