@@ -1,21 +1,21 @@
 import 'dart:io';
 
-import 'package:beepo/Service/auth.dart';
+import 'package:beepo/extensions.dart';
+import 'package:beepo/models/story_model/story.dart';
+import 'package:beepo/response.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:beepo/response.dart';
-import 'package:beepo/models/story_model/story.dart';
-import 'package:beepo/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 class StoryUploadMethod {
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
   final FirebaseStorage _storage;
 
-  const StoryUploadMethod({
+  StoryUploadMethod({
     @required FirebaseAuth auth,
     @required FirebaseFirestore firestore,
     @required FirebaseStorage storage,
@@ -28,13 +28,21 @@ class StoryUploadMethod {
         firestore: FirebaseFirestore.instance,
         storage: FirebaseStorage.instance,
       );
+  Map userM = Hive.box('beepo').get('userData');
 
   Future<Either<Failure, Success>> uploadStory(
-      {@required Story story, @required File file}) async {
+      {@required Story story,
+      @required File file,
+      String uid,
+      String friendId}) async {
     try {
       // final user = _auth.currentUser;
-      final storiesCollection = _firestore.collection('stories');
-
+      final storiesCollection =
+          _firestore.collection('stories').doc(uid).collection('myStories');
+      final friendsStories = _firestore
+          .collection('stories')
+          .doc(friendId)
+          .collection('PeopleStories');
       // Get media url
       final mediaUrl = await _uploadMediaToStorage(file);
       return mediaUrl.fold(
@@ -64,7 +72,7 @@ class StoryUploadMethod {
       // Creates a reference to where the file will be stored
       final storageRef = _storage
           .ref()
-          .child('stories/${AuthService().uid}/${file.path.split('/').last}');
+          .child('stories/${userM['uid']}/${file.path.split('/').last}');
       // Uploads the file to firebase storage
       await storageRef.putFile(file);
 

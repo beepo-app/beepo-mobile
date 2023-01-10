@@ -5,6 +5,7 @@ import 'package:beepo/Models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart';
 
 import 'package:image_picker/image_picker.dart';
@@ -24,6 +25,8 @@ class ChatNotifier extends ChangeNotifier {
   String imageUrl = ' ';
 
   String photoUrl;
+  Map userM = Hive.box('beepo').get('userData');
+
 
   Reference ref = FirebaseStorage.instance.ref();
   File selectedImage;
@@ -92,14 +95,14 @@ class ChatNotifier extends ChangeNotifier {
     if (photoMsg.isNotEmpty) {
       var ref = FirebaseFirestore.instance
           .collection('messages')
-          .doc(AuthService().uid)
+          .doc(userM['uid'])
           .collection('userMessages')
           .doc(receiverId)
           .collection('messageList')
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         await transaction.set(ref, {
-          "sender": AuthService().uid,
+          "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
           "content": photoMsg,
@@ -117,12 +120,12 @@ class ChatNotifier extends ChangeNotifier {
           .collection('messages')
           .doc(receiverId)
           .collection('userMessages')
-          .doc(AuthService().uid)
+          .doc(userM['uid'])
           .collection('messageList')
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         await transaction.set(ref1, {
-          "sender": AuthService().uid,
+          "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
           "content": photoMsg,
@@ -138,12 +141,12 @@ class ChatNotifier extends ChangeNotifier {
 
       var ref2 = FirebaseFirestore.instance
           .collection("conversation")
-          .doc(AuthService().uid)
+          .doc(userM['uid'])
           .collection("currentConversation")
           .doc(receiverId);
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         await transaction.set(ref2, {
-          "sender": AuthService().uid,
+          "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
           "content": photoMsg,
@@ -161,10 +164,10 @@ class ChatNotifier extends ChangeNotifier {
           .collection("conversation")
           .doc(receiverId)
           .collection("currentConversation")
-          .doc(AuthService().uid);
+          .doc(userM['uid']);
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         await transaction.set(ref3, {
-          "sender": AuthService().uid,
+          "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
           "content": photoMsg,
@@ -383,14 +386,14 @@ class ChatNotifier extends ChangeNotifier {
     if (audioMsg.isNotEmpty) {
       var ref = FirebaseFirestore.instance
           .collection('messages')
-          .doc(AuthService().uid)
+          .doc(userM['uid'])
           .collection('userMessages')
           .doc(receiverId)
           .collection('messageList')
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         await transaction.set(ref, {
-          "sender": AuthService().uid,
+          "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
           "content": audioMsg,
@@ -408,12 +411,12 @@ class ChatNotifier extends ChangeNotifier {
           .collection('messages')
           .doc(receiverId)
           .collection('userMessages')
-          .doc(AuthService().uid)
+          .doc(userM['uid'])
           .collection('messageList')
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         await transaction.set(ref1, {
-          "sender": AuthService().uid,
+          "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
           "content": audioMsg,
@@ -429,12 +432,12 @@ class ChatNotifier extends ChangeNotifier {
 
       var ref2 = FirebaseFirestore.instance
           .collection("conversation")
-          .doc(AuthService().uid)
+          .doc(userM['uid'])
           .collection("currentConversation")
           .doc(receiverId);
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         await transaction.set(ref2, {
-          "sender": AuthService().uid,
+          "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
           "content": audioMsg,
@@ -452,10 +455,10 @@ class ChatNotifier extends ChangeNotifier {
           .collection("conversation")
           .doc(receiverId)
           .collection("currentConversation")
-          .doc(AuthService().uid);
+          .doc(userM['uid']);
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         await transaction.set(ref3, {
-          "sender": AuthService().uid,
+          "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
           "content": audioMsg,

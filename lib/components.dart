@@ -1,6 +1,5 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, missing_return
 
-import 'package:beepo/Screens/Wallet/transfer_success.dart';
 import 'package:beepo/Service/auth.dart';
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
@@ -10,6 +9,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 
 import 'Models/story_model/story.dart';
@@ -123,6 +123,7 @@ class _ChatTabState extends State<ChatTab> {
   Stream<List<Story>> currentUserStories;
   Stream<List<Story>> friendsStories;
   Stream<List<UserModel>> currentUserFollowingStories;
+  Map userM = Hive.box('beepo').get('userData');
 
   @override
   void initState() {
@@ -132,8 +133,7 @@ class _ChatTabState extends State<ChatTab> {
         context.read<StoryDownloadProvider>().getCurrentUserStories();
     currentUserFollowingStories =
         context.read<StoryDownloadProvider>().getFollowingUsersStories();
-    friendsStories =         context.read<StoryDownloadProvider>().getFriendStories();
-
+    friendsStories = context.read<StoryDownloadProvider>().getFriendStories();
 
     super.initState();
   }
@@ -193,35 +193,30 @@ class _ChatTabState extends State<ChatTab> {
                         if (snapshot.hasData) {
                           //   return const CurrentUserStoryBubble(stories: []);
                           // }
+                          try {
+                            List<Story> userStories = snapshot.data;
+                            'UserStories: $userStories'.log();
 
-                          return FutureBuilder(
-                              future: AuthService().getUser(),
-                              builder: (context, fuck) {
-                                if (fuck.hasData) {
-                                  List<Story> userStories = snapshot.data;
-                                  'UserStories: $userStories'.log();
-                                  // Map userData;
-                                  // userData = fuck.data;
-                                  UserModel userf = UserModel(
-                                    uid: fuck.data['uid'],
-                                    name: fuck.data['displayName'],
-                                    userName: fuck.data['username'],
-                                    image: fuck.data['profilePictureUrl'],
-                                    // searchKeywords: fuck.data['searchKeywords'],
-                                  );
+                            Map useR;
 
-                                  final user = userf.copyWith(
-                                    stories: userStories,
-                                    uid: AuthService().uid,
-                                  );
-                                  return CurrentUserStoryBubble(user: user);
-                                }
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    color: primaryColor,
-                                  ),
-                                );
-                              });
+                            useR = Hive.box('beepo').get('userData');
+                            UserModel userf = UserModel(
+                              uid: useR['uid'],
+                              name: useR['displayName'],
+                              userName: useR['username'],
+                              image: useR['profilePictureUrl'],
+                              // searchKeywords: fuck.data['searchKeywords'],
+                            );
+
+                            final user = userf.copyWith(
+                              stories: userStories,
+                              uid: userM['uid'],
+                            );
+
+                            return CurrentUserStoryBubble(user: user);
+                          } catch (e) {
+                            print(e);
+                          }
                         }
                         return Center(
                           child: CircularProgressIndicator(
@@ -238,7 +233,7 @@ class _ChatTabState extends State<ChatTab> {
                           return StreamBuilder(
                               stream: FirebaseFirestore.instance
                                   .collection('users')
-                                  .where('uid', isNotEqualTo: AuthService().uid)
+                                  .where('uid', isNotEqualTo: userM['uid'])
                                   .snapshots(),
                               builder: (context, stream) {
                                 if (stream.hasData) {
@@ -249,7 +244,7 @@ class _ChatTabState extends State<ChatTab> {
                                     primary: false,
                                     shrinkWrap: true,
                                     physics:
-                                    const NeverScrollableScrollPhysics(),
+                                        const NeverScrollableScrollPhysics(),
                                     scrollDirection: Axis.horizontal,
                                     itemCount: followingUsers.length,
                                     itemBuilder: (context, index) {
@@ -257,12 +252,12 @@ class _ChatTabState extends State<ChatTab> {
                                         uid: followingUsers[index]['uid'],
                                         name: followingUsers[index]['name'],
                                         userName: followingUsers[index]
-                                        ['userName'],
+                                            ['userName'],
                                         image: followingUsers[index]['image'],
                                         // stories: followingUsers[index].stories,
                                       );
-                                      UserModel people = user.copyWith(
-                                          stories: stoty);
+                                      UserModel people =
+                                          user.copyWith(stories: stoty);
                                       return InkWell(
                                         onTap: () {
                                           Navigator.push(
@@ -355,97 +350,95 @@ class _ChatTabState extends State<ChatTab> {
                 children: [
                   showInput
                       ? TextField(
-                    onSubmitted: (value) {
-                      setState(() {
-                        showInput = !showInput;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Search messages',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  )
-                      : Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Messages",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            showInput = !showInput;
-                          });
-                        },
-                        icon: Icon(
-                          Icons.search,
-                          color: Color(0xff908f8d),
-                          size: 20,
-                        ),
-                      ),
-                      // SizedBox(width: 20),
-                      // Icon(
-                      //   Icons.more_vert_outlined,
-                      //   color: Color(0xff908f8d),
-                      //   size: 18,
-                      // ),
-                    ],
-                  ),
-                  Consumer<ChatNotifier>(
-                    builder: (context, pro, _) =>
-                        Column(
-                          children: [
-                            StreamBuilder(
-                              stream: FirebaseFirestore.instance
-                                  .collection('conversation')
-                                  .doc(AuthService().uid.isEmpty
-                                  ? ' '
-                                  : AuthService().uid)
-                                  .collection("currentConversation")
-                                  .snapshots(),
-                              builder:
-                                  (context, AsyncSnapshot<
-                                  QuerySnapshot> snapshot) {
-                                if (snapshot.hasData) {
-                                  if (snapshot.data.docs.isEmpty) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(top: 50),
-                                      child: const Center(
-                                        child: Text(
-                                          'No Messages\n Tap on the + icon to start a conversation',
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                  return ListView.separated(
-                                    padding: const EdgeInsets.only(top: 10),
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: snapshot.data.docs.length,
-                                    separatorBuilder: (ctx, i) =>
-                                    const SizedBox(height: 0),
-                                    itemBuilder: (ctx, index) {
-                                      return MyMessages(
-                                        uid: snapshot.data.docs[index].id,
-                                      );
-                                    },
-                                  );
-                                }
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              },
+                          onSubmitted: (value) {
+                            setState(() {
+                              showInput = !showInput;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            hintText: 'Search messages',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
+                          ),
+                        )
+                      : Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                "Messages",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  showInput = !showInput;
+                                });
+                              },
+                              icon: Icon(
+                                Icons.search,
+                                color: Color(0xff908f8d),
+                                size: 20,
+                              ),
+                            ),
+                            // SizedBox(width: 20),
+                            // Icon(
+                            //   Icons.more_vert_outlined,
+                            //   color: Color(0xff908f8d),
+                            //   size: 18,
+                            // ),
                           ],
                         ),
+                  Consumer<ChatNotifier>(
+                    builder: (context, pro, _) => Column(
+                      children: [
+                        StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('conversation')
+                              .doc(userM['uid']== ''
+                                  ? ' '
+                                  : userM['uid'])
+                              .collection("currentConversation")
+                              .snapshots(),
+                          builder:
+                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.hasData) {
+                              if (snapshot.data.docs.isEmpty) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 50),
+                                  child: const Center(
+                                    child: Text(
+                                      'No Messages\n Tap on the + icon to start a conversation',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return ListView.separated(
+                                padding: const EdgeInsets.only(top: 10),
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: snapshot.data.docs.length,
+                                separatorBuilder: (ctx, i) =>
+                                    const SizedBox(height: 0),
+                                itemBuilder: (ctx, index) {
+                                  return MyMessages(
+                                    uid: snapshot.data.docs[index].id,
+                                  );
+                                },
+                              );
+                            }
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
 
                   //),
@@ -565,22 +558,12 @@ class MessageSender extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var day = time
-        .toDate()
-        .day
-        .toString();
-    var month = time
-        .toDate()
-        .month
-        .toString();
+    var day = time.toDate().day.toString();
+    var month = time.toDate().month.toString();
     var year = time.toDate().toString().substring(2);
     var date = day + '-' + month + '-' + year;
-    var hour = time
-        .toDate()
-        .hour;
-    var min = time
-        .toDate()
-        .minute;
+    var hour = time.toDate().hour;
+    var min = time.toDate().minute;
 
     var ampm;
     if (hour > 12) {
@@ -607,29 +590,26 @@ class MessageSender extends StatelessWidget {
           color: !isMe ? Color(0xffc4c4c4) : Color(0xff0E014C),
         ),
         constraints: BoxConstraints(
-          maxWidth: MediaQuery
-              .of(context)
-              .size
-              .width * 0.5,
+          maxWidth: MediaQuery.of(context).size.width * 0.5,
         ),
         padding: const EdgeInsets.all(10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment:
-          isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             Text(
               text,
               style: isMe
                   ? TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-              )
+                      color: Colors.white,
+                      fontSize: 14,
+                    )
                   : TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-              ),
+                      color: Colors.black,
+                      fontSize: 14,
+                    ),
             ),
             SizedBox(height: 5),
             Row(
@@ -639,28 +619,28 @@ class MessageSender extends StatelessWidget {
                   hour.toString() + ":" + min.toString() + ampm,
                   style: isMe
                       ? TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                  )
+                          color: Colors.white,
+                          fontSize: 10,
+                        )
                       : TextStyle(
-                    color: Colors.black,
-                    fontSize: 10,
-                  ),
+                          color: Colors.black,
+                          fontSize: 10,
+                        ),
                 ),
                 isMe
                     ? SizedBox(width: 5)
                     : SizedBox(
-                  width: 0,
-                ),
+                        width: 0,
+                      ),
                 isMe
                     ? Icon(
-                  Icons.done_all,
-                  color: Colors.white,
-                  size: 15,
-                )
+                        Icons.done_all,
+                        color: Colors.white,
+                        size: 15,
+                      )
                     : SizedBox(
-                  width: 0,
-                ),
+                        width: 0,
+                      ),
               ],
             )
           ],
@@ -687,10 +667,7 @@ class MessageReceiver extends StatelessWidget {
         ),
         padding: const EdgeInsets.all(10),
         constraints: BoxConstraints(
-          maxWidth: MediaQuery
-              .of(context)
-              .size
-              .width * 0.5,
+          maxWidth: MediaQuery.of(context).size.width * 0.5,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -734,25 +711,25 @@ class CurrentUserStoryBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return
-      // Stack(
-      // children: [
-      InkWell(
-        onTap: () {
-          // if (user.stories.isEmpty) {
-          //   Navigator.push(
-          //       context, MaterialPageRoute(builder: (context) => AddStory()));
-          // } else {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => StoryScreen(user: user)));
-          // }
-        },
-        child: BubbleStories(
-          hasStory: user.stories.isNotEmpty,
-          text: 'Your story',
-          image: user.image,
-          // useNetworkImage: true,
-        ),
-      );
+        // Stack(
+        // children: [
+        InkWell(
+      onTap: () {
+        // if (user.stories.isEmpty) {
+        //   Navigator.push(
+        //       context, MaterialPageRoute(builder: (context) => AddStory()));
+        // } else {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => StoryScreen(user: user)));
+        // }
+      },
+      child: BubbleStories(
+        hasStory: user.stories.isNotEmpty,
+        text: 'Your story',
+        image: user.image,
+        // useNetworkImage: true,
+      ),
+    );
     // if (user.stories.isEmpty)
     //   Positioned(
     //     right: 8,
@@ -808,12 +785,11 @@ class WalletListTile extends StatelessWidget {
       ),
       margin: const EdgeInsets.symmetric(horizontal: 5),
       child: ListTile(
-        onTap: () =>
-            Get.to(WalletToken(
-              wallet: wallet,
-              balance: amount,
-              value: fiatValue,
-            )),
+        onTap: () => Get.to(WalletToken(
+          wallet: wallet,
+          balance: amount,
+          value: fiatValue,
+        )),
         dense: true,
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(17),

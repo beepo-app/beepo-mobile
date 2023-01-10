@@ -2,10 +2,10 @@
 
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
-import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 class SearchSearch extends StatefulWidget {
   @override
@@ -109,6 +109,7 @@ class SearchSearch2 extends StatefulWidget {
 
 class _SearchSearch2State extends State<SearchSearch2> {
   final TextEditingController _searchcontroller = TextEditingController();
+  Map userM = Hive.box('beepo').get('userData');
 
   @override
   void dispose() {
@@ -136,7 +137,7 @@ class _SearchSearch2State extends State<SearchSearch2> {
         child: StreamBuilder<QuerySnapshot<Map>>(
             stream: FirebaseFirestore.instance
                 .collection("conversation")
-                .doc(AuthService().uid)
+                .doc(userM['uid'])
                 .collection('currentConversation')
                 .where("searchKeywords",
                     arrayContains: _searchcontroller.text.trim().toLowerCase())

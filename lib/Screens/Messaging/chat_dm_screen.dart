@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +34,8 @@ class ChatDm extends StatefulWidget {
 class _ChatDmState extends State<ChatDm> {
   TextEditingController messageController = TextEditingController();
   bool isTyping = true;
+
+  Map userM = Hive.box('beepo').get('userData');
 
   @override
   void initState() {
@@ -166,7 +169,7 @@ class _ChatDmState extends State<ChatDm> {
                   child: StreamBuilder(
                       stream: FirebaseFirestore.instance
                           .collection('messages')
-                          .doc(AuthService().uid)
+                          .doc(userM['uid'])
                           .collection("userMessages")
                           .doc(widget.model.uid)
                           .collection("messageList")
@@ -206,7 +209,7 @@ class _ChatDmState extends State<ChatDm> {
                                   if (snapshot.data.docs[index]["type"] ==
                                       'message')
                                     MessageSender(
-                                      isMe: AuthService().uid ==
+                                      isMe: userM['uid'] ==
                                           snapshot.data.docs[index]["sender"],
                                       displayname: widget.model.name,
                                       text: snapshot.data.docs[index]["text"],
@@ -218,7 +221,7 @@ class _ChatDmState extends State<ChatDm> {
                                     Align(
                                       alignment: (snapshot.data.docs[index]
                                                   ['sender'] ==
-                                              AuthService().uid)
+                                          userM['uid'])
                                           ? Alignment.centerRight
                                           : Alignment.centerLeft,
                                       child: Container(
@@ -235,18 +238,18 @@ class _ChatDmState extends State<ChatDm> {
                                         decoration: BoxDecoration(
                                           color: (snapshot.data.docs[index]
                                                       ['sender'] !=
-                                                  AuthService().uid)
+                                              userM['uid'])
                                               ? Color(0xffc4c4c4)
                                               : Color(0xff0E014C),
                                           borderRadius: BorderRadius.only(
                                             topLeft: (snapshot.data.docs[index]
                                                         ['sender'] ==
-                                                    AuthService().uid)
+                                                userM['uid'])
                                                 ? Radius.circular(12)
                                                 : Radius.circular(0),
                                             topRight: (snapshot.data.docs[index]
                                                         ['sender'] ==
-                                                    AuthService().uid)
+                                                userM['uid'])
                                                 ? Radius.circular(0)
                                                 : Radius.circular(12),
                                             bottomLeft: Radius.circular(12),
@@ -331,7 +334,7 @@ class _ChatDmState extends State<ChatDm> {
                                                   style: (snapshot.data
                                                                   .docs[index]
                                                               ['sender'] ==
-                                                          AuthService().uid)
+                                                      userM['uid'])
                                                       ? TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 10,
@@ -363,7 +366,7 @@ class _ChatDmState extends State<ChatDm> {
                                     Align(
                                       alignment: (snapshot.data.docs[index]
                                                   ['sender'] ==
-                                              AuthService().uid)
+                                          userM['uid'])
                                           ? Alignment.centerRight
                                           : Alignment.centerLeft,
                                       child: SizedBox(
@@ -538,7 +541,7 @@ class _ChatDmState extends State<ChatDm> {
                         ChatMethods().storeMessages(
                           context: context,
                           text: context.read<ChatNotifier>().chatText,
-                          userID: AuthService().uid,
+                          userID: userM['uid'],
                           receiverID: widget.model.uid,
                           searchKeywords: createKeywords(widget.model.userName),
                           img: widget.model.image,

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:io';
 
@@ -17,7 +17,7 @@ import 'Utils/styles.dart';
 
 class AddStory extends StatefulWidget {
   const AddStory({Key key}) : super(key: key);
-  static const String routeName = '/add-story';
+  // static const String routeName = '/add-story';
 
   @override
   State<AddStory> createState() => _AddStoryState();
@@ -181,7 +181,7 @@ class _AddStoryState extends State<AddStory> {
                   },
                   child: Row(
                     children: [
-                      SvgPicture.asset(AppImages.newGallery),
+                      // SvgPicture.asset(AppImages.newGallery),
                       SizedBox(
                         width: 8,
                       ),

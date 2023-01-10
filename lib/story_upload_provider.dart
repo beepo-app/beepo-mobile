@@ -5,6 +5,7 @@ import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:beepo/response.dart';
@@ -44,6 +45,8 @@ class StoryUploadProvider extends ChangeNotifier {
   File get file => _file;
 
   Story _story;
+  Map userM = Hive.box('beepo').get('userData');
+
 
   StoryUploadStatus _status = StoryUploadStatus.initial;
   StoryUploadStatus get status => _status;
@@ -87,7 +90,7 @@ class StoryUploadProvider extends ChangeNotifier {
           _setMediaType(MediaType.image);
           final story = Story(
             mediaType: _mediaType,
-            uid: AuthService().uid,
+            uid: userM['uid'],
           );
           _setStory(story);
           if (_story != null) {
@@ -120,7 +123,7 @@ class StoryUploadProvider extends ChangeNotifier {
           _setMediaType(MediaType.image);
           final story = Story(
             mediaType: _mediaType,
-            uid: AuthService().uid,
+            uid: userM['uid'],
           );
           _setStory(story);
           if (_story != null) {
@@ -164,7 +167,7 @@ class StoryUploadProvider extends ChangeNotifier {
           _setMediaType(MediaType.video);
           final story = Story(
             mediaType: _mediaType,
-            uid: AuthService().uid,
+            uid: userM['uid'],
           );
           _setStory(story);
           if (_story != null) {

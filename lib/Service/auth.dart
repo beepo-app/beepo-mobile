@@ -78,16 +78,17 @@ class AuthService {
         box.put('isLogged', true);
         box.put('userData', data['user']);
 
-        // UserModel user = UserModel(
-        //     uid: data['user']['uid'],
-        //     searchKeywords: createKeywords(data['user']['username']),
-        //     name: displayName,
-        //     image: imgUrl,
-        //     userName: data['user']['username']);
-        // await FirebaseFirestore.instance
-        //     .collection('users')
-        //     .doc(data['user']['uid'])
-        //     .set(user.toJson());
+        UserModel user = UserModel(
+            uid: data['user']['uid'],
+            searchKeywords: createKeywords(data['user']['username']),
+            name: displayName,
+            image: imageUrl,
+            userName: data['user']['username'],
+        );
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(data['user']['uid'])
+            .set(user.toJson());
 
         return true;
       } else {

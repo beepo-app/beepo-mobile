@@ -4,12 +4,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:beepo/Models/story_model/story.dart';
 import 'package:beepo/Models/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 class StoryDownloadMethod {
+  Map userM = Hive.box('beepo').get('userData');
+
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
 
-  const StoryDownloadMethod({
+   StoryDownloadMethod({
     @required FirebaseAuth auth,
     @required FirebaseFirestore firestore,
   })  : _auth = auth,
@@ -30,7 +33,7 @@ class StoryDownloadMethod {
   Stream<List<Story>> getCurrentUserStories() async* {
     // final user = _auth.currentUser;
     final storiesCollection = _firestore.collection('stories');
-    final stories = storiesCollection.where('uid', isEqualTo: AuthService().uid);
+    final stories = storiesCollection.where('uid', isEqualTo: userM['uid']);
     // final snapshot = stories.orderBy('createdDate', descending: true).snapshots();
     yield* stories.snapshots().map((snapshot) => snapshot.docs.map((doc) => Story.fromJson(doc.data())).toList());
     // yield* storiesStream;
@@ -39,7 +42,7 @@ class StoryDownloadMethod {
   Stream<List<Story>> getFriendsStories() async* {
     // final user = _auth.currentUser;
     final storiesCollection = _firestore.collection('stories');
-    final stories = storiesCollection.where('uid', isNotEqualTo: AuthService().uid).orderBy('createdDate');
+    final stories = storiesCollection.where('uid', isNotEqualTo: userM['uid']).orderBy('createdDate');
     // final snapshot = stories.orderBy('createdDate', descending: true).snapshots();
     yield* stories.snapshots().map((snapshot) => snapshot.docs.map((doc) => Story.fromJson(doc.data())).toList());
     // yield* storiesStream;
@@ -62,7 +65,7 @@ class StoryDownloadMethod {
   Stream<List<UserModel>> _getFollowingUsers() async* {
     // _getFollowingUsersId().map((followingUsersId) async* {
       final usersCollection = _firestore.collection('users');
-      final users = usersCollection.where('uid', isNotEqualTo: AuthService().uid);
+      final users = usersCollection.where('uid', isNotEqualTo: userM['uid']);
       yield* users.snapshots().map((snapshot) => snapshot.docs.map((doc) => UserModel.fromJson(doc.data())).toList());
     // });
   }

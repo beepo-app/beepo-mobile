@@ -1,12 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 
 import 'Models/user_model.dart';
@@ -26,6 +26,8 @@ class _MyMessagesState extends State<MyMessages> {
   String img = '';
   String displayName = '';
   String userName = '';
+
+  Map userM = Hive.box('beepo').get('userData');
 
   void getProfileData() async {
     var profile = await FirebaseFirestore.instance
@@ -54,7 +56,7 @@ class _MyMessagesState extends State<MyMessages> {
       return StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('messages')
-              .doc(AuthService().uid)
+              .doc(userM['uid'])
               .collection("userMessages")
               .doc(widget.uid)
               .collection("messageList")
@@ -115,7 +117,7 @@ class _MyMessagesState extends State<MyMessages> {
                 subtitle: Text(
                   snapshot.data.docs[0]['type'] == 'message'
                       ? '${snapshot.data.docs[0]['text']}'
-                      : snapshot.data.docs[0]['sender'] == AuthService().uid
+                      : snapshot.data.docs[0]['sender'] == userM['uid']
                           ? 'Media sent '
                           : 'Media recieved',
                   style: isTapped == false
