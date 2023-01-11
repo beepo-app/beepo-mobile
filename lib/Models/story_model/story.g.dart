@@ -15,7 +15,7 @@ _$_Story _$$_StoryFromJson(Map<String, dynamic> json) => _$_Story(
       createdDate: json['createdDate'] == null
           ? null
           : DateTime.parse(json['createdDate'] as String),
-      hoursAgo: json['hoursAgo'] as int ?? 0,
+      hoursAgo: json['hoursAgo'] as String ?? '',
       path: json['path'] as String,
       uid: json['uid'] as String,
     );

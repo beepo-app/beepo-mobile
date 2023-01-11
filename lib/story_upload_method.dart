@@ -52,6 +52,7 @@ class StoryUploadMethod {
                 url: metadata.url,
                 createdDate: DateTime.now(),
                 path: metadata.path,
+            hoursAgo: 0,
               )
               .toJson();
           await storiesCollection.add(storyData);

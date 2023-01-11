@@ -31,7 +31,7 @@ mixin _$Story {
   /// Defaults to 10 seconds.
   Duration get duration => throw _privateConstructorUsedError;
   DateTime get createdDate => throw _privateConstructorUsedError;
-  int get hoursAgo => throw _privateConstructorUsedError;
+  String get hoursAgo => throw _privateConstructorUsedError;
   String get path => throw _privateConstructorUsedError;
 
   /// The id of the user who created the story
@@ -51,7 +51,7 @@ abstract class $StoryCopyWith<$Res> {
       MediaType mediaType,
       Duration duration,
       DateTime createdDate,
-      int hoursAgo,
+      String hoursAgo,
       String path,
       String uid});
 }
@@ -94,7 +94,7 @@ class _$StoryCopyWithImpl<$Res> implements $StoryCopyWith<$Res> {
       hoursAgo: hoursAgo == freezed
           ? _value.hoursAgo
           : hoursAgo // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String,
       path: path == freezed
           ? _value.path
           : path // ignore: cast_nullable_to_non_nullable
@@ -117,7 +117,7 @@ abstract class _$$_StoryCopyWith<$Res> implements $StoryCopyWith<$Res> {
       MediaType mediaType,
       Duration duration,
       DateTime createdDate,
-      int hoursAgo,
+      String hoursAgo,
       String path,
       String uid});
 }
@@ -161,7 +161,7 @@ class __$$_StoryCopyWithImpl<$Res> extends _$StoryCopyWithImpl<$Res>
       hoursAgo: hoursAgo == freezed
           ? _value.hoursAgo
           : hoursAgo // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String,
       path: path == freezed
           ? _value.path
           : path // ignore: cast_nullable_to_non_nullable
@@ -182,7 +182,7 @@ class _$_Story implements _Story {
       @required this.mediaType,
       this.duration = _duration,
       this.createdDate,
-      this.hoursAgo = 0,
+      this.hoursAgo = '',
       this.path,
       @required this.uid});
 
@@ -207,7 +207,7 @@ class _$_Story implements _Story {
   final DateTime createdDate;
   @override
   @JsonKey()
-  final int hoursAgo;
+  final String hoursAgo;
   @override
   final String path;
 
@@ -266,7 +266,7 @@ abstract class _Story implements Story {
       @required final MediaType mediaType,
       final Duration duration,
       final DateTime createdDate,
-      final int hoursAgo,
+      final String hoursAgo,
       final String path,
       @required final String uid}) = _$_Story;
 
@@ -289,7 +289,7 @@ abstract class _Story implements Story {
   @override
   DateTime get createdDate;
   @override
-  int get hoursAgo;
+  String get hoursAgo;
   @override
   String get path;
   @override

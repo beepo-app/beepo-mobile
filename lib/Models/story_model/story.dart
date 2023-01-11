@@ -17,7 +17,7 @@ class Story with _$Story {
     /// Defaults to 10 seconds.
     @Default(_duration) Duration duration,
     DateTime createdDate,
-    @Default(0) int hoursAgo,
+    @Default(0) String hoursAgo,
     String path,
 
     /// The id of the user who created the story

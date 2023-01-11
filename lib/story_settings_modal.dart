@@ -11,7 +11,8 @@ class StoryModalSheet {
         context: context,
         builder: (context) {
           return DraggableScrollableSheet(
-            initialChildSize: 0.6,
+            initialChildSize: 0.2,
+            minChildSize: 0.2,
             snap: true,
             expand: false,
             builder: (context, scrollController) => child,
