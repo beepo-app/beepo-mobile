@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:beepo/extensions.dart';
-import 'package:beepo/models/story_model/story.dart';
 import 'package:beepo/response.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';

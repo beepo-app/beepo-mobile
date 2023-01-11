@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:beepo/constants.dart';
 import 'package:beepo/extensions.dart';
-import 'package:beepo/models/story_model/story.dart';
 import 'package:beepo/story_settings_modal.dart';
 import 'package:beepo/story_upload_provider.dart';
 import 'package:beepo/text_styles.dart';
@@ -13,6 +12,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
+import 'Models/story_model/storyModel.dart';
 import 'Utils/styles.dart';
 
 class AddStory extends StatefulWidget {
@@ -82,14 +82,14 @@ class _AddStoryState extends State<AddStory> {
 
                       // If image is selected (file is not null)
                       image: (selectedFile != null &&
-                              selectedMediaType == MediaType.image)
+                              selectedMediaType == 'image')
                           ? DecorationImage(
                               image: FileImage(File(selectedFile.path)),
                               fit: BoxFit.cover,
                             )
                           // If video is selected (file is not null)
                           : (selectedFile != null &&
-                                  selectedMediaType == MediaType.video &&
+                                  selectedMediaType == 'video' &&
                                   videoThumbnail != null)
                               ? DecorationImage(
                                   image: MemoryImage(videoThumbnail),
@@ -120,7 +120,9 @@ class _AddStoryState extends State<AddStory> {
                             _showSnackBar(context,
                                 message: 'Upload in progress');
                           } else {
+                            await uploader.getCaption(controller.text.trim().isEmpty? " " : controller.text.trim());
                             final result = await uploader.uploadStory();
+
                             result.fold(
                               (failure) => _showSnackBar(context,
                                   message: failure.message),
@@ -128,6 +130,7 @@ class _AddStoryState extends State<AddStory> {
                                   message: 'Story uploaded successfully'),
                             );
                             Navigator.pop(context);
+                            controller.clear();
                             context.read<StoryUploadProvider>().reset();
                           }
                         },
@@ -233,7 +236,7 @@ class _AddStoryState extends State<AddStory> {
                   final selectedMediaType =
                       context.read<StoryUploadProvider>().mediaType;
                   if (selectedFile != null &&
-                      selectedMediaType == MediaType.video) {
+                      selectedMediaType == 'video') {
                     final isVideoDurationNotLong =
                     await _checkVideoDurationIsNotLong(selectedFile);
                     if (isVideoDurationNotLong && mounted) {

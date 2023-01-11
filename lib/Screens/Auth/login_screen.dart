@@ -1,10 +1,7 @@
 import 'package:beepo/Screens/Auth/pin_code.dart';
-import 'package:beepo/Service/auth.dart';
-import 'package:beepo/Widgets/commons.dart';
 import 'package:beepo/Widgets/toasts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 
 import '../../components.dart';
 

@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:story_view/story_view.dart';
 
+import 'Models/story_model/storyModel.dart';
 import 'Models/user_model.dart';
-import 'models/story_model/story.dart';
 
 class Homes extends StatefulWidget {
   final UserModel user;
@@ -31,13 +31,13 @@ class _HomesState extends State<Homes> {
   void addStoryItems() {
     for (final story in widget.user.stories) {
       switch (story.mediaType) {
-        case MediaType.image:
+        case 'image':
           storyItems.add(StoryItem.pageImage(
             url: story.url,
             controller: controller,
             caption:
                 // Text(
-                "Omotuo & Nkatekwan; You will love this meal if taken as supper.",
+                story.caption,
             //   style: TextStyle(
             //     color: Colors.white,
             //     backgroundColor: Colors.black54,
@@ -46,13 +46,13 @@ class _HomesState extends State<Homes> {
             // ),
           ));
           break;
-        case MediaType.video:
+        case 'video':
           storyItems.add(StoryItem.pageVideo(
             story.url,
             controller: controller,
             caption:
                 // Text(
-                "Hektas, sektas and skatad",
+                story.caption,
             //   style: TextStyle(
             //     color: Colors.white,
             //     backgroundColor: Colors.black54,

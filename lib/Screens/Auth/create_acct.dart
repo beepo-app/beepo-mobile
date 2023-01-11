@@ -2,20 +2,13 @@
 
 import 'dart:io';
 
-import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:beepo/Widgets/toasts.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
 
-import '../../Service/media.dart';
 import '../../Utils/functions.dart';
 import '../../components.dart';
-import '../../provider.dart';
 import 'pin_code.dart';
 
 class CreateAccount extends StatefulWidget {

@@ -1,14 +1,11 @@
-// import 'package:beepo/Models/story_model/story.dart';
-import 'package:beepo/models/story_model/story.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-// import 'package:voster/models/story_model/story.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class StoryModel {
   final String url;
-  final MediaType mediaType;
-  final Duration duration;
+  final String mediaType;
+  // final Duration duration;
   final DateTime createdDate;
   final int hoursAgo;
   final String path;
@@ -18,9 +15,9 @@ class StoryModel {
   const StoryModel({
     this.url,
     @required this.mediaType,
-    this.duration,
+    // this.duration = const Duration(seconds: 30),
     this.createdDate,
-    this.hoursAgo,
+    this.hoursAgo = 0,
     this.path,
     this.caption,
     this.uid,
@@ -31,8 +28,8 @@ class StoryModel {
   StoryModel copyWith({
     String url,
     String uid,
-    MediaType mediaType,
-    Duration duration,
+    String mediaType,
+    // Duration duration,
     DateTime createdDate,
     int hoursAgo,
     String path,
@@ -41,7 +38,7 @@ class StoryModel {
       StoryModel(
         url: url ?? this.url,
         mediaType: mediaType ?? this.mediaType,
-        duration: duration ?? this.duration,
+        // duration: duration ?? this.duration,
         createdDate: createdDate ?? this.createdDate,
         hoursAgo: hoursAgo ?? this.hoursAgo,
         path: path ?? this.path,
@@ -53,7 +50,7 @@ class StoryModel {
     return StoryModel(
       url: snapshot['url'],
       mediaType: snapshot['mediaType'],
-      duration: snapshot['duration'],
+      // duration: snapshot['duration'],
       createdDate: snapshot['createdDate'],
       hoursAgo: snapshot['hoursAgo'],
       path: snapshot['path'],
@@ -65,7 +62,7 @@ class StoryModel {
   Map<String, dynamic> toJson() => {
         'url': url,
         'mediaType': mediaType,
-        'duration': duration,
+        // 'duration': duration,
         'createdDate': createdDate,
         'hoursAgo': hoursAgo,
         'path': path,
@@ -76,7 +73,7 @@ class StoryModel {
   factory StoryModel.fromJson(Map<String, dynamic> snapshot) => StoryModel(
         url: snapshot['url'],
         mediaType: snapshot['mediaType'],
-        duration: snapshot['duration'],
+        // duration: snapshot['duration'],
         createdDate: snapshot['createdDate'],
         hoursAgo: snapshot['hoursAgo'],
         path: snapshot['path'],
@@ -89,7 +86,7 @@ class StoryModel {
     return StoryModel(
       url: snapshot['url'],
       mediaType: snapshot['mediaType'],
-      duration: snapshot['duration'],
+      // duration: snapshot['duration'],
       createdDate: snapshot['createdDate'],
       hoursAgo: snapshot['hoursAgo'],
       path: snapshot['path'],
@@ -98,3 +95,10 @@ class StoryModel {
     );
   }
 }
+
+// enum MediaType {
+//   @JsonValue('IMAGE')
+//   image,
+//   @JsonValue('VIDEO')
+//   video,
+// }

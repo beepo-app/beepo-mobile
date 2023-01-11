@@ -9,7 +9,6 @@ import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:beepo/response.dart';
-import 'package:beepo/models/story_model/story.dart';
 import 'package:beepo/story_upload_method.dart';
 import 'package:beepo/extensions.dart';
 
@@ -53,17 +52,20 @@ class StoryUploadProvider extends ChangeNotifier {
   StoryUploadStatus _status = StoryUploadStatus.initial;
   StoryUploadStatus get status => _status;
 
-  MediaType _mediaType;
-  MediaType get mediaType => _mediaType;
+  String _mediaType;
+  String get mediaType => _mediaType;
 
   Uint8List _thumbnail;
   Uint8List get thumbnail => _thumbnail;
+
+  String _caption;
+  String get caption => _caption;
 
   Future<Either<Failure, Success>> uploadStory() async {
     try {
       _setStoryUploadStatus(StoryUploadStatus.uploading);
       final response =
-          await _storyMethod.uploadStory(story: _story, file: _file, uid: userM['uid'],);
+          await _storyMethod.uploadStory(story: _story, file: _file, uid: userM['uid'], caption: _caption);
       return response.fold(
         (failure) async {
           _setStoryUploadStatus(StoryUploadStatus.failure);
@@ -81,7 +83,9 @@ class StoryUploadProvider extends ChangeNotifier {
     }
 
   }
-
+  Future<Either<Failure, Success>> getCaption(String text){
+    _caption = text;
+  }
   //TODO: Request permission to access media and camera
   Future<Either<Failure, Success>> pickImageGallery() async {
     try {
@@ -91,7 +95,7 @@ class StoryUploadProvider extends ChangeNotifier {
       if (result != null) {
         _selectFile(File(result.path));
         if (_file != null) {
-          _setMediaType(MediaType.image);
+          _setMediaType('image');
           final story = StoryModel(
             mediaType: _mediaType,
             uid: userM['uid'],
@@ -124,7 +128,7 @@ class StoryUploadProvider extends ChangeNotifier {
       if (result != null) {
         _selectFile(File(result.path));
         if (_file != null) {
-          _setMediaType(MediaType.image);
+          _setMediaType('image');
           final story = StoryModel(
             mediaType: _mediaType,
             uid: userM['uid'],
@@ -168,7 +172,7 @@ class StoryUploadProvider extends ChangeNotifier {
         'File length: $length'.log();
         _selectFile(File(result.path));
         if (_file != null) {
-          _setMediaType(MediaType.video);
+          _setMediaType('video');
           final story = StoryModel(
             mediaType: _mediaType,
             uid: userM['uid'],
@@ -228,7 +232,7 @@ class StoryUploadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _setMediaType(MediaType mediaType) {
+  void _setMediaType(String mediaType) {
     _mediaType = mediaType;
     notifyListeners();
   }
