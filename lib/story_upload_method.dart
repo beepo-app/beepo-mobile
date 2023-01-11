@@ -34,6 +34,7 @@ class StoryUploadMethod {
       {@required Story story,
       @required File file,
       @required String uid,
+        String caption,
       // @required String friendId,
       }) async {
     try {
@@ -52,7 +53,7 @@ class StoryUploadMethod {
                 url: metadata.url,
                 createdDate: DateTime.now(),
                 path: metadata.path,
-            hoursAgo: 0,
+            hoursAgo: caption,
               )
               .toJson();
           await storiesCollection.add(storyData);

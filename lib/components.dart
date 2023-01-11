@@ -12,7 +12,8 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 
-import 'Models/story_model/story.dart';
+// import 'Models/story_model/story.dart';
+import 'Models/story_model/storyModel.dart';
 import 'Models/user_model.dart';
 import 'Models/wallet.dart';
 import 'Screens/Browser/browser_page.dart';
@@ -120,8 +121,8 @@ class _ChatTabState extends State<ChatTab> {
   String receiver;
   bool showInput = false;
 
-  Stream<List<Story>> currentUserStories;
-  Stream<List<Story>> friendsStories;
+  Stream<List<StoryModel>> currentUserStories;
+  Stream<List<StoryModel>> friendsStories;
   Stream<List<UserModel>> currentUserFollowingStories;
   Map userM = Hive.box('beepo').get('userData');
 
@@ -189,7 +190,7 @@ class _ChatTabState extends State<ChatTab> {
                 margin: EdgeInsets.only(top: 10),
                 height: 100,
                 child: ListView(scrollDirection: Axis.horizontal, children: [
-                  StreamBuilder<List<Story>>(
+                  StreamBuilder<List<StoryModel>>(
                       stream: currentUserStories,
                       initialData: const [],
                       builder: (context, snapshot) {
@@ -197,7 +198,7 @@ class _ChatTabState extends State<ChatTab> {
                           //   return const CurrentUserStoryBubble(stories: []);
                           // }
                           try {
-                            List<Story> userStories = snapshot.data;
+                            List<StoryModel> userStories = snapshot.data;
                             'UserStories: $userStories'.log();
 
                             Map useR;

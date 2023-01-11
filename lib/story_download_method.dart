@@ -1,10 +1,12 @@
 import 'package:beepo/Service/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:beepo/Models/story_model/story.dart';
+// import 'package:beepo/Models/story_model/story.dart';
 import 'package:beepo/Models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+
+import 'Models/story_model/storyModel.dart';
 
 class StoryDownloadMethod {
   Map userM = Hive.box('beepo').get('userData');
@@ -30,7 +32,7 @@ class StoryDownloadMethod {
     yield* stories.snapshots().map((snapshot) => snapshot.docs.isNotEmpty);
   }
 
-  Stream<List<Story>> getCurrentUserStories() async* {
+  Stream<List<StoryModel>> getCurrentUserStories() async* {
     final storiesCollection = _firestore.collection('stories');
     final stories = storiesCollection.where('uid', isEqualTo: userM['uid']).orderBy('createdDate');
     // final snapshot = stories.orderBy('createdDate', descending: true).snapshots();
@@ -38,7 +40,7 @@ class StoryDownloadMethod {
     // yield* storiesStream;
   }
 
-  Stream<List<Story>> getFriendsStories() async* {
+  Stream<List<StoryModel>> getFriendsStories() async* {
     // final user = _auth.currentUser;
     final storiesCollection = _firestore.collection('stories');
     final stories = storiesCollection.where('uid', isNotEqualTo: userM['uid']).orderBy('createdDate');

@@ -1,4 +1,5 @@
-import 'package:beepo/Models/story_model/story.dart';
+// import 'package:beepo/Models/story_model/story.dart';
+import 'package:beepo/Models/story_model/storyModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:voster/models/story_model/story.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ class UserModel {
   final String image;
   final List searchKeywords;
   final String userName;
-  final List<Story> stories;
+  final List<StoryModel> stories;
 
 
   const UserModel({
@@ -28,7 +29,7 @@ class UserModel {
     String name,
     String image,
     String userName,
-    List searchKeywords, List<Story> stories,
+    List searchKeywords, List<StoryModel> stories,
   }) =>
       UserModel(
           uid: uid ?? this.uid,
