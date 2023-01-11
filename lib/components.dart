@@ -3,7 +3,8 @@
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
 import 'package:beepo/story_download_provider.dart';
-import 'package:beepo/story_screen.dart';
+
+// import 'package:beepo/story_screen.dart';
 import 'package:beepo/story_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -149,11 +150,12 @@ class _ChatTabState extends State<ChatTab> {
             const SizedBox(width: 20),
             GestureDetector(
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) =>
-                        // Homes()
-                        AddStory()
-                    ));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            // Homes()
+                            AddStory()));
               },
               child: Column(
                 children: [
@@ -233,7 +235,7 @@ class _ChatTabState extends State<ChatTab> {
                       initialData: const [],
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          print('stories lenght: ${snapshot.data.length}' );
+                          print('stories lenght: ${snapshot.data.length}');
                           // List<UserModel> stoty = snapshot.data;
                           return ListView.builder(
                             primary: false,
@@ -242,7 +244,8 @@ class _ChatTabState extends State<ChatTab> {
                             scrollDirection: Axis.horizontal,
                             itemCount: snapshot.data.length,
                             itemBuilder: (context, index) {
-                              final user = UserModel.fromMap(snapshot.data[index].toJson());
+                              final user = UserModel.fromMap(
+                                  snapshot.data[index].toJson());
                               //   (
                               //   uid: snapshot.data[index]['uid'],
                               //   name: snapshot.data[index]['name'],
@@ -254,11 +257,11 @@ class _ChatTabState extends State<ChatTab> {
                               // user.copyWith(stories: followingStories);
                               return InkWell(
                                 onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              StoryScreen(user: user)));
+                                  // Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) =>
+                                  //             StoryScreen(user: user)));
                                 },
                                 child: BubbleStories(
                                   text: user.name,

@@ -10,6 +10,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
+import 'Models/story_model/storyModel.dart';
+
 class StoryUploadMethod {
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
@@ -31,7 +33,7 @@ class StoryUploadMethod {
   Map userM = Hive.box('beepo').get('userData');
 
   Future<Either<Failure, Success>> uploadStory(
-      {@required Story story,
+      {@required StoryModel story,
       @required File file,
       @required String uid,
         String caption,
@@ -53,7 +55,7 @@ class StoryUploadMethod {
                 url: metadata.url,
                 createdDate: DateTime.now(),
                 path: metadata.path,
-            hoursAgo: caption,
+            caption: caption,
               )
               .toJson();
           await storiesCollection.add(storyData);

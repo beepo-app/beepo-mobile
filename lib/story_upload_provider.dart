@@ -13,6 +13,8 @@ import 'package:beepo/models/story_model/story.dart';
 import 'package:beepo/story_upload_method.dart';
 import 'package:beepo/extensions.dart';
 
+import 'Models/story_model/storyModel.dart';
+
 enum StoryUploadStatus {
   initial,
   gettingReady,
@@ -44,7 +46,7 @@ class StoryUploadProvider extends ChangeNotifier {
   File _file;
   File get file => _file;
 
-  Story _story;
+  StoryModel _story;
   Map userM = Hive.box('beepo').get('userData');
 
 
@@ -90,7 +92,7 @@ class StoryUploadProvider extends ChangeNotifier {
         _selectFile(File(result.path));
         if (_file != null) {
           _setMediaType(MediaType.image);
-          final story = Story(
+          final story = StoryModel(
             mediaType: _mediaType,
             uid: userM['uid'],
           );
@@ -123,7 +125,7 @@ class StoryUploadProvider extends ChangeNotifier {
         _selectFile(File(result.path));
         if (_file != null) {
           _setMediaType(MediaType.image);
-          final story = Story(
+          final story = StoryModel(
             mediaType: _mediaType,
             uid: userM['uid'],
           );
@@ -167,7 +169,7 @@ class StoryUploadProvider extends ChangeNotifier {
         _selectFile(File(result.path));
         if (_file != null) {
           _setMediaType(MediaType.video);
-          final story = Story(
+          final story = StoryModel(
             mediaType: _mediaType,
             uid: userM['uid'],
           );
@@ -215,7 +217,7 @@ class StoryUploadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _setStory(Story story) {
+  void _setStory(StoryModel story) {
     _story = story;
     notifyListeners();
   }

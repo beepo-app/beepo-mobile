@@ -1,12 +1,13 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-import 'package:beepo/Models/story_model/story.dart';
+// import 'package:beepo/Models/story_model/story.dart';
 import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:story_view/story_view.dart';
 
 import 'Models/user_model.dart';
+import 'models/story_model/story.dart';
 
 class Homes extends StatefulWidget {
   final UserModel user;

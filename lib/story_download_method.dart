@@ -36,7 +36,7 @@ class StoryDownloadMethod {
     final storiesCollection = _firestore.collection('stories');
     final stories = storiesCollection.where('uid', isEqualTo: userM['uid']).orderBy('createdDate');
     // final snapshot = stories.orderBy('createdDate', descending: true).snapshots();
-    yield* stories.snapshots().map((snapshot) => snapshot.docs.map((doc) => Story.fromJson(doc.data())).toList());
+    yield* stories.snapshots().map((snapshot) => snapshot.docs.map((doc) => StoryModel.fromJson(doc.data())).toList());
     // yield* storiesStream;
   }
 
@@ -45,7 +45,7 @@ class StoryDownloadMethod {
     final storiesCollection = _firestore.collection('stories');
     final stories = storiesCollection.where('uid', isNotEqualTo: userM['uid']).orderBy('createdDate');
     // final snapshot = stories.orderBy('createdDate', descending: true).snapshots();
-    yield* stories.snapshots().map((snapshot) => snapshot.docs.map((doc) => Story.fromJson(doc.data())).toList());
+    yield* stories.snapshots().map((snapshot) => snapshot.docs.map((doc) => StoryModel.fromJson(doc.data())).toList());
     // yield* storiesStream;
   }
 
@@ -57,7 +57,7 @@ class StoryDownloadMethod {
       final stories = storiesCollection.where('uid', whereIn: users.map((user) => user.uid).toList());
       users.map((user) async* {
         final userStories = stories.where('uid', isEqualTo: user.uid);
-        final uStories = userStories.snapshots().map((snapshot) => snapshot.docs.map((doc) => Story.fromJson(doc.data())).toList());
+        final uStories = userStories.snapshots().map((snapshot) => snapshot.docs.map((doc) => StoryModel.fromJson(doc.data())).toList());
         yield* uStories.map((stories) => user.copyWith(stories: stories));
       });
     });
