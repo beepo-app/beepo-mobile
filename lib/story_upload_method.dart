@@ -39,7 +39,7 @@ class StoryUploadMethod {
     try {
       // final user = _auth.currentUser;
       final storiesCollection =
-          _firestore.collection('stories').doc(uid).collection('myStories');
+          _firestore.collection('stories');
 
       // Get media url
       final mediaUrl = await _uploadMediaToStorage(file);

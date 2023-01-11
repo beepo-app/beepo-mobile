@@ -1,10 +1,10 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, missing_return
 
-import 'package:beepo/Service/auth.dart';
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
 import 'package:beepo/story_download_provider.dart';
 import 'package:beepo/story_screen.dart';
+import 'package:beepo/story_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -149,7 +149,10 @@ class _ChatTabState extends State<ChatTab> {
             GestureDetector(
               onTap: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AddStory()));
+                    MaterialPageRoute(builder: (context) =>
+                        // Homes()
+                        AddStory()
+                    ));
               },
               child: Column(
                 children: [
@@ -224,66 +227,57 @@ class _ChatTabState extends State<ChatTab> {
                           ),
                         );
                       }),
-                  StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('users')
-                          .where('uid', isNotEqualTo: userM['uid'])
-                          .snapshots(),
-                      builder: (context, stream) {
-                        if (stream.hasData) {
-                          return StreamBuilder <List<Story>>(
-                              stream: friendsStories,
-                              initialData: const [],
-                              builder: (context, snapshot){
-                                if (stream.hasData) {
-                                  final followingUsers = stream.data.docs;
-                                  // final storyPeaople = snapshot.data.docs;
-                                  List<Story> stoty = snapshot.data;
+                  StreamBuilder<List<UserModel>>(
+                      stream: currentUserFollowingStories,
+                      initialData: const [],
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          print('stories lenght: ${snapshot.data.length}' );
+                          // List<UserModel> stoty = snapshot.data;
+                          return ListView.builder(
+                            primary: false,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (context, index) {
+                              final user = UserModel.fromMap(snapshot.data[index].toJson());
+                              //   (
+                              //   uid: snapshot.data[index]['uid'],
+                              //   name: snapshot.data[index]['name'],
+                              //   userName: snapshot.data[index]['userName'],
+                              //   image: snapshot.data[index]['image'],
+                              //   stories: snapshot.data[index]['stories'],
+                              // );
+                              // UserModel people =
+                              // user.copyWith(stories: followingStories);
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              StoryScreen(user: user)));
+                                },
+                                child: BubbleStories(
+                                  text: user.name,
+                                  image: user.image,
+                                  hasStory: user.stories.isNotEmpty,
+                                  // useNetworkImage: true,
+                                ),
+                              );
+                            },
+                          );
+                          //       }
+                          //     }
+                          // );
 
-                                  return ListView.builder(
-                                    primary: false,
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: followingUsers.length,
-                                    itemBuilder: (context, index) {
-                                      final user = UserModel(
-                                        uid: followingUsers[index]['uid'],
-                                        name: followingUsers[index]['name'],
-                                        userName: followingUsers[index]
-                                            ['userName'],
-                                        image: followingUsers[index]['image'],
-                                        // stories: followingUsers[index].stories,
-                                      );
-                                      UserModel people =
-                                          user.copyWith(stories: stoty);
-                                      return InkWell(
-                                        onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      StoryScreen(
-                                                          user: people)));
-                                        },
-                                        child: BubbleStories(
-                                          text: people.name,
-                                          image: people.image,
-                                          hasStory: people.stories.isNotEmpty,
-                                          // useNetworkImage: true,
-                                        ),
-                                      );
-                                    },
-                                  );
-                                }
-
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    color: primaryColor,
-                                  ),
-                                );
-                              });
+                          // return Center(
+                          //   child: CircularProgressIndicator(
+                          //     color: primaryColor,
+                          //   ),
+                          // );
+                          // });
                         }
 
                         return Center(
@@ -399,9 +393,7 @@ class _ChatTabState extends State<ChatTab> {
                         StreamBuilder(
                           stream: FirebaseFirestore.instance
                               .collection('conversation')
-                              .doc(userM['uid']== ''
-                                  ? ' '
-                                  : userM['uid'])
+                              .doc(userM['uid'] == '' ? ' ' : userM['uid'])
                               .collection("currentConversation")
                               .snapshots(),
                           builder:
@@ -720,7 +712,7 @@ class CurrentUserStoryBubble extends StatelessWidget {
         //       context, MaterialPageRoute(builder: (context) => AddStory()));
         // } else {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => StoryScreen(user: user)));
+            MaterialPageRoute(builder: (context) => Homes(user: user)));
         // }
       },
       child: BubbleStories(
