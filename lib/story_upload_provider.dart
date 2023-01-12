@@ -1,16 +1,14 @@
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:beepo/Service/auth.dart';
+
+import 'package:beepo/extensions.dart';
+import 'package:beepo/response.dart';
+import 'package:beepo/story_upload_method.dart';
 import 'package:dartz/dartz.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
-import 'package:beepo/response.dart';
-import 'package:beepo/story_upload_method.dart';
-import 'package:beepo/extensions.dart';
 
 import 'Models/story_model/storyModel.dart';
 
@@ -85,6 +83,7 @@ class StoryUploadProvider extends ChangeNotifier {
   }
   Future<Either<Failure, Success>> getCaption(String text){
     _caption = text;
+    // return _caption;
   }
   //TODO: Request permission to access media and camera
   Future<Either<Failure, Success>> pickImageGallery() async {
@@ -99,6 +98,7 @@ class StoryUploadProvider extends ChangeNotifier {
           final story = StoryModel(
             mediaType: _mediaType,
             uid: userM['uid'],
+            name: userM['displayName'], profileImage: userM['profilePictureUrl'],
           );
           _setStory(story);
           if (_story != null) {
@@ -131,7 +131,7 @@ class StoryUploadProvider extends ChangeNotifier {
           _setMediaType("image");
           final story = StoryModel(
             mediaType: _mediaType,
-            uid: userM['uid'],
+            uid: userM['uid'], name: userM['displayName'], profileImage: userM['profilePictureUrl'],
           );
           _setStory(story);
           if (_story != null) {
@@ -175,7 +175,7 @@ class StoryUploadProvider extends ChangeNotifier {
           _setMediaType('video');
           final story = StoryModel(
             mediaType: _mediaType,
-            uid: userM['uid'],
+            uid: userM['uid'], name: userM['displayName'], profileImage: userM['profilePictureUrl'],
           );
           _setStory(story);
           if (_story != null) {

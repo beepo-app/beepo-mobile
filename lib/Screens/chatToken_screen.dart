@@ -32,7 +32,7 @@ class _ChatTokenState extends State<ChatToken> {
         ),
         title: const Text(
           "Send Token",
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
             fontSize: 24,
           ),
@@ -83,10 +83,10 @@ class _ChatTokenState extends State<ChatToken> {
                       const SizedBox(height: 57),
                       const Align(
                         alignment: Alignment.centerLeft,
-                        child: const Text(
+                        child: Text(
                           "Amount",
                           style: TextStyle(
-                            color: const Color(0xe50d004c),
+                            color: Color(0xe50d004c),
                             fontSize: 18,
                           ),
                         ),
@@ -123,7 +123,7 @@ class _ChatTokenState extends State<ChatToken> {
                           ),
                           isDense: true,
                           border: const OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(Radius.circular(15)),
+                              borderRadius: BorderRadius.all(Radius.circular(15)),
                               borderSide: BorderSide(
                                 color: Colors.grey,
                                 width: 1,

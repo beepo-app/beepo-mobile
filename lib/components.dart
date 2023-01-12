@@ -140,8 +140,8 @@ class _ChatTabState extends State<ChatTab> {
     // currentUserFollowingStories =
     //     context.read<StoryDownloadProvider>().getFollowingUsersStories();
     // friendsStories = context.read<StoryDownloadProvider>().getFriendStories();
-    currentUserFollowing =
-        context.read<StoryDownloadProvider>().getUsers();
+    // currentUserFollowing =
+    //     context.read<StoryDownloadProvider>().getUsers();
     super.initState();
   }
 

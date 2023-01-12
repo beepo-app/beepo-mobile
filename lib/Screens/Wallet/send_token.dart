@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:beepo/Models/wallet.dart';
 import 'package:beepo/Screens/Wallet/scan_code.dart';
 import 'package:beepo/Widgets/commons.dart';

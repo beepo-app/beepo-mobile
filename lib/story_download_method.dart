@@ -59,15 +59,23 @@ class StoryDownloadMethod {
   //       usersRef.where('uid', whereIn: uids)
   //   ).map((snapshot) => UserModel.fromJson(snapshot.docs)).toList();
   // }
-  final CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
-  final CollectionReference storiesRef = FirebaseFirestore.instance.collection('stories');
 
-  Stream<List<DocumentSnapshot>> getUsersInStories() {
-    return storiesRef.snapshots().asyncMap((snapshot) {
-      final List<String> uids = snapshot.docs.map((doc) => doc['uid']).toList();
-      return usersRef.where('uid', whereIn: uids).get();
-    }).map((snapshot) => snapshot.docs);
-  }
+  // Stream<List<UserModel>> getUsersInStories() {
+  //   final storiesRef = FirebaseFirestore.instance.collection('stories');
+  //   final usersRef = FirebaseFirestore.instance.collection('users');
+  //
+  //   return storiesRef.snapshots().map((storiesSnapshot) {
+  //     final uids = storiesSnapshot.docs.map((story) => story.data()['uid']).toSet();
+  //     return usersRef.where(FieldPath.documentId, whereIn: uids).snapshots().map((usersSnapshot) {
+  //       return usersSnapshot.docs.map((user) {
+  //         final data = user.data();
+  //         return UserModel(uid: data['uid'], name: data['name'], email: data['email']);
+  //       }).toList();
+  //     });
+  //   });
+  // }
+
+
 
   Stream<List<StoryModel>> getFriendsStories() async* {
     // final user = _auth.currentUser;

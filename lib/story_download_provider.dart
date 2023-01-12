@@ -26,6 +26,6 @@ class StoryDownloadProvider extends ChangeNotifier {
 
   Stream<List<UserModel>> getFollowingUsersStories() => _storyMethod.getFollowingUsersStories();
   Stream<List<UserModel>> getFollowingUsers() => _storyMethod.getFollowingUsers();
-  Stream<List<DocumentSnapshot>> getUsers() => _storyMethod.getUsersInStories();
+  // Stream<List<DocumentSnapshot>> getUsers() => _storyMethod.getUsersInStories();
 
 }

@@ -12,7 +12,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
-import 'Models/story_model/storyModel.dart';
 import 'Utils/styles.dart';
 
 class AddStory extends StatefulWidget {
