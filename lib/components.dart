@@ -110,6 +110,7 @@ class OutlnButton extends StatelessWidget {
     );
   }
 }
+
 List<UserModel> userss = [];
 
 class ChatTab extends StatefulWidget {
@@ -126,6 +127,8 @@ class _ChatTabState extends State<ChatTab> {
   Stream<List<StoryModel>> currentUserStories;
   Stream<List<StoryModel>> friendsStories;
   Stream<List<UserModel>> currentUserFollowingStories;
+  Stream<List<UserModel>> currentUserFollowing;
+
   Map userM = Hive.box('beepo').get('userData');
 
   @override
@@ -137,7 +140,8 @@ class _ChatTabState extends State<ChatTab> {
     currentUserFollowingStories =
         context.read<StoryDownloadProvider>().getFollowingUsersStories();
     friendsStories = context.read<StoryDownloadProvider>().getFriendStories();
-
+    currentUserFollowing =
+        context.read<StoryDownloadProvider>().getFollowingUsers();
     super.initState();
   }
 
@@ -197,14 +201,10 @@ class _ChatTabState extends State<ChatTab> {
                       stream: currentUserStories,
                       initialData: const [],
                       builder: (context, snapshot) {
-                        // print(snapshot.data.length);
                         if (snapshot.hasData) {
-                          //   return const CurrentUserStoryBubble(stories: []);
-                          // }
                           try {
                             List<StoryModel> userStories = snapshot.data;
                             'UserStories: $userStories'.log();
-// print(userStories.length);
                             Map useR;
                             useR = Hive.box('beepo').get('userData');
 
@@ -226,10 +226,10 @@ class _ChatTabState extends State<ChatTab> {
                             print(e);
                           }
                         }
-                        if (!snapshot.hasData){
+                        if (!snapshot.hasData) {
                           print("i can't get data");
                         }
-                        if(snapshot.hasError){
+                        if (snapshot.hasError) {
                           print(snapshot.error);
                         }
                         return Center(
@@ -238,13 +238,13 @@ class _ChatTabState extends State<ChatTab> {
                           ),
                         );
                       }),
-                  StreamBuilder(
-                      stream: FirebaseFirestore.instance.collection('users').where('uid', isNotEqualTo: userM['uid']).snapshots(),
+                  StreamBuilder<List<UserModel>>(
+                      stream: currentUserFollowingStories,
                       initialData: const [],
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-
-                          print('stories lenght: ${snapshot.data.length}');
+                          userss = snapshot.data.toList();
+                          print('stories lenght: ${userss.length}');
                           // List<UserModel> stoty = snapshot.data;
                           return ListView.builder(
                             primary: false,
@@ -254,7 +254,7 @@ class _ChatTabState extends State<ChatTab> {
                             itemCount: snapshot.data.length,
                             itemBuilder: (context, index) {
                               final user = UserModel.fromMap(
-                                  snapshot.data.docs[index].toJson());
+                                  snapshot.data[index].toJson());
                               userss.add(user);
                               //   (
                               //   uid: snapshot.data[index]['uid'],
