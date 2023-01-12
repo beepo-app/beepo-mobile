@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 // import 'package:beepo/Models/story_model/story.dart';
 import 'package:beepo/Models/user_model.dart';
@@ -25,5 +26,6 @@ class StoryDownloadProvider extends ChangeNotifier {
 
   Stream<List<UserModel>> getFollowingUsersStories() => _storyMethod.getFollowingUsersStories();
   Stream<List<UserModel>> getFollowingUsers() => _storyMethod.getFollowingUsers();
+  Stream<List<DocumentSnapshot>> getUsers() => _storyMethod.getUsersInStories();
 
 }

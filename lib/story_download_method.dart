@@ -1,4 +1,6 @@
 // import 'package:beepo/Models/story_model/story.dart';
+import 'dart:io';
+
 import 'package:beepo/Models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -42,6 +44,31 @@ class StoryDownloadMethod {
     // yield* storiesStream;
   }
 
+  // Stream<List<UserModel>> getUsersInStories(FirebaseFirestore firestore) {
+  //   CollectionReference usersRef = firestore.collection('users');
+  //   CollectionReference storiesRef = firestore.collection('stories');
+  //
+  //   // Get a stream of the 'uid' field from the stories collection
+  //   final storyUids = storiesRef.snapshots().map((snapshot) =>
+  //       snapshot.docs.map((doc) => StoryModel.fromJson(doc.data()).uid).toList()
+  //   );
+  //
+  //   // Use the 'uid' field to filter the users collection
+  //   // final its =
+  //   storyUids.map((uids) =>
+  //       usersRef.where('uid', whereIn: uids)
+  //   ).map((snapshot) => UserModel.fromJson(snapshot.docs)).toList();
+  // }
+  final CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
+  final CollectionReference storiesRef = FirebaseFirestore.instance.collection('stories');
+
+  Stream<List<DocumentSnapshot>> getUsersInStories() {
+    return storiesRef.snapshots().asyncMap((snapshot) {
+      final List<String> uids = snapshot.docs.map((doc) => doc['uid']).toList();
+      return usersRef.where('uid', whereIn: uids).get();
+    }).map((snapshot) => snapshot.docs);
+  }
+
   Stream<List<StoryModel>> getFriendsStories() async* {
     // final user = _auth.currentUser;
     final storiesCollection = _firestore.collection('stories');
@@ -59,10 +86,10 @@ class StoryDownloadMethod {
     getFollowingUsers().map((users) {
       final storiesCollection = _firestore.collection('stories');
       // return users with their stories
-      // final stories = storiesCollection.where('uid',
-      //     whereIn: users.map((user) => user.uid).toList());
+      final stories = storiesCollection.where('uid',
+          whereIn: users.map((user) => user.uid).toList());
       users.map((user) async* {
-        final userStories = storiesCollection.where('uid', isNotEqualTo: userM['uid']);
+        final userStories = stories.where('uid', isNotEqualTo: userM['uid']);
         final uStories = userStories.snapshots().map((snapshot) => snapshot.docs
             .map((doc) => StoryModel.fromJson(doc.data()))
             .toList());
@@ -74,8 +101,8 @@ class StoryDownloadMethod {
   Stream<List<UserModel>> getFollowingUsers() async* {
     // _getFollowingUsersId().map((followingUsersId) async* {
     final usersCollection = _firestore.collection('users');
-    final users = usersCollection.where('uid', isNotEqualTo: userM['uid']);
-    yield* users.snapshots().map((snapshot) =>
+    // final users = usersCollection.where('uid', isNotEqualTo: userM['uid']);
+    yield* usersCollection.snapshots().map((snapshot) =>
         snapshot.docs.map((doc) => UserModel.fromJson(doc.data())).toList());
     // });
   }

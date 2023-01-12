@@ -66,8 +66,8 @@ class _HomesState extends State<Homes> {
     }
   }
 
-  DateTime date;
-  String diff;
+  // DateTime date;
+  // String diff;
 
   //  calDate(DateTime date){
   //   final time = date.difference(DateTime.now());

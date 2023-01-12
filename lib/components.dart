@@ -125,9 +125,9 @@ class _ChatTabState extends State<ChatTab> {
   bool showInput = false;
 
   Stream<List<StoryModel>> currentUserStories;
-  Stream<List<StoryModel>> friendsStories;
-  Stream<List<UserModel>> currentUserFollowingStories;
-  Stream<List<UserModel>> currentUserFollowing;
+  // Stream<List<StoryModel>> friendsStories;
+  // Stream<List<UserModel>> currentUserFollowingStories;
+  Stream<List<DocumentSnapshot>> currentUserFollowing;
 
   Map userM = Hive.box('beepo').get('userData');
 
@@ -137,11 +137,11 @@ class _ChatTabState extends State<ChatTab> {
     // context.read<ChatNotifier>().getUsers();
     currentUserStories =
         context.read<StoryDownloadProvider>().getCurrentUserStories();
-    currentUserFollowingStories =
-        context.read<StoryDownloadProvider>().getFollowingUsersStories();
-    friendsStories = context.read<StoryDownloadProvider>().getFriendStories();
+    // currentUserFollowingStories =
+    //     context.read<StoryDownloadProvider>().getFollowingUsersStories();
+    // friendsStories = context.read<StoryDownloadProvider>().getFriendStories();
     currentUserFollowing =
-        context.read<StoryDownloadProvider>().getFollowingUsers();
+        context.read<StoryDownloadProvider>().getUsers();
     super.initState();
   }
 
@@ -238,68 +238,48 @@ class _ChatTabState extends State<ChatTab> {
                           ),
                         );
                       }),
-                  StreamBuilder<List<UserModel>>(
-                      stream: currentUserFollowingStories,
-                      initialData: const [],
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          userss = snapshot.data.toList();
-                          print('stories lenght: ${userss.length}');
-                          // List<UserModel> stoty = snapshot.data;
-                          return ListView.builder(
-                            primary: false,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: snapshot.data.length,
-                            itemBuilder: (context, index) {
-                              final user = UserModel.fromMap(
-                                  snapshot.data[index].toJson());
-                              userss.add(user);
-                              //   (
-                              //   uid: snapshot.data[index]['uid'],
-                              //   name: snapshot.data[index]['name'],
-                              //   userName: snapshot.data[index]['userName'],
-                              //   image: snapshot.data[index]['image'],
-                              //   stories: snapshot.data[index]['stories'],
-                              // );
-                              // UserModel people =
-                              // user.copyWith(stories: followingStories);
-                              return InkWell(
-                                onTap: () {
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) =>
-                                  //             StoryScreen(user: user)));
-                                },
-                                child: BubbleStories(
-                                  text: user.name,
-                                  image: user.image,
-                                  hasStory: user.stories.isNotEmpty,
-                                  // useNetworkImage: true,
-                                ),
-                              );
-                            },
-                          );
-                          //       }
-                          //     }
-                          // );
+                  StreamBuilder<List<DocumentSnapshot>>(
+                    stream: currentUserFollowing,
+                    builder: (context, snap) {
+                      if (snap.hasData) {
 
-                          // return Center(
-                          //   child: CircularProgressIndicator(
-                          //     color: primaryColor,
-                          //   ),
-                          // );
-                          // });
-                        }
+                        return ListView.builder(
+                          primary: false,
+                          shrinkWrap: true,
+                          physics:
+                          const NeverScrollableScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: snap.data.length,
+                          itemBuilder: (context, index) {
+                            print(snap.data.length);
+                            final user = UserModel.fromSnap(snap.data[index]);
 
-                        return Center(
-                          child: CircularProgressIndicator(
-                            color: primaryColor,
-                          ),
+                            return InkWell(
+                              onTap: () {
+                                // Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (context) =>
+                                //             StoryScreen(user: user)));
+                              },
+                              child: BubbleStories(
+                                text: user.name,
+                                image: user
+                                    .image,
+                                // hasStory: false,
+                                // useNetworkImage: true,
+                              ),
+                            );
+                          },
                         );
-                      }),
+                      }
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: primaryColor,
+                        ),
+                      );
+                    }
+                  )
                 ]),
               ),
             ),

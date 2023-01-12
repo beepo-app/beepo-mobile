@@ -1,6 +1,8 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/material.dart';
 
 class StoryModel {
   final String url;
@@ -81,7 +83,7 @@ class StoryModel {
         uid: snapshot['uid'],
       );
 
-  static StoryModel fromSnap(DocumentSnapshot snap) {
+  static StoryModel fromSnap(AsyncSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
     return StoryModel(
       url: snapshot['url'],
