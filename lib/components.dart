@@ -110,6 +110,7 @@ class OutlnButton extends StatelessWidget {
     );
   }
 }
+List<UserModel> userss = [];
 
 class ChatTab extends StatefulWidget {
   // ChatTab({Key key}) : super(key: key);
@@ -196,16 +197,17 @@ class _ChatTabState extends State<ChatTab> {
                       stream: currentUserStories,
                       initialData: const [],
                       builder: (context, snapshot) {
+                        // print(snapshot.data.length);
                         if (snapshot.hasData) {
                           //   return const CurrentUserStoryBubble(stories: []);
                           // }
                           try {
                             List<StoryModel> userStories = snapshot.data;
                             'UserStories: $userStories'.log();
-
+// print(userStories.length);
                             Map useR;
-
                             useR = Hive.box('beepo').get('userData');
+
                             UserModel userf = UserModel(
                               uid: useR['uid'],
                               name: useR['displayName'],
@@ -224,17 +226,24 @@ class _ChatTabState extends State<ChatTab> {
                             print(e);
                           }
                         }
+                        if (!snapshot.hasData){
+                          print("i can't get data");
+                        }
+                        if(snapshot.hasError){
+                          print(snapshot.error);
+                        }
                         return Center(
                           child: CircularProgressIndicator(
                             color: primaryColor,
                           ),
                         );
                       }),
-                  StreamBuilder<List<UserModel>>(
-                      stream: currentUserFollowingStories,
+                  StreamBuilder(
+                      stream: FirebaseFirestore.instance.collection('users').where('uid', isNotEqualTo: userM['uid']).snapshots(),
                       initialData: const [],
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
+
                           print('stories lenght: ${snapshot.data.length}');
                           // List<UserModel> stoty = snapshot.data;
                           return ListView.builder(
@@ -245,7 +254,8 @@ class _ChatTabState extends State<ChatTab> {
                             itemCount: snapshot.data.length,
                             itemBuilder: (context, index) {
                               final user = UserModel.fromMap(
-                                  snapshot.data[index].toJson());
+                                  snapshot.data.docs[index].toJson());
+                              userss.add(user);
                               //   (
                               //   uid: snapshot.data[index]['uid'],
                               //   name: snapshot.data[index]['name'],

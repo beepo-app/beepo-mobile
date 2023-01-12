@@ -62,7 +62,6 @@ class StoryDownloadMethod {
       });
     });
   }
-
   Stream<List<UserModel>> _getFollowingUsers() async* {
     // _getFollowingUsersId().map((followingUsersId) async* {
       final usersCollection = _firestore.collection('users');

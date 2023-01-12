@@ -82,14 +82,14 @@ class _AddStoryState extends State<AddStory> {
 
                       // If image is selected (file is not null)
                       image: (selectedFile != null &&
-                              selectedMediaType == 'image')
+                              selectedMediaType == "image")
                           ? DecorationImage(
                               image: FileImage(File(selectedFile.path)),
                               fit: BoxFit.cover,
                             )
                           // If video is selected (file is not null)
                           : (selectedFile != null &&
-                                  selectedMediaType == 'video' &&
+                                  selectedMediaType == "video" &&
                                   videoThumbnail != null)
                               ? DecorationImage(
                                   image: MemoryImage(videoThumbnail),
@@ -236,7 +236,7 @@ class _AddStoryState extends State<AddStory> {
                   final selectedMediaType =
                       context.read<StoryUploadProvider>().mediaType;
                   if (selectedFile != null &&
-                      selectedMediaType == 'video') {
+                      selectedMediaType == "video") {
                     final isVideoDurationNotLong =
                     await _checkVideoDurationIsNotLong(selectedFile);
                     if (isVideoDurationNotLong && mounted) {

@@ -95,7 +95,7 @@ class StoryUploadProvider extends ChangeNotifier {
       if (result != null) {
         _selectFile(File(result.path));
         if (_file != null) {
-          _setMediaType('image');
+          _setMediaType("image");
           final story = StoryModel(
             mediaType: _mediaType,
             uid: userM['uid'],
@@ -128,7 +128,7 @@ class StoryUploadProvider extends ChangeNotifier {
       if (result != null) {
         _selectFile(File(result.path));
         if (_file != null) {
-          _setMediaType('image');
+          _setMediaType("image");
           final story = StoryModel(
             mediaType: _mediaType,
             uid: userM['uid'],
@@ -232,8 +232,8 @@ class StoryUploadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _setMediaType(String mediaType) {
-    _mediaType = mediaType;
+  void _setMediaType(String type) {
+    _mediaType = type;
     notifyListeners();
   }
 
@@ -266,7 +266,7 @@ class StoryUploadProvider extends ChangeNotifier {
   }
 
   void _resetMediaTypeToNull() {
-    _mediaType = null;
+    _mediaType = '';
     notifyListeners();
   }
 

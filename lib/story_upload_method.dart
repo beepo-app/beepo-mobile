@@ -52,9 +52,9 @@ class StoryUploadMethod {
           final storyData = story
               .copyWith(
                 url: metadata.url,
-                createdDate: DateTime.now(),
+                createdDate: Timestamp.now(),
                 path: metadata.path,
-            caption: caption,
+                caption: caption,
               )
               .toJson();
           await storiesCollection.add(storyData);

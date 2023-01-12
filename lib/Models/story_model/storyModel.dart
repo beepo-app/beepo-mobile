@@ -1,13 +1,13 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 class StoryModel {
   final String url;
   final String mediaType;
   // final Duration duration;
-  final DateTime createdDate;
-  final int hoursAgo;
+  final Timestamp createdDate;
+  // final int hoursAgo;
   final String path;
   final String caption;
   final String uid;
@@ -15,12 +15,12 @@ class StoryModel {
   const StoryModel({
     this.url,
     @required this.mediaType,
-    // this.duration = const Duration(seconds: 30),
+    // this.duration = const Duration(seconds: 20),
     this.createdDate,
-    this.hoursAgo = 0,
+    // @Default(0) this.hoursAgo,
     this.path,
-    this.caption,
-    this.uid,
+    @Default(' ') this.caption,
+    @required this.uid,
   });
 
   // get stories => null;
@@ -30,8 +30,8 @@ class StoryModel {
     String uid,
     String mediaType,
     // Duration duration,
-    DateTime createdDate,
-    int hoursAgo,
+    Timestamp createdDate,
+    // int hoursAgo,
     String path,
     String caption,
   }) =>
@@ -40,7 +40,7 @@ class StoryModel {
         mediaType: mediaType ?? this.mediaType,
         // duration: duration ?? this.duration,
         createdDate: createdDate ?? this.createdDate,
-        hoursAgo: hoursAgo ?? this.hoursAgo,
+        // hoursAgo: hoursAgo ?? this.hoursAgo,
         path: path ?? this.path,
         caption: caption ?? this.caption,
         uid: uid ?? this.uid,
@@ -52,7 +52,7 @@ class StoryModel {
       mediaType: snapshot['mediaType'],
       // duration: snapshot['duration'],
       createdDate: snapshot['createdDate'],
-      hoursAgo: snapshot['hoursAgo'],
+      // hoursAgo: snapshot['hoursAgo'],
       path: snapshot['path'],
       caption: snapshot['caption'],
       uid: snapshot['uid'],
@@ -64,7 +64,7 @@ class StoryModel {
         'mediaType': mediaType,
         // 'duration': duration,
         'createdDate': createdDate,
-        'hoursAgo': hoursAgo,
+        // 'hoursAgo': hoursAgo,
         'path': path,
         'caption': caption,
         'uid': uid,
@@ -75,7 +75,7 @@ class StoryModel {
         mediaType: snapshot['mediaType'],
         // duration: snapshot['duration'],
         createdDate: snapshot['createdDate'],
-        hoursAgo: snapshot['hoursAgo'],
+        // hoursAgo: snapshot['hoursAgo'],
         path: snapshot['path'],
         caption: snapshot['caption'],
         uid: snapshot['uid'],
@@ -88,7 +88,7 @@ class StoryModel {
       mediaType: snapshot['mediaType'],
       // duration: snapshot['duration'],
       createdDate: snapshot['createdDate'],
-      hoursAgo: snapshot['hoursAgo'],
+      // hoursAgo: snapshot['hoursAgo'],
       path: snapshot['path'],
       caption: snapshot['caption'],
       uid: snapshot['uid'],

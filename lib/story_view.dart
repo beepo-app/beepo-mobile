@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:story_view/story_view.dart';
 
-import 'Models/story_model/storyModel.dart';
 import 'Models/user_model.dart';
+import 'components.dart';
 
 class Homes extends StatefulWidget {
   final UserModel user;
@@ -31,13 +31,14 @@ class _HomesState extends State<Homes> {
   void addStoryItems() {
     for (final story in widget.user.stories) {
       switch (story.mediaType) {
-        case 'image':
+        case "image":
           storyItems.add(StoryItem.pageImage(
             url: story.url,
             controller: controller,
             caption:
                 // Text(
                 story.caption,
+            duration: Duration(seconds: 20),
             //   style: TextStyle(
             //     color: Colors.white,
             //     backgroundColor: Colors.black54,
@@ -46,7 +47,7 @@ class _HomesState extends State<Homes> {
             // ),
           ));
           break;
-        case 'video':
+        case "video":
           storyItems.add(StoryItem.pageVideo(
             story.url,
             controller: controller,
@@ -117,7 +118,7 @@ class _HomesState extends State<Homes> {
                 }
               },
               onComplete: () {
-                // Navigator.pop(context);
+                Navigator.pop(context);
                 // i++;
                 // cont.nextPage(duration: Duration(seconds: 1), curve: Curves.easeIn);
 
@@ -150,12 +151,106 @@ class _HomesState extends State<Homes> {
 }
 
 class MoreStories extends StatefulWidget {
+  final UserModel user;
+
+  const MoreStories({
+    Key key,
+    @required this.user,
+  }) : super(key: key);
+
   @override
   _MoreStoriesState createState() => _MoreStoriesState();
 }
 
 class _MoreStoriesState extends State<MoreStories> {
-  final storyController = StoryController();
+  PageController controller;
+
+  @override
+  void initState() {
+    final initialPage = userss.indexOf(widget.user);
+    controller = PageController(initialPage: initialPage);
+    // addStoryItems();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // storyController.dispose();
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PageView(
+        controller: controller,
+        children: userss
+            .map((e) => StoryWidget(user: e, controller: controller))
+            .toList());
+  }
+}
+
+class StoryWidget extends StatefulWidget {
+  final UserModel user;
+  final PageController controller;
+
+  StoryWidget({
+    @required this.user,
+    @required this.controller,
+  });
+
+  @override
+  State<StoryWidget> createState() => _StoryWidgetState();
+}
+
+class _StoryWidgetState extends State<StoryWidget> {
+  final storyItems = <StoryItem>[];
+  StoryController storyController;
+
+  void addStoryItems() {
+    for (final story in widget.user.stories) {
+      switch (story.mediaType) {
+        case "image":
+          storyItems.add(StoryItem.pageImage(
+            url: story.url,
+            controller: storyController,
+            caption:
+                // Text(
+                story.caption,
+            duration: Duration(seconds: 20),
+            //   style: TextStyle(
+            //     color: Colors.white,
+            //     backgroundColor: Colors.black54,
+            //     fontSize: 17,
+            //   ),
+            // ),
+          ));
+          break;
+        case "video":
+          storyItems.add(StoryItem.pageVideo(
+            story.url,
+            controller: storyController,
+            caption:
+                // Text(
+                story.caption,
+            //   style: TextStyle(
+            //     color: Colors.white,
+            //     backgroundColor: Colors.black54,
+            //     fontSize: 17,
+            //   ),
+            // ),
+          ));
+          break;
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    storyController = StoryController();
+    addStoryItems();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -163,57 +258,29 @@ class _MoreStoriesState extends State<MoreStories> {
     super.dispose();
   }
 
+  // const StoryWidget({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("More"),
-      ),
-      body: StoryView(
-        storyItems: [
-          StoryItem.text(
-            title: "I guess you'd love to see more of our food. That's great.",
-            backgroundColor: Colors.blue,
-          ),
-          StoryItem.text(
-            title: "Nice!\n\nTap to continue.",
-            backgroundColor: Colors.red,
-            textStyle: TextStyle(
-              fontFamily: 'Dancing',
-              fontSize: 40,
-            ),
-          ),
-          StoryItem.pageImage(
-            url:
-                "https://image.ibb.co/cU4WGx/Omotuo-Groundnut-Soup-braperucci-com-1.jpg",
-            caption: "Still sampling",
-            controller: storyController,
-          ),
-          StoryItem.pageImage(
-              url: "https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif",
-              caption: "Working with gifs",
-              controller: storyController),
-          StoryItem.pageImage(
-            url: "https://media.giphy.com/media/XcA8krYsrEAYXKf4UQ/giphy.gif",
-            caption: "Hello, from the other side",
-            controller: storyController,
-          ),
-          StoryItem.pageImage(
-            url: "https://media.giphy.com/media/XcA8krYsrEAYXKf4UQ/giphy.gif",
-            caption: "Hello, from the other side2",
-            controller: storyController,
-          ),
-        ],
-        onStoryShow: (s) {
-          print("Showing a story");
-        },
-        onComplete: () {
-          print("Completed a cycle");
-        },
-        progressPosition: ProgressPosition.top,
-        repeat: false,
-        controller: storyController,
-      ),
+    return StoryView(
+      storyItems: storyItems,
+      onStoryShow: (s) {
+        print("Showing a story");
+      },
+      onComplete: () {
+        final currentIndex = userss.indexOf(widget.user);
+        final isLastPage = userss.length - 1 == currentIndex;
+        if (isLastPage) {
+          Navigator.pop(context);
+        }
+        widget.controller.nextPage(
+          duration: Duration(microseconds: 30000),
+          curve: Curves.easeIn,
+        );
+        print("Completed a cycle");
+      },
+      progressPosition: ProgressPosition.top,
+      repeat: false,
+      controller: storyController,
     );
   }
 }
