@@ -57,13 +57,10 @@ class _AddStoryState extends State<AddStory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        maintainBottomViewPadding: true,
-        child: Column(
-        children: [
-        Expanded(
-          flex: 25,
+      body: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: SafeArea(
+          // maintainBottomViewPadding: true,
           child: Consumer<StoryUploadProvider>(
             builder: (context, uploader, _) {
               final selectedFile = uploader.file;
@@ -73,6 +70,7 @@ class _AddStoryState extends State<AddStory> {
               return Stack(
                 children: [
                   Container(
+                    height: MediaQuery.of(context).size.height,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       // If the selected media is an image, show the selected image,
@@ -167,113 +165,119 @@ class _AddStoryState extends State<AddStory> {
                       ),
                       icon: const Icon(Icons.settings),
                     ),
-                  )
+                  ),
+
                 ],
               );
             },
           ),
         ),
-        Expanded(
-          flex: 2,
-          child: TextField(
-            decoration: InputDecoration(
-                hintText: "Add a caption...",
-                isDense: false,
-                hintStyle: TextStyle(
-                  fontSize: 15,
-                  fontStyle: FontStyle.italic,
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.only(
+              top: 0, left: 20.0, right: 20.0, bottom: 0),
+          child: Container(
+            width: double.infinity,
+            height: 100,
+            child: Column(
+              children: [
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Add a caption...",
+                      isDense: false,
+                      hintStyle: TextStyle(
+                        fontSize: 15,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      // filled: true,
+                      // enabledBorder: OutlineInputBorder(
+                      //   // borderSide: BorderSide.
+                      //
+                      // ),
+                      // focusedBorder: OutlineInputBorder(),
+                    ),
+                    expands: true,
+                    maxLines: null,
+                    minLines: null,
+                    controller: controller,
+                  ),
                 ),
-              // filled: true,
-              enabledBorder: OutlineInputBorder(
-                // borderSide: BorderSide.
-
-              ),
-              focusedBorder: OutlineInputBorder(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    InkWell(
+                      onTap: () async {
+                        await context
+                            .read<StoryUploadProvider>()
+                            .pickImageGallery();
+                        // Navigator.pop(context);
+                      },
+                      child: Row(
+                        children: [
+                          // SvgPicture.asset(AppImages.newGallery),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          const Text(
+                            'Gallery',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          )
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        await context.read<StoryUploadProvider>().pickVideo();
+                        if (mounted) {
+                          final selectedFile =
+                              context.read<StoryUploadProvider>().file;
+                          final selectedMediaType =
+                              context.read<StoryUploadProvider>().mediaType;
+                          if (selectedFile != null &&
+                              selectedMediaType == "video") {
+                            final isVideoDurationNotLong =
+                            await _checkVideoDurationIsNotLong(selectedFile);
+                            if (isVideoDurationNotLong && mounted) {
+                              final result = await context
+                                  .read<StoryUploadProvider>()
+                                  .getVideoThumbnail();
+                              result.fold(
+                                    (failure) => _showSnackBar(context,
+                                    message: failure.message),
+                                    (success) {},
+                              );
+                            } else {
+                              _showSnackBar(context,
+                                  message:
+                                  'Video duration cannot be more than 40 seconds');
+                              context.read<StoryUploadProvider>().reset();
+                            }
+                          }
+                        }
+                      },
+                      icon: const Icon(
+                        Icons.videocam_outlined,
+                        size: 35,
+                        color: secondaryColor,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        await context.read<StoryUploadProvider>().pickImageCamera();
+                      },
+                      icon: SvgPicture.asset(
+                        AppImages.camera,
+                        color: secondaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            expands: true,
-            maxLines: null,
-            minLines: null,
-            controller: controller,
           ),
         ),
+      ),
 
-        ],
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(
-            top: 0, left: 20.0, right: 20.0, bottom: 0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            InkWell(
-              onTap: () async {
-                await context
-                    .read<StoryUploadProvider>()
-                    .pickImageGallery();
-                // Navigator.pop(context);
-              },
-              child: Row(
-                children: [
-                  // SvgPicture.asset(AppImages.newGallery),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  const Text(
-                    'Gallery',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  )
-                ],
-              ),
-            ),
-            IconButton(
-              onPressed: () async {
-                await context.read<StoryUploadProvider>().pickVideo();
-                if (mounted) {
-                  final selectedFile =
-                      context.read<StoryUploadProvider>().file;
-                  final selectedMediaType =
-                      context.read<StoryUploadProvider>().mediaType;
-                  if (selectedFile != null &&
-                      selectedMediaType == "video") {
-                    final isVideoDurationNotLong =
-                    await _checkVideoDurationIsNotLong(selectedFile);
-                    if (isVideoDurationNotLong && mounted) {
-                      final result = await context
-                          .read<StoryUploadProvider>()
-                          .getVideoThumbnail();
-                      result.fold(
-                            (failure) => _showSnackBar(context,
-                            message: failure.message),
-                            (success) {},
-                      );
-                    } else {
-                      _showSnackBar(context,
-                          message:
-                          'Video duration cannot be more than 40 seconds');
-                      context.read<StoryUploadProvider>().reset();
-                    }
-                  }
-                }
-              },
-              icon: const Icon(
-                Icons.videocam_outlined,
-                size: 35,
-                color: secondaryColor,
-              ),
-            ),
-            IconButton(
-              onPressed: () async {
-                await context.read<StoryUploadProvider>().pickImageCamera();
-              },
-              icon: SvgPicture.asset(
-                AppImages.camera,
-                color: secondaryColor,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

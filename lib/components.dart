@@ -394,7 +394,7 @@ class _ChatTabState extends State<ChatTab> {
             // ),
           ],
         ),
-        const SizedBox(height: 40),
+        const SizedBox(height: 20),
         Expanded(
           child: Container(
             padding: const EdgeInsets.only(left: 15, right: 15, top: 15),

@@ -84,13 +84,14 @@ class _HomesState extends State<Homes> {
   //     diff = "Just Now";
   //   }
   // }
-
+  int i;
   final PageController cont = PageController();
 
   @override
   void initState() {
     addStoryItems();
     // calDate(date);
+    i = 0;
     super.initState();
   }
 
@@ -109,12 +110,27 @@ class _HomesState extends State<Homes> {
                 // setState(() {
                 //   date = widget.user.stories[index].createdDate;
                 // });
+                // controller.
+                // i = i+1;
                 print("Showing a story");
               },
               onVerticalSwipeComplete: (f) {
                 // i++;
-                if (f == Direction.down) {
-                  Navigator.pop(context);
+                if (f == Direction.up) {
+                  controller.next();
+                  setState(() {
+                    i = i+ 1;
+                  });
+                  // Navigator.pop(context);
+                }
+                else if( f == Direction.down){
+                  controller.previous();
+                  if(i==0){
+                    setState(() {
+                      i= i-1;
+                    });
+
+                  }
                 }
               },
               onComplete: () {
@@ -143,7 +159,8 @@ class _HomesState extends State<Homes> {
             },
             child: StatusProfile(
               user: widget.user,
-              date: 'Just Now',
+              date:
+                  '${DateTime.now().difference(widget.user.stories[i].createdDate.toDate()).inHours}h:${DateTime.now().difference(widget.user.stories[i].createdDate.toDate()).inMinutes - 60 * DateTime.now().difference(widget.user.stories[i].createdDate.toDate()).inHours}min ago',
             ),
           ),
         )
