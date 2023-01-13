@@ -24,8 +24,10 @@ enum StoryUploadStatus {
 //? Movie media selection to a separate class
 class StoryUploadProvider extends ChangeNotifier {
   final StoryUploadMethod _storyMethod;
+
   // final FirebaseAuth _firebaseAuth;
   final ImagePicker _imagePicker;
+
   StoryUploadProvider({
     @required StoryUploadMethod storyMethod,
     // @required FirebaseAuth firebaseAuth,
@@ -41,29 +43,33 @@ class StoryUploadProvider extends ChangeNotifier {
       );
 
   File _file;
+
   File get file => _file;
 
   StoryModel _story;
   Map userM = Hive.box('beepo').get('userData');
 
-
   StoryUploadStatus _status = StoryUploadStatus.initial;
+
   StoryUploadStatus get status => _status;
 
   String _mediaType;
+
   String get mediaType => _mediaType;
 
   Uint8List _thumbnail;
+
   Uint8List get thumbnail => _thumbnail;
 
   String _caption;
+
   String get caption => _caption;
 
   Future<Either<Failure, Success>> uploadStory() async {
     try {
       _setStoryUploadStatus(StoryUploadStatus.uploading);
-      final response =
-          await _storyMethod.uploadStory(story: _story, file: _file, uid: userM['uid'], caption: _caption);
+      final response = await _storyMethod.uploadStory(
+          story: _story, file: _file, uid: userM['uid'], caption: _caption);
       return response.fold(
         (failure) async {
           _setStoryUploadStatus(StoryUploadStatus.failure);
@@ -73,18 +79,18 @@ class StoryUploadProvider extends ChangeNotifier {
           _setStoryUploadStatus(StoryUploadStatus.success);
           return right(const Success('Story uploaded successfully'));
         },
-
       );
     } on Failure catch (e) {
       _setStoryUploadStatus(StoryUploadStatus.failure);
       return left(e);
     }
-
   }
-  Future<Either<Failure, Success>> getCaption(String text){
+
+  Future<Either<Failure, Success>> getCaption(String text) {
     _caption = text;
     // return _caption;
   }
+
   //TODO: Request permission to access media and camera
   Future<Either<Failure, Success>> pickImageGallery() async {
     try {
@@ -98,7 +104,8 @@ class StoryUploadProvider extends ChangeNotifier {
           final story = StoryModel(
             mediaType: _mediaType,
             uid: userM['uid'],
-            name: userM['displayName'], profileImage: userM['profilePictureUrl'],
+            name: userM['displayName'],
+            profileImage: userM['profilePictureUrl'],
           );
           _setStory(story);
           if (_story != null) {
@@ -131,7 +138,9 @@ class StoryUploadProvider extends ChangeNotifier {
           _setMediaType("image");
           final story = StoryModel(
             mediaType: _mediaType,
-            uid: userM['uid'], name: userM['displayName'], profileImage: userM['profilePictureUrl'],
+            uid: userM['uid'],
+            name: userM['displayName'],
+            profileImage: userM['profilePictureUrl'],
           );
           _setStory(story);
           if (_story != null) {
@@ -175,7 +184,9 @@ class StoryUploadProvider extends ChangeNotifier {
           _setMediaType('video');
           final story = StoryModel(
             mediaType: _mediaType,
-            uid: userM['uid'], name: userM['displayName'], profileImage: userM['profilePictureUrl'],
+            uid: userM['uid'],
+            name: userM['displayName'],
+            profileImage: userM['profilePictureUrl'],
           );
           _setStory(story);
           if (_story != null) {
@@ -201,8 +212,8 @@ class StoryUploadProvider extends ChangeNotifier {
     try {
       final thumbImage = await VideoThumbnail.thumbnailData(
         video: _file.path,
-        maxWidth:
-            128, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+        maxWidth: 128,
+        // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
         quality: 25,
       );
       if (thumbImage != null) {

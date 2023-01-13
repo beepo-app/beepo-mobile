@@ -55,7 +55,7 @@ class StoryModel {
         caption: caption ?? this.caption,
         uid: uid ?? this.uid,
         profileImage: profileImage ?? this.profileImage,
-        name: name ?? this.profileImage,
+        name: name ?? this.name,
       );
 
   factory StoryModel.fromMap(Map<String, dynamic> snapshot) {

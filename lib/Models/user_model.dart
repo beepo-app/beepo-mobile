@@ -16,7 +16,8 @@ class UserModel {
   const UserModel({
     @required this.uid,
     @required this.name,
-    @required this.userName,
+    // @required
+    this.userName,
     @required this.image,
      this.searchKeywords = const [],
     this.stories = const [],

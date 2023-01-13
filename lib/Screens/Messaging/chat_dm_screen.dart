@@ -36,11 +36,13 @@ class _ChatDmState extends State<ChatDm> {
   bool isTyping = true;
 
   Map userM = Hive.box('beepo').get('userData');
+  int isPlaying;
 
   @override
   void initState() {
     // TODO: implement initState
     FirebaseAuth.instance.signInAnonymously();
+    isPlaying = -1;
     messageController.addListener(() {
       setState(() {});
     });
@@ -265,21 +267,23 @@ class _ChatDmState extends State<ChatDm> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: [
-                                                context
-                                                        .watch<ChatNotifier>()
-                                                        .isPlayingMsg
+                                                isPlaying != -1
                                                     ? GestureDetector(
                                                         child: Icon(
                                                           Icons.cancel,
                                                           color: Colors.white,
                                                         ),
                                                         onTap: () {
+
                                                           // context.read<ChatNotifier>().isPlayingMsg = false;
                                                           context
                                                               .read<
                                                                   ChatNotifier>()
-                                                              .stopRecord(widget
-                                                                  .model.uid);
+                                                              .pauseAudio();
+                                                          setState(() {
+                                                            isPlaying = -1;
+
+                                                          });
                                                         },
                                                       )
                                                     : GestureDetector(
@@ -288,10 +292,10 @@ class _ChatDmState extends State<ChatDm> {
                                                           color: Colors.white,
                                                         ),
                                                         onTap: () async {
-                                                          context
-                                                              .read<
-                                                                  ChatNotifier>()
-                                                              .isPlayingMsg = true;
+                                                          setState(() {
+                                                            isPlaying = index;
+
+                                                          });
                                                           await context
                                                               .read<
                                                                   ChatNotifier>()
@@ -300,12 +304,14 @@ class _ChatDmState extends State<ChatDm> {
                                                                           .docs[
                                                                       index]
                                                                   ['content']);
-                                                          // Future.delayed(duration)
-                                                          context
-                                                              .read<
-                                                                  ChatNotifier>()
-                                                              .isPlayingMsg = false;
-                                                          // notifyListeners();
+                                                          //  Future.delayed(context.read<ChatNotifier>().dure, (){
+                                                          //   setState(() {
+                                                          //     isPlaying = -1;
+                                                          //
+                                                          //   });
+                                                          // });
+
+
                                                         },
                                                       ),
                                                 Center(
@@ -313,10 +319,7 @@ class _ChatDmState extends State<ChatDm> {
                                                     'assets/lottie/waves.json',
                                                     height: 30,
                                                     width: 100,
-                                                    animate: context
-                                                            .watch<
-                                                                ChatNotifier>()
-                                                            .isPlayingMsg
+                                                    animate: isPlaying !=-1
                                                         ? true
                                                         : false,
                                                     fit: BoxFit.fitHeight,
@@ -330,7 +333,7 @@ class _ChatDmState extends State<ChatDm> {
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  '${snapshot.data.docs[index]['duration']} seconds',
+                                                  '${snapshot.data.docs[index]['duration']}',
                                                   style: (snapshot.data
                                                                   .docs[index]
                                                               ['sender'] ==

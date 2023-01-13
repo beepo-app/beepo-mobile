@@ -44,41 +44,8 @@ class StoryDownloadMethod {
     // yield* storiesStream;
   }
 
-  // Stream<List<UserModel>> getUsersInStories(FirebaseFirestore firestore) {
-  //   CollectionReference usersRef = firestore.collection('users');
-  //   CollectionReference storiesRef = firestore.collection('stories');
-  //
-  //   // Get a stream of the 'uid' field from the stories collection
-  //   final storyUids = storiesRef.snapshots().map((snapshot) =>
-  //       snapshot.docs.map((doc) => StoryModel.fromJson(doc.data()).uid).toList()
-  //   );
-  //
-  //   // Use the 'uid' field to filter the users collection
-  //   // final its =
-  //   storyUids.map((uids) =>
-  //       usersRef.where('uid', whereIn: uids)
-  //   ).map((snapshot) => UserModel.fromJson(snapshot.docs)).toList();
-  // }
-
-  // Stream<List<UserModel>> getUsersInStories() {
-  //   final storiesRef = FirebaseFirestore.instance.collection('stories');
-  //   final usersRef = FirebaseFirestore.instance.collection('users');
-  //
-  //   return storiesRef.snapshots().map((storiesSnapshot) {
-  //     final uids = storiesSnapshot.docs.map((story) => story.data()['uid']).toSet();
-  //     return usersRef.where(FieldPath.documentId, whereIn: uids).snapshots().map((usersSnapshot) {
-  //       return usersSnapshot.docs.map((user) {
-  //         final data = user.data();
-  //         return UserModel(uid: data['uid'], name: data['name'], email: data['email']);
-  //       }).toList();
-  //     });
-  //   });
-  // }
-
-
 
   Stream<List<StoryModel>> getFriendsStories() async* {
-    // final user = _auth.currentUser;
     final storiesCollection = _firestore.collection('stories');
     final stories = storiesCollection
         .where('uid', isNotEqualTo: userM['uid'])

@@ -7,13 +7,11 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart';
-
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record_mp3/record_mp3.dart';
 
-import 'Service/auth.dart';
 import 'Utils/functions.dart';
 
 class ChatNotifier extends ChangeNotifier {
@@ -27,15 +25,16 @@ class ChatNotifier extends ChangeNotifier {
   String photoUrl;
   Map userM = Hive.box('beepo').get('userData');
 
-
   Reference ref = FirebaseStorage.instance.ref();
   File selectedImage;
   File selectedImageForChat;
 
   pickUploadImage() async {
-
     final image = await ImagePicker().pickImage(
-        source: ImageSource.gallery, maxWidth: 512, maxHeight: 512, imageQuality: 75);
+        source: ImageSource.gallery,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 75);
     ref = FirebaseStorage.instance.ref().child(image.path);
     notifyListeners();
 
@@ -64,31 +63,33 @@ class ChatNotifier extends ChangeNotifier {
     Reference reg = FirebaseStorage.instance.ref();
 
     final image = await ImagePicker().pickImage(
-      source: ImageSource.gallery, maxWidth: 512, maxHeight: 512, imageQuality: 100);
-  reg = FirebaseStorage.instance.ref().child(image.path);
-  // notifyListeners();
+        source: ImageSource.gallery,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 100);
+    reg = FirebaseStorage.instance.ref().child(image.path);
+    // notifyListeners();
 
-  if (image != null) {
-    File file = File( image.path );
-    await ImageUtil().cropProfileImage(file).then((value) {
-      if (value != null) {
-        // setState(() {
-        selectedImageForChat = value;
+    if (image != null) {
+      File file = File(image.path);
+      await ImageUtil().cropProfileImage(file).then((value) {
+        if (value != null) {
+          // setState(() {
+          selectedImageForChat = value;
+          notifyListeners();
+          // });
+        }
+      });
+
+      await reg.putFile(File(image.path));
+      reg.getDownloadURL().then((value) {
+        print(value);
+        photoUrl = value;
         notifyListeners();
-        // });
-      }
-    });
-
-    await reg.putFile(File(image.path));
-    reg.getDownloadURL().then((value) {
-      print(value);
-      photoUrl = value;
-      notifyListeners();
-       sendPhotoMsg(photoUrl, receiverId: id);
-    });
-  }
+        sendPhotoMsg(photoUrl, receiverId: id);
+      });
+    }
 // }
-
   }
 
   sendPhotoMsg(String photoMsg, {String receiverId}) async {
@@ -186,9 +187,13 @@ class ChatNotifier extends ChangeNotifier {
       print("Hello");
     }
   }
+
   cameraUploadImage() async {
     final image = await ImagePicker().pickImage(
-        source: ImageSource.camera, maxWidth: 512, maxHeight: 512, imageQuality: 75);
+        source: ImageSource.camera,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 75);
     ref = FirebaseStorage.instance.ref().child(image.path);
     notifyListeners();
 
@@ -214,12 +219,15 @@ class ChatNotifier extends ChangeNotifier {
     Reference reh = FirebaseStorage.instance.ref();
 
     final image = await ImagePicker().pickImage(
-        source: ImageSource.camera, maxWidth: 512, maxHeight: 512, imageQuality: 75);
+        source: ImageSource.camera,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 75);
     reh = FirebaseStorage.instance.ref().child(image.path);
     notifyListeners();
 
     if (image != null) {
-      File file = File( image.path );
+      File file = File(image.path);
       await ImageUtil().cropProfileImage(file).then((value) {
         if (value != null) {
           // setState(() {
@@ -251,8 +259,10 @@ class ChatNotifier extends ChangeNotifier {
   Map chosen = {};
 
   getUsers(UserModel model) async {
-    final snap =
-        await FirebaseFirestore.instance.collection('users').doc(model.uid).get();
+    final snap = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(model.uid)
+        .get();
     //
     // snap.listen((event) {
     //   _users.clear();
@@ -263,8 +273,6 @@ class ChatNotifier extends ChangeNotifier {
     // });
     chosen = (snap.data() as dynamic);
   }
-
-
 
   bool isPlayingMsg = false, isRecording = false, isSending = false;
 
@@ -277,14 +285,16 @@ class ChatNotifier extends ChangeNotifier {
     await file.writeAsBytes(bytes);
     if (await file.exists()) {
       // setState(() {
-        recordFilePath = file.path;
-        notifyListeners();
-        // isPlayingMsg = true;
-        // notifyListeners();
-        print(isPlayingMsg);
+      recordFilePath = file.path;
+      notifyListeners();
+      // isPlayingMsg = true;
+      // file.
+      // notifyListeners();
+      // print(isPlayingMsg);
       // });
       await play();
-
+      // Future.delayed(dure);
+      // isPlayingMsg = false;
       // setState(() {
 
       //   print(isPlayingMsg);
@@ -330,20 +340,26 @@ class ChatNotifier extends ChangeNotifier {
     bool s = RecordMp3.instance.stop();
     if (s) {
       // setState(() {
-        isSending = true;
-        notifyListeners();
+      isSending = true;
+      notifyListeners();
       // });
       await uploadAudio(receiverId);
 
       // setState(() {
-        isPlayingMsg = false;
-        notifyListeners();
+      // isPlayingMsg = false;
+      // notifyListeners();
       // });
     }
   }
+  void pauseAudio() async {
+    AudioPlayer player = AudioPlayer();
+    player.setUrl(recordFilePath, isLocal: true);
+    await player.pause();
+  }
 
   Duration dure = const Duration();
-  durationCalc(){
+
+  durationCalc() {
     AudioPlayer audioPlayer = AudioPlayer();
     audioPlayer.setUrl(recordFilePath, isLocal: true);
     audioPlayer.onDurationChanged.listen((Duration event) {
@@ -360,13 +376,12 @@ class ChatNotifier extends ChangeNotifier {
         recordFilePath,
         isLocal: true,
       );
-
     }
+
   }
 
   String recordFilePath;
   ScrollController scrollController = ScrollController();
-
 
   // = ScrollController();
 
@@ -397,13 +412,15 @@ class ChatNotifier extends ChangeNotifier {
           "receiver": receiverId,
           "created": Timestamp.now(),
           "content": audioMsg,
-          "duration": dure.inSeconds.toString(),
+          "duration": dure.inSeconds > 60
+              ? '${dure.inMinutes}:${dure.inSeconds - dure.inMinutes * 60}'
+              : '${dure.inSeconds.toString()}s',
           "type": 'audio'
         });
       }).then((value) {
         // setState(() {
-          isSending = false;
-          notifyListeners();
+        isSending = false;
+        notifyListeners();
         // });
       });
 
@@ -420,7 +437,9 @@ class ChatNotifier extends ChangeNotifier {
           "receiver": receiverId,
           "created": Timestamp.now(),
           "content": audioMsg,
-          "duration": dure.inSeconds.toString(),
+          "duration": dure.inSeconds > 60
+              ? '${dure.inMinutes}:${dure.inSeconds - dure.inMinutes * 60}'
+              : '${dure.inSeconds.toString()}s',
           "type": 'audio'
         });
       }).then((value) {
@@ -441,7 +460,9 @@ class ChatNotifier extends ChangeNotifier {
           "receiver": receiverId,
           "created": Timestamp.now(),
           "content": audioMsg,
-          "duration": dure.inSeconds.toString(),
+          "duration": dure.inSeconds > 60
+              ? '${dure.inMinutes}:${dure.inSeconds - dure.inMinutes * 60}'
+              : '${dure.inSeconds.toString()}s',
           "type": 'audio'
         });
       }).then((value) {
@@ -462,7 +483,9 @@ class ChatNotifier extends ChangeNotifier {
           "receiver": receiverId,
           "created": Timestamp.now(),
           "content": audioMsg,
-          "duration": dure.inSeconds.toString(),
+          "duration": dure.inSeconds > 60
+              ? '${dure.inMinutes}:${dure.inSeconds - dure.inMinutes * 60}'
+              : '${dure.inSeconds.toString()}s',
           "type": 'audio'
         });
       }).then((value) {
@@ -477,8 +500,6 @@ class ChatNotifier extends ChangeNotifier {
       print("Hello");
     }
   }
-
-
 
   uploadAudio(String id) {
     final Reference firebaseStorageRef = FirebaseStorage.instance.ref().child(

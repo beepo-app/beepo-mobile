@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/extensions.dart';
 import 'package:beepo/response.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -31,17 +32,18 @@ class StoryUploadMethod {
       );
   Map userM = Hive.box('beepo').get('userData');
 
-  Future<Either<Failure, Success>> uploadStory(
-      {@required StoryModel story,
-      @required File file,
-      @required String uid,
-        String caption,
-      // @required String friendId,
-      }) async {
+  Future<Either<Failure, Success>> uploadStory({
+    @required StoryModel story,
+    @required File file,
+    @required String uid,
+    String caption,
+    // @required String friendId,
+  }) async {
     try {
       // final user = _auth.currentUser;
-      final storiesCollection =
-          _firestore.collection('stories');
+      final storiesCollection = _firestore.collection('stories');
+
+      final usersWithStoriesCollection = _firestore.collection('usersStories');
 
       // Get media url
       final mediaUrl = await _uploadMediaToStorage(file);
@@ -58,8 +60,13 @@ class StoryUploadMethod {
               )
               .toJson();
           await storiesCollection.add(storyData);
+          await usersWithStoriesCollection.add(UserModel(
+                  uid: userM['uid'],
+                  name: userM['displayName'],
+                  userName: userM['username'],
+                  image: userM['profilePictureUrl'])
+              .toJson());
           return right(const Success());
-
         },
       );
     } on FirebaseException catch (e) {

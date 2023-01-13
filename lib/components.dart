@@ -125,11 +125,14 @@ class _ChatTabState extends State<ChatTab> {
   bool showInput = false;
 
   Stream<List<StoryModel>> currentUserStories;
-  // Stream<List<StoryModel>> friendsStories;
+  Stream<List<StoryModel>> friendsStories;
+
   // Stream<List<UserModel>> currentUserFollowingStories;
   Stream<List<DocumentSnapshot>> currentUserFollowing;
 
   Map userM = Hive.box('beepo').get('userData');
+
+  Widget usert;
 
   @override
   void initState() {
@@ -139,9 +142,56 @@ class _ChatTabState extends State<ChatTab> {
         context.read<StoryDownloadProvider>().getCurrentUserStories();
     // currentUserFollowingStories =
     //     context.read<StoryDownloadProvider>().getFollowingUsersStories();
-    // friendsStories = context.read<StoryDownloadProvider>().getFriendStories();
+    friendsStories = context.read<StoryDownloadProvider>().getFriendStories();
     // currentUserFollowing =
     //     context.read<StoryDownloadProvider>().getUsers();
+    context.read<StoryDownloadProvider>().getFriendStories().listen((event) {
+      // for(StoryModel userd in event){
+      usert = StreamBuilder(
+          stream:
+              FirebaseFirestore.instance.collection('usersStories').snapshots(),
+          initialData: const [],
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                primary: false,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: (context, index) {
+                  print(snapshot.data.docs.length);
+                  // List<StoryModel> userStories = event;
+
+                  final user = UserModel.fromJson(snapshot.data.docs[index]);
+                  final leftToMe = user.copyWith(stories: event);
+
+                  return InkWell(
+                    onTap: () {
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) =>
+                      //             StoryScreen(user: user)));
+                    },
+                    child: BubbleStories(
+                      text: leftToMe.name,
+                      image: leftToMe.image,
+                      // hasStory: false,
+                      // useNetworkImage: true,
+                    ),
+                  );
+                },
+              );
+            }
+            return Center(
+              child: CircularProgressIndicator(
+                color: primaryColor,
+              ),
+            );
+          });
+      // }
+    });
     super.initState();
   }
 
@@ -238,48 +288,71 @@ class _ChatTabState extends State<ChatTab> {
                           ),
                         );
                       }),
-                  StreamBuilder<List<DocumentSnapshot>>(
-                    stream: currentUserFollowing,
-                    builder: (context, snap) {
-                      if (snap.hasData) {
-
-                        return ListView.builder(
-                          primary: false,
-                          shrinkWrap: true,
-                          physics:
-                          const NeverScrollableScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: snap.data.length,
-                          itemBuilder: (context, index) {
-                            print(snap.data.length);
-                            final user = UserModel.fromSnap(snap.data[index]);
-
-                            return InkWell(
-                              onTap: () {
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (context) =>
-                                //             StoryScreen(user: user)));
-                              },
-                              child: BubbleStories(
-                                text: user.name,
-                                image: user
-                                    .image,
-                                // hasStory: false,
-                                // useNetworkImage: true,
-                              ),
-                            );
-                          },
-                        );
-                      }
-                      return Center(
-                        child: CircularProgressIndicator(
-                          color: primaryColor,
-                        ),
-                      );
-                    }
-                  )
+                  // usert,
+                  //
+                  // StreamBuilder<List<StoryModel>>(
+                  //     stream: friendsStories,
+                  //     initialData: const [],
+                  //     builder: (context, snap) {
+                  //       if (snap.hasData) {
+                  //         return StreamBuilder(
+                  //             stream: FirebaseFirestore.instance
+                  //                 .collection('usersStories')
+                  //                 .snapshots(),
+                  //             // initialData: const [],
+                  //             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  //               if (snapshot.hasData) {
+                  //                 return ListView.builder(
+                  //                   primary: false,
+                  //                   shrinkWrap: true,
+                  //                   physics:
+                  //                       const NeverScrollableScrollPhysics(),
+                  //                   scrollDirection: Axis.horizontal,
+                  //                   itemCount: snapshot.data.docs.length,
+                  //                   itemBuilder: (context, index) {
+                  //                     print(snapshot.data.docs.length);
+                  //                     List<StoryModel> userStories = snap.data;
+                  //
+                  //                     final user = UserModel(
+                  //                       uid: snapshot.data.docs[index]['uid'],
+                  //                       name: snapshot.data.docs[index]['name'],
+                  //                       image: snapshot.data.docs[index]
+                  //                           ['image'],
+                  //                     );
+                  //                     final leftToMe =
+                  //                         user.copyWith(stories: userStories);
+                  //
+                  //                     return InkWell(
+                  //                       onTap: () {
+                  //                         // Navigator.push(
+                  //                         //     context,
+                  //                         //     MaterialPageRoute(
+                  //                         //         builder: (context) =>
+                  //                         //             StoryScreen(user: user)));
+                  //                       },
+                  //                       child: BubbleStories(
+                  //                         text: leftToMe.name,
+                  //                         image: leftToMe.image,
+                  //                         // hasStory: false,
+                  //                         // useNetworkImage: true,
+                  //                       ),
+                  //                     );
+                  //                   },
+                  //                 );
+                  //               }
+                  //               return Center(
+                  //                 child: CircularProgressIndicator(
+                  //                   color: primaryColor,
+                  //                 ),
+                  //               );
+                  //             });
+                  //       }
+                  //       return Center(
+                  //         child: CircularProgressIndicator(
+                  //           color: primaryColor,
+                  //         ),
+                  //       );
+                  //     })
                 ]),
               ),
             ),
