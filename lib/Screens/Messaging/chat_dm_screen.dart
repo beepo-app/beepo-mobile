@@ -106,10 +106,13 @@ class _ChatDmState extends State<ChatDm> {
                                   height: 35,
                                   width: 35,
                                   imageUrl: widget.model.image,
-                                  placeholder: (context, url) =>
-                                      Center(child: CircularProgressIndicator()),
-                                  errorWidget: (context, url, error) => Icon(Icons.person, color: secondaryColor,),
-filterQuality: FilterQuality.high,
+                                  placeholder: (context, url) => Center(
+                                      child: CircularProgressIndicator()),
+                                  errorWidget: (context, url, error) => Icon(
+                                    Icons.person,
+                                    color: secondaryColor,
+                                  ),
+                                  filterQuality: FilterQuality.high,
                                 ),
                               ),
                             ),
@@ -386,15 +389,23 @@ filterQuality: FilterQuality.high,
                                           },
                                           child: ClipRRect(
                                             child: Hero(
-                                              tag: 'image',
+                                              tag: 'image$index',
                                               child: CachedNetworkImage(
                                                 fit: BoxFit.cover,
                                                 imageUrl: snapshot.data
                                                     .docs[index]["content"],
                                                 placeholder: (context, url) =>
-                                                    Center(child: CircularProgressIndicator()),
-                                                errorWidget: (context, url, error) => Icon(Icons.person, color: secondaryColor,),
-filterQuality: FilterQuality.high,
+                                                    Center(
+                                                        child:
+                                                            CircularProgressIndicator()),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Icon(
+                                                  Icons.person,
+                                                  color: secondaryColor,
+                                                ),
+                                                filterQuality:
+                                                    FilterQuality.high,
                                               ),
                                             ),
                                             borderRadius:
@@ -429,7 +440,40 @@ filterQuality: FilterQuality.high,
           child: Row(
             children: [
               Expanded(
-                child: TextField(
+                child:  context.watch<ChatNotifier>().isRecording
+                    ? Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10, left: 10),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: Lottie.asset(
+                            'assets/lottie/recording.json',
+                            height: 40,
+                            width: 27,
+                            fit: BoxFit.fitHeight
+                          ),
+                        ),
+                        Expanded(
+                          child: Lottie.asset(
+                            'assets/lottie/Linear_determinate.json',
+                            height: double.infinity,
+                            width: double.infinity,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  height: 40,
+                  // width: 20,
+
+                )
+                    :TextField(
                   style: TextStyle(
                     color: Color(0xff697077),
                     fontSize: 14,
@@ -459,38 +503,38 @@ filterQuality: FilterQuality.high,
                           icon: SvgPicture.asset('assets/camera.svg')),
                     ),
                     suffixIcon: FittedBox(
-                      child: Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {},
-                            constraints: const BoxConstraints(
-                              maxWidth: 30,
-                            ),
-                            icon: Icon(
-                              Iconsax.dollar_circle,
-                              size: 20,
-                              color: secondaryColor,
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {},
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 30,
+                                  ),
+                                  icon: Icon(
+                                    Iconsax.dollar_circle,
+                                    size: 20,
+                                    color: secondaryColor,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    context
+                                        .read<ChatNotifier>()
+                                        .pickUploadImageChat(widget.model.uid);
+                                  },
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 30,
+                                  ),
+                                  icon: Icon(
+                                    Iconsax.gallery,
+                                    size: 20,
+                                    color: secondaryColor,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                              ],
                             ),
                           ),
-                          IconButton(
-                            onPressed: () {
-                              context
-                                  .read<ChatNotifier>()
-                                  .pickUploadImageChat(widget.model.uid);
-                            },
-                            constraints: const BoxConstraints(
-                              maxWidth: 30,
-                            ),
-                            icon: Icon(
-                              Iconsax.gallery,
-                              size: 20,
-                              color: secondaryColor,
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                        ],
-                      ),
-                    ),
                     filled: true,
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -506,6 +550,14 @@ filterQuality: FilterQuality.high,
               SizedBox(
                 width: 10,
               ),
+              context.watch<ChatNotifier>().isRecording
+                  ? SizedBox(
+                // child:
+                height: 5,
+                width: 40,
+
+              )
+                  : SizedBox(),
               messageController.text.isEmpty
                   ? GestureDetector(
                       onLongPress: () {
@@ -526,17 +578,13 @@ filterQuality: FilterQuality.high,
                         context.read<ChatNotifier>().durationCalc();
                       },
                       child: context.watch<ChatNotifier>().isRecording
-                          ? Lottie.asset(
-                              'assets/lottie/mic.json',
-                              height: 47,
-                              width: 27,
-                            )
+                          ? SizedBox()
+
                           : SvgPicture.asset(
                               'assets/microphone.svg',
                               width: 27,
                               height: 27,
-                            ),
-                    )
+                            ))
                   : IconButton(
                       onPressed: () async {
                         context
@@ -589,8 +637,11 @@ class FullScreenImage extends StatelessWidget {
               imageUrl: imageUrl,
               placeholder: (context, url) =>
                   Center(child: CircularProgressIndicator()),
-              errorWidget: (context, url, error) => Icon(Icons.person, color: secondaryColor,),
-filterQuality: FilterQuality.high,
+              errorWidget: (context, url, error) => Icon(
+                Icons.person,
+                color: secondaryColor,
+              ),
+              filterQuality: FilterQuality.high,
             ),
           ),
         ),

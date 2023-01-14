@@ -117,19 +117,26 @@ class _HomesState extends State<Homes> {
               onVerticalSwipeComplete: (f) {
                 // i++;
                 if (f == Direction.up) {
+                  if(i<storyItems.length-1){
                   controller.next();
                   setState(() {
                     i = i+ 1;
-                  });
+                  });}
+                  else{
+                    Navigator.pop(context);
+                  }
                   // Navigator.pop(context);
                 }
                 else if( f == Direction.down){
                   controller.previous();
-                  if(i==0){
+                  if(i!=0){
                     setState(() {
                       i= i-1;
                     });
 
+                  }
+                  else {
+                    Navigator.pop(context);
                   }
                 }
               },
