@@ -3,10 +3,10 @@
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
 import 'package:beepo/story_download_provider.dart';
-
 // import 'package:beepo/story_screen.dart';
 import 'package:beepo/story_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -133,6 +133,16 @@ class _ChatTabState extends State<ChatTab> {
   Map userM = Hive.box('beepo').get('userData');
 
   Widget usert;
+  CameraDescription firstCamera;
+
+  gethg() async {
+    // Obtain a list of the available cameras on the device.
+    final cameras = await availableCameras();
+
+    // Get a specific camera from the list of available cameras.
+    firstCamera = cameras.first;
+
+  }
 
   @override
   void initState() {
@@ -145,7 +155,7 @@ class _ChatTabState extends State<ChatTab> {
     friendsStories = context.read<StoryDownloadProvider>().getFriendStories();
     // currentUserFollowing =
     //     context.read<StoryDownloadProvider>().getUsers();
-
+   gethg();
     super.initState();
   }
 
@@ -164,7 +174,11 @@ class _ChatTabState extends State<ChatTab> {
                     MaterialPageRoute(
                         builder: (context) =>
                             // Homes()
-                            AddStory()));
+                      // CameraApp()
+                      //       TakePictureScreen(camera: firstCamera,)
+                            AddStory(camera: firstCamera,)
+                    )
+                );
               },
               child: Column(
                 children: [

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:beepo/extensions.dart';
 import 'package:beepo/response.dart';
 import 'package:beepo/story_upload_method.dart';
+import 'package:camera/camera.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 import 'Models/story_model/storyModel.dart';
+import 'add_story.dart';
 
 enum StoryUploadStatus {
   initial,
@@ -127,11 +129,26 @@ class StoryUploadProvider extends ChangeNotifier {
     }
   }
 
+
+
+
+
   Future<Either<Failure, Success>> pickImageCamera() async {
+
+    // notifyListeners();
+
+    // initializeControllerFuture =  controller.initialize();
+    // notifyListeners();
+
     try {
+      // await initializeControllerFuture;
       _setStoryUploadStatus(StoryUploadStatus.gettingReady);
       //TODO: Add permission check
-      final result = await _imagePicker.pickImage(source: ImageSource.camera);
+      final result = await controlle.takePicture();
+
+      // if (!mounted) return;
+
+      // final result = await _imagePicker.pickImage(source: ImageSource.camera);
       if (result != null) {
         _selectFile(File(result.path));
         if (_file != null) {

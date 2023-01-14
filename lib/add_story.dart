@@ -2,20 +2,24 @@
 
 import 'dart:io';
 
-import 'package:beepo/constants.dart';
-import 'package:beepo/extensions.dart';
+import 'package:beepo/camera.dart';
 import 'package:beepo/story_settings_modal.dart';
 import 'package:beepo/story_upload_provider.dart';
 import 'package:beepo/text_styles.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
 import 'Utils/styles.dart';
+import 'constants.dart';
+
+CameraController controlle;
 
 class AddStory extends StatefulWidget {
-  const AddStory({Key key}) : super(key: key);
+  const AddStory({Key key, @required this.camera}) : super(key: key);
+  final CameraDescription camera;
 
   // static const String routeName = '/add-story';
 
@@ -26,10 +30,12 @@ class AddStory extends StatefulWidget {
 class _AddStoryState extends State<AddStory> {
   VideoPlayerController _videoPlayerController;
   TextEditingController controller = TextEditingController();
+  Future<void> initializeControllerFuture;
 
   @override
   void dispose() {
     _videoPlayerController?.dispose();
+    controlle.dispose();
     super.dispose();
   }
 
@@ -55,10 +61,24 @@ class _AddStoryState extends State<AddStory> {
   }
 
   @override
+  void initState() {
+    controlle = CameraController(
+      // Get a specific camera from the list of available cameras.
+      widget.camera,
+      // Define the resolution to use.
+      ResolutionPreset.ultraHigh,
+    );
+    initializeControllerFuture = controlle.initialize();
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Scaffold(
         resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.transparent,
         body: SafeArea(
           // maintainBottomViewPadding: true,
           child: Consumer<StoryUploadProvider>(
@@ -71,35 +91,52 @@ class _AddStoryState extends State<AddStory> {
                 children: [
                   Container(
                     height: MediaQuery.of(context).size.height,
-                    alignment: Alignment.center,
+                    alignment: Alignment.topCenter,
                     decoration: BoxDecoration(
-                      // If the selected media is an image, show the selected image,
-                      // else it is a video, show the video thumbnail.
-                      // If no media is selected, decoration image will be null.
 
-                      // If image is selected (file is not null)
-                      image: (selectedFile != null &&
-                              selectedMediaType == "image")
-                          ? DecorationImage(
-                              image: FileImage(File(selectedFile.path)),
-                              fit: BoxFit.cover,
-                            )
-                          // If video is selected (file is not null)
-                          : (selectedFile != null &&
-                                  selectedMediaType == "video" &&
-                                  videoThumbnail != null)
-                              ? DecorationImage(
-                                  image: MemoryImage(videoThumbnail),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
-                    ),
+                        // If the selected media is an image, show the selected image,
+                        // else it is a video, show the video thumbnail.
+                        // If no media is selected, decoration image will be null.
+
+                        // If image is selected (file is not null)
+                        image: (selectedFile != null &&
+                                selectedMediaType == "image")
+                            ? DecorationImage(
+                                image: FileImage(File(selectedFile.path)),
+                                fit: BoxFit.cover,
+                              )
+                            // If video is selected (file is not null)
+                            : (selectedFile != null &&
+                                    selectedMediaType == "video" &&
+                                    videoThumbnail != null)
+                                ? DecorationImage(
+                                    image: MemoryImage(videoThumbnail),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
+                        color: Colors.transparent),
                     child: (selectedFile != null)
                         ? const SizedBox.shrink()
-                        : Text(
-                            'Select media to upload',
-                            style: context.textTheme.headline5,
+                        : FutureBuilder<void>(
+                            future: initializeControllerFuture,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                // If the Future is complete, display the preview.
+                                return CameraPreview(controlle);
+                              } else {
+                                // Otherwise, display a loading indicator.
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              }
+                            },
                           ),
+                    // (selectedFile != null)
+                    //     ? const SizedBox.shrink()
+                    //     : Text(
+                    //         'Select media to upload',
+                    //         style: context.textTheme.headline5,
+                    //       ),
                   ),
                   if (selectedFile != null)
                     // The upload button is only visible when the user has selected a file
@@ -117,7 +154,10 @@ class _AddStoryState extends State<AddStory> {
                             _showSnackBar(context,
                                 message: 'Upload in progress');
                           } else {
-                            await uploader.getCaption(controller.text.trim().isEmpty? " " : controller.text.trim());
+                            await uploader.getCaption(
+                                controller.text.trim().isEmpty
+                                    ? " "
+                                    : controller.text.trim());
                             final result = await uploader.uploadStory();
 
                             result.fold(
@@ -166,15 +206,14 @@ class _AddStoryState extends State<AddStory> {
                       icon: const Icon(Icons.settings),
                     ),
                   ),
-
                 ],
               );
             },
           ),
         ),
         bottomNavigationBar: Padding(
-          padding: const EdgeInsets.only(
-              top: 0, left: 20.0, right: 20.0, bottom: 0),
+          padding:
+              const EdgeInsets.only(top: 0, left: 20.0, right: 20.0, bottom: 0),
           child: Container(
             width: double.infinity,
             height: 100,
@@ -207,9 +246,13 @@ class _AddStoryState extends State<AddStory> {
                   children: [
                     InkWell(
                       onTap: () async {
-                        await context
-                            .read<StoryUploadProvider>()
-                            .pickImageGallery();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CameraApp()));
+                        // await context
+                        //     .read<StoryUploadProvider>()
+                        //     .pickImageGallery();
                         // Navigator.pop(context);
                       },
                       child: Row(
@@ -227,6 +270,18 @@ class _AddStoryState extends State<AddStory> {
                     ),
                     IconButton(
                       onPressed: () async {
+                        await initializeControllerFuture;
+                        await context
+                            .read<StoryUploadProvider>()
+                            .pickImageCamera();
+                      },
+                      icon: SvgPicture.asset(
+                        AppImages.camera,
+                        color: secondaryColor,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () async {
                         await context.read<StoryUploadProvider>().pickVideo();
                         if (mounted) {
                           final selectedFile =
@@ -236,20 +291,21 @@ class _AddStoryState extends State<AddStory> {
                           if (selectedFile != null &&
                               selectedMediaType == "video") {
                             final isVideoDurationNotLong =
-                            await _checkVideoDurationIsNotLong(selectedFile);
+                                await _checkVideoDurationIsNotLong(
+                                    selectedFile);
                             if (isVideoDurationNotLong && mounted) {
                               final result = await context
                                   .read<StoryUploadProvider>()
                                   .getVideoThumbnail();
                               result.fold(
-                                    (failure) => _showSnackBar(context,
+                                (failure) => _showSnackBar(context,
                                     message: failure.message),
-                                    (success) {},
+                                (success) {},
                               );
                             } else {
                               _showSnackBar(context,
                                   message:
-                                  'Video duration cannot be more than 40 seconds');
+                                      'Video duration cannot be more than 40 seconds');
                               context.read<StoryUploadProvider>().reset();
                             }
                           }
@@ -261,15 +317,6 @@ class _AddStoryState extends State<AddStory> {
                         color: secondaryColor,
                       ),
                     ),
-                    IconButton(
-                      onPressed: () async {
-                        await context.read<StoryUploadProvider>().pickImageCamera();
-                      },
-                      icon: SvgPicture.asset(
-                        AppImages.camera,
-                        color: secondaryColor,
-                      ),
-                    ),
                   ],
                 ),
               ],
@@ -277,7 +324,6 @@ class _AddStoryState extends State<AddStory> {
           ),
         ),
       ),
-
     );
   }
 }

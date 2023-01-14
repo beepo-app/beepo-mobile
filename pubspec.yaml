@@ -70,6 +70,7 @@ dependencies:
   story_view: ^0.14.0
   json_annotation: ^4.7.0
   audio_waveforms: ^1.0.1
+  camera: ^0.10.1
 
 #
 
