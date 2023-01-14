@@ -13,13 +13,15 @@ import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
 import 'Utils/styles.dart';
+import 'components.dart';
 import 'constants.dart';
 
 CameraController controlle;
 
 class AddStory extends StatefulWidget {
-  const AddStory({Key key, @required this.camera}) : super(key: key);
-  final CameraDescription camera;
+  const AddStory({Key key, @required this.camera1, @required this.camera2}) : super(key: key);
+  final CameraDescription camera1;
+  final CameraDescription camera2;
 
   // static const String routeName = '/add-story';
 
@@ -38,7 +40,7 @@ class _AddStoryState extends State<AddStory> {
     controlle.dispose();
     super.dispose();
   }
-
+bool hasChanged = false;
   //? Find a better name for this method
   Future<bool> _checkVideoDurationIsNotLong(File file) async {
     _videoPlayerController = VideoPlayerController.file(file);
@@ -64,7 +66,7 @@ class _AddStoryState extends State<AddStory> {
   void initState() {
     controlle = CameraController(
       // Get a specific camera from the list of available cameras.
-      widget.camera,
+      hasChanged? widget.camera1 : widget.camera2,
       // Define the resolution to use.
       ResolutionPreset.ultraHigh,
     );
@@ -227,6 +229,15 @@ class _AddStoryState extends State<AddStory> {
                       hintStyle: TextStyle(
                         fontSize: 15,
                         fontStyle: FontStyle.italic,
+                      ),
+                      suffixIcon: GestureDetector(
+                          child: Icon(Icons.change_circle_outlined),
+                        onTap: (){
+
+                            setState(() {
+                              hasChanged = !hasChanged;
+                            });
+                        },
                       ),
                       // filled: true,
                       // enabledBorder: OutlineInputBorder(

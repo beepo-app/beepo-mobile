@@ -131,7 +131,25 @@ class StoryUploadProvider extends ChangeNotifier {
 
 
 
+  int ity=0;
+changeCamera(CameraDescription camera){
+  if(camera.lensDirection.index != 0) {
+    // setState(() {
+      ity=  camera.lensDirection.index + 1;
 
+      notifyListeners();
+      // i = 1;
+      print('Camera Changed');
+    // });
+  }else{
+    // setState(() {
+      ity = 0;
+      notifyListeners();
+      print('Camera Changed back');
+
+    // });
+  }
+}
 
   Future<Either<Failure, Success>> pickImageCamera() async {
 

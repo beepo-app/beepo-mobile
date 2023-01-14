@@ -3,6 +3,7 @@
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
 import 'package:beepo/story_download_provider.dart';
+import 'package:beepo/story_upload_provider.dart';
 // import 'package:beepo/story_screen.dart';
 import 'package:beepo/story_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -134,13 +135,17 @@ class _ChatTabState extends State<ChatTab> {
 
   Widget usert;
   CameraDescription firstCamera;
+  CameraDescription secondCamera;
 
+  // List<CameraDescription> cameras;
   gethg() async {
     // Obtain a list of the available cameras on the device.
-    final cameras = await availableCameras();
-
+     final cameras = await availableCameras();
     // Get a specific camera from the list of available cameras.
-    firstCamera = cameras.first;
+    firstCamera = cameras[0];
+    secondCamera = cameras[1];
+    print('number of cameras: ${cameras.length} ${firstCamera.lensDirection.name}');
+// cameras.take(2);
 
   }
 
@@ -176,7 +181,7 @@ class _ChatTabState extends State<ChatTab> {
                             // Homes()
                       // CameraApp()
                       //       TakePictureScreen(camera: firstCamera,)
-                            AddStory(camera: firstCamera,)
+                            AddStory(camera1: firstCamera, camera2: secondCamera,)
                     )
                 );
               },
