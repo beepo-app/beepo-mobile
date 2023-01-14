@@ -3,6 +3,7 @@
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
 import 'package:beepo/Utils/styles.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -83,7 +84,16 @@ class _SearchSearchState extends State<SearchSearch> {
                               shape: BoxShape.circle,
                             ),
                             child: ClipOval(
-                              child: Image.network(data['image']),
+                              child: CachedNetworkImage(
+                                imageUrl: data['image'],
+                                placeholder: (context, url) =>
+                                    Center(child: CircularProgressIndicator()),
+                                filterQuality: FilterQuality.high,
+                                errorWidget: (context, url, error) => Icon(
+                                  Icons.person,
+                                  color: secondaryColor,
+                                ),
+                              ),
                             ),
                           ),
                           title: Text(
@@ -182,7 +192,16 @@ class _SearchSearch2State extends State<SearchSearch2> {
                               shape: BoxShape.circle,
                             ),
                             child: ClipOval(
-                              child: Image.network(data['image']),
+                              child: CachedNetworkImage(
+                                imageUrl: data['image'],
+                                placeholder: (context, url) =>
+                                    Center(child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) => Icon(
+                                  Icons.person,
+                                  color: secondaryColor,
+                                ),
+                                filterQuality: FilterQuality.high,
+                              ),
                             ),
                           ),
                           title: Text(
@@ -207,7 +226,8 @@ class SocialAppBar extends StatelessWidget implements PreferredSizeWidget {
   const SocialAppBar({
     @required this.title,
     this.leading = true,
-  }) ;
+  });
+
   final Widget title;
   final bool leading;
 
@@ -236,7 +256,7 @@ class SearchBar extends StatelessWidget {
     this.readonly = false,
     this.controller,
     this.onChanged,
-  }) ;
+  });
 
   final VoidCallback ontap;
   final bool readonly;

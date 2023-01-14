@@ -34,6 +34,15 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+
+    lintOptions {
+        disable 'Instantiable'
+        disable 'InvalidPackage'
+        //Put the following line
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }

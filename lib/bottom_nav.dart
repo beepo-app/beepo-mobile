@@ -21,6 +21,7 @@ class _BottomNavHomeState extends State<BottomNavHome> {
     Browser(),
     Profile(),
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -29,6 +29,11 @@ class ChatNotifier extends ChangeNotifier {
   File selectedImage;
   File selectedImageForChat;
 
+  //  preload(BuildContext context, String path) {
+  //   final configuration = createLocalImageConfiguration(context);
+  //   return NetworkImage(path).resolve(configuration);
+  // }
+
   pickUploadImage() async {
     final image = await ImagePicker().pickImage(
         source: ImageSource.gallery,

@@ -145,53 +145,7 @@ class _ChatTabState extends State<ChatTab> {
     friendsStories = context.read<StoryDownloadProvider>().getFriendStories();
     // currentUserFollowing =
     //     context.read<StoryDownloadProvider>().getUsers();
-    context.read<StoryDownloadProvider>().getFriendStories().listen((event) {
-      // for(StoryModel userd in event){
-      usert = StreamBuilder(
-          stream:
-              FirebaseFirestore.instance.collection('usersStories').snapshots(),
-          initialData: const [],
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                primary: false,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                itemCount: snapshot.data.docs.length,
-                itemBuilder: (context, index) {
-                  print(snapshot.data.docs.length);
-                  // List<StoryModel> userStories = event;
 
-                  final user = UserModel.fromJson(snapshot.data.docs[index]);
-                  final leftToMe = user.copyWith(stories: event);
-
-                  return InkWell(
-                    onTap: () {
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) =>
-                      //             StoryScreen(user: user)));
-                    },
-                    child: BubbleStories(
-                      text: leftToMe.name,
-                      image: leftToMe.image,
-                      // hasStory: false,
-                      // useNetworkImage: true,
-                    ),
-                  );
-                },
-              );
-            }
-            return Center(
-              child: CircularProgressIndicator(
-                color: primaryColor,
-              ),
-            );
-          });
-      // }
-    });
     super.initState();
   }
 

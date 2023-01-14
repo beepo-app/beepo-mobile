@@ -13,14 +13,13 @@ import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
-import '../../Service/auth.dart';
 import '../../Widgets/toasts.dart';
+import '../../bottom_nav.dart';
 import '../../chat_methods.dart';
 import '../../components.dart';
 import '../../generate_keywords.dart';
 import '../../provider.dart';
 import '../Profile/user_profile_screen.dart';
-import 'chat.dart';
 
 class ChatDm extends StatefulWidget {
   final UserModel model;
@@ -83,7 +82,7 @@ class _ChatDmState extends State<ChatDm> {
                             onPressed: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ChatScreen())),
+                                    builder: (context) => BottomNavHome())),
                           ),
                           SizedBox(width: 6),
                           GestureDetector(
@@ -107,6 +106,10 @@ class _ChatDmState extends State<ChatDm> {
                                   height: 35,
                                   width: 35,
                                   imageUrl: widget.model.image,
+                                  placeholder: (context, url) =>
+                                      Center(child: CircularProgressIndicator()),
+                                  errorWidget: (context, url, error) => Icon(Icons.person, color: secondaryColor,),
+filterQuality: FilterQuality.high,
                                 ),
                               ),
                             ),
@@ -223,7 +226,7 @@ class _ChatDmState extends State<ChatDm> {
                                     Align(
                                       alignment: (snapshot.data.docs[index]
                                                   ['sender'] ==
-                                          userM['uid'])
+                                              userM['uid'])
                                           ? Alignment.centerRight
                                           : Alignment.centerLeft,
                                       child: Container(
@@ -240,18 +243,18 @@ class _ChatDmState extends State<ChatDm> {
                                         decoration: BoxDecoration(
                                           color: (snapshot.data.docs[index]
                                                       ['sender'] !=
-                                              userM['uid'])
+                                                  userM['uid'])
                                               ? Color(0xffc4c4c4)
                                               : Color(0xff0E014C),
                                           borderRadius: BorderRadius.only(
                                             topLeft: (snapshot.data.docs[index]
                                                         ['sender'] ==
-                                                userM['uid'])
+                                                    userM['uid'])
                                                 ? Radius.circular(12)
                                                 : Radius.circular(0),
                                             topRight: (snapshot.data.docs[index]
                                                         ['sender'] ==
-                                                userM['uid'])
+                                                    userM['uid'])
                                                 ? Radius.circular(0)
                                                 : Radius.circular(12),
                                             bottomLeft: Radius.circular(12),
@@ -274,7 +277,6 @@ class _ChatDmState extends State<ChatDm> {
                                                           color: Colors.white,
                                                         ),
                                                         onTap: () {
-
                                                           // context.read<ChatNotifier>().isPlayingMsg = false;
                                                           context
                                                               .read<
@@ -282,7 +284,6 @@ class _ChatDmState extends State<ChatDm> {
                                                               .pauseAudio();
                                                           setState(() {
                                                             isPlaying = -1;
-
                                                           });
                                                         },
                                                       )
@@ -294,7 +295,6 @@ class _ChatDmState extends State<ChatDm> {
                                                         onTap: () async {
                                                           setState(() {
                                                             isPlaying = index;
-
                                                           });
                                                           await context
                                                               .read<
@@ -310,8 +310,6 @@ class _ChatDmState extends State<ChatDm> {
                                                           //
                                                           //   });
                                                           // });
-
-
                                                         },
                                                       ),
                                                 Center(
@@ -319,7 +317,7 @@ class _ChatDmState extends State<ChatDm> {
                                                     'assets/lottie/waves.json',
                                                     height: 30,
                                                     width: 100,
-                                                    animate: isPlaying !=-1
+                                                    animate: isPlaying != -1
                                                         ? true
                                                         : false,
                                                     fit: BoxFit.fitHeight,
@@ -337,7 +335,7 @@ class _ChatDmState extends State<ChatDm> {
                                                   style: (snapshot.data
                                                                   .docs[index]
                                                               ['sender'] ==
-                                                      userM['uid'])
+                                                          userM['uid'])
                                                       ? TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 10,
@@ -369,7 +367,7 @@ class _ChatDmState extends State<ChatDm> {
                                     Align(
                                       alignment: (snapshot.data.docs[index]
                                                   ['sender'] ==
-                                          userM['uid'])
+                                              userM['uid'])
                                           ? Alignment.centerRight
                                           : Alignment.centerLeft,
                                       child: SizedBox(
@@ -384,17 +382,19 @@ class _ChatDmState extends State<ChatDm> {
                                                     .docs[index]["content"],
                                                 tag: "image",
                                               );
-                                            }
-                                            )
-                                            );
+                                            }));
                                           },
                                           child: ClipRRect(
                                             child: Hero(
                                               tag: 'image',
-                                              child: Image.network(
-                                                snapshot.data.docs[index]
-                                                    ["content"],
+                                              child: CachedNetworkImage(
                                                 fit: BoxFit.cover,
+                                                imageUrl: snapshot.data
+                                                    .docs[index]["content"],
+                                                placeholder: (context, url) =>
+                                                    Center(child: CircularProgressIndicator()),
+                                                errorWidget: (context, url, error) => Icon(Icons.person, color: secondaryColor,),
+filterQuality: FilterQuality.high,
                                               ),
                                             ),
                                             borderRadius:
@@ -449,7 +449,9 @@ class _ChatDmState extends State<ChatDm> {
                       },
                       child: IconButton(
                           onPressed: () {
-                            context.read<ChatNotifier>().cameraUploadImageChat(widget.model.uid);
+                            context
+                                .read<ChatNotifier>()
+                                .cameraUploadImageChat(widget.model.uid);
                           },
                           constraints: BoxConstraints(
                             maxWidth: 30,
@@ -585,6 +587,10 @@ class FullScreenImage extends StatelessWidget {
               width: MediaQuery.of(context).size.width,
               fit: BoxFit.contain,
               imageUrl: imageUrl,
+              placeholder: (context, url) =>
+                  Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => Icon(Icons.person, color: secondaryColor,),
+filterQuality: FilterQuality.high,
             ),
           ),
         ),

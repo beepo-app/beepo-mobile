@@ -70,6 +70,10 @@ class _UserProfileState extends State<UserProfile> {
                       width: 110,
                       height: 110,
                       imageUrl: widget.model.image,
+                      placeholder: (context, url) =>
+                          Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) => Icon(Icons.person, color: secondaryColor,),
+filterQuality: FilterQuality.high,
                       // fit: BoxFit.cover,
                     ),
                   ),

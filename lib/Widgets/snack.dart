@@ -4,6 +4,7 @@ import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:beepo/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -108,8 +109,12 @@ class MySearchDelegate extends SearchDelegate {
                         shape: BoxShape.circle,
                       ),
                       child: ClipOval(
-                        child:
-                            Image.network(snapshot.data.docs[index]['image']),
+                        child: CachedNetworkImage(
+                          imageUrl: snapshot.data.docs[index]['image'],
+                          placeholder: (context, url) =>
+                              Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) => Icon(Icons.person, color: secondaryColor,),
+                        ),
                       ),
                     ),
                     title: Text(

@@ -89,6 +89,15 @@ class _MyMessagesState extends State<MyMessages> {
                         imageUrl: img,
                         height: 50,
                         width: 50,
+                        placeholder: (context, url) => Center(
+                            child: CircularProgressIndicator(
+                          color: secondaryColor,
+                        )),
+                        errorWidget: (context, url, error) => Icon(
+                          Icons.person,
+                          color: secondaryColor,
+                        ),
+                        filterQuality: FilterQuality.high,
                       )),
                 ),
                 title: Row(
@@ -134,9 +143,7 @@ class _MyMessagesState extends State<MyMessages> {
               );
             }
             return Center(
-              child: CircularProgressIndicator(
-                color: primaryColor,
-              ),
+              child: SizedBox()
             );
           });
     } catch (e) {
