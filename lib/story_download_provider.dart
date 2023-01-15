@@ -28,8 +28,17 @@ class StoryDownloadProvider extends ChangeNotifier {
   Stream<List<StoryModel>> getCurrentUserStories() =>
       _storyMethod.getCurrentUserStories();
 
-  Stream<List<StoryModel>> getFriendStories() =>
-      _storyMethod.getFriendsStories();
+  // Stream<List<StoryModel>> getFriendStories() =>
+  //     _storyMethod.getFriendsStories();
+
+  Stream<List<StoryModel>> getFriendsStories(String uid) async* {
+    // final storiesCollection = _firestore.collection('stories');
+    final stories = FirebaseFirestore.instance.collection('stories').where('uid', isEqualTo: uid);
+    // final snapshot = stories.orderBy('createdDate', descending: true).snapshots();
+    yield* stories.snapshots().map((snapshot) =>
+        snapshot.docs.map((doc) => StoryModel.fromJson(doc.data())).toList());
+    // yield* storiesStream;
+  }
 
   delete(StoryModel user) {
     final storiesCollection = FirebaseFirestore.instance.collection('stories');

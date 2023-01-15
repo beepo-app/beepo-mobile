@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-// import 'package:beepo/Models/story_model/story.dart';
 import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
 import 'package:beepo/story_download_provider.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:story_view/story_view.dart';
 
 import 'Models/user_model.dart';
-import 'components.dart';
 
 class Homes extends StatefulWidget {
   final UserModel user;
@@ -25,10 +23,7 @@ class _HomesState extends State<Homes> {
 
   Map userM = Hive.box('beepo').get('userData');
 
-  // int i = 0;
   final storyItems = <StoryItem>[];
-
-  // final currentIndex =
 
   void addStoryItems() {
     for (final story in widget.user.stories) {
@@ -41,12 +36,6 @@ class _HomesState extends State<Homes> {
                 // Text(
                 story.caption,
             duration: Duration(seconds: 20),
-            //   style: TextStyle(
-            //     color: Colors.white,
-            //     backgroundColor: Colors.black54,
-            //     fontSize: 17,
-            //   ),
-            // ),
           ));
           break;
         case "video":
@@ -56,45 +45,25 @@ class _HomesState extends State<Homes> {
             caption:
                 // Text(
                 story.caption,
-            //   style: TextStyle(
-            //     color: Colors.white,
-            //     backgroundColor: Colors.black54,
-            //     fontSize: 17,
-            //   ),
-            // ),
           ));
           break;
       }
     }
   }
 
-  // DateTime date;
-  // String diff;
-
-  //  calDate(DateTime date){
-  //   final time = date.difference(DateTime.now());
-  //   if(time.inHours > 24){
-  //     diff = "${time.inDays} ago";
-  //   }
-  //   else if(time.inMinutes > 60){
-  //     diff = "${time.inHours} ago";
-  //   }
-  //   else if(time.inSeconds > 60){
-  //     diff = "${time.inMinutes} ago";
-  //   }
-  //   else{
-  //     diff = "Just Now";
-  //   }
-  // }
   int i;
-  final PageController cont = PageController();
+
+  // final PageController cont = PageController();
 
   @override
   void initState() {
     addStoryItems();
     // calDate(date);
     i = 0;
-    if (DateTime.now().difference(widget.user.stories[0].createdDate.toDate()).inSeconds > 24 * 3600) {
+    if (DateTime.now()
+            .difference(widget.user.stories[0].createdDate.toDate())
+            .inSeconds >
+        24 * 3600) {
       context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
     }
     super.initState();
@@ -105,22 +74,13 @@ class _HomesState extends State<Homes> {
         Material(
           type: MaterialType.transparency,
           child: PageView(children: [
-            // widget.user =>
             StoryView(
               controller: controller,
               storyItems: storyItems,
               onStoryShow: (s) {
-                // final index = storyItems.indexOf(s);
-                // // DateTime date;
-                // setState(() {
-                //   date = widget.user.stories[index].createdDate;
-                // });
-                // controller.
-                // i = i+1;
-                print("Showing a story");
+                print("Showing a story ${widget.user.stories.length}");
               },
               onVerticalSwipeComplete: (f) {
-                // i++;
                 if (f == Direction.up) {
                   if (i < storyItems.length - 1) {
                     controller.next();
@@ -178,10 +138,14 @@ class _HomesState extends State<Homes> {
 
 class MoreStories extends StatefulWidget {
   final String uid;
+  final List docu;
+  final UserModel user;
 
   const MoreStories({
     Key key,
     @required this.uid,
+    @required this.docu,
+    @required this.user,
   }) : super(key: key);
 
   @override
@@ -189,12 +153,56 @@ class MoreStories extends StatefulWidget {
 }
 
 class _MoreStoriesState extends State<MoreStories> {
-  PageController controller;
+  Map userM = Hive.box('beepo').get('userData');
+
+  PageController pageController;
+  final StoryController controller = StoryController();
+
+  final storyItems = <StoryItem>[];
+
+  void addStoryItems() {
+    for (final story in widget.user.stories) {
+      switch (story.mediaType) {
+        case "image":
+          storyItems.add(StoryItem.pageImage(
+            url: story.url,
+            controller: controller,
+            caption:
+                // Text(
+                story.caption,
+            duration: Duration(seconds: 20),
+          ));
+          break;
+        case "video":
+          storyItems.add(StoryItem.pageVideo(
+            story.url,
+            controller: controller,
+            caption:
+                // Text(
+                story.caption,
+          ));
+          break;
+      }
+    }
+  }
+
+  int i;
 
   @override
   void initState() {
+    // getProfileData();
+    addStoryItems();
+    // calDate(date);
+    i = 0;
+    if (DateTime.now()
+            .difference(widget.user.stories[0].createdDate.toDate())
+            .inSeconds >
+        24 * 3600) {
+      context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
+    }
     // final initialPage = userss.indexOf(widget.uid);
-    controller = PageController(initialPage: 0);
+
+    pageController = PageController(initialPage: 0);
     // addStoryItems();
     super.initState();
   }
@@ -208,106 +216,81 @@ class _MoreStoriesState extends State<MoreStories> {
 
   @override
   Widget build(BuildContext context) {
-    return PageView(
-        controller: controller,
-        children: userss
-            .map((e) => StoryWidget(user: e, controller: controller))
-            .toList());
-  }
-}
+    return Stack(children: [
+      Material(
+        type: MaterialType.transparency,
+        child: PageView.builder(
+          itemBuilder: (ctx, index) {
+            return StoryView(
+              controller: controller,
+              storyItems: storyItems,
+              onStoryShow: (s) {
+                print("Showing a story");
+              },
+              onVerticalSwipeComplete: (f) {
+                if (f == Direction.up) {
+                  if (i < storyItems.length - 1) {
+                    controller.next();
+                    setState(() {
+                      i = i + 1;
+                    });
+                  } else {
+                    pageController.nextPage(
+                        duration: Duration(microseconds: 300),
+                        curve: Curves.easeIn);
+                    // Navigator.pop(context);
+                  }
+                  // Navigator.pop(context);
+                } else if (f == Direction.down) {
+                  controller.previous();
+                  if (i != 0) {
+                    setState(() {
+                      i = i - 1;
+                    });
+                  } else {
+                    Navigator.pop(context);
+                  }
+                }
+              },
+              onComplete: () {
+                if (index < (widget.docu.length - 1)) {
+                  pageController.nextPage(
+                      duration: Duration(microseconds: 300),
+                      curve: Curves.easeIn);
+                }
+                Navigator.pop(context);
+                // i++;
+                // cont.nextPage(duration: Duration(seconds: 1), curve: Curves.easeIn);
 
-class StoryWidget extends StatefulWidget {
-  final UserModel user;
-  final PageController controller;
-
-  StoryWidget({
-    @required this.user,
-    @required this.controller,
-  });
-
-  @override
-  State<StoryWidget> createState() => _StoryWidgetState();
-}
-
-class _StoryWidgetState extends State<StoryWidget> {
-  final storyItems = <StoryItem>[];
-  StoryController storyController;
-
-  void addStoryItems() {
-    for (final story in widget.user.stories) {
-      switch (story.mediaType) {
-        case "image":
-          storyItems.add(StoryItem.pageImage(
-            url: story.url,
-            controller: storyController,
-            caption:
-                // Text(
-                story.caption,
-            duration: Duration(seconds: 20),
-            //   style: TextStyle(
-            //     color: Colors.white,
-            //     backgroundColor: Colors.black54,
-            //     fontSize: 17,
-            //   ),
-            // ),
-          ));
-          break;
-        case "video":
-          storyItems.add(StoryItem.pageVideo(
-            story.url,
-            controller: storyController,
-            caption:
-                // Text(
-                story.caption,
-            //   style: TextStyle(
-            //     color: Colors.white,
-            //     backgroundColor: Colors.black54,
-            //     fontSize: 17,
-            //   ),
-            // ),
-          ));
-          break;
-      }
-    }
-  }
-
-  @override
-  void initState() {
-    storyController = StoryController();
-    addStoryItems();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    storyController.dispose();
-    super.dispose();
-  }
-
-  // const StoryWidget({Key? key}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return StoryView(
-      storyItems: storyItems,
-      onStoryShow: (s) {
-        print("Showing a story");
-      },
-      onComplete: () {
-        final currentIndex = userss.indexOf(widget.user);
-        final isLastPage = userss.length - 1 == currentIndex;
-        if (isLastPage) {
-          Navigator.pop(context);
-        }
-        widget.controller.nextPage(
-          duration: Duration(microseconds: 30000),
-          curve: Curves.easeIn,
-        );
-        print("Completed a cycle");
-      },
-      progressPosition: ProgressPosition.top,
-      repeat: false,
-      controller: storyController,
-    );
+                print("Completed a cycle");
+              },
+              progressPosition: ProgressPosition.top,
+              repeat: false,
+              inline: true,
+            );
+          },
+          itemCount: widget.docu.length,
+          controller: pageController,
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.only(top: 50, left: 20),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ChatDm(
+                          model: widget.user,
+                        )));
+          },
+          child: StatusProfile(
+              user: widget.user,
+              date:
+                  '${DateTime.now().difference(widget.user.stories[i].createdDate.toDate()).inHours}h:${DateTime.now().difference(widget.user.stories[i].createdDate.toDate()).inMinutes - 60 * DateTime.now().difference(widget.user.stories[i].createdDate.toDate()).inHours}min ago'),
+        ),
+      )
+    ]);
   }
 }
 

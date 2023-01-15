@@ -3,7 +3,7 @@
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
 import 'package:beepo/story_download_provider.dart';
-import 'package:beepo/story_upload_provider.dart';
+
 // import 'package:beepo/story_screen.dart';
 import 'package:beepo/story_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -140,13 +140,13 @@ class _ChatTabState extends State<ChatTab> {
   // List<CameraDescription> cameras;
   gethg() async {
     // Obtain a list of the available cameras on the device.
-     final cameras = await availableCameras();
+    final cameras = await availableCameras();
     // Get a specific camera from the list of available cameras.
     firstCamera = cameras[0];
     secondCamera = cameras[1];
-    print('number of cameras: ${cameras.length} ${firstCamera.lensDirection.name}');
+    print(
+        'number of cameras: ${cameras.length} ${firstCamera.lensDirection.name}');
 // cameras.take(2);
-
   }
 
   @override
@@ -157,10 +157,10 @@ class _ChatTabState extends State<ChatTab> {
         context.read<StoryDownloadProvider>().getCurrentUserStories();
     // currentUserFollowingStories =
     //     context.read<StoryDownloadProvider>().getFollowingUsersStories();
-    friendsStories = context.read<StoryDownloadProvider>().getFriendStories();
+    // friendsStories = context.read<StoryDownloadProvider>().getFriendStories();
     // currentUserFollowing =
     //     context.read<StoryDownloadProvider>().getUsers();
-   gethg();
+    gethg();
     super.initState();
   }
 
@@ -179,11 +179,12 @@ class _ChatTabState extends State<ChatTab> {
                     MaterialPageRoute(
                         builder: (context) =>
                             // Homes()
-                      // CameraApp()
-                      //       TakePictureScreen(camera: firstCamera,)
-                            AddStory(camera1: firstCamera, camera2: secondCamera,)
-                    )
-                );
+                            // CameraApp()
+                            //       TakePictureScreen(camera: firstCamera,)
+                            AddStory(
+                              camera1: firstCamera,
+                              camera2: secondCamera,
+                            )));
               },
               child: Column(
                 children: [
@@ -261,45 +262,37 @@ class _ChatTabState extends State<ChatTab> {
                           ),
                         );
                       }),
-
                   StreamBuilder(
-                      stream: FirebaseFirestore.instance.collection('usersStories').where('uid', isNotEqualTo: userM['uid']).snapshots(),
+                      stream: FirebaseFirestore.instance
+                          .collection('usersStories')
+                          .where('uid', isNotEqualTo: userM['uid'])
+                          .snapshots(),
                       // initialData: const [],
-                      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      builder:
+                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.hasData) {
                           if (snapshot.data.docs.isEmpty) {
                             return SizedBox();
                           }
-                                  return ListView.builder(
-                                    primary: false,
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: snapshot.data.docs.length,
-                                    itemBuilder: (context, index) {
-                                      print(snapshot.data.docs.length);
+                          return ListView.builder(
+                            primary: false,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: snapshot.data.docs.length,
+                            itemBuilder: (context, index) {
+                              print(snapshot.data.docs.length);
 
-                                      return InkWell(
-                                        onTap: () {
-                                          // Navigator.push(
-                                          //     context,
-                                          //     MaterialPageRoute(
-                                          //         builder: (context) =>
-                                          //             StoryScreen(user: user)));
-                                        },
-                                        child: BubbleStories(
-                                          uid: snapshot.data.docs[index].id,
-                                          docu: snapshot.data.docs,
-                                          // hasStory: false,
-                                          // useNetworkImage: true,
-                                        ),
-                                      );
-                                    },
-                                  );
-
-
-                              }
+                              return BubbleStories(
+                                uid: snapshot.data.docs[index].id,
+                                docu: snapshot.data.docs,
+                                myStory: false,
+                                // hasStory: false,
+                                // useNetworkImage: true,
+                              );
+                            },
+                          );
+                        }
                         return Center(
                           child: CircularProgressIndicator(
                             color: primaryColor,
@@ -378,7 +371,8 @@ class _ChatTabState extends State<ChatTab> {
                           stream: FirebaseFirestore.instance
                               .collection('conversation')
                               .doc(userM['uid'] == '' ? ' ' : userM['uid'])
-                              .collection("currentConversation").orderBy('created', descending: true)
+                              .collection("currentConversation")
+                              .orderBy('created', descending: true)
                               .snapshots(),
                           builder:
                               (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -688,21 +682,15 @@ class CurrentUserStoryBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-        // Stack(
-        // children: [
-        InkWell(
+    return InkWell(
       onTap: () {
-        // if (user.stories.isEmpty) {
-        //   Navigator.push(
-        //       context, MaterialPageRoute(builder: (context) => AddStory()));
-        // } else {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => Homes(user: user)));
-        // }
       },
       child: BubbleStories(
+        uid: user.uid,
         hasStory: user.stories.isNotEmpty,
+        myStory: true,
         // useNetworkImage: true,
       ),
     );

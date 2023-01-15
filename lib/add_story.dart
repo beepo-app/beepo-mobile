@@ -221,6 +221,9 @@ class _AddStoryState extends State<AddStory> {
           child: Container(
             width: double.infinity,
             height: 100,
+            decoration: BoxDecoration(
+              color: Colors.black,
+            ),
             child: Column(
               children: [
                 Expanded(

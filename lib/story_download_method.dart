@@ -34,7 +34,7 @@ class StoryDownloadMethod {
   }
 
   Stream<List<StoryModel>> getCurrentUserStories() async* {
-    final storiesCollection = _firestore.collection('usersStories');
+    final storiesCollection = _firestore.collection('stories');
     final stories = storiesCollection
         .where('uid', isEqualTo: userM['uid'])
         .orderBy('createdDate');
@@ -45,16 +45,7 @@ class StoryDownloadMethod {
   }
 
 
-  Stream<List<StoryModel>> getFriendsStories() async* {
-    final storiesCollection = _firestore.collection('stories');
-    final stories = storiesCollection
-        .where('uid', isNotEqualTo: userM['uid'])
-        .orderBy('createdDate');
-    // final snapshot = stories.orderBy('createdDate', descending: true).snapshots();
-    yield* stories.snapshots().map((snapshot) =>
-        snapshot.docs.map((doc) => StoryModel.fromJson(doc.data())).toList());
-    // yield* storiesStream;
-  }
+
 
   // get stories of users that the current user is following
   Stream<List<UserModel>> getFollowingUsersStories() async* {
