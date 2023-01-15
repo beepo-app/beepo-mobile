@@ -10,7 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
-
+import 'package:image/image.dart' as img;
 import 'Models/story_model/storyModel.dart';
 import 'add_story.dart';
 
@@ -151,7 +151,7 @@ changeCamera(CameraDescription camera){
   }
 }
 
-  Future<Either<Failure, Success>> pickImageCamera() async {
+  Future<Either<Failure, Success>> pickImageCamera1() async {
 
     // notifyListeners();
 
@@ -168,7 +168,11 @@ changeCamera(CameraDescription camera){
 
       // final result = await _imagePicker.pickImage(source: ImageSource.camera);
       if (result != null) {
-        _selectFile(File(result.path));
+        final img.Image capturedImage = img.decodeImage(await File(result.path).readAsBytes());
+        final img.Image orientedImage = img.bakeOrientation(capturedImage);
+        final noke =         img.flipHorizontal(orientedImage);
+        final yeske = await File(result.path).writeAsBytes(img.encodeJpg(noke));
+        _selectFile(yeske);
         if (_file != null) {
           _setMediaType("image");
           final story = StoryModel(
@@ -196,7 +200,55 @@ changeCamera(CameraDescription camera){
       return left(Failure(e.message));
     }
   }
+  Future<Either<Failure, Success>> pickImageCamera() async {
 
+    // notifyListeners();
+
+    // initializeControllerFuture =  controller.initialize();
+    // notifyListeners();
+
+    try {
+      // await initializeControllerFuture;
+      _setStoryUploadStatus(StoryUploadStatus.gettingReady);
+      //TODO: Add permission check
+      final result = await controlle.takePicture();
+
+      // if (!mounted) return;
+
+      // final result = await _imagePicker.pickImage(source: ImageSource.camera);
+      if (result != null) {
+        final img.Image capturedImage = img.decodeImage(await File(result.path).readAsBytes());
+        final img.Image orientedImage = img.bakeOrientation(capturedImage);
+        // final noke =         img.flipHorizontal(orientedImage);
+        final yeske = await File(result.path).writeAsBytes(img.encodeJpg(orientedImage));
+        _selectFile(yeske);
+        if (_file != null) {
+          _setMediaType("image");
+          final story = StoryModel(
+            mediaType: _mediaType,
+            uid: userM['uid'],
+            name: userM['displayName'],
+            profileImage: userM['profilePictureUrl'],
+          );
+          _setStory(story);
+          if (_story != null) {
+            return right(const Success());
+          } else {
+            _resetStatusToInitial();
+            return left(const Failure('Something went wrong'));
+          }
+        } else {
+          _resetStatusToInitial();
+          return left(const Failure('Something went wrong'));
+        }
+      } else {
+        _resetStatusToInitial();
+        return left(const Failure('No file selected'));
+      }
+    } on PlatformException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
   Future<Either<Failure, Success>> pickVideo() async {
     try {
       _setStoryUploadStatus(StoryUploadStatus.gettingReady);

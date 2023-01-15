@@ -34,13 +34,15 @@ class _AddStoryState extends State<AddStory> {
   TextEditingController controller = TextEditingController();
   Future<void> initializeControllerFuture;
 
+  CameraDescription selected;
+
   @override
   void dispose() {
     _videoPlayerController?.dispose();
     controlle.dispose();
     super.dispose();
   }
-bool hasChanged = false;
+// bool hasChanged = false;
   //? Find a better name for this method
   Future<bool> _checkVideoDurationIsNotLong(File file) async {
     _videoPlayerController = VideoPlayerController.file(file);
@@ -66,7 +68,7 @@ bool hasChanged = false;
   void initState() {
     controlle = CameraController(
       // Get a specific camera from the list of available cameras.
-      hasChanged? widget.camera1 : widget.camera2,
+       widget.camera1,
       // Define the resolution to use.
       ResolutionPreset.ultraHigh,
     );
@@ -129,7 +131,7 @@ bool hasChanged = false;
                               } else {
                                 // Otherwise, display a loading indicator.
                                 return const Center(
-                                    child: CircularProgressIndicator());
+                                    child: CircularProgressIndicator(color: secondaryColor,));
                               }
                             },
                           ),
@@ -235,8 +237,13 @@ bool hasChanged = false;
                         onTap: (){
 
                             setState(() {
-                              hasChanged = !hasChanged;
+
+                              // hasChanged = !hasChanged;
+                              selected = selected == widget.camera1? widget.camera2: widget.camera1;
+
                             });
+                            controlle = CameraController(selected, ResolutionPreset.ultraHigh);
+                            initializeControllerFuture = controlle.initialize();
                         },
                       ),
                       // filled: true,
@@ -257,13 +264,13 @@ bool hasChanged = false;
                   children: [
                     InkWell(
                       onTap: () async {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CameraApp()));
-                        // await context
-                        //     .read<StoryUploadProvider>()
-                        //     .pickImageGallery();
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => CameraApp()));
+                        await context
+                            .read<StoryUploadProvider>()
+                            .pickImageGallery();
                         // Navigator.pop(context);
                       },
                       child: Row(
@@ -282,9 +289,20 @@ bool hasChanged = false;
                     IconButton(
                       onPressed: () async {
                         await initializeControllerFuture;
-                        await context
-                            .read<StoryUploadProvider>()
-                            .pickImageCamera();
+                        if(selected == widget.camera2){
+                          await context
+                              .read<StoryUploadProvider>()
+                              .pickImageCamera1();
+                        }else{
+                          await context
+                              .read<StoryUploadProvider>()
+                              .pickImageCamera() ;
+                        }
+                        // selected == widget.camera1?
+
+                            // : await context
+                            // .read<StoryUploadProvider>()
+                            // .pickImageCamera1();
                       },
                       icon: SvgPicture.asset(
                         AppImages.camera,

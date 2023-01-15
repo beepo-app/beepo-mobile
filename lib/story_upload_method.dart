@@ -59,7 +59,7 @@ class StoryUploadMethod {
                 caption: caption,
               )
               .toJson();
-          await storiesCollection.add(storyData);
+          await storiesCollection.doc(userM['uid']).set(storyData);
           await usersWithStoriesCollection.add(UserModel(
                   uid: userM['uid'],
                   name: userM['displayName'],

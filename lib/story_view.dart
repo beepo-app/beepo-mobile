@@ -2,8 +2,10 @@
 
 // import 'package:beepo/Models/story_model/story.dart';
 import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
+import 'package:beepo/story_download_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
 import 'package:story_view/story_view.dart';
 
 import 'Models/user_model.dart';
@@ -92,6 +94,9 @@ class _HomesState extends State<Homes> {
     addStoryItems();
     // calDate(date);
     i = 0;
+    if (DateTime.now().difference(widget.user.stories[0].createdDate.toDate()).inSeconds > 24 * 3600) {
+      context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
+    }
     super.initState();
   }
 
@@ -117,25 +122,22 @@ class _HomesState extends State<Homes> {
               onVerticalSwipeComplete: (f) {
                 // i++;
                 if (f == Direction.up) {
-                  if(i<storyItems.length-1){
-                  controller.next();
-                  setState(() {
-                    i = i+ 1;
-                  });}
-                  else{
+                  if (i < storyItems.length - 1) {
+                    controller.next();
+                    setState(() {
+                      i = i + 1;
+                    });
+                  } else {
                     Navigator.pop(context);
                   }
                   // Navigator.pop(context);
-                }
-                else if( f == Direction.down){
+                } else if (f == Direction.down) {
                   controller.previous();
-                  if(i!=0){
+                  if (i != 0) {
                     setState(() {
-                      i= i-1;
+                      i = i - 1;
                     });
-
-                  }
-                  else {
+                  } else {
                     Navigator.pop(context);
                   }
                 }

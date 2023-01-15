@@ -64,6 +64,8 @@ class _MyMessagesState extends State<MyMessages> {
               .snapshots(),
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
+              List<DateTime> get;
+              get.add(snapshot.data.docs[0]['created'].toDate());
               return ListTile(
                 onTap: () {
                   Get.to(ChatDm(
