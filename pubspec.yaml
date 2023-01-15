@@ -71,6 +71,7 @@ dependencies:
   json_annotation: ^4.7.0
   audio_waveforms: ^1.0.1
   camera: ^0.10.1
+  keyboard_dismisser: ^3.0.0
 
 #
 

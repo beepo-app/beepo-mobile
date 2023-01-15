@@ -434,7 +434,7 @@ class _ChatTabState extends State<ChatTab> {
                           stream: FirebaseFirestore.instance
                               .collection('conversation')
                               .doc(userM['uid'] == '' ? ' ' : userM['uid'])
-                              .collection("currentConversation")
+                              .collection("currentConversation").orderBy('created', descending: true)
                               .snapshots(),
                           builder:
                               (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -460,6 +460,8 @@ class _ChatTabState extends State<ChatTab> {
                                 itemBuilder: (ctx, index) {
                                   return MyMessages(
                                     uid: snapshot.data.docs[index].id,
+                                    index: index,
+                                    docu: snapshot.data.docs,
                                   );
                                 },
                               );
