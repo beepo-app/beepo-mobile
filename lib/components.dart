@@ -261,110 +261,54 @@ class _ChatTabState extends State<ChatTab> {
                           ),
                         );
                       }),
-                  // usert,
-                  //
-                  // StreamBuilder<List<StoryModel>>(
-                  //     stream: friendsStories,
-                  //     initialData: const [],
-                  //     builder: (context, snap) {
-                  //       if (snap.hasData) {
-                  //         return StreamBuilder(
-                  //             stream: FirebaseFirestore.instance
-                  //                 .collection('usersStories')
-                  //                 .snapshots(),
-                  //             // initialData: const [],
-                  //             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  //               if (snapshot.hasData) {
-                  //                 return ListView.builder(
-                  //                   primary: false,
-                  //                   shrinkWrap: true,
-                  //                   physics:
-                  //                       const NeverScrollableScrollPhysics(),
-                  //                   scrollDirection: Axis.horizontal,
-                  //                   itemCount: snapshot.data.docs.length,
-                  //                   itemBuilder: (context, index) {
-                  //                     print(snapshot.data.docs.length);
-                  //                     List<StoryModel> userStories = snap.data;
-                  //
-                  //                     final user = UserModel(
-                  //                       uid: snapshot.data.docs[index]['uid'],
-                  //                       name: snapshot.data.docs[index]['name'],
-                  //                       image: snapshot.data.docs[index]
-                  //                           ['image'],
-                  //                     );
-                  //                     final leftToMe =
-                  //                         user.copyWith(stories: userStories);
-                  //
-                  //                     return InkWell(
-                  //                       onTap: () {
-                  //                         // Navigator.push(
-                  //                         //     context,
-                  //                         //     MaterialPageRoute(
-                  //                         //         builder: (context) =>
-                  //                         //             StoryScreen(user: user)));
-                  //                       },
-                  //                       child: BubbleStories(
-                  //                         text: leftToMe.name,
-                  //                         image: leftToMe.image,
-                  //                         // hasStory: false,
-                  //                         // useNetworkImage: true,
-                  //                       ),
-                  //                     );
-                  //                   },
-                  //                 );
-                  //               }
-                  //               return Center(
-                  //                 child: CircularProgressIndicator(
-                  //                   color: primaryColor,
-                  //                 ),
-                  //               );
-                  //             });
-                  //       }
-                  //       return Center(
-                  //         child: CircularProgressIndicator(
-                  //           color: primaryColor,
-                  //         ),
-                  //       );
-                  //     })
+
+                  StreamBuilder(
+                      stream: FirebaseFirestore.instance.collection('usersStories').where('uid', isNotEqualTo: userM['uid']).snapshots(),
+                      // initialData: const [],
+                      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.data.docs.isEmpty) {
+                            return SizedBox();
+                          }
+                                  return ListView.builder(
+                                    primary: false,
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: snapshot.data.docs.length,
+                                    itemBuilder: (context, index) {
+                                      print(snapshot.data.docs.length);
+
+                                      return InkWell(
+                                        onTap: () {
+                                          // Navigator.push(
+                                          //     context,
+                                          //     MaterialPageRoute(
+                                          //         builder: (context) =>
+                                          //             StoryScreen(user: user)));
+                                        },
+                                        child: BubbleStories(
+                                          uid: snapshot.data.docs[index].id,
+                                          docu: snapshot.data.docs,
+                                          // hasStory: false,
+                                          // useNetworkImage: true,
+                                        ),
+                                      );
+                                    },
+                                  );
+
+
+                              }
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColor,
+                          ),
+                        );
+                      })
                 ]),
               ),
             ),
-            // const SizedBox(width: 10),
-            // Expanded(
-            //   child: SizedBox(
-            //     height: 80,
-            //     child: ListView.separated(
-            //       padding: const EdgeInsets.only(right: 10),
-            //       shrinkWrap: true,
-            //       itemCount: 6,
-            //       scrollDirection: Axis.horizontal,
-            //       separatorBuilder: (ctx, i) => const SizedBox(width: 10),
-            //       itemBuilder: (ctx, i) {
-            //         return Column(
-            //           children: [
-            //             ClipRRect(
-            //               borderRadius: BorderRadius.circular(30),
-            //               child: Image.asset(
-            //                 'assets/profile_img.png',
-            //                 height: 60,
-            //                 width: 60,
-            //               ),
-            //             ),
-            //             const SizedBox(height: 7),
-            //             const Text(
-            //               "James",
-            //               style: TextStyle(
-            //                 color: const Color(0xb2ffffff),
-            //                 fontSize: 10,
-            //                 fontWeight: FontWeight.w700,
-            //               ),
-            //             )
-            //           ],
-            //         );
-            //       },
-            //     ),
-            //   ),
-            // ),
           ],
         ),
         const SizedBox(height: 20),
@@ -759,29 +703,9 @@ class CurrentUserStoryBubble extends StatelessWidget {
       },
       child: BubbleStories(
         hasStory: user.stories.isNotEmpty,
-        text: 'Your story',
-        image: user.image,
         // useNetworkImage: true,
       ),
     );
-    // if (user.stories.isEmpty)
-    //   Positioned(
-    //     right: 8,
-    //     bottom: 30,
-    //     child: CircleAvatar(
-    //       radius: 6,
-    //       backgroundColor: AppColors.primaryColor,
-    //       child: Center(
-    //         child: Icon(
-    //           Icons.add,
-    //           size: 11,
-    //           color: context.themeData.primaryColor,
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    //   ],
-    // );
   }
 }
 

@@ -41,9 +41,9 @@ class StoryUploadMethod {
   }) async {
     try {
       // final user = _auth.currentUser;
-      final storiesCollection = _firestore.collection('stories');
+      final storiesCollection = _firestore.collection('usersStories');
 
-      final usersWithStoriesCollection = _firestore.collection('usersStories');
+      final usersWithStoriesCollection = _firestore.collection('stories');
 
       // Get media url
       final mediaUrl = await _uploadMediaToStorage(file);
@@ -60,12 +60,8 @@ class StoryUploadMethod {
               )
               .toJson();
           await storiesCollection.doc(userM['uid']).set(storyData);
-          await usersWithStoriesCollection.add(UserModel(
-                  uid: userM['uid'],
-                  name: userM['displayName'],
-                  userName: userM['username'],
-                  image: userM['profilePictureUrl'])
-              .toJson());
+          await usersWithStoriesCollection.add(storyData);
+              // .toJson());
           return right(const Success());
         },
       );

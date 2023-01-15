@@ -34,7 +34,7 @@ class StoryDownloadMethod {
   }
 
   Stream<List<StoryModel>> getCurrentUserStories() async* {
-    final storiesCollection = _firestore.collection('stories');
+    final storiesCollection = _firestore.collection('usersStories');
     final stories = storiesCollection
         .where('uid', isEqualTo: userM['uid'])
         .orderBy('createdDate');

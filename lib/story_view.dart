@@ -177,11 +177,11 @@ class _HomesState extends State<Homes> {
 }
 
 class MoreStories extends StatefulWidget {
-  final UserModel user;
+  final String uid;
 
   const MoreStories({
     Key key,
-    @required this.user,
+    @required this.uid,
   }) : super(key: key);
 
   @override
@@ -193,8 +193,8 @@ class _MoreStoriesState extends State<MoreStories> {
 
   @override
   void initState() {
-    final initialPage = userss.indexOf(widget.user);
-    controller = PageController(initialPage: initialPage);
+    // final initialPage = userss.indexOf(widget.uid);
+    controller = PageController(initialPage: 0);
     // addStoryItems();
     super.initState();
   }
