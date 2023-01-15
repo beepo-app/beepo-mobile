@@ -82,7 +82,7 @@ class _AddStoryState extends State<AddStory> {
     return Scaffold(
       body: Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.black,
         body: SafeArea(
           // maintainBottomViewPadding: true,
           child: Consumer<StoryUploadProvider>(
@@ -197,7 +197,7 @@ class _AddStoryState extends State<AddStory> {
                         Navigator.pop(context);
                         context.read<StoryUploadProvider>().reset();
                       },
-                      icon: const Icon(Icons.close),
+                      icon: const Icon(Icons.close, color: Colors.white,),
                     ),
                   ),
                   Align(
@@ -207,7 +207,7 @@ class _AddStoryState extends State<AddStory> {
                         child: const StorySettings(),
                         context: context,
                       ),
-                      icon: const Icon(Icons.settings),
+                      icon: const Icon(Icons.settings, color: Colors.white,),
                     ),
                   ),
                 ],
@@ -221,11 +221,12 @@ class _AddStoryState extends State<AddStory> {
           child: Container(
             width: double.infinity,
             height: 100,
-            decoration: BoxDecoration(
-              color: Colors.black,
-            ),
+            // decoration: BoxDecoration(
+            //   // color: Colors.black,
+            // ),
             child: Column(
               children: [
+                // if (context.read<StoryUploadProvider>().file != null)
                 Expanded(
                   child: TextField(
                     decoration: InputDecoration(
@@ -234,9 +235,10 @@ class _AddStoryState extends State<AddStory> {
                       hintStyle: TextStyle(
                         fontSize: 15,
                         fontStyle: FontStyle.italic,
+                        color: Colors.white
                       ),
                       suffixIcon: GestureDetector(
-                          child: Icon(Icons.change_circle_outlined),
+                          child: Icon(Icons.change_circle_outlined, color: Colors.white,),
                         onTap: (){
 
                             setState(() {
@@ -284,7 +286,7 @@ class _AddStoryState extends State<AddStory> {
                           ),
                           const Text(
                             'Gallery',
-                            style: TextStyle(fontWeight: FontWeight.w600),
+                            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
                           )
                         ],
                       ),
@@ -307,10 +309,18 @@ class _AddStoryState extends State<AddStory> {
                             // .read<StoryUploadProvider>()
                             // .pickImageCamera1();
                       },
-                      icon: SvgPicture.asset(
-                        AppImages.camera,
-                        color: secondaryColor,
-                      ),
+                      icon: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.black,
+                          border: Border.all(color: Colors.white, width: 3),
+                          // borderRadius: BorderRadius.circular(50)
+                        ),
+                      )
+                      // SvgPicture.asset(
+                      //   AppImages.camera,
+                      //   color: secondaryColor,
+                      // ),
                     ),
                     IconButton(
                       onPressed: () async {
@@ -346,7 +356,7 @@ class _AddStoryState extends State<AddStory> {
                       icon: const Icon(
                         Icons.videocam_outlined,
                         size: 35,
-                        color: secondaryColor,
+                        color: Colors.white,
                       ),
                     ),
                   ],
