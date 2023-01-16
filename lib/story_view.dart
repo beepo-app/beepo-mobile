@@ -63,7 +63,7 @@ class _HomesState extends State<Homes> {
     if (DateTime.now()
             .difference(widget.user.stories[0].createdDate.toDate())
             .inSeconds >
-        24 * 3600) {
+        12 * 3600) {
       context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
     }
     super.initState();
@@ -155,7 +155,6 @@ class MoreStories extends StatefulWidget {
 class _MoreStoriesState extends State<MoreStories> {
   Map userM = Hive.box('beepo').get('userData');
 
-  PageController pageController;
   final StoryController controller = StoryController();
 
   final storyItems = <StoryItem>[];
@@ -197,13 +196,9 @@ class _MoreStoriesState extends State<MoreStories> {
     if (DateTime.now()
             .difference(widget.user.stories[0].createdDate.toDate())
             .inSeconds >
-        24 * 3600) {
+        12 * 3600) {
       context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
     }
-    // final initialPage = userss.indexOf(widget.uid);
-
-    pageController = PageController(initialPage: 0);
-    // addStoryItems();
     super.initState();
   }
 
@@ -219,45 +214,43 @@ class _MoreStoriesState extends State<MoreStories> {
     return Stack(children: [
       Material(
         type: MaterialType.transparency,
-        child: PageView.builder(
-          itemBuilder: (ctx, index) {
-            return StoryView(
+        child: StoryView(
               controller: controller,
               storyItems: storyItems,
               onStoryShow: (s) {
                 print("Showing a story");
               },
               onVerticalSwipeComplete: (f) {
-                if (f == Direction.up) {
-                  if (i < storyItems.length - 1) {
-                    controller.next();
-                    setState(() {
-                      i = i + 1;
-                    });
-                  } else {
-                    pageController.nextPage(
-                        duration: Duration(microseconds: 300),
-                        curve: Curves.easeIn);
-                    // Navigator.pop(context);
-                  }
-                  // Navigator.pop(context);
-                } else if (f == Direction.down) {
-                  controller.previous();
-                  if (i != 0) {
-                    setState(() {
-                      i = i - 1;
-                    });
-                  } else {
-                    Navigator.pop(context);
-                  }
-                }
+                // if (f == Direction.up) {
+                //   if (i < storyItems.length - 1) {
+                //     controller.next();
+                //     setState(() {
+                //       i = i + 1;
+                //     });
+                //   } else {
+                //     // pageController.nextPage(
+                //     //     duration: Duration(microseconds: 300),
+                //     //     curve: Curves.easeIn);
+                //     Navigator.pop(context);
+                //   }
+                //   // Navigator.pop(context);
+                // } else if (f == Direction.down) {
+                //   controller.previous();
+                //   if (i != 0) {
+                //     setState(() {
+                //       i = i - 1;
+                //     });
+                //   } else {
+                //     Navigator.pop(context);
+                //   }
+                // }
               },
               onComplete: () {
-                if (index < (widget.docu.length - 1)) {
-                  pageController.nextPage(
-                      duration: Duration(microseconds: 300),
-                      curve: Curves.easeIn);
-                }
+                // if (index < (widget.docu.length - 1)) {
+                //   pageController.nextPage(
+                //       duration: Duration(microseconds: 300),
+                //       curve: Curves.easeIn);
+                // }
                 Navigator.pop(context);
                 // i++;
                 // cont.nextPage(duration: Duration(seconds: 1), curve: Curves.easeIn);
@@ -267,11 +260,8 @@ class _MoreStoriesState extends State<MoreStories> {
               progressPosition: ProgressPosition.top,
               repeat: false,
               inline: true,
-            );
-          },
-          itemCount: widget.docu.length,
-          controller: pageController,
-        ),
+            ),
+
       ),
       Padding(
         padding: const EdgeInsets.only(top: 50, left: 20),

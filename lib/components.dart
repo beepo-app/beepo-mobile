@@ -287,8 +287,7 @@ class _ChatTabState extends State<ChatTab> {
                                 uid: snapshot.data.docs[index].id,
                                 docu: snapshot.data.docs,
                                 myStory: false,
-                                // hasStory: false,
-                                // useNetworkImage: true,
+                                index: index,
                               );
                             },
                           );
