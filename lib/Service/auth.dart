@@ -22,6 +22,7 @@ class AuthService {
 
   //Get UserID
   String get userID => box.get('userId', defaultValue: '');
+
   String get uid => box.get('uid', defaultValue: '');
 
   //Get User token
@@ -79,11 +80,11 @@ class AuthService {
         box.put('userData', data['user']);
 
         UserModel user = UserModel(
-            uid: data['user']['uid'],
-            searchKeywords: createKeywords(data['user']['username']),
-            name: displayName,
-            image: imageUrl,
-            userName: data['user']['username'],
+          uid: data['user']['uid'],
+          searchKeywords: createKeywords(data['user']['username']),
+          name: displayName,
+          image: imageUrl,
+          userName: data['user']['username'],
         );
         await FirebaseFirestore.instance
             .collection('users')
@@ -301,6 +302,16 @@ class AuthService {
       );
 
       var data = json.decode(response.body);
+     Map me = await getUser();
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(me['uid'])
+          .update(UserModel(
+                  name: displayName,
+                  userName: username,
+                  image: imgUrl,
+                  uid: me['uid'])
+              .toJson());
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       } else {
