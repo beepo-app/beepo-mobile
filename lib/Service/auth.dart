@@ -109,16 +109,15 @@ class AuthService {
         headers: {
           'Accept': 'application/json',
           Headers.bearer: AuthService().accessToken,
-          Headers.context: AuthService().contextId,
         },
       );
 
       log(response.body.toString());
 
       if (response.statusCode == 200) {
-        // Map data = json.decode(response.body);
-        // Hive.box('beepo').put('userData', data);
-        return {};
+        Map data = json.decode(response.body);
+        box.put('userData', data);
+        return data;
       } else {
         return null;
       }
@@ -139,7 +138,8 @@ class AuthService {
       box.put('privateKey', keys['privateKey']);
       box.put('publicKey', keys['publicKey']);
 
-      String encryptedSeedphrase = await EncryptionService().encrypt(seedPhrase);
+      String encryptedSeedphrase =
+          await EncryptionService().encrypt(seedPhrase);
       String encryptedPin = await EncryptionService().encrypt(pin);
 
       bool acctFound = await verifyPhrase(encryptedSeedphrase);
@@ -264,8 +264,8 @@ class AuthService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map result = jsonDecode(response.body);
 
-        String dd =
-            await EncryptionService().getSeedPhrase(seedPhrase: result['seedPhrase']);
+        String dd = await EncryptionService()
+            .getSeedPhrase(seedPhrase: result['seedPhrase']);
         return dd;
       } else {
         print(response.body);
@@ -281,10 +281,9 @@ class AuthService {
     String displayName,
     String username,
     String imgUrl,
+    String description,
   }) async {
     try {
-      print(AuthService().contextId);
-
       final response = await http.post(
         Uri.parse('$baseUrl/users/edit'),
         headers: {
@@ -296,17 +295,15 @@ class AuthService {
           'displayName': displayName,
           'username': username,
           'profilePictureUrl': imgUrl,
-          'description': 'nnn'
+          'description': description,
         }),
       );
 
+      var data = json.decode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        var data = json.decode(response.body);
-        print(data);
-
         return true;
       } else {
-        showToast(response.body);
+        showToast(data['message']);
         return false;
       }
     } catch (e) {

@@ -33,6 +33,7 @@ class _EditProfileState extends State<EditProfile> {
     super.initState();
     displayNameController.text = widget.data['displayName'];
     userNameController.text = widget.data['username'];
+    bioController.text = widget.data['description'] ?? '';
   }
 
   @override
@@ -63,7 +64,8 @@ class _EditProfileState extends State<EditProfile> {
                                   width: 120,
                                   color: Colors.grey[300],
                                   child: const Center(
-                                    child: Icon(Iconsax.user, color: primaryColor),
+                                    child:
+                                        Icon(Iconsax.user, color: primaryColor),
                                   ),
                                 )
                               : CachedNetworkImage(
@@ -71,7 +73,8 @@ class _EditProfileState extends State<EditProfile> {
                                   height: 120,
                                   width: 120,
                                   fit: BoxFit.cover,
-                                  progressIndicatorBuilder: (context, url, progress) {
+                                  progressIndicatorBuilder:
+                                      (context, url, progress) {
                                     return Center(
                                       child: CircularProgressIndicator(
                                         value: progress.progress,
@@ -86,7 +89,8 @@ class _EditProfileState extends State<EditProfile> {
                       child: GestureDetector(
                         onTap: () async {
                           //pick image
-                          file = await ImageUtil().pickProfileImage(context: context);
+                          file = await ImageUtil()
+                              .pickProfileImage(context: context);
                         },
                         child: Container(
                           height: 40,
