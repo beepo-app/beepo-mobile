@@ -36,6 +36,7 @@ class _EditProfileState extends State<EditProfile> {
     super.initState();
     displayNameController.text = widget.data['displayName'];
     userNameController.text = widget.data['username'];
+    bioController.text = widget.data['description'] ?? '';
   }
 
   @override
