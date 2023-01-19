@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:beepo/Utils/styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -37,10 +37,24 @@ class _MyMessagesState extends State<MyMessages> {
         .doc(widget.uid)
         .get();
 
-    img = profile['image'];
-    displayName = profile['name'];
-    userName = profile['userName'];
-    setState(() {});
+
+    setState(() {
+      img = profile['image'];
+      displayName = profile['name'];
+      userName = profile['userName'];
+    });
+  }
+
+  get(String receiverID) async {
+    final tet = await FirebaseFirestore.instance
+        .collection('messages')
+        .doc(userM['uid'])
+        .collection('userMessages')
+        .doc(receiverID)
+        .collection('messageList')
+        .where('sender', isEqualTo: userM['uid'])
+        .get();
+    return tet.docs.isEmpty;
   }
 
   bool isTapped = true;
@@ -49,6 +63,9 @@ class _MyMessagesState extends State<MyMessages> {
   void initState() {
     // TODO: implement initState
     getProfileData();
+    // setState(() {
+    //
+    // });
     super.initState();
   }
 
@@ -56,19 +73,139 @@ class _MyMessagesState extends State<MyMessages> {
   Widget build(BuildContext context) {
     try {
       return ListTile(
-        onTap: () {
-          Get.to(ChatDm(
-            model: UserModel(
-              uid: widget.uid,
-              image: img,
-              name: displayName,
-              userName: userName,
-              searchKeywords: createKeywords(userName),
-            ),
-          ));
+        onTap: () async {
+          final newChat = await get(widget.uid);
+          newChat == true
+              ? {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text('Accept Message Request'),
+                          content: Text(
+                              'This message is not from one of your friends. '
+                              'Accept request or decline.'),
+                          actions: [
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Get.to(ChatDm(
+                                          model: UserModel(
+                                            uid: widget.uid,
+                                            image: img,
+                                            name: displayName,
+                                            userName: userName,
+                                            searchKeywords:
+                                                createKeywords(userName),
+                                          ),
+                                        ));
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: secondaryColor,
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        padding: EdgeInsets.all(10),
+                                        child: Text(
+                                          'Accept',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        FirebaseFirestore.instance
+                                            .collection('conversation')
+                                            .doc(userM['uid'])
+                                            .collection("currentConversation")
+                                            .doc(widget.uid)
+                                            .delete();
+                                        FirebaseFirestore.instance
+                                            .collection('conversation')
+                                            .doc(widget.uid)
+                                            .collection("currentConversation")
+                                            .doc(userM['uid'])
+                                            .delete();
+                                        var collect = await FirebaseFirestore
+                                            .instance
+                                            .collection('messages')
+                                            .doc(userM['uid'])
+                                            .collection('userMessages')
+                                            .doc(widget.uid)
+                                            .collection('messageList')
+                                            .get();
+                                        for (var doc in collect.docs) {
+                                          await doc.reference.delete();
+                                        }
+                                        // .doc(widget.uid).delete();
+                                        var collect2 = await FirebaseFirestore
+                                            .instance
+                                            .collection('messages')
+                                            .doc(widget.uid)
+                                            .collection('userMessages')
+                                            .doc(userM['uid'])
+                                            .collection('messageList')
+                                            .get();
+                                        for (var docr in collect2.docs) {
+                                          await docr.reference.delete();
+                                        }
+                                        // .doc(userM['uid']).delete();
+                                        Navigator.pop(context);
+                                      },
+                                      child: Container(
+                                        child: Text(
+                                          'Decline',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                            color: secondaryColor,
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        );
+                      })
+                }
+              : Get.to(ChatDm(
+                  model: UserModel(
+                    uid: widget.uid,
+                    image: img,
+                    name: displayName,
+                    userName: userName,
+                    searchKeywords: createKeywords(userName),
+                  ),
+                ));
           // setState(() {
           isTapped = true;
           // });
+          // }
         },
         contentPadding: EdgeInsets.zero,
         leading: SizedBox(
@@ -102,15 +239,27 @@ class _MyMessagesState extends State<MyMessages> {
                 ),
               ),
             ),
-            Text(
-              // '${pro.last['created']} : ${}',
-              DateFormat('HH:mm')
-                  .format(widget.docu[widget.index]['created'].toDate()),
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
+            Column(
+              children: [
+                Text(
+                  DateFormat('HH:mm')
+                      .format(widget.docu[widget.index]['created'].toDate()),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  DateFormat('d:M:y')
+                      .format(widget.docu[widget.index]['created'].toDate()),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 8,
+                    fontWeight: FontWeight.w400,
+                  ),
+                )
+              ],
             ),
           ],
         ),
@@ -132,8 +281,6 @@ class _MyMessagesState extends State<MyMessages> {
                 ),
         ),
       );
-      // }
-      return Center(child: SizedBox());
     } catch (e) {
       print(e);
     }

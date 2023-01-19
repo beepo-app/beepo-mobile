@@ -14,7 +14,6 @@ class BubbleStories extends StatefulWidget {
     this.docu,
     this.hasStory = true,
     this.myStory,
-    this.index,
     // this.useNetworkImage = false,
   }) : super(key: key);
 
@@ -22,7 +21,6 @@ class BubbleStories extends StatefulWidget {
   final String uid;
   final List docu;
   final bool myStory;
-  final int index;
 
   @override
   State<BubbleStories> createState() => _BubbleStoriesState();
@@ -32,37 +30,6 @@ class _BubbleStoriesState extends State<BubbleStories> {
   String img = '';
   String displayName = '';
   String userName = '';
-
-  void getPage() async {
-    for (final page in widget.docu) {
-      pages.add(StreamBuilder<List<StoryModel>>(
-          stream: context
-              .read<StoryDownloadProvider>()
-              .getFriendsStories(page['uid']),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              List<StoryModel> uset = snapshot.data;
-              UserModel beta = UserModel(
-                      uid: page['uid'],
-                      name: page['name'],
-                      image: page['profileImage'],
-                      // userName: userName,
-              )
-                  .copyWith(stories: uset);
-              return MoreStories(
-                uid: page['uid'],
-                docu: widget.docu,
-                user: beta,
-              );
-            }
-            return const Center(
-              child: CircularProgressIndicator(
-                color: primaryColor,
-              ),
-            );
-          }));
-    }
-  }
 
   void getProfileData() async {
     var profile = await FirebaseFirestore.instance
@@ -76,57 +43,56 @@ class _BubbleStoriesState extends State<BubbleStories> {
     setState(() {});
   }
 
-  List<Widget> pages = [];
-
-  // getPages() {
-  //
-  // }
-
-  PageController pageController;
-
   @override
   void initState() {
-    getPage();
     getProfileData();
     super.initState();
   }
-
-  int selectedIndex = 0;
 
   // final bool useNetworkImage;
   @override
   Widget build(BuildContext context) {
     if (widget.myStory == false) {
       return InkWell(
-
         onTap: () {
-          setState(() {
-            pageController = PageController(initialPage: widget.index);
-          });
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => PageView.builder(
-                        itemBuilder: (context, index) {
-
-                          print('number of pages ${pages.length}');
-
-                          return pages[index];
-                        },
-                        itemCount: pages.length,
-                        controller: pageController,
-
-                        onPageChanged: (bit) {
-                          // setState(() {
-                          //   selectedIndex = selectedIndex + 1;
-                          // });
-                          // pageController.animateToPage(
-                          //     pageController.page.toInt() + 1,
-                          //     duration: Duration(microseconds: 300),
-                          //     curve: Curves.easeIn);
-                        },
-                      )));
-
+                  builder: (context) => StreamBuilder<List<StoryModel>>(
+                      stream: context
+                          .read<StoryDownloadProvider>()
+                          .getFriendsStories(widget.uid),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          List<StoryModel> uset = snapshot.data;
+                          UserModel beta = UserModel(
+                                  uid: widget.uid,
+                                  name: displayName,
+                                  image: img,
+                                  userName: userName)
+                              .copyWith(stories: uset);
+                          // if (DateTime.now()
+                          //         .difference(
+                          //             beta.stories[0].createdDate.toDate())
+                          //         .inHours >
+                          //     14) {
+                          //   context
+                          //       .read<StoryDownloadProvider>()
+                          //       .delete(beta.stories[0]);
+                          //
+                          // }
+                          return MoreStories(
+                            uid: widget.uid,
+                            docu: widget.docu,
+                            user: beta,
+                          );
+                        }
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColor,
+                          ),
+                        );
+                      })));
         },
         child: Column(
           children: [
@@ -139,10 +105,17 @@ class _BubbleStoriesState extends State<BubbleStories> {
                     ),
                     width: 60,
                     height: 60,
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(img),
-                      radius: 30,
-                    ),
+                    child: img != null
+                        ? CircleAvatar(
+                            backgroundImage: NetworkImage(img),
+                            radius: 30,
+                          )
+                        : const CircleAvatar(
+                            child: Icon(
+                              Icons.person,
+                              color: secondaryColor,
+                            ),
+                          ),
                   )
                 : const SizedBox(
                     width: 1,
@@ -175,7 +148,7 @@ class _BubbleStoriesState extends State<BubbleStories> {
                   width: 1,
                 ),
           Text(
-            widget.hasStory ? displayName : ' ',
+            widget.hasStory ? 'Your Moments' : ' ',
             style: const TextStyle(color: Colors.white, fontSize: 10),
           ),
         ],

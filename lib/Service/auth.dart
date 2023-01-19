@@ -303,6 +303,7 @@ class AuthService {
 
       var data = json.decode(response.body);
      Map me = await getUser();
+     final search = createKeywords(username);
       await FirebaseFirestore.instance
           .collection('users')
           .doc(me['uid'])
@@ -310,6 +311,7 @@ class AuthService {
                   name: displayName,
                   userName: username,
                   image: imgUrl,
+                  searchKeywords: search,
                   uid: me['uid'])
               .toJson());
       if (response.statusCode == 200 || response.statusCode == 201) {

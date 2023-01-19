@@ -237,6 +237,7 @@ class _AddStoryState extends State<AddStory> {
                         fontStyle: FontStyle.italic,
                         color: Colors.white
                       ),
+
                       suffixIcon: GestureDetector(
                           child: Icon(Icons.change_circle_outlined, color: Colors.white,),
                         onTap: (){
@@ -260,6 +261,7 @@ class _AddStoryState extends State<AddStory> {
                     ),
                     expands: true,
                     maxLines: null,
+                    style: TextStyle(color: Colors.white),
                     minLines: null,
                     controller: controller,
                   ),

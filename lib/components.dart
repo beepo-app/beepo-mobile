@@ -287,7 +287,7 @@ class _ChatTabState extends State<ChatTab> {
                                 uid: snapshot.data.docs[index].id,
                                 docu: snapshot.data.docs,
                                 myStory: false,
-                                index: index,
+                                // index: index,
                               );
                             },
                           );
@@ -376,6 +376,7 @@ class _ChatTabState extends State<ChatTab> {
                           builder:
                               (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                             if (snapshot.hasData) {
+
                               if (snapshot.data.docs.isEmpty) {
                                 return Padding(
                                   padding: const EdgeInsets.only(top: 50),
@@ -486,7 +487,7 @@ class _CallTabState extends State<CallTab> {
               ),
               title: const Text(
                 "Precious ",
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.black,
                   fontSize: 14,
                 ),

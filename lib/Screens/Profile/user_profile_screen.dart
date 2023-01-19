@@ -64,17 +64,31 @@ class _UserProfileState extends State<UserProfile> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: 56),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(60),
-                    child: CachedNetworkImage(
-                      width: 110,
-                      height: 110,
-                      imageUrl: widget.model.image,
-                      placeholder: (context, url) =>
-                          Center(child: CircularProgressIndicator()),
-                      errorWidget: (context, url, error) => Icon(Icons.person, color: secondaryColor,),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) {
+                            return FullScreenImage(
+                              imageUrl: widget.model.image,
+                              tag: "imagex",
+                            );
+                          }));
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(60),
+                      child: Hero(
+                        tag: 'imagex',
+                        child: CachedNetworkImage(
+                          width: 110,
+                          height: 110,
+                          imageUrl: widget.model.image,
+                          placeholder: (context, url) =>
+                              Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) => Icon(Icons.person, color: secondaryColor,),
 filterQuality: FilterQuality.high,
-                      // fit: BoxFit.cover,
+                          // fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(height: 12),

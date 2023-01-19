@@ -2,6 +2,7 @@
 
 import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
 import 'package:beepo/story_download_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
@@ -195,9 +196,26 @@ class _MoreStoriesState extends State<MoreStories> {
     i = 0;
     if (DateTime.now()
             .difference(widget.user.stories[0].createdDate.toDate())
-            .inSeconds >
-        12 * 3600) {
-      context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
+            .inHours >
+        13) {
+      if(widget.user.stories.length != 1){
+        context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
+        FirebaseFirestore.instance
+            .collection('usersStories')
+            .doc(widget.user.stories[0].uid)
+            .delete();
+      }
+      else{
+        Navigator.pop(context);
+        context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
+        FirebaseFirestore.instance
+            .collection('usersStories')
+            .doc(widget.user.stories[0].uid)
+            .delete();
+        setState(() {
+
+        });
+      }
     }
     super.initState();
   }
@@ -264,7 +282,7 @@ class _MoreStoriesState extends State<MoreStories> {
 
       ),
       Padding(
-        padding: const EdgeInsets.only(top: 50, left: 20),
+        padding: const EdgeInsets.only(top: 80, left: 20),
         child: GestureDetector(
           onTap: () {
             Navigator.push(
