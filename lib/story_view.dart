@@ -62,10 +62,27 @@ class _HomesState extends State<Homes> {
     // calDate(date);
     i = 0;
     if (DateTime.now()
-            .difference(widget.user.stories[0].createdDate.toDate())
-            .inSeconds >
-        12 * 3600) {
-      context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
+        .difference(widget.user.stories[0].createdDate.toDate())
+        .inHours >
+        24) {
+      if(widget.user.stories.length != 1){
+        context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
+        FirebaseFirestore.instance
+            .collection('usersStories')
+            .doc(widget.user.stories[0].uid)
+            .delete();
+      }
+      else{
+        Navigator.pop(context);
+        context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
+        FirebaseFirestore.instance
+            .collection('usersStories')
+            .doc(widget.user.stories[0].uid)
+            .delete();
+        setState(() {
+
+        });
+      }
     }
     super.initState();
   }
@@ -197,7 +214,7 @@ class _MoreStoriesState extends State<MoreStories> {
     if (DateTime.now()
             .difference(widget.user.stories[0].createdDate.toDate())
             .inHours >
-        13) {
+        24) {
       if(widget.user.stories.length != 1){
         context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
         FirebaseFirestore.instance
