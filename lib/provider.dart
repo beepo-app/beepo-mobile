@@ -356,6 +356,7 @@ class ChatNotifier extends ChangeNotifier {
       // });
     }
   }
+
   void pauseAudio() async {
     AudioPlayer player = AudioPlayer();
     player.setUrl(recordFilePath, isLocal: true);
@@ -374,6 +375,25 @@ class ChatNotifier extends ChangeNotifier {
     });
   }
 
+  String img = '';
+  String displayName = '';
+  String userName = '';
+
+  void getProfileData(String usi) async {
+    var profile =
+        await FirebaseFirestore.instance.collection('users').doc(usi).get();
+
+    // setState(() {
+    img = profile['image'];
+    notifyListeners();
+
+    displayName = profile['name'];
+    notifyListeners();
+    userName = profile['userName'];
+    notifyListeners();
+    // });
+  }
+
   Future<void> play() async {
     if (recordFilePath != null && File(recordFilePath).existsSync()) {
       AudioPlayer audioPlayer = AudioPlayer();
@@ -382,7 +402,6 @@ class ChatNotifier extends ChangeNotifier {
         isLocal: true,
       );
     }
-
   }
 
   String recordFilePath;
