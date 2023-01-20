@@ -347,6 +347,7 @@ class StatusProfile extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20,
                   color: Colors.white,
+                  decoration: TextDecoration.none
                 ),
               ),
               SizedBox(
@@ -357,6 +358,7 @@ class StatusProfile extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 10,
                   color: Colors.white,
+                    decoration: TextDecoration.none
                 ),
               ),
             ],

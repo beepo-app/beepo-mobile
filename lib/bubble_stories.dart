@@ -3,6 +3,7 @@ import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:beepo/story_download_provider.dart';
 import 'package:beepo/story_view.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -105,9 +106,9 @@ class _BubbleStoriesState extends State<BubbleStories> {
                     ),
                     width: 60,
                     height: 60,
-                    child: img != null
+                    child: img.isNotEmpty
                         ? CircleAvatar(
-                            backgroundImage: NetworkImage(img),
+                            backgroundImage: CachedNetworkImageProvider(img),
                             radius: 30,
                           )
                         : const CircleAvatar(
@@ -115,7 +116,8 @@ class _BubbleStoriesState extends State<BubbleStories> {
                               Icons.person,
                               color: secondaryColor,
                             ),
-                          ),
+                      backgroundColor: secondaryColor,
+                    ),
                   )
                 : const SizedBox(
                     width: 1,
@@ -139,9 +141,17 @@ class _BubbleStoriesState extends State<BubbleStories> {
                   ),
                   width: 60,
                   height: 60,
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(img),
-                    radius: 30,
+                  child: img.isNotEmpty
+                      ? CircleAvatar(
+                          backgroundImage: CachedNetworkImageProvider(img),
+                          radius: 30,
+                        )
+                      : const CircleAvatar(
+                          child: Icon(
+                            Icons.person,
+                            color: secondaryColor,
+                          ),
+                    backgroundColor: secondaryColor,
                   ),
                 )
               : const SizedBox(

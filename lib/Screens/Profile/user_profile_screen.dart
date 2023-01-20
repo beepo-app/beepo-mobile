@@ -11,6 +11,8 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:iconsax/iconsax.dart';
 
+import '../../media_links_docs.dart';
+
 class UserProfile extends StatefulWidget {
   // const UserProfile({Key key}) : super(key: key);
   final UserModel model;
@@ -182,171 +184,177 @@ class _UserProfileState extends State<UserProfile> {
               ),
             ),
             Expanded(
-                child: Container(
-                    padding: EdgeInsets.only(left: 20, right: 20),
-                    color: Colors.white,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+              child: Container(
+                padding: EdgeInsets.only(left: 20, right: 20),
+                color: Colors.white,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 30),
+                      Center(
+                        child: Text(
+                          "Hi there, am new to Beepo and I love it",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xff0e014c),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Divider(),
+                      SizedBox(height: 10),
+                      Row(
                         children: [
-                          SizedBox(height: 30),
-                          Center(
+                          Expanded(
                             child: Text(
-                              "Hi there, am new to Beepo and I love it",
-                              textAlign: TextAlign.center,
+                              "Mute notifications",
                               style: TextStyle(
                                 color: Color(0xff0e014c),
                                 fontSize: 14,
-                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
-                          SizedBox(height: 10),
-                          Divider(),
-                          SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Mute notifications",
-                                  style: TextStyle(
-                                    color: Color(0xff0e014c),
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Switch(
-                                value: enable,
-                                activeColor: secondaryColor,
-                                onChanged: (value) {
-                                  setState(() {
-                                    enable = value;
-                                  });
-                                },
-                              ),
-                            ],
+                          Switch(
+                            value: enable,
+                            activeColor: secondaryColor,
+                            onChanged: (value) {
+                              setState(() {
+                                enable = value;
+                              });
+                            },
                           ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Allow Screenshot",
-                                  style: TextStyle(
-                                    color: Color(0xff0e014c),
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Switch(
-                                value: enable2,
-                                activeColor: secondaryColor,
-                                onChanged: (val) {
-                                  setState(() {
-                                    enable2 = val;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Allow media",
-                                  style: TextStyle(
-                                    color: Color(0xff0e014c),
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Switch(
-                                value: enable3,
-                                activeColor: secondaryColor,
-                                onChanged: (value) {
-                                  setState(() {
-                                    enable3 = value;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-                          Divider(),
-                          SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Shared Media, Links and Docs',
-                                style: TextStyle(
-                                  fontFamily: 'Roboto',
-                                  color: txtColor1,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Icon(
-                                Icons.arrow_forward_ios_outlined,
-                                color: secondaryColor,
-                                size: 15,
-                              )
-                            ],
-                          ),
-                          SizedBox(height: 22),
-                          StreamBuilder(
-                              stream: FirebaseFirestore.instance
-                                  .collection('messages')
-                                  .doc(userM['uid'])
-                                  .collection('userMessages')
-                                  .doc(widget.model.uid)
-                                  .collection('messageList')
-                                  .where('type', isEqualTo: 'photo')
-                                  .snapshots(),
-                              builder: (context,
-                                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                                if (snapshot.hasData) {
-                                  return GridView.count(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    padding: const EdgeInsets.only(bottom: 20),
-                                    mainAxisSpacing: 20,
-                                    shrinkWrap: true,
-                                    crossAxisSpacing: 15,
-                                    crossAxisCount: 3,
-                                    children: List.generate(
-                                        snapshot.data.docs.length, (index) {
-                                      return GestureDetector(
-                                        // onTap: () => Get.to(Store()),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(10),
-                                          height: 91,
-                                          width: 102,
-                                          decoration: BoxDecoration(
-                                            // color: Colors.grey,
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                          ),
-                                          child: ClipRRect(
-                                            child: CachedNetworkImage(
-                                              imageUrl: snapshot
-                                                  .data.docs[index]['content'],
-                                              fit: BoxFit.fill,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                  );
-                                }
-                                return CircularProgressIndicator(
-                                  color: primaryColor,
-                                );
-                              }),
                         ],
                       ),
-                    ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "Allow Screenshot",
+                              style: TextStyle(
+                                color: Color(0xff0e014c),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          Switch(
+                            value: enable2,
+                            activeColor: secondaryColor,
+                            onChanged: (val) {
+                              setState(() {
+                                enable2 = val;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "Allow media",
+                              style: TextStyle(
+                                color: Color(0xff0e014c),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          Switch(
+                            value: enable3,
+                            activeColor: secondaryColor,
+                            onChanged: (value) {
+                              setState(() {
+                                enable3 = value;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      Divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Shared Media, Links and Docs',
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              color: txtColor1,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MediaLinks(
+                                            model: widget.model,
+                                          )));
+                            },
+                            icon: Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              color: secondaryColor,
+                              size: 15,
+                            ),
+                          )
+                        ],
+                      ),
+                      StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('messages')
+                              .doc(userM['uid'])
+                              .collection('userMessages')
+                              .doc(widget.model.uid)
+                              .collection('messageList')
+                              .where('type', isEqualTo: 'photo')
+                              .snapshots(),
+                          builder:
+                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.hasData) {
+                              return GridView.count(
+                                physics: NeverScrollableScrollPhysics(),
+                                padding: const EdgeInsets.only(bottom: 20),
+                                mainAxisSpacing: 20,
+                                shrinkWrap: true,
+                                crossAxisSpacing: 15,
+                                crossAxisCount: 3,
+                                children: List.generate(
+                                    snapshot.data.docs.length, (index) {
+                                  return GestureDetector(
+                                    // onTap: () => Get.to(Store()),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(10),
+                                      height: 91,
+                                      width: 102,
+                                      decoration: BoxDecoration(
+                                        // color: Colors.grey,
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child: ClipRRect(
+                                        child: CachedNetworkImage(
+                                          imageUrl: snapshot.data.docs[index]
+                                              ['content'],
+                                          fit: BoxFit.fill,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              );
+                            }
+                            return CircularProgressIndicator(
+                              color: primaryColor,
+                            );
+                          }),
+                    ],
+                  ),
                 ),
+              ),
             ),
           ],
         ),
