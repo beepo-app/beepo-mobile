@@ -249,55 +249,55 @@ class _MoreStoriesState extends State<MoreStories> {
     return Stack(children: [
       Material(
         type: MaterialType.transparency,
-        child: StoryView(
-              controller: controller,
-              storyItems: storyItems,
-              onStoryShow: (s) {
-                print("Showing a story");
-              },
-              onVerticalSwipeComplete: (f) {
-                // if (f == Direction.up) {
-                //   if (i < storyItems.length - 1) {
-                //     controller.next();
-                //     setState(() {
-                //       i = i + 1;
-                //     });
-                //   } else {
-                //     // pageController.nextPage(
-                //     //     duration: Duration(microseconds: 300),
-                //     //     curve: Curves.easeIn);
-                //     Navigator.pop(context);
-                //   }
-                //   // Navigator.pop(context);
-                // } else if (f == Direction.down) {
-                //   controller.previous();
-                //   if (i != 0) {
-                //     setState(() {
-                //       i = i - 1;
-                //     });
-                //   } else {
-                //     Navigator.pop(context);
-                //   }
-                // }
-              },
-              onComplete: () {
-                // if (index < (widget.docu.length - 1)) {
-                //   pageController.nextPage(
-                //       duration: Duration(microseconds: 300),
-                //       curve: Curves.easeIn);
-                // }
-                Navigator.pop(context);
-                // i++;
-                // cont.nextPage(duration: Duration(seconds: 1), curve: Curves.easeIn);
+        child:  StoryView(
+                  controller: controller,
+                  storyItems: storyItems,
+                  onStoryShow: (s) {
+                    print("Showing a story");
+                  },
+                  onVerticalSwipeComplete: (f) {
+                    if (f == Direction.up) {
+                      if (i < storyItems.length - 1) {
+                        controller.next();
+                        setState(() {
+                          i = i + 1;
+                        });
+                      } else {
+                        // pageController.nextPage(
+                        //     duration: Duration(microseconds: 300),
+                        //     curve: Curves.easeIn);
+                        Navigator.pop(context);
+                      }
+                      // Navigator.pop(context);
+                    } else if (f == Direction.down) {
+                      controller.previous();
+                      if (i != 0) {
+                        setState(() {
+                          i = i - 1;
+                        });
+                      } else {
+                        Navigator.pop(context);
+                      }
+                    }
+                  },
+                  onComplete: () {
+                    // if (index < (widget.docu.length - 1)) {
+                    //   pageController.nextPage(
+                    //       duration: Duration(microseconds: 300),
+                    //       curve: Curves.easeIn);
+                    // }
+                    Navigator.pop(context);
+                    // i++;
+                    // cont.nextPage(duration: Duration(seconds: 1), curve: Curves.easeIn);
 
-                print("Completed a cycle");
-              },
-              progressPosition: ProgressPosition.top,
-              repeat: false,
-              inline: true,
-            ),
-
+                    print("Completed a cycle");
+                  },
+                  progressPosition: ProgressPosition.top,
+                  repeat: false,
+                  inline: true,
+                ),
       ),
+
       Padding(
         padding: const EdgeInsets.only(top: 80, left: 20),
         child: GestureDetector(

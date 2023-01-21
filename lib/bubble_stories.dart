@@ -6,21 +6,24 @@ import 'package:beepo/story_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 
 class BubbleStories extends StatefulWidget {
   const BubbleStories({
     Key key,
-    @required this.uid,
+     this.index,
     this.docu,
+    @required this.uid,
     this.hasStory = true,
     this.myStory,
     // this.useNetworkImage = false,
   }) : super(key: key);
 
   final bool hasStory;
-  final String uid;
+  final int index;
   final List docu;
+  final String uid;
   final bool myStory;
 
   @override
@@ -28,25 +31,13 @@ class BubbleStories extends StatefulWidget {
 }
 
 class _BubbleStoriesState extends State<BubbleStories> {
-  String img = '';
-  String displayName = '';
-  String userName = '';
 
-  void getProfileData() async {
-    var profile = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.uid)
-        .get();
-
-    img = profile['image'];
-    displayName = profile['name'];
-    userName = profile['userName'];
-    setState(() {});
-  }
+  Map userM = Hive.box('beepo').get('userData');
+  PageController cont;
 
   @override
   void initState() {
-    getProfileData();
+    // getProfileData();
     super.initState();
   }
 
@@ -62,30 +53,30 @@ class _BubbleStoriesState extends State<BubbleStories> {
                   builder: (context) => StreamBuilder<List<StoryModel>>(
                       stream: context
                           .read<StoryDownloadProvider>()
-                          .getFriendsStories(widget.uid),
+                          .getFriendsStories(widget.docu[widget.index]['uid']),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           List<StoryModel> uset = snapshot.data;
                           UserModel beta = UserModel(
                                   uid: widget.uid,
-                                  name: displayName,
-                                  image: img,
-                                  userName: userName)
+                                  name: widget.docu[widget.index]['name'],
+                                  image: widget.docu[widget.index]['profileImage'],
+                                  // userName: userName,
+                          )
                               .copyWith(stories: uset);
-                          // if (DateTime.now()
-                          //         .difference(
-                          //             beta.stories[0].createdDate.toDate())
-                          //         .inHours >
-                          //     14) {
-                          //   context
-                          //       .read<StoryDownloadProvider>()
-                          //       .delete(beta.stories[0]);
-                          //
-                          // }
-                          return MoreStories(
-                            uid: widget.uid,
-                            docu: widget.docu,
-                            user: beta,
+                          cont = PageController(initialPage: widget.index);
+
+                          return PageView.builder(
+                          itemCount: widget.docu.length,
+                            itemBuilder: (context, num) {
+                              return MoreStories(
+                                uid: widget.docu[widget.index]['uid'],
+                                docu: widget.docu,
+                                user: beta,
+                              );
+                            },
+                            controller: cont,
+                            // scrollDirection: Axis.vertical,
                           );
                         }
                         return const Center(
@@ -95,73 +86,89 @@ class _BubbleStoriesState extends State<BubbleStories> {
                         );
                       })));
         },
-        child: Column(
-          children: [
-            widget.hasStory
-                ? Container(
-                    margin: const EdgeInsets.only(right: 7.0, top: 10),
-                    padding: const EdgeInsets.all(2.0),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    width: 60,
-                    height: 60,
-                    child: img.isNotEmpty
-                        ? CircleAvatar(
-                            backgroundImage: CachedNetworkImageProvider(img),
-                            radius: 30,
-                          )
-                        : const CircleAvatar(
-                            child: Icon(
-                              Icons.person,
-                              color: secondaryColor,
-                            ),
-                      backgroundColor: secondaryColor,
-                    ),
-                  )
-                : const SizedBox(
-                    width: 1,
-                  ),
-            Text(
-              widget.hasStory ? displayName : ' ',
-              style: const TextStyle(color: Colors.white, fontSize: 10),
-            ),
-          ],
+        child: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('users').where('uid', isEqualTo: widget.uid).snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if(!snapshot.hasData){
+              return const SizedBox();
+            }
+            // usName = snapshot.data.docs[0]['userName'];
+            return Column(
+              children: [
+                widget.hasStory
+                    ? Container(
+                        margin: const EdgeInsets.only(right: 7.0, top: 10),
+                        padding: const EdgeInsets.all(2.0),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                        ),
+                        width: 60,
+                        height: 60,
+                        child: snapshot.data.docs[0]['image'].isNotEmpty
+                            ? CircleAvatar(
+                                backgroundImage: CachedNetworkImageProvider(snapshot.data.docs[0]['image']),
+                                radius: 30,
+                              )
+                            : const CircleAvatar(
+                                child: Icon(
+                                  Icons.person,
+                                  color: secondaryColor,
+                                ),
+                          backgroundColor: secondaryColor,
+                        ),
+                      )
+                    : const SizedBox(
+                        width: 1,
+                      ),
+                Text(
+                  widget.hasStory ? snapshot.data.docs[0]['name'] : ' ',
+                  style: const TextStyle(color: Colors.white, fontSize: 10),
+                ),
+              ],
+            );
+          }
         ),
       );
     } else {
-      return Column(
-        children: [
-          widget.hasStory
-              ? Container(
-                  margin: const EdgeInsets.only(right: 7.0, top: 10),
-                  padding: const EdgeInsets.all(2.0),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  width: 60,
-                  height: 60,
-                  child: img.isNotEmpty
-                      ? CircleAvatar(
-                          backgroundImage: CachedNetworkImageProvider(img),
-                          radius: 30,
-                        )
-                      : const CircleAvatar(
-                          child: Icon(
-                            Icons.person,
-                            color: secondaryColor,
-                          ),
-                    backgroundColor: secondaryColor,
-                  ),
-                )
-              : const SizedBox(
-                  width: 1,
-                ),
-          Text(
-            widget.hasStory ? 'Your Moments' : ' ',
-            style: const TextStyle(color: Colors.white, fontSize: 10),
-          ),
-        ],
+      return StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('users').where('uid', isEqualTo: userM['uid']).snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          return Column(
+            children: [
+              widget.hasStory
+                  ? Container(
+                      margin: const EdgeInsets.only(right: 7.0, top: 10),
+                      padding: const EdgeInsets.all(2.0),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      width: 60,
+                      height: 60,
+                      child: snapshot.data.docs[0]['image'].isNotEmpty
+                          ? CircleAvatar(
+                              backgroundImage: CachedNetworkImageProvider(snapshot.data.docs[0]['image']),
+                              radius: 30,
+                            )
+                          : const CircleAvatar(
+                              child: Icon(
+                                Icons.person,
+                                color: secondaryColor,
+                              ),
+                        backgroundColor: secondaryColor,
+                      ),
+                    )
+                  : const SizedBox(
+                      width: 1,
+                    ),
+              Text(
+                widget.hasStory ? 'Your Moments' : ' ',
+                style: const TextStyle(color: Colors.white, fontSize: 10),
+              ),
+            ],
+          );
+        }
       );
     }
     return const SizedBox.shrink();

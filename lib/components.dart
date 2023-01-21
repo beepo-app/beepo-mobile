@@ -285,6 +285,7 @@ class _ChatTabState extends State<ChatTab> {
 
                               return BubbleStories(
                                 uid: snapshot.data.docs[index].id,
+                                index: index,
                                 docu: snapshot.data.docs,
                                 myStory: false,
                                 // index: index,
