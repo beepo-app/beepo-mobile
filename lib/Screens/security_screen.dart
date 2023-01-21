@@ -1,3 +1,4 @@
+import 'package:beepo/Screens/Profile/phrase_confirmation.dart';
 import 'package:beepo/Screens/Profile/wallet_phrase.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -85,7 +86,8 @@ class _SecurityState extends State<Security> {
                             onChanged: (value) {
                               LocalAuthentication()
                                   .authenticate(
-                                localizedReason: 'Please authenticate to continue',
+                                localizedReason:
+                                    'Please authenticate to continue',
                               )
                                   .then((val) {
                                 if (val) {
@@ -129,7 +131,8 @@ class _SecurityState extends State<Security> {
                         )
                             .then((val) {
                           if (val) {
-                            Get.to(WalletPhraseScreen());
+                            // Get.to(WalletPhraseScreen());
+                            Get.to(PhraseConfirmation());
                           }
                         });
                       },
