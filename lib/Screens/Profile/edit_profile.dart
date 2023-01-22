@@ -186,12 +186,17 @@ class _EditProfileState extends State<EditProfile> {
                       if (file != null) {
                         imgUrl = await MediaService.uploadProfilePicture(file);
                       }
-                      await AuthService().editProfile(
+                      bool result = await AuthService().editProfile(
                         displayName: displayNameController.text,
                         username: userNameController.text,
                         imgUrl: imgUrl,
                       );
-                      Get.back();
+                      if (result) {
+                        showToast('Profile updated successfully');
+                        Get.close(2);
+                      } else {
+                        Get.back();
+                      }
                     }
                   },
                 ),
