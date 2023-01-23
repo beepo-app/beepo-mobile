@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -200,14 +201,21 @@ class _GroupDmState extends State<GroupDm> {
                                   children: [
                                     if (snapshot.data.docs[index]["type"] ==
                                         'message')
-                                      MessageSender(
+                                      Group(
                                         isMe: userM['uid'] ==
                                             snapshot.data.docs[index]["sender"],
-                                        displayname: snapshot.data.docs[index]
-                                            ["displayName"],
                                         text: snapshot.data.docs[index]["text"],
                                         time: snapshot.data.docs[index]
                                             ["created"],
+                                        user: UserModel(
+                                            uid: snapshot.data.docs[index]
+                                                ["sender"],
+                                            name: snapshot.data.docs[index]
+                                                ["displayName"],
+                                            image: snapshot.data.docs[index]
+                                                ["image"],
+                                          userName: snapshot.data.docs[index]["userName"],
+                                        ),
                                       )
                                     else if (snapshot.data.docs[index]
                                             ["type"] ==

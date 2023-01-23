@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, missing_return
 
+import 'package:beepo/Screens/Profile/user_profile_screen.dart';
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
 import 'package:beepo/story_download_provider.dart';
@@ -375,7 +376,6 @@ class _ChatTabState extends State<ChatTab> {
                           builder:
                               (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                             if (snapshot.hasData) {
-
                               if (snapshot.data.docs.isNotEmpty) {
                                 return ListView.separated(
                                   padding: const EdgeInsets.only(top: 10),
@@ -383,7 +383,7 @@ class _ChatTabState extends State<ChatTab> {
                                   shrinkWrap: true,
                                   itemCount: snapshot.data.docs.length,
                                   separatorBuilder: (ctx, i) =>
-                                  const SizedBox(height: 0),
+                                      const SizedBox(height: 0),
                                   itemBuilder: (ctx, index) {
                                     return GroupMessages(
                                       uid: snapshot.data.docs[index].id,
@@ -392,8 +392,7 @@ class _ChatTabState extends State<ChatTab> {
                                     );
                                   },
                                 );
-                              }
-                              else{
+                              } else {
                                 return SizedBox();
                               }
                             }
@@ -412,7 +411,6 @@ class _ChatTabState extends State<ChatTab> {
                           builder:
                               (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                             if (snapshot.hasData) {
-
                               if (snapshot.data.docs.isEmpty) {
                                 return Padding(
                                   padding: const EdgeInsets.only(top: 50),
@@ -445,7 +443,6 @@ class _ChatTabState extends State<ChatTab> {
                             );
                           },
                         ),
-
                       ],
                     ),
                   ),
@@ -665,7 +662,8 @@ class Group extends StatelessWidget {
   final Timestamp time;
   final UserModel user;
 
-  const Group({Key key,
+  const Group({
+    Key key,
     @required this.isMe,
     @required this.text,
     @required this.time,
@@ -695,78 +693,110 @@ class Group extends StatelessWidget {
     }
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: isMe ? Radius.circular(12) : Radius.circular(0),
-            topRight: isMe ? Radius.circular(0) : Radius.circular(12),
-            bottomLeft: Radius.circular(12),
-            bottomRight: Radius.circular(12),
-          ),
-          color: !isMe ? Color(0xffc4c4c4) : Color(0xff0E014C),
-        ),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.5,
-        ),
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment:
-          isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-
-            Text(
-              text,
-              style: isMe
-                  ? TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-              )
-                  : TextStyle(
-                color: Colors.black,
-                fontSize: 14,
+      child: Row(
+        crossAxisAlignment:
+            !isMe ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        mainAxisAlignment:
+            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: [
+          if (!isMe)
+            Padding(
+              padding: const EdgeInsets.only(right: 5),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UserProfile(model: user)));
+                },
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundImage: CachedNetworkImageProvider(user.image),
+                ),
               ),
             ),
-            SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: isMe ? Radius.circular(12) : Radius.circular(0),
+                topRight: isMe ? Radius.circular(0) : Radius.circular(12),
+                bottomLeft: Radius.circular(12),
+                bottomRight: Radius.circular(12),
+              ),
+              color: !isMe ? Color(0xffc4c4c4) : Color(0xff0E014C),
+            ),
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.5,
+            ),
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment:
+                  isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
+                if (!isMe)
+                  Text(
+                    user.name,
+                    style: TextStyle(
+                      color: txtColor1,
+                      fontFamily: 'SignikaNegative',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 Text(
-                  hour.toString() + ":" + min.toString() + ampm,
+                  text,
                   style: isMe
                       ? TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                  )
+                          color: Colors.white,
+                          fontSize: 14,
+                        )
                       : TextStyle(
-                    color: Colors.black,
-                    fontSize: 10,
-                  ),
+                          color: Colors.black,
+                          fontSize: 14,
+                        ),
                 ),
-                isMe
-                    ? SizedBox(width: 5)
-                    : SizedBox(
-                  width: 0,
-                ),
-                isMe
-                    ? Icon(
-                  Icons.done_all,
-                  color: Colors.white,
-                  size: 15,
+                SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      hour.toString() + ":" + min.toString() + ampm,
+                      style: isMe
+                          ? TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                            )
+                          : TextStyle(
+                              color: Colors.black,
+                              fontSize: 10,
+                            ),
+                    ),
+                    isMe
+                        ? SizedBox(width: 5)
+                        : SizedBox(
+                            width: 0,
+                          ),
+                    isMe
+                        ? Icon(
+                            Icons.done_all,
+                            color: Colors.white,
+                            size: 15,
+                          )
+                        : SizedBox(
+                            width: 0,
+                          ),
+                  ],
                 )
-                    : SizedBox(
-                  width: 0,
-                ),
               ],
-            )
-          ],
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
-
 
 class CurrentUserStoryBubble extends StatelessWidget {
   const CurrentUserStoryBubble({

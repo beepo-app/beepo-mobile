@@ -117,3 +117,6 @@ flutter:
     - family: Roboto
       fonts:
         - asset: fonts/Roboto-Regular.ttf
+    - family: SignikaNegative
+      fonts:
+        - asset: fonts/SignikaNegative-Bold.ttf

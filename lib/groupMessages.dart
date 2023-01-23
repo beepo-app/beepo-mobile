@@ -127,7 +127,7 @@ class _GroupMessagesState extends State<GroupMessages> {
           widget.docu[widget.index]['type'] == 'message'
               ? widget.docu[widget.index]['sender'] == userM['uid']
                   ? 'you: ${widget.docu[widget.index]['text']}'
-                  : '${widget.docu[widget.index]['text']}'
+                  : '${widget.docu[widget.index]['displayName']}:${widget.docu[widget.index]['text']}'
               : widget.docu[widget.index]['sender'] == userM['uid']
                   ? 'Media sent '
                   : 'Media recieved',
