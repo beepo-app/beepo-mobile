@@ -14,7 +14,7 @@ import 'Screens/Messaging/chat_dm_screen.dart';
 import 'generate_keywords.dart';
 
 class MyMessages extends StatefulWidget {
-  const MyMessages({@required this.uid, this.index, this.docu});
+  const MyMessages({Key key, @required this.uid, this.index, this.docu}) : super(key: key);
 
   final String uid;
   final int index;

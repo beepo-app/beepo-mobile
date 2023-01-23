@@ -76,4 +76,46 @@ class ChatMethods {
       displaySnack(context, "Please check your internet connection");
     }
   }
+
+  void storeGroupMessages({
+    BuildContext context,
+    String text,
+    String sender,
+    List searchKeywords,
+    String userName,
+    String image,
+    String displayName,
+  }) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("groups")
+          .doc('beepo')
+          .set({
+        'text': text,
+        'sender': sender,
+        'userName': userName,
+        'displayName': displayName,
+        'image': image,
+        'created': Timestamp.now(),
+        'searchKeywords': searchKeywords,
+        'type': 'message',
+      });
+
+
+      await FirebaseFirestore.instance
+          .collection('groupMessages')
+          .add({
+        'text': text,
+        'sender': sender,
+        'created': Timestamp.now(),
+        'type': 'message',
+        'image': image,
+        'userName': userName,
+        'displayName': displayName,
+      });
+
+    } catch (e) {
+      displaySnack(context, "Please check your internet connection");
+    }
+  }
 }

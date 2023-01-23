@@ -23,6 +23,7 @@ import 'Screens/Wallet/token_screen.dart';
 import 'Utils/styles.dart';
 import 'add_story.dart';
 import 'bubble_stories.dart';
+import 'groupMessages.dart';
 import 'myMessages.dart';
 
 class FilledButton extends StatelessWidget {
@@ -369,6 +370,40 @@ class _ChatTabState extends State<ChatTab> {
                       children: [
                         StreamBuilder(
                           stream: FirebaseFirestore.instance
+                              .collection('groups')
+                              .snapshots(),
+                          builder:
+                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.hasData) {
+
+                              if (snapshot.data.docs.isNotEmpty) {
+                                return ListView.separated(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data.docs.length,
+                                  separatorBuilder: (ctx, i) =>
+                                  const SizedBox(height: 0),
+                                  itemBuilder: (ctx, index) {
+                                    return GroupMessages(
+                                      uid: snapshot.data.docs[index].id,
+                                      index: index,
+                                      docu: snapshot.data.docs,
+                                    );
+                                  },
+                                );
+                              }
+                              else{
+                                return SizedBox();
+                              }
+                            }
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          },
+                        ),
+                        StreamBuilder(
+                          stream: FirebaseFirestore.instance
                               .collection('conversation')
                               .doc(userM['uid'] == '' ? ' ' : userM['uid'])
                               .collection("currentConversation")
@@ -410,6 +445,7 @@ class _ChatTabState extends State<ChatTab> {
                             );
                           },
                         ),
+
                       ],
                     ),
                   ),
@@ -623,47 +659,106 @@ class MessageSender extends StatelessWidget {
   }
 }
 
-class MessageReceiver extends StatelessWidget {
+class Group extends StatelessWidget {
+  final bool isMe;
+  final String text;
+  final Timestamp time;
+  final UserModel user;
+
+  const Group({Key key,
+    @required this.isMe,
+    @required this.text,
+    @required this.time,
+    this.user,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    var day = time.toDate().day.toString();
+    var month = time.toDate().month.toString();
+    var year = time.toDate().toString().substring(2);
+    var date = day + '-' + month + '-' + year;
+    var hour = time.toDate().hour;
+    var min = time.toDate().minute;
+
+    var ampm;
+    if (hour > 12) {
+      hour = hour % 12;
+      ampm = 'pm';
+    } else if (hour == 12) {
+      ampm = 'pm';
+    } else if (hour == 0) {
+      hour = 12;
+      ampm = 'am';
+    } else {
+      ampm = 'am';
+    }
     return Align(
-      alignment: Alignment.centerLeft,
+      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(0),
-            topRight: Radius.circular(12),
+            topLeft: isMe ? Radius.circular(12) : Radius.circular(0),
+            topRight: isMe ? Radius.circular(0) : Radius.circular(12),
             bottomLeft: Radius.circular(12),
             bottomRight: Radius.circular(12),
           ),
-          color: Color(0xe50d004c),
+          color: !isMe ? Color(0xffc4c4c4) : Color(0xff0E014C),
         ),
-        padding: const EdgeInsets.all(10),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.5,
         ),
+        padding: const EdgeInsets.all(10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment:
+          isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
+
             Text(
-              "😂🤣 wdy mean?",
-              style: TextStyle(
+              text,
+              style: isMe
+                  ? TextStyle(
                 color: Colors.white,
+                fontSize: 14,
+              )
+                  : TextStyle(
+                color: Colors.black,
                 fontSize: 14,
               ),
             ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Text(
-                "9:13am",
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
+            SizedBox(height: 5),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  hour.toString() + ":" + min.toString() + ampm,
+                  style: isMe
+                      ? TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                  )
+                      : TextStyle(
+                    color: Colors.black,
+                    fontSize: 10,
+                  ),
                 ),
-              ),
+                isMe
+                    ? SizedBox(width: 5)
+                    : SizedBox(
+                  width: 0,
+                ),
+                isMe
+                    ? Icon(
+                  Icons.done_all,
+                  color: Colors.white,
+                  size: 15,
+                )
+                    : SizedBox(
+                  width: 0,
+                ),
+              ],
             )
           ],
         ),
@@ -671,6 +766,7 @@ class MessageReceiver extends StatelessWidget {
     );
   }
 }
+
 
 class CurrentUserStoryBubble extends StatelessWidget {
   const CurrentUserStoryBubble({

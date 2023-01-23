@@ -72,6 +72,8 @@ dependencies:
   audio_waveforms: ^1.0.1
   camera: ^0.10.1
   keyboard_dismisser: ^3.0.0
+  firebase_messaging: ^13.1.0
+  overlay_support: ^2.1.0
 
 #
 

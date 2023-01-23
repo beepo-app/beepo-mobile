@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 
@@ -14,6 +15,11 @@ class BottomNavHome extends StatefulWidget {
 }
 
 class _BottomNavHomeState extends State<BottomNavHome> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   int index = 0;
   List body = [
     ChatScreen(),
