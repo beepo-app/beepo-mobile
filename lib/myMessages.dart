@@ -254,7 +254,7 @@ class _MyMessagesState extends State<MyMessages> {
                           widget.docu[widget.index]['created'].toDate()),
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 12,
+                        fontSize: 10,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

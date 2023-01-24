@@ -56,7 +56,7 @@ packages:
       name: audioplayers
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.18.3"
+    version: "0.20.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -309,6 +309,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.3"
+  firebase_messaging:
+    dependency: "direct main"
+    description:
+      name: firebase_messaging
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "13.1.0"
+  firebase_messaging_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_messaging_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.2.0"
+  firebase_messaging_web:
+    dependency: transitive
+    description:
+      name: firebase_messaging_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.2.0"
   firebase_storage:
     dependency: "direct main"
     description:
@@ -1071,6 +1092,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.1"
+  syncfusion_flutter_core:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_core
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "20.4.44"
+  syncfusion_flutter_sliders:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_sliders
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "20.4.44"
   synchronized:
     dependency: transitive
     description:
@@ -1232,6 +1267,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.0.1"
+  voice_message_package:
+    dependency: "direct main"
+    description:
+      name: voice_message_package
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.74"
   web_socket_channel:
     dependency: "direct main"
     description:

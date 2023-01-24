@@ -35,7 +35,7 @@ dependencies:
   path: any
   permission_handler: any
   record_mp3: ^2.1.0
-  audioplayers: ^0.18.1
+  audioplayers: ^0.20.1
 
   qr_flutter: ^4.0.0
   qr_code_scanner: ^1.0.1
@@ -73,6 +73,9 @@ dependencies:
   camera: ^0.10.1
   keyboard_dismisser: ^3.0.0
   quick_notify: ^0.2.1
+  firebase_messaging: any
+  voice_message_package: ^0.0.74
+
 
 #
 
