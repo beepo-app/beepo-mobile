@@ -8,7 +8,7 @@ import 'Screens/Profile/profile_screen.dart';
 import 'Screens/Wallet/wallet_screen.dart';
 
 class BottomNavHome extends StatefulWidget {
-  BottomNavHome({Key key}) : super(key: key);
+  const BottomNavHome({Key key}) : super(key: key);
 
   @override
   State<BottomNavHome> createState() => _BottomNavHomeState();

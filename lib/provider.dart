@@ -250,7 +250,6 @@ class ChatNotifier extends ChangeNotifier {
       sendPhotoMsg(photoUrl, receiverId: id);
     });
   }
-
   void storeText(newText) {
     chatText = newText;
     notifyListeners();

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:beepo/Screens/Profile/wallet_phrase.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:beepo/Widgets/commons.dart';

@@ -126,7 +126,7 @@ class _VerifyCodeState extends State<VerifyCode> {
 
                     if (result) {
                       showToast('Login successful');
-                      Get.offAll(BottomNavHome());
+                      Get.offAll(const BottomNavHome());
                     }
                   }
                 } else {

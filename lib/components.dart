@@ -26,6 +26,7 @@ import 'add_story.dart';
 import 'bubble_stories.dart';
 import 'groupMessages.dart';
 import 'myMessages.dart';
+import 'notify.dart';
 
 class FilledButton extends StatelessWidget {
   final String text;
@@ -180,13 +181,13 @@ class _ChatTabState extends State<ChatTab> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            // Homes()
-                            // CameraApp()
-                            //       TakePictureScreen(camera: firstCamera,)
-                            AddStory(
-                              camera1: firstCamera,
-                              camera2: secondCamera,
-                            )));
+                            Note()
+                            // AddStory(
+                            //   camera1: firstCamera,
+                            //   camera2: secondCamera,
+                            // )
+                    ),
+                );
               },
               child: Column(
                 children: [

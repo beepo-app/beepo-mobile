@@ -171,6 +171,5 @@ class _BubbleStoriesState extends State<BubbleStories> {
         }
       );
     }
-    return const SizedBox.shrink();
   }
 }

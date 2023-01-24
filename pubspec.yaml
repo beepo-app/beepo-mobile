@@ -74,6 +74,8 @@ dependencies:
   keyboard_dismisser: ^3.0.0
   firebase_messaging: ^13.1.0
   overlay_support: ^2.1.0
+  push: ^0.1.3
+  quick_notify: ^0.2.1
 
 #
 
