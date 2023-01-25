@@ -75,6 +75,9 @@ dependencies:
   quick_notify: ^0.2.1
   firebase_messaging: any
   voice_message_package: ^0.0.74
+  record: ^4.4.4
+  flutter_vibrate: ^1.3.0
+  font_awesome_flutter: ^10.3.0
 
 
 #

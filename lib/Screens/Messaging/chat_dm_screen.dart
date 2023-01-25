@@ -2,6 +2,7 @@
 
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
+import 'package:beepo/record.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +14,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:voice_message_package/voice_message_package.dart';
 
 import '../../Widgets/toasts.dart';
 import '../../bottom_nav.dart';
@@ -31,9 +33,10 @@ class ChatDm extends StatefulWidget {
   State<ChatDm> createState() => _ChatDmState();
 }
 
-class _ChatDmState extends State<ChatDm> {
+class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
   TextEditingController messageController = TextEditingController();
   bool isTyping = true;
+  AnimationController controller;
 
   Map userM = Hive.box('beepo').get('userData');
   int isPlaying;
@@ -41,6 +44,11 @@ class _ChatDmState extends State<ChatDm> {
   @override
   void initState() {
     // TODO: implement initState
+    controller = AnimationController(
+      vsync: this,
+      duration: Duration(microseconds: 100000),
+      reverseDuration: Duration(microseconds: 100000),
+    );
     FirebaseAuth.instance.signInAnonymously();
     isPlaying = -1;
     messageController.addListener(() {
@@ -198,7 +206,8 @@ class _ChatDmState extends State<ChatDm> {
                                     snapshot.data.docs[index]['created'];
                                 var day = time.toDate().day.toString();
                                 var month = time.toDate().month.toString();
-                                var year = time.toDate().toString().substring(2);
+                                var year =
+                                    time.toDate().toString().substring(2);
                                 var date = day + '-' + month + '-' + year;
                                 var hour = time.toDate().hour;
                                 var min = time.toDate().minute;
@@ -227,7 +236,8 @@ class _ChatDmState extends State<ChatDm> {
                                         time: snapshot.data.docs[index]
                                             ["created"],
                                       )
-                                    else if (snapshot.data.docs[index]["type"] ==
+                                    else if (snapshot.data.docs[index]
+                                            ["type"] ==
                                         'audio')
                                       Align(
                                         alignment: (snapshot.data.docs[index]
@@ -235,140 +245,166 @@ class _ChatDmState extends State<ChatDm> {
                                                 userM['uid'])
                                             ? Alignment.centerRight
                                             : Alignment.centerLeft,
-                                        child: Container(
-                                          width:
-                                              MediaQuery.of(context).size.width *
-                                                  0.5,
-                                          constraints: BoxConstraints(
-                                            maxWidth: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.5,
-                                          ),
-                                          padding: EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            color: (snapshot.data.docs[index]
-                                                        ['sender'] !=
-                                                    userM['uid'])
-                                                ? Color(0xffc4c4c4)
-                                                : Color(0xff0E014C),
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: (snapshot.data.docs[index]
-                                                          ['sender'] ==
-                                                      userM['uid'])
-                                                  ? Radius.circular(12)
-                                                  : Radius.circular(0),
-                                              topRight: (snapshot.data.docs[index]
-                                                          ['sender'] ==
-                                                      userM['uid'])
-                                                  ? Radius.circular(0)
-                                                  : Radius.circular(12),
-                                              bottomLeft: Radius.circular(12),
-                                              bottomRight: Radius.circular(12),
-                                            ),
-                                          ),
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  isPlaying != -1
-                                                      ? GestureDetector(
-                                                          child: Icon(
-                                                            Icons.cancel,
-                                                            color: Colors.white,
-                                                          ),
-                                                          onTap: () {
-                                                            // context.read<ChatNotifier>().isPlayingMsg = false;
-                                                            context
-                                                                .read<
-                                                                    ChatNotifier>()
-                                                                .pauseAudio();
-                                                            setState(() {
-                                                              isPlaying = -1;
-                                                            });
-                                                          },
-                                                        )
-                                                      : GestureDetector(
-                                                          child: Icon(
-                                                            Icons.play_arrow,
-                                                            color: Colors.white,
-                                                          ),
-                                                          onTap: () async {
-                                                            setState(() {
-                                                              isPlaying = index;
-                                                            });
-                                                            await context
-                                                                .read<
-                                                                    ChatNotifier>()
-                                                                .loadFile(snapshot
-                                                                            .data
-                                                                            .docs[
-                                                                        index]
-                                                                    ['content']);
-                                                            //  Future.delayed(context.read<ChatNotifier>().dure, (){
-                                                            //   setState(() {
-                                                            //     isPlaying = -1;
-                                                            //
-                                                            //   });
-                                                            // });
-                                                          },
-                                                        ),
-                                                  Center(
-                                                    child: Lottie.asset(
-                                                      'assets/lottie/waves.json',
-                                                      height: 30,
-                                                      width: 100,
-                                                      animate: isPlaying != -1
-                                                          ? true
-                                                          : false,
-                                                      fit: BoxFit.fitHeight,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    '${snapshot.data.docs[index]['duration']}',
-                                                    style: (snapshot.data
-                                                                    .docs[index]
-                                                                ['sender'] ==
-                                                            userM['uid'])
-                                                        ? TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 10,
-                                                          )
-                                                        : TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 10,
-                                                          ),
-                                                  ),
-                                                  Text(
-                                                    // date +
-                                                    //     " " +
-                                                    hour.toString() +
-                                                        ":" +
-                                                        min.toString() +
-                                                        ampm,
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 10,
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                            ],
-                                          ),
+                                        child: VoiceMessage(
+                                          audioSrc: snapshot.data.docs[index]
+                                              ['content'],
+                                          me: snapshot.data.docs[index]
+                                                  ['sender'] ==
+                                              userM['uid'],
+                                          meBgColor: secondaryColor,
+                                          contactBgColor: Color(0xffc4c4c4),
+                                          contactPlayIconColor: Colors.black,
+                                          contactFgColor: Colors.white,
                                         ),
                                       )
+                                    // Align(
+                                    //   alignment: (snapshot.data.docs[index]
+                                    //   ['sender'] ==
+                                    //       userM['uid'])
+                                    //       ? Alignment.centerRight
+                                    //       : Alignment.centerLeft,
+                                    //   child: Container(
+                                    //     width:
+                                    //     MediaQuery
+                                    //         .of(context)
+                                    //         .size
+                                    //         .width *
+                                    //         0.5,
+                                    //     constraints: BoxConstraints(
+                                    //       maxWidth: MediaQuery
+                                    //           .of(context)
+                                    //           .size
+                                    //           .width *
+                                    //           0.5,
+                                    //     ),
+                                    //     padding: EdgeInsets.all(10),
+                                    //     decoration: BoxDecoration(
+                                    //       color: (snapshot.data.docs[index]
+                                    //       ['sender'] !=
+                                    //           userM['uid'])
+                                    //           ? Color(0xffc4c4c4)
+                                    //           : Color(0xff0E014C),
+                                    //       borderRadius: BorderRadius.only(
+                                    //         topLeft: (snapshot.data
+                                    //             .docs[index]
+                                    //         ['sender'] ==
+                                    //             userM['uid'])
+                                    //             ? Radius.circular(12)
+                                    //             : Radius.circular(0),
+                                    //         topRight: (snapshot.data
+                                    //             .docs[index]
+                                    //         ['sender'] ==
+                                    //             userM['uid'])
+                                    //             ? Radius.circular(0)
+                                    //             : Radius.circular(12),
+                                    //         bottomLeft: Radius.circular(12),
+                                    //         bottomRight: Radius.circular(
+                                    //             12),
+                                    //       ),
+                                    //     ),
+                                    //     child: Column(
+                                    //       children: [
+                                    //         Row(
+                                    //           mainAxisAlignment:
+                                    //           MainAxisAlignment
+                                    //               .spaceBetween,
+                                    //           crossAxisAlignment:
+                                    //           CrossAxisAlignment.center,
+                                    //           children: [
+                                    //             isPlaying != -1
+                                    //                 ? GestureDetector(
+                                    //               child: Icon(
+                                    //                 Icons.cancel,
+                                    //                 color: Colors.white,
+                                    //               ),
+                                    //               onTap: () {
+                                    //                 // context.read<ChatNotifier>().isPlayingMsg = false;
+                                    //                 context
+                                    //                     .read<
+                                    //                     ChatNotifier>()
+                                    //                     .pauseAudio();
+                                    //                 setState(() {
+                                    //                   isPlaying = -1;
+                                    //                 });
+                                    //               },
+                                    //             )
+                                    //                 : GestureDetector(
+                                    //               child: Icon(
+                                    //                 Icons.play_arrow,
+                                    //                 color: Colors.white,
+                                    //               ),
+                                    //               onTap: () async {
+                                    //                 setState(() {
+                                    //                   isPlaying = index;
+                                    //                 });
+                                    //                 await context
+                                    //                     .read<
+                                    //                     ChatNotifier>()
+                                    //                     .loadFile(snapshot
+                                    //                     .data
+                                    //                     .docs[
+                                    //                 index]
+                                    //                 ['content']);
+                                    //                 //  Future.delayed(context.read<ChatNotifier>().dure, (){
+                                    //                 //   setState(() {
+                                    //                 //     isPlaying = -1;
+                                    //                 //
+                                    //                 //   });
+                                    //                 // });
+                                    //               },
+                                    //             ),
+                                    //             Center(
+                                    //               child: Lottie.asset(
+                                    //                 'assets/lottie/waves.json',
+                                    //                 height: 30,
+                                    //                 width: 100,
+                                    //                 animate: isPlaying != -1
+                                    //                     ? true
+                                    //                     : false,
+                                    //                 fit: BoxFit.fitHeight,
+                                    //               ),
+                                    //             ),
+                                    //           ],
+                                    //         ),
+                                    //         Row(
+                                    //           mainAxisAlignment:
+                                    //           MainAxisAlignment
+                                    //               .spaceBetween,
+                                    //           children: [
+                                    //             Text(
+                                    //               '${snapshot.data
+                                    //                   .docs[index]['duration']}',
+                                    //               style: (snapshot.data
+                                    //                   .docs[index]
+                                    //               ['sender'] ==
+                                    //                   userM['uid'])
+                                    //                   ? TextStyle(
+                                    //                 color: Colors.white,
+                                    //                 fontSize: 10,
+                                    //               )
+                                    //                   : TextStyle(
+                                    //                 color: Colors.black,
+                                    //                 fontSize: 10,
+                                    //               ),
+                                    //             ),
+                                    //             Text(
+                                    //               // date +
+                                    //               //     " " +
+                                    //               hour.toString() +
+                                    //                   ":" +
+                                    //                   min.toString() +
+                                    //                   ampm,
+                                    //               style: TextStyle(
+                                    //                 color: Colors.white,
+                                    //                 fontSize: 10,
+                                    //               ),
+                                    //             ),
+                                    //           ],
+                                    //         )
+                                    //       ],
+                                    //     ),
+                                    //   ),
+                                    // )
                                     else
                                       Align(
                                         alignment: (snapshot.data.docs[index]
@@ -382,7 +418,8 @@ class _ChatDmState extends State<ChatDm> {
                                           child: GestureDetector(
                                             onTap: () {
                                               Navigator.push(context,
-                                                  MaterialPageRoute(builder: (_) {
+                                                  MaterialPageRoute(
+                                                      builder: (_) {
                                                 return FullScreenImage(
                                                   imageUrl: snapshot.data
                                                       .docs[index]["content"],
@@ -443,69 +480,71 @@ class _ChatDmState extends State<ChatDm> {
             child: Row(
               children: [
                 Expanded(
-                  child:  context.watch<ChatNotifier>().isRecording
+                  child: context.watch<ChatNotifier>().isRecording
                       ? Container(
-                    margin: EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 10, left: 10),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Center(
-                            child: Lottie.asset(
-                              'assets/lottie/recording.json',
-                              height: 40,
-                              width: 27,
-                              fit: BoxFit.fitHeight
+                          margin: EdgeInsets.only(bottom: 10),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: 10, left: 10),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Center(
+                                  child: Lottie.asset(
+                                      'assets/lottie/recording.json',
+                                      height: 40,
+                                      width: 27,
+                                      fit: BoxFit.fitHeight),
+                                ),
+                                Expanded(
+                                  child: Lottie.asset(
+                                    'assets/lottie/Linear_determinate.json',
+                                    height: double.infinity,
+                                    width: double.infinity,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          Expanded(
-                            child: Lottie.asset(
-                              'assets/lottie/Linear_determinate.json',
-                              height: double.infinity,
-                              width: double.infinity,
-                              fit: BoxFit.fill,
-                            ),
+                          height: 40,
+                          // width: 20,
+                        )
+                      : TextField(
+                          style: TextStyle(
+                            color: Color(0xff697077),
+                            fontSize: 14,
                           ),
-                        ],
-                      ),
-                    ),
-                    height: 40,
-                    // width: 20,
-
-                  )
-                      :TextField(
-                    style: TextStyle(
-                      color: Color(0xff697077),
-                      fontSize: 14,
-                    ),
-                    controller: messageController,
-                    decoration: InputDecoration(
-                      fillColor: Colors.white,
-                      hintText: 'Message',
-                      isDense: false,
-                      hintStyle:
-                          TextStyle(color: Color(0xff697077), fontSize: 14),
-                      prefixIcon: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isTyping = !isTyping;
-                          });
-                        },
-                        child: IconButton(
-                            onPressed: () {
-                              context
-                                  .read<ChatNotifier>()
-                                  .cameraUploadImageChat(widget.model.uid);
-                            },
-                            constraints: BoxConstraints(
-                              maxWidth: 30,
+                          controller: messageController,
+                          decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            hintText: 'Message',
+                            isDense: false,
+                            hintStyle: TextStyle(
+                                color: Color(0xff697077), fontSize: 14),
+                            prefixIcon: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isTyping = !isTyping;
+                                });
+                              },
+                              child: IconButton(
+                                  onPressed: () {
+                                    context
+                                        .read<ChatNotifier>()
+                                        .cameraUploadImageChat(
+                                            widget.model.uid);
+                                  },
+                                  constraints: BoxConstraints(
+                                    maxWidth: 30,
+                                  ),
+                                  icon: SvgPicture.asset('assets/camera.svg')),
                             ),
-                            icon: SvgPicture.asset('assets/camera.svg')),
-                      ),
-                      suffixIcon: FittedBox(
+                            suffixIcon: FittedBox(
                               child: Row(
                                 children: [
                                   IconButton(
@@ -523,7 +562,8 @@ class _ChatDmState extends State<ChatDm> {
                                     onPressed: () {
                                       context
                                           .read<ChatNotifier>()
-                                          .pickUploadImageChat(widget.model.uid);
+                                          .pickUploadImageChat(
+                                              widget.model.uid);
                                     },
                                     constraints: const BoxConstraints(
                                       maxWidth: 30,
@@ -538,56 +578,30 @@ class _ChatDmState extends State<ChatDm> {
                                 ],
                               ),
                             ),
-                      filled: true,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
+                            filled: true,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
                 ),
                 SizedBox(
                   width: 10,
                 ),
                 context.watch<ChatNotifier>().isRecording
                     ? SizedBox(
-                  // child:
-                  height: 5,
-                  width: 40,
-
-                )
+                        // child:
+                        height: 5,
+                        width: 40,
+                      )
                     : SizedBox(),
                 messageController.text.isEmpty
-                    ? GestureDetector(
-                        onLongPress: () {
-                          context.read<ChatNotifier>().startRecord();
-                          setState(() {
-                            context.read<ChatNotifier>().isRecording = true;
-                            showToast('Recording!');
-                          });
-                        },
-                        onLongPressEnd: (hey) {
-                          context
-                              .read<ChatNotifier>()
-                              .stopRecord(widget.model.uid);
-                          setState(() {
-                            context.read<ChatNotifier>().isRecording = false;
-                            showToast('Sent!');
-                          });
-                          context.read<ChatNotifier>().durationCalc();
-                        },
-                        child: context.watch<ChatNotifier>().isRecording
-                            ? SizedBox()
-
-                            : SvgPicture.asset(
-                                'assets/microphone.svg',
-                                width: 27,
-                                height: 27,
-                              ))
+                    ? RecordButton(controller: controller, model: widget.model,)
                     : IconButton(
                         onPressed: () async {
                           context
@@ -599,7 +613,8 @@ class _ChatDmState extends State<ChatDm> {
                             text: context.read<ChatNotifier>().chatText,
                             userID: userM['uid'],
                             receiverID: widget.model.uid,
-                            searchKeywords: createKeywords(widget.model.userName),
+                            searchKeywords:
+                                createKeywords(widget.model.userName),
                             img: widget.model.image,
                             displayName: widget.model.name,
                             userName: widget.model.userName,

@@ -340,6 +340,9 @@ class ChatNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  void cancelRecord(){
+    RecordMp3.instance.stop();
+  }
   void stopRecord(String receiverId) async {
     bool s = RecordMp3.instance.stop();
     if (s) {
