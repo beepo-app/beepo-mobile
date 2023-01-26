@@ -64,7 +64,7 @@ class _HomesState extends State<Homes> {
     if (DateTime.now()
         .difference(widget.user.stories[0].createdDate.toDate())
         .inHours >
-        24) {
+        23) {
       if(widget.user.stories.length != 1){
         context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
         FirebaseFirestore.instance
@@ -214,7 +214,7 @@ class _MoreStoriesState extends State<MoreStories> {
     if (DateTime.now()
             .difference(widget.user.stories[0].createdDate.toDate())
             .inHours >
-        24) {
+        23) {
       if(widget.user.stories.length != 1){
         context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
         FirebaseFirestore.instance
