@@ -40,7 +40,7 @@ class _RecordButtonState extends State<RecordButton> {
   DateTime startTime;
   Timer timer;
   String recordDuration = "00:00";
-  Record record;
+  // Record record;
 
   bool isLocked = false;
   bool showLottie = false;
@@ -84,7 +84,7 @@ class _RecordButtonState extends State<RecordButton> {
 
   @override
   void dispose() {
-    record.dispose();
+    // record.dispose();
     timer?.cancel();
     timer = null;
     super.dispose();

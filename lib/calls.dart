@@ -3,16 +3,18 @@ import 'dart:async';
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as rtc_local_view;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as rtc_remote_view;
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
-import 'package:beepo/main.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+
+import 'Utils/styles.dart';
 
 class VideoCall extends StatefulWidget {
   final String channelName;
   final ClientRole role;
+  final String name;
 
-  const VideoCall({Key key, this.channelName, this.role}) : super(key: key);
+  const VideoCall({Key key, this.channelName, this.role, @required this.name}) : super(key: key);
 
   @override
   State<VideoCall> createState() => _VideoCallState();
@@ -46,9 +48,30 @@ class _VideoCallState extends State<VideoCall> {
     VideoEncoderConfiguration configuration = VideoEncoderConfiguration();
     configuration.dimensions = const VideoDimensions(width: 1920, height: 1000);
     await _engine.setVideoEncoderConfiguration(configuration);
+    // await getToken();
     await _engine.joinChannel(Token, widget.channelName, null, 0);
   }
+  String baseUrl = ''; //Add the link to your deployed server here
+  int uid = 0;
+  String token;
 
+  // Future<void> getToken() async {
+  //   final response = await http.get(
+  //     Uri.parse(baseUrl + '/rtc/' + widget.channelName + '/publisher/uid/' + uid.toString()
+  //       // To add expiry time uncomment the below given line with the time in seconds
+  //       // + '?expiry=45'
+  //     ),
+  //   );
+  //
+  //   if (response.statusCode == 200) {
+  //     setState(() {
+  //       token = response.body;
+  //       token = jsonDecode(token)['rtcToken'];
+  //     });
+  //   } else {
+  //     print('Failed to fetch the token');
+  //   }
+  // }
   void _addAgoraEventHandler() {
     _engine.setEventHandler(
       RtcEngineEventHandler(error: (code) {
@@ -57,7 +80,7 @@ class _VideoCallState extends State<VideoCall> {
           _infoStrings.add(info);
         });
       }, joinChannelSuccess: (channel, uid, elapsed) async {
-        await NotificationController.createNewNotification(channel);
+        // await NotificationController.createNewNotification(channel);
 
         setState(() {
           final info = 'Join Channel: $channel, uid: $uid';
@@ -85,7 +108,12 @@ class _VideoCallState extends State<VideoCall> {
           final info = 'First remote Video: $uid ${width}x $height';
           _infoStrings.add(info);
         });
-      }),
+      },
+        tokenPrivilegeWillExpire: (token) async {
+          // await getToken();
+          await _engine.renewToken(token);
+        }
+      ),
     );
   }
 
@@ -216,13 +244,15 @@ class _VideoCallState extends State<VideoCall> {
     _engine.destroy();
     super.dispose();
   }
+  Map userM = Hive.box('beepo').get('userData');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Agora'),
+        title:  Text(widget.name),
         centerTitle: true,
+        backgroundColor: secondaryColor,
         actions: [
           IconButton(
             onPressed: () {

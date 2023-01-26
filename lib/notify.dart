@@ -1,17 +1,21 @@
+// ignore_for_file: unnecessary_this, avoid_print, prefer_collection_literals, prefer_const_constructors_in_immutables, prefer_generic_function_type_aliases
+
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'dart:async';
 
 //import OneSignal
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 
+class Note extends StatefulWidget {
+  const Note({Key key}) : super(key: key);
 
-class MyApp extends StatefulWidget {
   @override
-  _MyAppState createState() => new _MyAppState();
+  _NoteState createState() => _NoteState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _NoteState extends State<Note> {
   String _debugLabelString = "";
   String _emailAddress;
   String _smsNumber;
@@ -20,7 +24,7 @@ class _MyAppState extends State<MyApp> {
   bool _enableConsentButton = false;
 
   // CHANGE THIS parameter to true if you want to test GDPR privacy consent
-  bool _requireConsent = true;
+  final bool _requireConsent = true;
 
   @override
   void initState() {
@@ -38,7 +42,7 @@ class _MyAppState extends State<MyApp> {
 
     OneSignal.shared
         .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
-      print('NOTIFICATION OPENED HANDLER CALLED WITH: ${result}');
+      print('NOTIFICATION OPENED HANDLER CALLED WITH: $result');
       this.setState(() {
         _debugLabelString =
         "Opened notification: \n${result.notification.jsonRepresentation().replaceAll("\\n", "\n")}";
@@ -47,7 +51,7 @@ class _MyAppState extends State<MyApp> {
 
     OneSignal.shared
         .setNotificationWillShowInForegroundHandler((OSNotificationReceivedEvent event) {
-      print('FOREGROUND HANDLER CALLED WITH: ${event}');
+      print('FOREGROUND HANDLER CALLED WITH: $event');
       /// Display Notification, send null to not display
       event.complete(null);
 
@@ -102,10 +106,10 @@ class _MyAppState extends State<MyApp> {
 
     // NOTE: Replace with your own app ID from https://www.onesignal.com
     await OneSignal.shared
-        .setAppId("380dc082-5231-4cc2-ab51-a03da5a0e4c2");
+        .setAppId('8f26effe-fda3-4034-a262-be12f4c5c47e');
 
     // iOS-only method to open launch URLs in Safari when set to false
-    OneSignal.shared.setLaunchURLsInApp(false);
+    // OneSignal.shared.setLaunchURLsInApp(false);
 
     bool requiresConsent = await OneSignal.shared.requiresUserPrivacyConsent();
 
@@ -178,7 +182,7 @@ class _MyAppState extends State<MyApp> {
 
     print("Setting email");
 
-    OneSignal.shared.setEmail(email: _emailAddress!).whenComplete(() {
+    OneSignal.shared.setEmail(email: _emailAddress).whenComplete(() {
       print("Successfully set email");
     }).catchError((error) {
       print("Failed to set email with error: $error");
@@ -190,7 +194,7 @@ class _MyAppState extends State<MyApp> {
 
     print("Setting language");
 
-    OneSignal.shared.setLanguage(_language!).then((response) {
+    OneSignal.shared.setLanguage(_language).then((response) {
       print("Successfully set language with response: $response");
     }).catchError((error) {
       print("Failed to set language with error: $error");
@@ -212,7 +216,7 @@ class _MyAppState extends State<MyApp> {
 
     print("Setting SMS Number");
 
-    OneSignal.shared.setSMSNumber(smsNumber: _smsNumber!).then((response) {
+    OneSignal.shared.setSMSNumber(smsNumber: _smsNumber).then((response) {
       print("Successfully set SMSNumber with response $response");
     }).catchError((error) {
       print("Failed to set SMS Number with error: $error");
@@ -259,18 +263,13 @@ class _MyAppState extends State<MyApp> {
       print("Encountered an error sending tags: $error");
     });
   }
+  Map userM = Hive.box('beepo').get('userData');
 
   void _handleSetExternalUserId() {
     print("Setting external user ID");
-    if (_externalUserId == null) return;
+    // if (_externalUserId == null) return;
+// OneSignal.shared.postNotification(notification);
 
-    OneSignal.shared.setExternalUserId(_externalUserId!).then((results) {
-      if (results == null) return;
-
-      this.setState(() {
-        _debugLabelString = "External user id set: $results";
-      });
-    });
   }
 
   void _handleRemoveExternalUserId() {
@@ -286,10 +285,11 @@ class _MyAppState extends State<MyApp> {
   void _handleSendNotification() async {
     var deviceState = await OneSignal.shared.getDeviceState();
 
-    if (deviceState == null || deviceState.userId == null)
+    if (deviceState == null || deviceState.userId == null) {
       return;
+    }
 
-    var playerId = deviceState.userId!;
+    var playerId = deviceState.userId;
 
     var imgUrlString =
         "http://cdn1-www.dogtime.com/assets/uploads/gallery/30-impossibly-cute-puppies/impossibly-cute-puppy-2.jpg";
@@ -315,10 +315,11 @@ class _MyAppState extends State<MyApp> {
   void _handleSendSilentNotification() async {
     var deviceState = await OneSignal.shared.getDeviceState();
 
-    if (deviceState == null || deviceState.userId == null)
+    if (deviceState == null || deviceState.userId == null) {
       return;
+    }
 
-    var playerId = deviceState.userId!;
+    var playerId = deviceState.userId;
 
     var notification = OSCreateNotification.silentNotification(
         playerIds: [playerId], additionalData: {'test': 'value'});
@@ -339,7 +340,7 @@ class _MyAppState extends State<MyApp> {
     /// Example addTriggers call for IAM
     /// This will add 2 triggers so if there are any IAM satisfying these, they
     /// will be shown to the user
-    Map<String, Object> triggers = new Map<String, Object>();
+    Map<String, Object> triggers = Map<String, Object>();
     triggers["trigger_2"] = "two";
     triggers["trigger_3"] = "three";
     OneSignal.shared.addTriggers(triggers);
@@ -349,7 +350,7 @@ class _MyAppState extends State<MyApp> {
     OneSignal.shared.removeTriggerForKey("trigger_2");
 
     // Get the value for a trigger by its key
-    Object? triggerValue = await OneSignal.shared.getTriggerValueForKey("trigger_3");
+    Object triggerValue = await OneSignal.shared.getTriggerValueForKey("trigger_3");
     print("'trigger_3' key trigger value: ${triggerValue?.toString()}");
 
     // Create a list and bulk remove triggers based on keys supplied
@@ -390,39 +391,39 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      home: new Scaffold(
-          appBar: new AppBar(
+    return MaterialApp(
+      home: Scaffold(
+          appBar: AppBar(
             title: const Text('OneSignal Flutter Demo'),
-            backgroundColor: Color.fromARGB(255, 212, 86, 83),
+            backgroundColor: const Color.fromARGB(255, 212, 86, 83),
           ),
           body: Container(
-            padding: EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(10.0),
             child: SingleChildScrollView(
-              child: new Table(
+              child: Table(
                 children: [
-                  new TableRow(children: [
-                    new OneSignalButton(
+                  TableRow(children: [
+                    OneSignalButton(
                         "Get Tags", _handleGetTags, !_enableConsentButton)
                   ]),
-                  new TableRow(children: [
-                    new OneSignalButton(
+                  TableRow(children: [
+                    OneSignalButton(
                         "Send Tags", _handleSendTags, !_enableConsentButton)
                   ]),
-                  new TableRow(children: [
-                    new OneSignalButton("Prompt for Push Permission",
+                  TableRow(children: [
+                    OneSignalButton("Prompt for Push Permission",
                         _handlePromptForPushPermission, !_enableConsentButton)
                   ]),
-                  new TableRow(children: [
-                    new OneSignalButton(
+                  TableRow(children: [
+                    OneSignalButton(
                         "Print Device State",
                         _handleGetDeviceState,
                         !_enableConsentButton)
                   ]),
-                  new TableRow(children: [
-                    new TextField(
+                  TableRow(children: [
+                    TextField(
                       textAlign: TextAlign.center,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           hintText: "Email Address",
                           labelStyle: TextStyle(
                             color: Color.fromARGB(255, 212, 86, 83),
@@ -434,23 +435,23 @@ class _MyAppState extends State<MyApp> {
                       },
                     )
                   ]),
-                  new TableRow(children: [
+                  TableRow(children: [
                     Container(
                       height: 8.0,
                     )
                   ]),
-                  new TableRow(children: [
-                    new OneSignalButton(
+                  TableRow(children: [
+                    OneSignalButton(
                         "Set Email", _handleSetEmail, !_enableConsentButton)
                   ]),
-                  new TableRow(children: [
-                    new OneSignalButton("Logout Email", _handleLogoutEmail,
+                  TableRow(children: [
+                    OneSignalButton("Logout Email", _handleLogoutEmail,
                         !_enableConsentButton)
                   ]),
-                  new TableRow(children: [
-                    new TextField(
+                  TableRow(children: [
+                    TextField(
                       textAlign: TextAlign.center,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           hintText: "SMS Number",
                           labelStyle: TextStyle(
                             color: Color.fromARGB(255, 212, 86, 83),
@@ -462,43 +463,43 @@ class _MyAppState extends State<MyApp> {
                       },
                     )
                   ]),
-                  new TableRow(children: [
+                  TableRow(children: [
                     Container(
                       height: 8.0,
                     )
                   ]),
-                  new TableRow(children: [
-                    new OneSignalButton(
+                  TableRow(children: [
+                    OneSignalButton(
                         "Set SMS Number", _handleSetSMSNumber, !_enableConsentButton)
                   ]),
-                  new TableRow(children: [
-                    new OneSignalButton("Logout SMS Number", _handleLogoutSMSNumber,
+                  TableRow(children: [
+                    OneSignalButton("Logout SMS Number", _handleLogoutSMSNumber,
                         !_enableConsentButton)
                   ]),
-                  new TableRow(children: [
-                    new OneSignalButton("Provide GDPR Consent", _handleConsent,
+                  TableRow(children: [
+                    OneSignalButton("Provide GDPR Consent", _handleConsent,
                         _enableConsentButton)
                   ]),
-                  new TableRow(children: [
-                    new OneSignalButton("Set Location Shared",
+                  TableRow(children: [
+                    OneSignalButton("Set Location Shared",
                         _handleSetLocationShared, !_enableConsentButton)
                   ]),
-                  new TableRow(children: [
-                    new OneSignalButton(
+                  TableRow(children: [
+                    OneSignalButton(
                         "Delete Tag", _handleDeleteTag, !_enableConsentButton)
                   ]),
-                  new TableRow(children: [
-                    new OneSignalButton("Post Notification",
+                  TableRow(children: [
+                    OneSignalButton("Post Notification",
                         _handleSendNotification, !_enableConsentButton)
                   ]),
-                  new TableRow(children: [
-                    new OneSignalButton("Post Silent Notification",
+                  TableRow(children: [
+                    OneSignalButton("Post Silent Notification",
                         _handleSendSilentNotification, !_enableConsentButton)
                   ]),
-                  new TableRow(children: [
-                    new TextField(
+                  TableRow(children: [
+                    TextField(
                       textAlign: TextAlign.center,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           hintText: "External User ID",
                           labelStyle: TextStyle(
                             color: Color.fromARGB(255, 212, 86, 83),
@@ -510,23 +511,23 @@ class _MyAppState extends State<MyApp> {
                       },
                     )
                   ]),
-                  new TableRow(children: [
+                  TableRow(children: [
                     Container(
                       height: 8.0,
                     )
                   ]),
-                  new TableRow(children: [
-                    new OneSignalButton(
+                  TableRow(children: [
+                    OneSignalButton(
                         "Set External User ID", _handleSetExternalUserId, !_enableConsentButton)
                   ]),
-                  new TableRow(children: [
-                    new OneSignalButton(
+                  TableRow(children: [
+                    OneSignalButton(
                         "Remove External User ID", _handleRemoveExternalUserId, !_enableConsentButton)
                   ]),
-                  new TableRow(children: [
-                    new TextField(
+                  TableRow(children: [
+                    TextField(
                       textAlign: TextAlign.center,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           hintText: "Language",
                           labelStyle: TextStyle(
                             color: Color.fromARGB(255, 212, 86, 83),
@@ -538,18 +539,18 @@ class _MyAppState extends State<MyApp> {
                       },
                     )
                   ]),
-                  new TableRow(children: [
+                  TableRow(children: [
                     Container(
                       height: 8.0,
                     )
                   ]),
-                  new TableRow(children: [
-                    new OneSignalButton(
+                  TableRow(children: [
+                    OneSignalButton(
                         "Set Language", _handleSetLanguage, !_enableConsentButton)
                   ]),
-                  new TableRow(children: [
-                    new Container(
-                      child: new Text(_debugLabelString),
+                  TableRow(children: [
+                    Container(
+                      child: Text(_debugLabelString),
                       alignment: Alignment.center,
                     )
                   ]),
@@ -570,29 +571,30 @@ class OneSignalButton extends StatefulWidget {
 
   OneSignalButton(this.title, this.onPressed, this.enabled);
 
-  State<StatefulWidget> createState() => new OneSignalButtonState();
+  @override
+  State<StatefulWidget> createState() => OneSignalButtonState();
 }
 
 class OneSignalButtonState extends State<OneSignalButton> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return new Table(
+    return Table(
       children: [
-        new TableRow(children: [
-          new TextButton(
+        TableRow(children: [
+          TextButton(
             style: TextButton.styleFrom(
               foregroundColor:Colors.white,
               disabledForegroundColor: Colors.white,
-              backgroundColor: Color.fromARGB(255, 212, 86, 83),
-              disabledBackgroundColor:Color.fromARGB(180, 212, 86, 83),
-              padding: EdgeInsets.all(8.0),
+              backgroundColor: const Color.fromARGB(255, 212, 86, 83),
+              disabledBackgroundColor:const Color.fromARGB(180, 212, 86, 83),
+              padding: const EdgeInsets.all(8.0),
             ),
-            child: new Text(widget.title),
+            child: Text(widget.title),
             onPressed: widget.enabled ? widget.onPressed : null,
           )
         ]),
-        new TableRow(children: [
+        TableRow(children: [
           Container(
             height: 8.0,
           )

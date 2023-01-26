@@ -7,6 +7,8 @@ import 'package:agora_rtc_engine/rtc_engine.dart';
 import './calls.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'Utils/styles.dart';
+
 class IndexPage extends StatefulWidget {
   const IndexPage({Key key}) : super(key: key);
 
@@ -30,27 +32,28 @@ class _IndexPageState extends State<IndexPage> {
           ? _validateError = true
           : _validateError = false;
     });
-    if (_channelController.text.isNotEmpty) {
+    // if (_channelController.text.isNotEmpty) {
       await _handleCameraAndMic(Permission.camera);
       await _handleCameraAndMic(Permission.microphone);
       await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => VideoCall(
-            channelName: _channelController.text,
-            role: _role,
+          builder: (context) => const VideoCall(
+            channelName: 'hackAngel',
+            role: ClientRole.Broadcaster,
           ),
         ),
       );
-    }
+    // }
 }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Flutter Video Call Demo'),
+        title: const Text('Video call'),
         centerTitle: true,
+        backgroundColor: secondaryColor,
       ),
       body: Center(
         child: Container(

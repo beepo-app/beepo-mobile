@@ -1,20 +1,20 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unnecessary_this
 
-import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
 import 'package:beepo/story_download_provider.dart';
 import 'package:beepo/story_upload_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'Screens/Auth/lock_screen.dart';
 import 'Screens/Auth/onboarding.dart';
 import 'bottom_nav.dart';
-import 'package:http/http.dart' as http;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,271 +23,231 @@ void main() async {
       // options: DefaultF
       // options: DefaultFirebaseOptions.currentPlatform,
       );
-  NotificationController.initializeLocalNotifications();
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-  // AwesomeNotifications().initialize('', channels)
+
   await Hive.initFlutter();
   await Hive.openBox('beepo');
   runApp(MyApp());
 }
 
-class NotificationController {
-  static ReceivedAction initialAction;
+String playerId = '';
 
-  ///  *********************************************
-  ///     INITIALIZATIONS
-  ///  *********************************************
-  ///
-  static Future<void> initializeLocalNotifications() async {
-    await AwesomeNotifications().initialize(
-         'resource://drawable/background',
-        [
-          NotificationChannel(
-              channelKey: 'alerts',
-              channelName: 'Alerts',
-              channelDescription: 'Notification tests as alerts',
-              playSound: true,
-              onlyAlertOnce: true,
-              groupAlertBehavior: GroupAlertBehavior.Children,
-              importance: NotificationImportance.High,
-              defaultPrivacy: NotificationPrivacy.Private,
-              defaultColor: Colors.deepPurple,
-              ledColor: Colors.deepPurple)
-        ],
-        debug: true);
-
-    // Get initial notification action is optional
-    initialAction = await AwesomeNotifications()
-        .getInitialNotificationAction(removeFromActionEvents: false);
-  }
-
-  ///  *********************************************
-  ///     NOTIFICATION EVENTS LISTENER
-  ///  *********************************************
-  ///  Notifications events are only delivered after call this method
-  static Future<void> startListeningNotificationEvents() async {
-    AwesomeNotifications()
-        .setListeners(onActionReceivedMethod: onActionReceivedMethod);
-  }
-
-  ///  *********************************************
-  ///     NOTIFICATION EVENTS
-  ///  *********************************************
-  ///
-  @pragma('vm:entry-point')
-  static Future<void> onActionReceivedMethod(
-      ReceivedAction receivedAction) async {
-
-    if(
-    receivedAction.actionType == ActionType.SilentAction ||
-        receivedAction.actionType == ActionType.SilentBackgroundAction
-    ){
-      // For background actions, you must hold the execution until the end
-      print('Message sent via notification input: "${receivedAction.buttonKeyInput}"');
-      await executeLongTaskInBackground();
-    }
-    else {
-      MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
-          '/notification-page',
-              (route) =>
-          (route.settings.name != '/notification-page') || route.isFirst,
-          arguments: receivedAction);
-    }
-  }
-
-  ///  *********************************************
-  ///     REQUESTING NOTIFICATION PERMISSIONS
-  ///  *********************************************
-  ///
-  static Future<bool> displayNotificationRationale() async {
-    bool userAuthorized = false;
-    BuildContext context = MyApp.navigatorKey.currentContext;
-    await showDialog(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            title: Text('Get Notified!',
-                style: Theme.of(context).textTheme.titleLarge),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Image.asset(
-                        'assets/animated-bell.gif',
-                        height: MediaQuery.of(context).size.height * 0.3,
-                        fit: BoxFit.fitWidth,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                    'Allow Awesome Notifications to send you beautiful notifications!'),
-              ],
-            ),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                  },
-                  child: Text(
-                    'Deny',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleLarge
-                        ?.copyWith(color: Colors.red),
-                  )),
-              TextButton(
-                  onPressed: () async {
-                    userAuthorized = true;
-                    Navigator.of(ctx).pop();
-                  },
-                  child: Text(
-                    'Allow',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleLarge
-                        ?.copyWith(color: Colors.deepPurple),
-                  )),
-            ],
-          );
-        });
-    return userAuthorized &&
-        await AwesomeNotifications().requestPermissionToSendNotifications();
-  }
-
-  ///  *********************************************
-  ///     BACKGROUND TASKS TEST
-  ///  *********************************************
-  static Future<void> executeLongTaskInBackground() async {
-    print("starting long task");
-    await Future.delayed(const Duration(seconds: 4));
-    final url = Uri.parse("http://google.com");
-    final re = await http.get(url);
-    print(re.body);
-    print("long task done");
-  }
-
-  ///  *********************************************
-  ///     NOTIFICATION CREATION METHODS
-  ///  *********************************************
-  ///
-  static Future<void> createNewNotification(String channel) async {
-    bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
-    if (!isAllowed) isAllowed = await displayNotificationRationale();
-    if (!isAllowed) return;
-
-    await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: -1, // -1 is replaced by a random number
-            channelKey: channel,
-            title: 'Huston! The eagle has landed!',
-            body:
-            "A small step for a man, but a giant leap to Flutter's community!",
-            bigPicture: 'https://storage.googleapis.com/cms-storage-bucket/d406c736e7c4c57f5f61.png',
-            largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
-            //'asset://assets/images/balloons-in-sky.jpg',
-            notificationLayout: NotificationLayout.BigPicture,
-            payload: {'notificationId': '1234567890'}),
-        actionButtons: [
-          NotificationActionButton(key: 'REDIRECT', label: 'Redirect'),
-          NotificationActionButton(
-              key: 'REPLY',
-              label: 'Reply Message',
-              requireInputText: true,
-              actionType: ActionType.SilentAction
-          ),
-          NotificationActionButton(
-              key: 'DISMISS',
-              label: 'Dismiss',
-              actionType: ActionType.DismissAction,
-              isDangerousOption: true)
-        ]);
-  }
-
-  static Future<void> scheduleNewNotification() async {
-    bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
-    if (!isAllowed) isAllowed = await displayNotificationRationale();
-    if (!isAllowed) return;
-
-    await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: -1, // -1 is replaced by a random number
-            channelKey: 'alerts',
-            title: "Huston! The eagle has landed!",
-            body:
-            "A small step for a man, but a giant leap to Flutter's community!",
-            bigPicture: 'https://storage.googleapis.com/cms-storage-bucket/d406c736e7c4c57f5f61.png',
-            largeIcon: 'https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf16282.png',
-            //'asset://assets/images/balloons-in-sky.jpg',
-            notificationLayout: NotificationLayout.BigPicture,
-            payload: {
-              'notificationId': '1234567890'
-            }),
-        actionButtons: [
-          NotificationActionButton(key: 'REDIRECT', label: 'Redirect'),
-          NotificationActionButton(
-              key: 'DISMISS',
-              label: 'Dismiss',
-              actionType: ActionType.DismissAction,
-              isDangerousOption: true)
-        ],
-        schedule: NotificationCalendar.fromDate(
-            date: DateTime.now().add(const Duration(seconds: 10))));
-  }
-
-  static Future<void> resetBadgeCounter() async {
-    await AwesomeNotifications().resetGlobalBadge();
-  }
-
-  static Future<void> cancelNotifications() async {
-    await AwesomeNotifications().cancelAll();
-  }
-}
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("onBackgroundMessage: $message");
-}
 class MyApp extends StatefulWidget {
   const MyApp({Key key}) : super(key: key);
 
 // The navigator key is necessary to navigate using static methods
   static final GlobalKey<NavigatorState> navigatorKey =
-  GlobalKey<NavigatorState>();
-
+      GlobalKey<NavigatorState>();
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
+  String _debugLabelString = "";
 
+  // String _emailAddress;
+  // String _smsNumber;
+  // String _language;
+  bool _enableConsentButton = true;
+
+  oneSignalInAppMessagingTriggerExamples() async {
+    /// Example addTrigger call for IAM
+    /// This will add 1 trigger so if there are any IAM satisfying it, it
+    /// will be shown to the user
+    OneSignal.shared.addTrigger("trigger_1", "one");
+
+    /// Example addTriggers call for IAM
+    /// This will add 2 triggers so if there are any IAM satisfying these, they
+    /// will be shown to the user
+    Map<String, Object> triggers = Map<String, Object>();
+    triggers["trigger_2"] = "two";
+    triggers["trigger_3"] = "three";
+    OneSignal.shared.addTriggers(triggers);
+
+    // Removes a trigger by its key so if any future IAM are pulled with
+    // these triggers they will not be shown until the trigger is added back
+    OneSignal.shared.removeTriggerForKey("trigger_2");
+
+    // Get the value for a trigger by its key
+    Object triggerValue =
+        await OneSignal.shared.getTriggerValueForKey("trigger_3");
+    print("'trigger_3' key trigger value: ${triggerValue?.toString()}");
+
+    // Create a list and bulk remove triggers based on keys supplied
+    List<String> keys = ["trigger_1", "trigger_3"];
+    OneSignal.shared.removeTriggersForKeys(keys);
+
+    // Toggle pausing (displaying or not) of IAMs
+    OneSignal.shared.pauseInAppMessages(false);
+  }
+
+  Future<void> outcomeAwaitExample() async {
+    var outcomeEvent = await OneSignal.shared.sendOutcome("await_normal_1");
+    print(outcomeEvent.jsonRepresentation());
+  }
+
+  oneSignalOutcomeEventsExamples() async {
+    // Await example for sending outcomes
+    outcomeAwaitExample();
+
+    // Send a normal outcome and get a reply with the name of the outcome
+    OneSignal.shared.sendOutcome("normal_1");
+    OneSignal.shared.sendOutcome("normal_2").then((outcomeEvent) {
+      print(outcomeEvent.jsonRepresentation());
+    });
+
+    // Send a unique outcome and get a reply with the name of the outcome
+    OneSignal.shared.sendUniqueOutcome("unique_1");
+    OneSignal.shared.sendUniqueOutcome("unique_2").then((outcomeEvent) {
+      print(outcomeEvent.jsonRepresentation());
+    });
+
+    // Send an outcome with a value and get a reply with the name of the outcome
+    OneSignal.shared.sendOutcomeWithValue("value_1", 3.2);
+    OneSignal.shared.sendOutcomeWithValue("value_2", 3.9).then((outcomeEvent) {
+      print(outcomeEvent.jsonRepresentation());
+    });
+  }
+
+  final bool _requireConsent = true;
+  Map userM = Hive.box('beepo').get('userData');
+
+  void _handleGetDeviceState() async {
+    print("Getting DeviceState");
+    OneSignal.shared.getDeviceState().then((deviceState) {
+      print("DeviceState: ${deviceState?.jsonRepresentation()}");
+      this.setState(() {
+        _debugLabelString =
+            deviceState?.jsonRepresentation() ?? "Device state null";
+        print('USER ID IS ${deviceState.userId}');
+        playerId = deviceState.userId;
+        FirebaseFirestore.instance
+            .collection('OneSignal')
+            .doc(userM['uid'])
+            .set({
+          'playerId': playerId,
+        });
+      });
+    });
+  }
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> initPlatformState() async {
+    if (!mounted) return;
+
+    OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+    OneSignal.shared.setRequiresUserPrivacyConsent(true);
+    OneSignal.shared.consentGranted(true);
+
+    // NOTE: Replace with your own app ID from https://www.onesignal.com
+
+    await OneSignal.shared.setAppId('8f26effe-fda3-4034-a262-be12f4c5c47e');
+    _handleGetDeviceState();
+
+    OneSignal.shared.setExternalUserId(userM['uid']).then((results) {
+      results.toString().log();
+    }).catchError((error) {
+      error.toString().log();
+    });
+    // Preferences.
+
+    OneSignal.shared
+        .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
+      print('NOTIFICATION OPENED HANDLER CALLED WITH: $result');
+      setState(() {
+        _debugLabelString =
+            "Opened notification: \n${result.notification.jsonRepresentation().replaceAll("\\n", "\n")}";
+      });
+    });
+
+    OneSignal.shared.setNotificationWillShowInForegroundHandler(
+        (OSNotificationReceivedEvent event) {
+      print('FOREGROUND HANDLER CALLED WITH: $event');
+
+      /// Display Notification, send null to not display
+      event.complete(null);
+
+      setState(() {
+        _debugLabelString =
+            "Notification received in foreground notification: \n${event.notification.jsonRepresentation().replaceAll("\\n", "\n")}";
+      });
+    });
+
+    OneSignal.shared
+        .setInAppMessageClickedHandler((OSInAppMessageAction action) {
+      setState(() {
+        _debugLabelString =
+            "In App Message Clicked: \n${action.jsonRepresentation().replaceAll("\\n", "\n")}";
+      });
+    });
+
+    OneSignal.shared
+        .setSubscriptionObserver((OSSubscriptionStateChanges changes) {
+      print("SUBSCRIPTION STATE CHANGED: ${changes.jsonRepresentation()}");
+    });
+
+    OneSignal.shared.setPermissionObserver((OSPermissionStateChanges changes) {
+      print("PERMISSION STATE CHANGED: ${changes.jsonRepresentation()}");
+    });
+
+    OneSignal.shared.setEmailSubscriptionObserver(
+        (OSEmailSubscriptionStateChanges changes) {
+      print("EMAIL SUBSCRIPTION STATE CHANGED ${changes.jsonRepresentation()}");
+    });
+
+    OneSignal.shared
+        .setSMSSubscriptionObserver((OSSMSSubscriptionStateChanges changes) {
+      print("SMS SUBSCRIPTION STATE CHANGED ${changes.jsonRepresentation()}");
+    });
+
+    OneSignal.shared.setOnWillDisplayInAppMessageHandler((message) {
+      print("ON WILL DISPLAY IN APP MESSAGE ${message.messageId}");
+    });
+
+    OneSignal.shared.setOnDidDisplayInAppMessageHandler((message) {
+      print("ON DID DISPLAY IN APP MESSAGE ${message.messageId}");
+    });
+
+    OneSignal.shared.setOnWillDismissInAppMessageHandler((message) {
+      print("ON WILL DISMISS IN APP MESSAGE ${message.messageId}");
+    });
+
+    OneSignal.shared.setOnDidDismissInAppMessageHandler((message) {
+      print("ON DID DISMISS IN APP MESSAGE ${message.messageId}");
+    });
+
+    OneSignal.shared.promptUserForPushNotificationPermission().then((accepted) {
+      print("Accepted permission: $accepted");
+    });
+    // iOS-only method to open launch URLs in Safari when set to false
+    OneSignal.shared.setLaunchURLsInApp(false);
+
+    bool requiresConsent = await OneSignal.shared.requiresUserPrivacyConsent();
+
+    setState(() {
+      _enableConsentButton = requiresConsent;
+    });
+
+    // Some examples of how to use In App Messaging public methods with OneSignal SDK
+    oneSignalInAppMessagingTriggerExamples();
+
+    OneSignal.shared.disablePush(false);
+
+    // Some examples of how to use Outcome Events public methods with OneSignal SDK
+    oneSignalOutcomeEventsExamples();
+
+    bool userProvidedPrivacyConsent =
+        await OneSignal.shared.userProvidedPrivacyConsent();
+    print("USER PROVIDED PRIVACY CONSENT: $userProvidedPrivacyConsent");
+  }
+
+  @override
   void initState() {
-    NotificationController.startListeningNotificationEvents();
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      print("onMessage: $message");
-    });
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      print("onMessageOpenedApp: $message");
-    });
-      // if (message.data["navigation"] == "/your_route") {
-      //   int _yourId = int.tryParse(message.data["id"]) ?? 0;
-      //   Navigator.push(
-      //       navigatorKey.currentState.context,
-      //       MaterialPageRoute(
-      //           builder: (context) => YourScreen(
-      //             yourId:_yourId,
-      //           )));
-      // });
+    initPlatformState();
+
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     bool isLoggedIn = Hive.box('beepo').get('isLogged', defaultValue: false);
