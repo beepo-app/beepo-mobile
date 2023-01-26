@@ -11,6 +11,7 @@ class UserModel {
   final List searchKeywords;
   final String userName;
   final List<StoryModel> stories;
+  final String firebaseToken;
 
 
   const UserModel({
@@ -21,6 +22,7 @@ class UserModel {
     @required this.image,
      this.searchKeywords = const [],
     this.stories = const [],
+    this.firebaseToken,
   });
 
   // get stories => null;

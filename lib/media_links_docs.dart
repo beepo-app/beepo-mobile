@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:linkwell/linkwell.dart';
 
 class MediaLinks extends StatefulWidget {
   // const UserProfile({Key key}) : super(key: key);
@@ -32,6 +33,7 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
     tabController = TabController(length: 3, vsync: this);
     super.initState();
   }
+
   @override
   void dispose() {
     tabController.dispose();
@@ -167,130 +169,196 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
               ),
             ),
             Expanded(
-              child: TabBarView(children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 12, right: 12),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                    Text('Recent', style: TextStyle(
-                      fontFamily: 'Roboto',
-                      color: txtColor1,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
-                    ),),
-                    SizedBox(height: 10,),
-                    StreamBuilder(
-                        stream: FirebaseFirestore.instance
-                            .collection('messages')
-                            .doc(userM['uid'])
-                            .collection('userMessages')
-                            .doc(widget.model.uid)
-                            .collection('messageList')
-                            .where('type', isEqualTo: 'photo')
-                            .snapshots(),
-                        builder:
-                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.hasData) {
-                            return GridView.count(
-                              physics: NeverScrollableScrollPhysics(),
-                              padding: const EdgeInsets.only(bottom: 20),
-                              mainAxisSpacing: 20,
-                              shrinkWrap: true,
-                              crossAxisSpacing: 15,
-                              crossAxisCount: 3,
-                              children: List.generate(
-                                  snapshot.data.docs.length, (index) {
-                                return Container(
-                                  height: 91,
-                                  width: 102,
-                                  decoration: BoxDecoration(
-                                    // color: Colors.grey,
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: (){
-                                      Navigator.push(context, MaterialPageRoute(builder: (_) {
-                                        return FullScreenImage(
-                                          imageUrl: snapshot.data.docs[index]
-                                          ['content'],
-                                          tag: "images$index",
-                                        );
-                                      }));
-                                    },
-                                    child: ClipRRect(
-                                      child: Hero(
-                                        tag: "images$index",
-                                        child: CachedNetworkImage(
-                                          imageUrl: snapshot.data.docs[index]
-                                          ['content'],
-                                          fit: BoxFit.fill,
-                                        ),
-                                      ),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                );
-                              }),
-                            );
-                          }
-                          return CircularProgressIndicator(
-                            color: primaryColor,
-                          );
-                        }),
-                      StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection('messages')
-                              .doc(userM['uid'])
-                              .collection('userMessages')
-                              .doc(widget.model.uid)
-                              .collection('messageList')
-                              .where('type', isEqualTo: 'video')
-                              .snapshots(),
-                          builder:
-                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                            if (snapshot.hasData) {
-                              return GridView.count(
-                                physics: NeverScrollableScrollPhysics(),
-                                padding: const EdgeInsets.only(bottom: 20),
-                                mainAxisSpacing: 20,
-                                shrinkWrap: true,
-                                crossAxisSpacing: 15,
-                                crossAxisCount: 3,
-                                children: List.generate(
-                                    snapshot.data.docs.length, (index) {
-                                  return GestureDetector(
-                                    // onTap: () => Get.to(Store()),
-                                    child: Container(
+              child: TabBarView(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12, right: 12),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Recent',
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            color: txtColor1,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        StreamBuilder(
+                            stream: FirebaseFirestore.instance
+                                .collection('messages')
+                                .doc(userM['uid'])
+                                .collection('userMessages')
+                                .doc(widget.model.uid)
+                                .collection('messageList')
+                                .where('type', isEqualTo: 'photo')
+                                .snapshots(),
+                            builder: (context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.hasData) {
+                                return GridView.count(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  padding: const EdgeInsets.only(bottom: 20),
+                                  mainAxisSpacing: 20,
+                                  shrinkWrap: true,
+                                  crossAxisSpacing: 15,
+                                  crossAxisCount: 3,
+                                  children: List.generate(
+                                      snapshot.data.docs.length, (index) {
+                                    return Container(
                                       height: 91,
                                       width: 102,
                                       decoration: BoxDecoration(
                                         // color: Colors.grey,
                                         borderRadius: BorderRadius.circular(15),
                                       ),
-                                      child: ClipRRect(
-                                        child: CachedNetworkImage(
-                                          imageUrl: snapshot.data.docs[index]
-                                          ['content'],
-                                          fit: BoxFit.fill,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(builder: (_) {
+                                            return FullScreenImage(
+                                              imageUrl: snapshot
+                                                  .data.docs[index]['content'],
+                                              tag: "images$index",
+                                            );
+                                          }));
+                                        },
+                                        child: ClipRRect(
+                                          child: Hero(
+                                            tag: "images$index",
+                                            child: CachedNetworkImage(
+                                              imageUrl: snapshot
+                                                  .data.docs[index]['content'],
+                                              fit: BoxFit.fill,
+                                            ),
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                         ),
-                                        borderRadius: BorderRadius.circular(10),
                                       ),
-                                    ),
-                                  );
-                                }),
+                                    );
+                                  }),
+                                );
+                              }
+                              return CircularProgressIndicator(
+                                color: primaryColor,
                               );
-                            }
-                            return CircularProgressIndicator(
-                              color: primaryColor,
-                            );
-                          }),
-                  ],),
-                ),
-                SizedBox(),
-                SizedBox(),
-              ],
+                            }),
+                        StreamBuilder(
+                            stream: FirebaseFirestore.instance
+                                .collection('messages')
+                                .doc(userM['uid'])
+                                .collection('userMessages')
+                                .doc(widget.model.uid)
+                                .collection('messageList')
+                                .where('type', isEqualTo: 'video')
+                                .snapshots(),
+                            builder: (context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.hasData) {
+                                return GridView.count(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  padding: const EdgeInsets.only(bottom: 20),
+                                  mainAxisSpacing: 20,
+                                  shrinkWrap: true,
+                                  crossAxisSpacing: 15,
+                                  crossAxisCount: 3,
+                                  children: List.generate(
+                                      snapshot.data.docs.length, (index) {
+                                    return GestureDetector(
+                                      // onTap: () => Get.to(Store()),
+                                      child: Container(
+                                        height: 91,
+                                        width: 102,
+                                        decoration: BoxDecoration(
+                                          // color: Colors.grey,
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ),
+                                        child: ClipRRect(
+                                          child: CachedNetworkImage(
+                                            imageUrl: snapshot.data.docs[index]
+                                                ['content'],
+                                            fit: BoxFit.fill,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                );
+                              }
+                              return CircularProgressIndicator(
+                                color: primaryColor,
+                              );
+                            }),
+                      ],
+                    ),
+                  ),
+                  SizedBox(),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12, right: 12),
+                    child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('messages')
+                            .doc(userM['uid'])
+                            .collection('userMessages')
+                            .doc(widget.model.uid)
+                            .collection('messageList')
+                            .where('type', isEqualTo: 'message')
+                            .snapshots(),
+                        builder: (context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasData) {
+                            return ListView.builder(
+                                itemCount: snapshot.data.docs.length,
+                                itemBuilder: (context, index) {
+                                  if (snapshot.data.docs[index]['text']
+                                              .toString()
+                                              .split('?')
+                                              .first
+                                              .split('.')
+                                              .last ==
+                                          'com' ||
+                                      snapshot.data.docs[index]['text']
+                                              .toString()
+                                              .split('?')
+                                              .first
+                                              .split('.')
+                                              .last ==
+                                          'net/') {
+                                    return Container(
+                                      // width: 50,
+                                      height: 50,
+                                      // width: MediaQuery.of(context).size.width * 0.5,
+                                      decoration: BoxDecoration(color: primaryColor, borderRadius: BorderRadius.circular(15)),
+                                      margin: EdgeInsets.only(top: 10),
+                                      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.5),
+                                      alignment: Alignment.center,
+                                      child: LinkWell(
+                                          snapshot.data.docs[index]['text'],
+                                          linkStyle: TextStyle(
+                                            fontFamily: 'Roboto',
+                                            color: secondaryColor,
+                                            fontSize: 11,
+                                          )),
+                                    );
+                                  }
+                                  return SizedBox();
+                                });
+                          }
+                          return CircularProgressIndicator(
+                            color: primaryColor,
+                          );
+                        }),
+                  ),
+                ],
                 controller: tabController,
               ),
             ),

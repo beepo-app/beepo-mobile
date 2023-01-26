@@ -13,6 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:linkwell/linkwell.dart';
 import 'package:provider/provider.dart';
 
 // import 'Models/story_model/story.dart';
@@ -178,15 +179,14 @@ class _ChatTabState extends State<ChatTab> {
             GestureDetector(
               onTap: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            Note()
-                            // AddStory(
-                            //   camera1: firstCamera,
-                            //   camera2: secondCamera,
-                            // )
-                    ),
+                  context,
+                  MaterialPageRoute(builder: (context) =>
+                      // Note()
+                      AddStory(
+                        camera1: firstCamera,
+                        camera2: secondCamera,
+                      )
+                      ),
                 );
               },
               child: Column(
@@ -597,26 +597,32 @@ class MessageSender extends StatelessWidget {
           color: !isMe ? Color(0xffc4c4c4) : Color(0xff0E014C),
         ),
         constraints: BoxConstraints(
+          // maxWidth: double.infinity
           maxWidth: MediaQuery.of(context).size.width * 0.5,
         ),
         padding: const EdgeInsets.all(10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment:
-              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            LinkWell(
               text,
               style: isMe
                   ? TextStyle(
+                      fontFamily: 'Roboto',
                       color: Colors.white,
-                      fontSize: 14,
+                      fontSize: 11,
                     )
                   : TextStyle(
+                      fontFamily: 'Roboto',
                       color: Colors.black,
-                      fontSize: 14,
+                      fontSize: 11,
                     ),
+              linkStyle: TextStyle(
+                  fontFamily: 'Roboto',
+                  color: primaryColor,
+                  fontSize: 11,),
             ),
             SizedBox(height: 5),
             Row(

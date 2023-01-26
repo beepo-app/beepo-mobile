@@ -16,13 +16,17 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:voice_message_package/voice_message_package.dart';
 
-import '../../Widgets/toasts.dart';
 import '../../bottom_nav.dart';
 import '../../chat_methods.dart';
 import '../../components.dart';
 import '../../generate_keywords.dart';
+import '../../index.dart';
 import '../../provider.dart';
 import '../Profile/user_profile_screen.dart';
+
+const APP_ID = '29454d2c6f01445fbbb6db095adec156';
+const Token =
+    '007eJxTYFi2Rz9GnYk/t/dIRyibZmudY6z5kdr3jh4zijmj2eKCZyowGFmamJqkGCWbpRkYmpiYpiUlJZmlJBlYmiampCYbmprV2lxMbghkZLh5ZAIjIwMEgvisDE6pqQX5DAwAZOodHQ==';
 
 class ChatDm extends StatefulWidget {
   final UserModel model;
@@ -159,7 +163,15 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                               ),
                             ),
                             Spacer(),
-                            SvgPicture.asset('assets/video_call.svg'),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => IndexPage()));
+                              },
+                              child: SvgPicture.asset('assets/video_call.svg'),
+                            ),
                             SizedBox(width: 15),
                             Icon(
                               Icons.call,
@@ -601,7 +613,10 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                       )
                     : SizedBox(),
                 messageController.text.isEmpty
-                    ? RecordButton(controller: controller, model: widget.model,)
+                    ? RecordButton(
+                        controller: controller,
+                        model: widget.model,
+                      )
                     : IconButton(
                         onPressed: () async {
                           context
