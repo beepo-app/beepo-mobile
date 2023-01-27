@@ -236,3 +236,22 @@ cameraIconBoxShadow(context) => BoxShadow(
       blurRadius: 3,
       spreadRadius: 5,
     );
+
+const boxDecor = BoxDecoration(
+  borderRadius: BorderRadius.only(
+    bottomLeft: Radius.circular(20.0),
+    bottomRight: Radius.circular(20.0),
+  ),
+  // image: DecorationImage(
+  //   fit: BoxFit.fill,
+  //   image: AssetImage('images/selfie2.webp'),
+  // ),
+);
+
+// const boxDecore = BoxDecoration(
+//   borderRadius: BorderRadius.circular(20),
+//   // image: DecorationImage(
+//   //   fit: BoxFit.fill,
+//   //   image: AssetImage('images/selfie1.webp'),
+//   // ),
+// );
