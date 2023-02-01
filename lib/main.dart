@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_this
 
+import 'package:beepo/calls.dart';
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
 import 'package:beepo/story_download_provider.dart';
@@ -267,6 +268,10 @@ class _MyAppState extends State<MyApp> {
         title: 'Beepo',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primarySwatch: Colors.blue),
+        routes: {
+          '/' : (context)=> BottomNavHome(),
+          // '/call' : (context) => VideoCall(name: name, isVideo: isVideo)
+        },
         home: isLoggedIn
             ? isLocked
                 ? LockScreen()

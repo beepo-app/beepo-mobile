@@ -9,14 +9,19 @@ import 'package:beepo/record.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_callkeep/flutter_callkeep.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:lottie/lottie.dart';
+import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 import 'package:voice_message_package/voice_message_package.dart';
 
 import '../../bottom_nav.dart';
@@ -41,6 +46,8 @@ class ChatDm extends StatefulWidget {
 }
 
 class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
+
+
   TextEditingController messageController = TextEditingController();
   bool isTyping = true;
   AnimationController controller;
@@ -59,6 +66,8 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
       player = get['playerId'];
     });
   }
+
+//One Signal
 
   Future<Response> sendNotification(
       {List<String> tokenIdList, String contents, String heading}) async {
@@ -93,9 +102,16 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
     );
   }
 
+
   @override
   void initState() {
     // TODO: implement initState
+    // _uuid = Uuid();
+    // initFirebase();
+    // WidgetsBinding.instance.addObserver(this);
+    // Check call when open app from terminated
+    // checkAndNavigationCallingPage();
+
     controller = AnimationController(
       vsync: this,
       duration: Duration(microseconds: 100000),

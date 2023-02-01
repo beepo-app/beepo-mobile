@@ -83,6 +83,8 @@ dependencies:
   awesome_notifications: ^0.7.4+1
   agora_rtc_engine: ^5.0.1
   onesignal_flutter: ^3.5.0
+  flutter_callkeep: ^0.3.0
+  no_context_navigation: ^2.1.2
 
 
 #

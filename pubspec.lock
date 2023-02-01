@@ -391,6 +391,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.3.0"
+  flutter_callkeep:
+    dependency: "direct main"
+    description:
+      name: flutter_callkeep
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
   flutter_foreground_task:
     dependency: transitive
     description:
@@ -744,6 +751,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
+  no_context_navigation:
+    dependency: "direct main"
+    description:
+      name: no_context_navigation
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.2"
   octo_image:
     dependency: transitive
     description:
@@ -1401,5 +1415,5 @@ packages:
     source: hosted
     version: "3.1.0"
 sdks:
-  dart: ">=2.17.0 <3.0.0"
+  dart: ">=2.18.0 <3.0.0"
   flutter: ">=3.0.0"
