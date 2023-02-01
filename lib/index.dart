@@ -36,7 +36,7 @@ class _IndexPageState extends State<IndexPage> {
       await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const VideoCall(
+          builder: (context) =>  VideoCall(
             channelName: 'hackAngel',
             role: ClientRole.Broadcaster,
           ),
@@ -47,12 +47,12 @@ class _IndexPageState extends State<IndexPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('Video call'),
-        centerTitle: true,
-        backgroundColor: secondaryColor,
-      ),
+      // appBar: AppBar(
+      //   automaticallyImplyLeading: false,
+      //   title: const Text('Video call'),
+      //   centerTitle: true,
+      //   backgroundColor: secondaryColor,
+      // ),
       body: Center(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20),

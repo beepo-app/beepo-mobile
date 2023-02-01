@@ -228,7 +228,8 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                     builder: (context) => VideoCall(
                                       channelName: 'HackAngel',
                                       role: ClientRole.Broadcaster,
-                                      name: widget.model.name,
+                                      name: widget.model,
+                                      isVideo: true,
                                     ),
                                   ),
                                 );
@@ -241,10 +242,25 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                               child: SvgPicture.asset('assets/video_call.svg'),
                             ),
                             SizedBox(width: 15),
-                            Icon(
-                              Icons.call,
-                              size: 20,
-                              color: Colors.white,
+                            GestureDetector(
+                              onTap: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => VideoCall(
+                                      channelName: 'HackAngel',
+                                      role: ClientRole.Broadcaster,
+                                      name: widget.model,
+                                      isVideo: false,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Icon(
+                                Icons.call,
+                                size: 20,
+                                color: Colors.white,
+                              ),
                             ),
                             SizedBox(width: 15),
                             Icon(

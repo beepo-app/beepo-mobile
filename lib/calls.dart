@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as rtc_local_view;
@@ -10,14 +11,21 @@ import 'package:flutter/physics.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 
+import 'Models/user_model.dart';
 import 'Utils/styles.dart';
 
 class VideoCall extends StatefulWidget {
   final String channelName;
   final ClientRole role;
-  final String name;
+  final UserModel name;
+  bool isVideo;
 
-  const VideoCall({Key key, this.channelName, this.role, @required this.name})
+   VideoCall(
+      {Key key,
+      this.channelName,
+      this.role,
+      @required this.name,
+      @required this.isVideo})
       : super(key: key);
 
   @override
@@ -97,7 +105,9 @@ class _VideoCallState extends State<VideoCall>
       return;
     }
     _engine = await RtcEngine.create(APP_ID);
-    await _engine.enableVideo();
+    widget.isVideo == true
+        ? await _engine.enableVideo()
+        : _engine.disableVideo();
     await _engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
     await _engine.setClientRole(widget.role);
     _addAgoraEventHandler();
@@ -194,94 +204,121 @@ class _VideoCallState extends State<VideoCall>
       ));
     }
     final views = list;
-    if (views.length == 1) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0) + const EdgeInsets.only(top: 3),
-        child: AnimatedContainer(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          // color: Colors.amber,
-          duration: const Duration(milliseconds: 50),
-          child: views[0],
-          clipBehavior: Clip.hardEdge,
-        ),
-      );
-    } else if (views.length == 2) {
-      return Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0) + const EdgeInsets.only(top: 3),
-            child: AnimatedContainer(
-              width: size.width,
-              height: underHeight - 92,
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-              ),
-
-              // color: Colors.amber,
-              duration: const Duration(milliseconds: 50),
-              child: views[0],
+    if (widget.isVideo == true) {
+      if (views.length == 1) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0) + const EdgeInsets.only(top: 3),
+          child: AnimatedContainer(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
             ),
+            // color: Colors.amber,
+            duration: const Duration(milliseconds: 50),
+            child: views[0],
+            clipBehavior: Clip.hardEdge,
           ),
-          const SizedBox(
-            height: 10.0,
-          ),
-          GestureDetector(
-            onPanDown: (details) {
-              _controller.stop();
-            },
-            onPanUpdate: (details) {
-              panPosition = details.globalPosition;
-              setState(() {
-                _dragAlignment += Alignment(
-                  details.delta.dx / (size.width / 2),
-                  details.delta.dy / (size.height / 2),
-                );
-              });
-            },
-            onPanEnd: (details) {
-              _runAnimation(details.velocity.pixelsPerSecond, size);
-            },
-            child: Align(
-              alignment: isFreelyDragged
-                  ? Alignment(
-                      (panPosition.dx / size.width) * 2 - 1,
-                      (panPosition.dy / size.height) * 2 - 1 - 0.2,
-                    )
-                  : _dragAlignment,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: AnimatedContainer(
-                  width: width,
-                  clipBehavior: Clip.hardEdge,
-                  height: height,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    // image: DecorationImage(
-                    //   fit: BoxFit.fill,
-                    //   image: AssetImage('images/selfie1.webp'),
-                    // ),
+        );
+      } else if (views.length == 2) {
+        return Stack(
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.all(8.0) + const EdgeInsets.only(top: 3),
+              child: AnimatedContainer(
+                width: size.width,
+                height: underHeight - 92,
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+
+                // color: Colors.amber,
+                duration: const Duration(milliseconds: 50),
+                child: views[0],
+              ),
+            ),
+            const SizedBox(
+              height: 10.0,
+            ),
+            GestureDetector(
+              onPanDown: (details) {
+                _controller.stop();
+              },
+              onPanUpdate: (details) {
+                panPosition = details.globalPosition;
+                setState(() {
+                  _dragAlignment += Alignment(
+                    details.delta.dx / (size.width / 2),
+                    details.delta.dy / (size.height / 2),
+                  );
+                });
+              },
+              onPanEnd: (details) {
+                _runAnimation(details.velocity.pixelsPerSecond, size);
+              },
+              child: Align(
+                alignment: isFreelyDragged
+                    ? Alignment(
+                        (panPosition.dx / size.width) * 2 - 1,
+                        (panPosition.dy / size.height) * 2 - 1 - 0.2,
+                      )
+                    : _dragAlignment,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: AnimatedContainer(
+                    width: width,
+                    clipBehavior: Clip.hardEdge,
+                    height: height,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      // image: DecorationImage(
+                      //   fit: BoxFit.fill,
+                      //   image: AssetImage('images/selfie1.webp'),
+                      // ),
+                    ),
+                    // color: Colors.pink,
+                    duration: const Duration(milliseconds: 50),
+                    child: views[1],
                   ),
-                  // color: Colors.pink,
-                  duration: const Duration(milliseconds: 50),
-                  child: views[1],
                 ),
               ),
             ),
+          ],
+        );
+      }
+      return const SizedBox();
+    } else {
+      return Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(widget.name.image),
+            fit: BoxFit.cover,
           ),
-        ],
+        ),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          child: Container(
+            decoration: BoxDecoration(color: Colors.white.withOpacity(0.0)),
+            // child: const CircleAvatar(
+            //   // backgroundImage: NetworkImage(widget.name.image),
+            //   // radius: 100,
+            //
+            // ),
+            clipBehavior: Clip.hardEdge,
+          ),
+        ),
       );
     }
-    return const SizedBox();
-    // Column(
-    // children:
-    //     List.generate(views.length, (index) => Expanded(child: views[index])),
-    // );
   }
+
+  // Column(
+  // children:
+  //     List.generate(views.length, (index) => Expanded(child: views[index])),
+  // );
 
   bool enabled = true;
 
@@ -290,71 +327,220 @@ class _VideoCallState extends State<VideoCall>
     return Container(
       alignment: Alignment.bottomCenter,
       padding: const EdgeInsets.symmetric(vertical: 48),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          RawMaterialButton(
-            onPressed: () {
-              _engine.switchCamera();
-            },
-            child: const Icon(
-              Icons.switch_camera,
-              color: Color(0xff323232),
-              size: 20,
+      child: widget.isVideo == true
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                RawMaterialButton(
+                  onPressed: () {
+                    _engine.switchCamera();
+                  },
+                  child: const Icon(
+                    Icons.switch_camera,
+                    color: Color(0xff323232),
+                    size: 20,
+                  ),
+                  shape: const CircleBorder(),
+                  elevation: 2,
+                  fillColor: Colors.white,
+                  padding: const EdgeInsets.all(12),
+                ),
+                RawMaterialButton(
+                  onPressed: () {
+                    setState(() {
+                      enabled = !enabled;
+                    });
+                    _engine.enableLocalVideo(enabled);
+                  },
+                  child: const Icon(
+                    Icons.videocam_rounded,
+                    color: Color(0xff323232),
+                    size: 20,
+                  ),
+                  shape: const CircleBorder(),
+                  elevation: 2,
+                  fillColor: Colors.white,
+                  padding: const EdgeInsets.all(12),
+                ),
+                RawMaterialButton(
+                  onPressed: () {
+                    setState(() {
+                      muted = !muted;
+                    });
+                    _engine.muteLocalAudioStream(muted);
+                  },
+                  child: Icon(
+                    muted ? Icons.mic_off : Icons.mic,
+                    color: const Color(0xff323232),
+                    size: 20,
+                  ),
+                  shape: const CircleBorder(),
+                  elevation: 2,
+                  fillColor: Colors.white,
+                  padding: const EdgeInsets.all(12),
+                ),
+                RawMaterialButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Icon(
+                    Icons.call_end,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  shape: const CircleBorder(),
+                  elevation: 2,
+                  fillColor: Colors.redAccent,
+                  padding: const EdgeInsets.all(15),
+                ),
+              ],
+            )
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 80),
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(widget.name.image),
+                        radius: 100,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        widget.name.name,
+                        style: const TextStyle(
+                          fontFamily: "Roboto",
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 150,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [
+                        RawMaterialButton(
+                          onPressed: () {
+                            setState(() {
+                              enabled = !enabled;
+                            });
+                            _engine.setEnableSpeakerphone(enabled);
+                          },
+                          child: const Icon(
+                            Icons.volume_up_rounded,
+                            color: Color(0xff323232),
+                            size: 20,
+                          ),
+                          shape: const CircleBorder(),
+                          elevation: 2,
+                          fillColor: Colors.white,
+                          padding: const EdgeInsets.all(12),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text(
+                          "Speaker",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
+                        )
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        RawMaterialButton(
+                          onPressed: () {
+                            setState(() {
+                              enabled = !enabled;
+                            });
+                            _engine.enableVideo();
+                            widget.isVideo = true;
+                            _engine.enableLocalVideo(enabled);
+                          },
+                          child: const Icon(
+                            Icons.videocam_rounded,
+                            color: Color(0xff323232),
+                            size: 20,
+                          ),
+                          shape: const CircleBorder(),
+                          elevation: 2,
+                          fillColor: Colors.white,
+                          padding: const EdgeInsets.all(12),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text(
+                          "Video Call",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
+                        )
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        RawMaterialButton(
+                          onPressed: () {
+                            setState(() {
+                              muted = !muted;
+                            });
+                            _engine.muteLocalAudioStream(muted);
+                          },
+                          child: Icon(
+                            muted ? Icons.mic_off : Icons.mic,
+                            color: const Color(0xff323232),
+                            size: 20,
+                          ),
+                          shape: const CircleBorder(),
+                          elevation: 2,
+                          fillColor: Colors.white,
+                          padding: const EdgeInsets.all(12),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text(
+                          "Mute",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 53,
+                ),
+                RawMaterialButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Icon(
+                    Icons.call_end,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  shape: const CircleBorder(),
+                  elevation: 2,
+                  fillColor: Colors.redAccent,
+                  padding: const EdgeInsets.all(15),
+                )
+              ],
             ),
-            shape: const CircleBorder(),
-            elevation: 2,
-            fillColor: Colors.white,
-            padding: const EdgeInsets.all(12),
-          ),
-          RawMaterialButton(
-            onPressed: () {
-              setState(() {
-                enabled = !enabled;
-              });
-              _engine.enableLocalVideo(enabled);
-            },
-            child: const Icon(
-              Icons.videocam_rounded,
-              color: Color(0xff323232),
-              size: 20,
-            ),
-            shape: const CircleBorder(),
-            elevation: 2,
-            fillColor: Colors.white,
-            padding: const EdgeInsets.all(12),
-          ),
-          RawMaterialButton(
-            onPressed: () {
-              setState(() {
-                muted = !muted;
-              });
-              _engine.muteLocalAudioStream(muted);
-            },
-            child: Icon(
-              muted ? Icons.mic_off : Icons.mic,
-              color: const Color(0xff323232),
-              size: 20,
-            ),
-            shape: const CircleBorder(),
-            elevation: 2,
-            fillColor: Colors.white,
-            padding: const EdgeInsets.all(12),
-          ),
-          RawMaterialButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Icon(
-              Icons.call_end,
-              color: Colors.white,
-              size: 20,
-            ),
-            shape: const CircleBorder(),
-            elevation: 2,
-            fillColor: Colors.redAccent,
-            padding: const EdgeInsets.all(15),
-          ),
-        ],
-      ),
     );
   }
 
@@ -418,21 +604,6 @@ class _VideoCallState extends State<VideoCall>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.name),
-        centerTitle: true,
-        backgroundColor: secondaryColor,
-        actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                viewPanel = !viewPanel;
-              });
-            },
-            icon: const Icon(Icons.info_outline),
-          )
-        ],
-      ),
       backgroundColor: Colors.black,
       body: Stack(
         children: [
