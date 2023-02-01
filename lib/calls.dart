@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as rtc_local_view;
@@ -7,29 +8,31 @@ import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:hive/hive.dart';
+import 'package:http/http.dart' as http;
 
 import 'Utils/styles.dart';
-import 'constants.dart';
 
 class VideoCall extends StatefulWidget {
   final String channelName;
   final ClientRole role;
   final String name;
 
-  const VideoCall({Key key, this.channelName, this.role, @required this.name}) : super(key: key);
+  const VideoCall({Key key, this.channelName, this.role, @required this.name})
+      : super(key: key);
 
   @override
   State<VideoCall> createState() => _VideoCallState();
 }
 
-class _VideoCallState extends State<VideoCall> with SingleTickerProviderStateMixin{
+class _VideoCallState extends State<VideoCall>
+    with SingleTickerProviderStateMixin {
   final _users = <int>[];
   final _infoStrings = <String>[];
   bool muted = false;
   bool viewPanel = false;
   RtcEngine _engine;
 
-   AnimationController _controller;
+  AnimationController _controller;
 
   /// The alignment of the card as it is dragged or being animated.
   ///
@@ -38,7 +41,7 @@ class _VideoCallState extends State<VideoCall> with SingleTickerProviderStateMix
   /// this value is set to the value of the [_animation].
   Alignment _dragAlignment = Alignment.bottomCenter;
 
-   Animation<Alignment> _animation;
+  Animation<Alignment> _animation;
 
   bool get isFreelyDragged => _dragAlignment.y < 0;
   Offset panPosition;
@@ -70,7 +73,6 @@ class _VideoCallState extends State<VideoCall> with SingleTickerProviderStateMix
     _controller.animateWith(simulation);
   }
 
-
   @override
   void initState() {
     initialize();
@@ -84,7 +86,8 @@ class _VideoCallState extends State<VideoCall> with SingleTickerProviderStateMix
     });
   }
 
-
+  String token =
+      "007eJxTYFD27/L7sPmSvUwwd1V0nMN54RkLFS72h7gVP/hg9LRzlogCg5GlialJilGyWZqBoYmJaVpSUpJZSpKBpWliSmqyoamZx7xbyQ2BjAyVQgUsjAwQCOJzMngkJmc75qWn5jAwAACOWSAN";
 
   Future<void> initialize() async {
     if (APP_ID.isEmpty) {
@@ -102,29 +105,35 @@ class _VideoCallState extends State<VideoCall> with SingleTickerProviderStateMix
     configuration.dimensions = const VideoDimensions(width: 1920, height: 1000);
     await _engine.setVideoEncoderConfiguration(configuration);
     // await getToken();
-    await _engine.joinChannel(Token, widget.channelName, null, 0);
+    await _engine.joinChannel(token, widget.channelName, null, 0);
   }
-  String baseUrl = ''; //Add the link to your deployed server here
-  int uid = 0;
-  String token;
 
-  // Future<void> getToken() async {
-  //   final response = await http.get(
-  //     Uri.parse(baseUrl + '/rtc/' + widget.channelName + '/publisher/uid/' + uid.toString()
-  //       // To add expiry time uncomment the below given line with the time in seconds
-  //       // + '?expiry=45'
-  //     ),
-  //   );
-  //
-  //   if (response.statusCode == 200) {
-  //     setState(() {
-  //       token = response.body;
-  //       token = jsonDecode(token)['rtcToken'];
-  //     });
-  //   } else {
-  //     print('Failed to fetch the token');
-  //   }
-  // }
+  String baseUrl =
+      'http://localhost:8080'; //Add the link to your deployed server here
+  int uid = 0;
+
+  Future<void> getToken() async {
+    final response = await http.get(
+      Uri.parse(baseUrl +
+              '/rtc/' +
+              widget.channelName +
+              '/publisher/uid/' +
+              uid.toString()
+          // To add expiry time uncomment the below given line with the time in seconds
+          // + '?expiry=45'
+          ),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        token = response.body;
+        token = jsonDecode(token)['rtcToken'];
+      });
+    } else {
+      print('Failed to fetch the token');
+    }
+  }
+
   void _addAgoraEventHandler() {
     _engine.setEventHandler(
       RtcEngineEventHandler(error: (code) {
@@ -161,12 +170,10 @@ class _VideoCallState extends State<VideoCall> with SingleTickerProviderStateMix
           final info = 'First remote Video: $uid ${width}x $height';
           _infoStrings.add(info);
         });
-      },
-        tokenPrivilegeWillExpire: (token) async {
-          // await getToken();
-          await _engine.renewToken(token);
-        }
-      ),
+      }, tokenPrivilegeWillExpire: (token) async {
+        await getToken();
+        await _engine.renewToken(token);
+      }),
     );
   }
 
@@ -187,22 +194,22 @@ class _VideoCallState extends State<VideoCall> with SingleTickerProviderStateMix
       ));
     }
     final views = list;
-    if(views.length ==1){
+    if (views.length == 1) {
       return Padding(
         padding: const EdgeInsets.all(8.0) + const EdgeInsets.only(top: 3),
         child: AnimatedContainer(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),),
+            borderRadius: BorderRadius.circular(20),
+          ),
           // color: Colors.amber,
           duration: const Duration(milliseconds: 50),
           child: views[0],
           clipBehavior: Clip.hardEdge,
         ),
       );
-    }
-    else if(views.length == 2){
+    } else if (views.length == 2) {
       return Stack(
         children: [
           Padding(
@@ -212,14 +219,16 @@ class _VideoCallState extends State<VideoCall> with SingleTickerProviderStateMix
               height: underHeight - 92,
               clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(20),),
+                borderRadius: BorderRadius.circular(20),
+              ),
 
               // color: Colors.amber,
               duration: const Duration(milliseconds: 50),
               child: views[0],
             ),
           ),
-          const SizedBox(height: 10.0,
+          const SizedBox(
+            height: 10.0,
           ),
           GestureDetector(
             onPanDown: (details) {
@@ -240,9 +249,9 @@ class _VideoCallState extends State<VideoCall> with SingleTickerProviderStateMix
             child: Align(
               alignment: isFreelyDragged
                   ? Alignment(
-                (panPosition.dx / size.width) * 2 - 1,
-                (panPosition.dy / size.height) * 2 - 1 - 0.2,
-              )
+                      (panPosition.dx / size.width) * 2 - 1,
+                      (panPosition.dy / size.height) * 2 - 1 - 0.2,
+                    )
                   : _dragAlignment,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -268,12 +277,14 @@ class _VideoCallState extends State<VideoCall> with SingleTickerProviderStateMix
       );
     }
     return const SizedBox();
-      // Column(
-      // children:
-      //     List.generate(views.length, (index) => Expanded(child: views[index])),
+    // Column(
+    // children:
+    //     List.generate(views.length, (index) => Expanded(child: views[index])),
     // );
   }
-bool enabled = true;
+
+  bool enabled = true;
+
   Widget _toolbar() {
     if (widget.role == ClientRole.Audience) return const SizedBox();
     return Container(
@@ -299,7 +310,7 @@ bool enabled = true;
           RawMaterialButton(
             onPressed: () {
               setState(() {
-                enabled =!enabled;
+                enabled = !enabled;
               });
               _engine.enableLocalVideo(enabled);
             },
@@ -342,7 +353,6 @@ bool enabled = true;
             fillColor: Colors.redAccent,
             padding: const EdgeInsets.all(15),
           ),
-
         ],
       ),
     );
@@ -402,14 +412,14 @@ bool enabled = true;
     _controller.dispose();
     super.dispose();
   }
+
   Map userM = Hive.box('beepo').get('userData');
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
-        title:  Text(widget.name),
+        title: Text(widget.name),
         centerTitle: true,
         backgroundColor: secondaryColor,
         actions: [

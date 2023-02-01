@@ -27,7 +27,6 @@ import 'add_story.dart';
 import 'bubble_stories.dart';
 import 'groupMessages.dart';
 import 'myMessages.dart';
-import 'notify.dart';
 
 class FilledButton extends StatelessWidget {
   final String text;
@@ -397,9 +396,7 @@ class _ChatTabState extends State<ChatTab> {
                                 return SizedBox();
                               }
                             }
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
+                            return const SizedBox();
                           },
                         ),
                         StreamBuilder(
