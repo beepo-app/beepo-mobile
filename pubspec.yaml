@@ -85,6 +85,7 @@ dependencies:
   onesignal_flutter: ^3.5.0
   flutter_callkeep: ^0.3.0
   no_context_navigation: ^2.1.2
+  flutter_callkit_incoming: ^1.0.3+3
 
 
 #

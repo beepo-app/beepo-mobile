@@ -398,6 +398,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.0"
+  flutter_callkit_incoming:
+    dependency: "direct main"
+    description:
+      name: flutter_callkit_incoming
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.3+3"
   flutter_foreground_task:
     dependency: transitive
     description:
