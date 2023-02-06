@@ -1,21 +1,32 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, missing_return
 
-import 'package:beepo/Screens/Wallet/transfer_success.dart';
-import 'package:beepo/Service/auth.dart';
-import 'package:beepo/Widgets/textfields.dart';
-import 'package:beepo/Widgets/toasts.dart';
+import 'package:beepo/Screens/Profile/user_profile_screen.dart';
+import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
-import 'package:beepo/search.dart';
+import 'package:beepo/story_download_provider.dart';
+
+// import 'package:beepo/story_screen.dart';
+import 'package:beepo/story_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
+import 'package:linkwell/linkwell.dart';
 import 'package:provider/provider.dart';
 
+// import 'Models/story_model/story.dart';
+import 'Models/story_model/storyModel.dart';
+import 'Models/user_model.dart';
 import 'Models/wallet.dart';
-import 'Screens/Wallet/token_screen.dart';
 import 'Screens/Browser/browser_page.dart';
+import 'Screens/Wallet/token_screen.dart';
 import 'Utils/styles.dart';
+import 'add_story.dart';
+import 'bubble_stories.dart';
+import 'callkeep.dart';
+import 'groupMessages.dart';
 import 'myMessages.dart';
 
 class FilledButton extends StatelessWidget {
@@ -105,6 +116,8 @@ class OutlnButton extends StatelessWidget {
   }
 }
 
+List<UserModel> userss = [];
+
 class ChatTab extends StatefulWidget {
   // ChatTab({Key key}) : super(key: key);
 
@@ -116,11 +129,42 @@ class _ChatTabState extends State<ChatTab> {
   String receiver;
   bool showInput = false;
 
+  Stream<List<StoryModel>> currentUserStories;
+  Stream<List<StoryModel>> friendsStories;
+
+  // Stream<List<UserModel>> currentUserFollowingStories;
+  Stream<List<DocumentSnapshot>> currentUserFollowing;
+
+  Map userM = Hive.box('beepo').get('userData');
+
+  Widget usert;
+  CameraDescription firstCamera;
+  CameraDescription secondCamera;
+
+  // List<CameraDescription> cameras;
+  gethg() async {
+    // Obtain a list of the available cameras on the device.
+    final cameras = await availableCameras();
+    // Get a specific camera from the list of available cameras.
+    firstCamera = cameras[0];
+    secondCamera = cameras[1];
+    print(
+        'number of cameras: ${cameras.length} ${firstCamera.lensDirection.name}');
+// cameras.take(2);
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     // context.read<ChatNotifier>().getUsers();
-
+    currentUserStories =
+        context.read<StoryDownloadProvider>().getCurrentUserStories();
+    // currentUserFollowingStories =
+    //     context.read<StoryDownloadProvider>().getFollowingUsersStories();
+    // friendsStories = context.read<StoryDownloadProvider>().getFriendStories();
+    // currentUserFollowing =
+    //     context.read<StoryDownloadProvider>().getUsers();
+    gethg();
     super.initState();
   }
 
@@ -129,11 +173,21 @@ class _ChatTabState extends State<ChatTab> {
     return Column(
       children: [
         Row(
+          // scrollDirection: Axis.horizontal,
           children: [
             const SizedBox(width: 20),
             GestureDetector(
               onTap: () {
-                showToast('Coming soon');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>
+                      Test()
+                      // AddStory(
+                      //   camera1: firstCamera,
+                      //   camera2: secondCamera,
+                      // )
+                      ),
+                );
               },
               child: Column(
                 children: [
@@ -162,45 +216,98 @@ class _ChatTabState extends State<ChatTab> {
                 ],
               ),
             ),
-            // const SizedBox(width: 10),
-            // Expanded(
-            //   child: SizedBox(
-            //     height: 80,
-            //     child: ListView.separated(
-            //       padding: const EdgeInsets.only(right: 10),
-            //       shrinkWrap: true,
-            //       itemCount: 6,
-            //       scrollDirection: Axis.horizontal,
-            //       separatorBuilder: (ctx, i) => const SizedBox(width: 10),
-            //       itemBuilder: (ctx, i) {
-            //         return Column(
-            //           children: [
-            //             ClipRRect(
-            //               borderRadius: BorderRadius.circular(30),
-            //               child: Image.asset(
-            //                 'assets/profile_img.png',
-            //                 height: 60,
-            //                 width: 60,
-            //               ),
-            //             ),
-            //             const SizedBox(height: 7),
-            //             const Text(
-            //               "James",
-            //               style: TextStyle(
-            //                 color: const Color(0xb2ffffff),
-            //                 fontSize: 10,
-            //                 fontWeight: FontWeight.w700,
-            //               ),
-            //             )
-            //           ],
-            //         );
-            //       },
-            //     ),
-            //   ),
-            // ),
+            SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.only(top: 10),
+                height: 100,
+                child: ListView(scrollDirection: Axis.horizontal, children: [
+                  StreamBuilder<List<StoryModel>>(
+                      stream: currentUserStories,
+                      initialData: const [],
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          try {
+                            List<StoryModel> userStories = snapshot.data;
+                            'UserStories: $userStories'.log();
+                            Map useR;
+                            useR = Hive.box('beepo').get('userData');
+
+                            UserModel userf = UserModel(
+                              uid: useR['uid'],
+                              name: useR['displayName'],
+                              userName: useR['username'],
+                              image: useR['profilePictureUrl'],
+                              // searchKeywords: fuck.data['searchKeywords'],
+                            );
+
+                            final user = userf.copyWith(
+                              stories: userStories,
+                              uid: userM['uid'],
+                            );
+
+                            return CurrentUserStoryBubble(user: user);
+                          } catch (e) {
+                            print(e);
+                          }
+                        }
+                        if (!snapshot.hasData) {
+                          print("i can't get data");
+                        }
+                        if (snapshot.hasError) {
+                          print(snapshot.error);
+                        }
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColor,
+                          ),
+                        );
+                      }),
+                  StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('usersStories')
+                          .where('uid', isNotEqualTo: userM['uid'])
+                          .snapshots(),
+                      // initialData: const [],
+                      builder:
+                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.data.docs.isEmpty) {
+                            return SizedBox();
+                          }
+                          return ListView.builder(
+                            primary: false,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: snapshot.data.docs.length,
+                            itemBuilder: (context, index) {
+                              print(snapshot.data.docs.length);
+
+                              return BubbleStories(
+                                uid: snapshot.data.docs[index].id,
+                                index: index,
+                                docu: snapshot.data.docs,
+                                myStory: false,
+                                // index: index,
+                              );
+                            },
+                          );
+                        }
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColor,
+                          ),
+                        );
+                      })
+                ]),
+              ),
+            ),
           ],
         ),
-        const SizedBox(height: 40),
+        const SizedBox(height: 20),
         Expanded(
           child: Container(
             padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
@@ -265,11 +372,43 @@ class _ChatTabState extends State<ChatTab> {
                       children: [
                         StreamBuilder(
                           stream: FirebaseFirestore.instance
-                              .collection('conversation')
-                              .doc(AuthService().uid.isEmpty ? ' ' : AuthService().uid)
-                              .collection("currentConversation")
+                              .collection('groups')
                               .snapshots(),
-                          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          builder:
+                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.hasData) {
+                              if (snapshot.data.docs.isNotEmpty) {
+                                return ListView.separated(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data.docs.length,
+                                  separatorBuilder: (ctx, i) =>
+                                      const SizedBox(height: 0),
+                                  itemBuilder: (ctx, index) {
+                                    return GroupMessages(
+                                      uid: snapshot.data.docs[index].id,
+                                      index: index,
+                                      docu: snapshot.data.docs,
+                                    );
+                                  },
+                                );
+                              } else {
+                                return SizedBox();
+                              }
+                            }
+                            return const SizedBox();
+                          },
+                        ),
+                        StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('conversation')
+                              .doc(userM['uid'] == '' ? ' ' : userM['uid'])
+                              .collection("currentConversation")
+                              .orderBy('created', descending: true)
+                              .snapshots(),
+                          builder:
+                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                             if (snapshot.hasData) {
                               if (snapshot.data.docs.isEmpty) {
                                 return Padding(
@@ -287,10 +426,13 @@ class _ChatTabState extends State<ChatTab> {
                                 physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
                                 itemCount: snapshot.data.docs.length,
-                                separatorBuilder: (ctx, i) => const SizedBox(height: 0),
+                                separatorBuilder: (ctx, i) =>
+                                    const SizedBox(height: 0),
                                 itemBuilder: (ctx, index) {
                                   return MyMessages(
                                     uid: snapshot.data.docs[index].id,
+                                    index: index,
+                                    docu: snapshot.data.docs,
                                   );
                                 },
                               );
@@ -378,7 +520,7 @@ class _CallTabState extends State<CallTab> {
               ),
               title: const Text(
                 "Precious ",
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.black,
                   fontSize: 14,
                 ),
@@ -421,6 +563,25 @@ class MessageSender extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var day = time.toDate().day.toString();
+    var month = time.toDate().month.toString();
+    var year = time.toDate().toString().substring(2);
+    var date = day + '-' + month + '-' + year;
+    var hour = time.toDate().hour;
+    var min = time.toDate().minute;
+
+    var ampm;
+    if (hour > 12) {
+      hour = hour % 12;
+      ampm = 'pm';
+    } else if (hour == 12) {
+      ampm = 'pm';
+    } else if (hour == 0) {
+      hour = 12;
+      ampm = 'am';
+    } else {
+      ampm = 'am';
+    }
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -431,35 +592,51 @@ class MessageSender extends StatelessWidget {
             bottomLeft: Radius.circular(12),
             bottomRight: Radius.circular(12),
           ),
-          color: isMe ? Color(0xffFF9C34) : Color(0xe50d004c),
+          color: !isMe ? Color(0xffc4c4c4) : Color(0xff0E014C),
         ),
         constraints: BoxConstraints(
+          // maxWidth: double.infinity
           maxWidth: MediaQuery.of(context).size.width * 0.5,
         ),
         padding: const EdgeInsets.all(10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            LinkWell(
               text,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-              ),
+              style: isMe
+                  ? TextStyle(
+                      fontFamily: 'Roboto',
+                      color: Colors.white,
+                      fontSize: 11,
+                    )
+                  : TextStyle(
+                      fontFamily: 'Roboto',
+                      color: Colors.black,
+                      fontSize: 11,
+                    ),
+              linkStyle: TextStyle(
+                  fontFamily: 'Roboto',
+                  color: primaryColor,
+                  fontSize: 11,),
             ),
             SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  '${time.toDate().hour} : ${time.toDate().minute}',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  hour.toString() + ":" + min.toString() + ampm,
+                  style: isMe
+                      ? TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                        )
+                      : TextStyle(
+                          color: Colors.black,
+                          fontSize: 10,
+                        ),
                 ),
                 isMe
                     ? SizedBox(width: 5)
@@ -484,50 +661,169 @@ class MessageSender extends StatelessWidget {
   }
 }
 
-class MessageReceiver extends StatelessWidget {
+class Group extends StatelessWidget {
+  final bool isMe;
+  final String text;
+  final Timestamp time;
+  final UserModel user;
+
+  const Group({
+    Key key,
+    @required this.isMe,
+    @required this.text,
+    @required this.time,
+    this.user,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    var day = time.toDate().day.toString();
+    var month = time.toDate().month.toString();
+    var year = time.toDate().toString().substring(2);
+    var date = day + '-' + month + '-' + year;
+    var hour = time.toDate().hour;
+    var min = time.toDate().minute;
+
+    var ampm;
+    if (hour > 12) {
+      hour = hour % 12;
+      ampm = 'pm';
+    } else if (hour == 12) {
+      ampm = 'pm';
+    } else if (hour == 0) {
+      hour = 12;
+      ampm = 'am';
+    } else {
+      ampm = 'am';
+    }
     return Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(0),
-            topRight: Radius.circular(12),
-            bottomLeft: Radius.circular(12),
-            bottomRight: Radius.circular(12),
-          ),
-          color: Color(0xe50d004c),
-        ),
-        padding: const EdgeInsets.all(10),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.5,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "😂🤣 wdy mean?",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Text(
-                "9:13am",
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
+      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+      child: Row(
+        crossAxisAlignment:
+            !isMe ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        mainAxisAlignment:
+            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: [
+          if (!isMe)
+            Padding(
+              padding: const EdgeInsets.only(right: 5),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UserProfile(model: user)));
+                },
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundImage: CachedNetworkImageProvider(user.image),
                 ),
               ),
-            )
-          ],
-        ),
+            ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: isMe ? Radius.circular(12) : Radius.circular(0),
+                topRight: isMe ? Radius.circular(0) : Radius.circular(12),
+                bottomLeft: Radius.circular(12),
+                bottomRight: Radius.circular(12),
+              ),
+              color: !isMe ? Color(0xffc4c4c4) : Color(0xff0E014C),
+            ),
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.5,
+            ),
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment:
+                  isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              children: [
+                if (!isMe)
+                  Text(
+                    user.name,
+                    style: TextStyle(
+                      color: txtColor1,
+                      fontFamily: 'SignikaNegative',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                Text(
+                  text,
+                  style: isMe
+                      ? TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        )
+                      : TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                        ),
+                ),
+                SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      hour.toString() + ":" + min.toString() + ampm,
+                      style: isMe
+                          ? TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                            )
+                          : TextStyle(
+                              color: Colors.black,
+                              fontSize: 10,
+                            ),
+                    ),
+                    isMe
+                        ? SizedBox(width: 5)
+                        : SizedBox(
+                            width: 0,
+                          ),
+                    isMe
+                        ? Icon(
+                            Icons.done_all,
+                            color: Colors.white,
+                            size: 15,
+                          )
+                        : SizedBox(
+                            width: 0,
+                          ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CurrentUserStoryBubble extends StatelessWidget {
+  const CurrentUserStoryBubble({
+    Key key,
+    @required this.user,
+  }) : super(key: key);
+
+  // final List<Story> stories;
+  final UserModel user;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => Homes(user: user)));
+      },
+      child: BubbleStories(
+        uid: user.uid,
+        hasStory: user.stories.isNotEmpty,
+        myStory: true,
+        // useNetworkImage: true,
       ),
     );
   }
@@ -858,7 +1154,9 @@ class ContainerButton extends StatelessWidget {
                   const Text(
                     'Swap',
                     style: TextStyle(
-                        fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey),
                   ),
                   const Spacer(),
                   const VerticalDivider(),
@@ -882,7 +1180,9 @@ class ContainerButton extends StatelessWidget {
                   const Text(
                     'Granda',
                     style: const TextStyle(
-                        fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey),
                   ),
                   const Spacer(),
                   const VerticalDivider(),
@@ -906,7 +1206,9 @@ class ContainerButton extends StatelessWidget {
               child: const Text(
                 'About',
                 style: const TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey),
               ),
             ),
           ),

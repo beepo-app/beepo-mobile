@@ -5,13 +5,12 @@ import 'package:beepo/Widgets/toasts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:lottie/lottie.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../../Service/auth.dart';
 import '../../Utils/styles.dart';
-import '../../components.dart';
 import '../../bottom_nav.dart';
+import '../../components.dart';
 
 class VerifyCode extends StatefulWidget {
   final File image;
@@ -127,7 +126,7 @@ class _VerifyCodeState extends State<VerifyCode> {
 
                     if (result) {
                       showToast('Login successful');
-                      Get.offAll(BottomNavHome());
+                      Get.offAll(const BottomNavHome());
                     }
                   }
                 } else {

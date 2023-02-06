@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:beepo/Widgets/commons.dart';
 import 'package:beepo/components.dart';
 import 'package:flutter/material.dart';

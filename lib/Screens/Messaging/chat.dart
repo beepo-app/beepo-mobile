@@ -95,7 +95,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 25),
+                      const SizedBox(height: 10),
                       Expanded(
                         child: TabBarView(
                           children: [

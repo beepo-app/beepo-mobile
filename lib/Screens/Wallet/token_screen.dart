@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:beepo/Models/transaction.dart';
 import 'package:beepo/Service/transactions.dart';
 import 'package:beepo/Utils/functions.dart';
@@ -5,15 +7,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../Models/wallet.dart';
 import '../../Utils/styles.dart';
-import 'send_token.dart';
-import '../send_global.dart';
 import 'receive_token.dart';
+import 'send_token.dart';
 
 class WalletToken extends StatefulWidget {
   final Wallet wallet;

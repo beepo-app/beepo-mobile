@@ -8,7 +8,6 @@ import 'package:beepo/Service/encryption.dart';
 import 'package:beepo/Widgets/toasts.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../Constants/network.dart';
 
