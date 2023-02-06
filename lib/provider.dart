@@ -1,8 +1,12 @@
+// ignore_for_file: avoid_print, prefer_const_constructors
+
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:beepo/Models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:encrypt/encrypt.dart';
+import 'package:encrypt/encrypt_io.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -10,9 +14,13 @@ import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pointycastle/asymmetric/api.dart';
 import 'package:record_mp3/record_mp3.dart';
+import 'package:rsa_encrypt/rsa_encrypt.dart';
 
 import 'Utils/functions.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
+
 
 class ChatNotifier extends ChangeNotifier {
   List<String> _users = [];
@@ -29,10 +37,54 @@ class ChatNotifier extends ChangeNotifier {
   File selectedImage;
   File selectedImageForChat;
 
+  // String decrypted;
+  Encrypted encrypted;
+
+
   //  preload(BuildContext context, String path) {
   //   final configuration = createLocalImageConfiguration(context);
   //   return NetworkImage(path).resolve(configuration);
   // }
+   Future<String>encrypt(String text) async {
+    var helper = RsaKeyHelper();
+
+    final serverPublicKey = await parseKeyFromFile<RSAPublicKey>('test/public.pem');
+
+    final privateKey = await parseKeyFromFile<RSAPrivateKey>('test/private.pem');
+
+    final encrypterer = Encrypter(
+      RSA(
+        publicKey: helper.parsePublicKeyFromPem(serverPublicKey),
+        privateKey: helper.parsePrivateKeyFromPem(privateKey),
+        encoding: RSAEncoding.PKCS1,
+      ),
+    );
+
+    encrypted = encrypterer.encrypt(text);
+    notifyListeners();
+
+    return encrypted.base16;
+  }
+
+  decrypt(Encrypted encrypting)async {
+    var helper = RsaKeyHelper();
+
+    final serverPublicKey = await parseKeyFromFile<RSAPublicKey>('test/public.pem');
+
+    final privateKey = await parseKeyFromFile<RSAPrivateKey>('test/private.pem');
+
+    final encrypterer = Encrypter(
+      RSA(
+        publicKey: helper.parsePublicKeyFromPem(serverPublicKey),
+        privateKey: helper.parsePrivateKeyFromPem(privateKey),
+        encoding: RSAEncoding.PKCS1,
+      ),
+    );
+     String decrypted = encrypterer.decrypt16(encrypting.base16);
+     return decrypted;
+     // notifyListeners();
+  }
+
 
   pickUploadImage() async {
     final image = await ImagePicker().pickImage(
@@ -433,7 +485,7 @@ class ChatNotifier extends ChangeNotifier {
           .collection('messageList')
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-        await transaction.set(ref, {
+         transaction.set(ref, {
           "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
@@ -458,7 +510,7 @@ class ChatNotifier extends ChangeNotifier {
           .collection('messageList')
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-        await transaction.set(ref1, {
+         transaction.set(ref1, {
           "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
@@ -481,7 +533,7 @@ class ChatNotifier extends ChangeNotifier {
           .collection("currentConversation")
           .doc(receiverId);
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-        await transaction.set(ref2, {
+         transaction.set(ref2, {
           "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
@@ -504,7 +556,7 @@ class ChatNotifier extends ChangeNotifier {
           .collection("currentConversation")
           .doc(userM['uid']);
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-        await transaction.set(ref3, {
+         transaction.set(ref3, {
           "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),

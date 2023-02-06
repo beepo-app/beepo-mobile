@@ -268,10 +268,10 @@ class _MyAppState extends State<MyApp> {
         title: 'Beepo',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primarySwatch: Colors.blue),
-        routes: {
-          '/' : (context)=> BottomNavHome(),
-          // '/call' : (context) => VideoCall(name: name, isVideo: isVideo)
-        },
+        // routes: {
+        //   '/' : (context)=> BottomNavHome(),
+        //   '/call' : (context) => VideoCall(name: name, isVideo: isVideo)
+        // },
         home: isLoggedIn
             ? isLocked
                 ? LockScreen()

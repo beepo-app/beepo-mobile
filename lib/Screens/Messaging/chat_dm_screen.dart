@@ -31,6 +31,8 @@ import '../../generate_keywords.dart';
 import '../../provider.dart';
 import '../Profile/user_profile_screen.dart';
 
+import 'package:encrypt/encrypt.dart' as enc;
+
 const APP_ID = '29454d2c6f01445fbbb6db095adec156';
 const Token =
     '007eJxTYNjNrHnlnvVml13NFy7v3MO7fafCrF2lsbbTni+wn/Rk+6tdCgxGliamJilGyWZpBoYmJqZpSUlJZilJBpamiSmpyYamZntfXUpuCGRk4Fx+n5mRAQLBfAaPxORsx7z01BwGBgDw2CT1';
@@ -335,6 +337,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                 var date = day + '-' + month + '-' + year;
                                 var hour = time.toDate().hour;
                                 var min = time.toDate().minute;
+                                final encrypter = enc.Encrypter(enc.AES(enc.Key.fromLength(32)));
 
                                 var ampm;
                                 if (hour > 12) {
@@ -356,7 +359,11 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                         isMe: userM['uid'] ==
                                             snapshot.data.docs[index]["sender"],
                                         displayname: widget.model.name,
-                                        text: snapshot.data.docs[index]["text"],
+                                        text: encrypter.decrypt64(snapshot.data.docs[index]
+                                                ["text"],
+                                            iv: enc.IV.fromLength(16)
+                                        // ["iv"]
+                                        ),
                                         time: snapshot.data.docs[index]
                                             ["created"],
                                       )
@@ -587,6 +594,8 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                               .read<ChatNotifier>()
                               .storeText(messageController.text.trim());
                           messageController.clear();
+
+
                           ChatMethods().storeMessages(
                             context: context,
                             text: context.read<ChatNotifier>().chatText,
@@ -597,6 +606,8 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                             img: widget.model.image,
                             displayName: widget.model.name,
                             userName: widget.model.userName,
+                            key: enc.Key.fromLength(32),
+                            iv: enc.IV.fromLength(16),
                           );
                           sendNotification(
                             tokenIdList: [player],
@@ -623,8 +634,8 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                           //
                           // )
                           // );
-
                           context.read<ChatNotifier>().clearText();
+                          // EncryptData.encryptFernet(context.read<ChatNotifier>().chatText);
                           // OneSignal.shared.
                         },
                         icon: const Icon(

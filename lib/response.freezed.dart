@@ -59,8 +59,8 @@ mixin _$Response<T> {
 /// @nodoc
 abstract class $ResponseCopyWith<T, $Res> {
   factory $ResponseCopyWith(
-          Response<T> value, $Res Function(Response<T>) then) =
-      _$ResponseCopyWithImpl<T, $Res>;
+      Response<T> value, $Res Function(Response<T>) then) =
+  _$ResponseCopyWithImpl<T, $Res>;
 }
 
 /// @nodoc
@@ -75,8 +75,8 @@ class _$ResponseCopyWithImpl<T, $Res> implements $ResponseCopyWith<T, $Res> {
 /// @nodoc
 abstract class _$$SuccessCopyWith<T, $Res> {
   factory _$$SuccessCopyWith(
-          _$Success<T> value, $Res Function(_$Success<T>) then) =
-      __$$SuccessCopyWithImpl<T, $Res>;
+      _$Success<T> value, $Res Function(_$Success<T>) then) =
+  __$$SuccessCopyWithImpl<T, $Res>;
   $Res call({T data});
 }
 
@@ -98,7 +98,7 @@ class __$$SuccessCopyWithImpl<T, $Res> extends _$ResponseCopyWithImpl<T, $Res>
       data == freezed
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
-              as T,
+      as T,
     ));
   }
 }
@@ -208,8 +208,8 @@ abstract class Success<T> implements Response<T> {
 /// @nodoc
 abstract class _$$FailureCopyWith<T, $Res> {
   factory _$$FailureCopyWith(
-          _$Failure<T> value, $Res Function(_$Failure<T>) then) =
-      __$$FailureCopyWithImpl<T, $Res>;
+      _$Failure<T> value, $Res Function(_$Failure<T>) then) =
+  __$$FailureCopyWithImpl<T, $Res>;
   $Res call({String message});
 }
 
@@ -231,7 +231,7 @@ class __$$FailureCopyWithImpl<T, $Res> extends _$ResponseCopyWithImpl<T, $Res>
       message == freezed
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
-              as String,
+      as String,
     ));
   }
 }

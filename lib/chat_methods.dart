@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:beepo/Widgets/snack.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cryptography/cryptography.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter/material.dart';
-// import 'package:voster/utils/snack.dart';
 
 class ChatMethods {
   void storeMessages({
@@ -13,15 +16,21 @@ class ChatMethods {
     String userName,
     String img,
     String displayName,
+    encrypt.Key key,
+    encrypt.IV iv,
   }) async {
     try {
+      final encrypter = encrypt.Encrypter(encrypt.AES(key));
+      final encrypted = encrypter.encrypt(text, iv: iv);
+
+
       await FirebaseFirestore.instance
           .collection("conversation")
           .doc(userID)
           .collection("currentConversation")
           .doc(receiverID)
           .set({
-        'text': text,
+        'text': encrypted.base64,
         'sender': userID,
         'receiver': receiverID,
         'name': userName,
@@ -30,6 +39,8 @@ class ChatMethods {
         'created': Timestamp.now(),
         'searchKeywords': searchKeywords,
         'type': 'message',
+        // 'key': key.base64,
+        // 'iv': iv.base64,
       });
       await FirebaseFirestore.instance
           .collection("conversation")
@@ -37,12 +48,14 @@ class ChatMethods {
           .collection("currentConversation")
           .doc(userID)
           .set({
-        'text': text,
+        'text': encrypted.base64,
         'sender': userID,
         'receiver': receiverID,
         'created': Timestamp.now(),
         'searchKeywords': searchKeywords,
         'type': 'message',
+        // 'key': key.base64,
+        // 'iv': iv.base64,
       });
 
       await FirebaseFirestore.instance
@@ -52,11 +65,13 @@ class ChatMethods {
           .doc(receiverID)
           .collection('messageList')
           .add({
-        'text': text,
+        'text': encrypted.base64,
         'sender': userID,
         'receiver': receiverID,
         'created': Timestamp.now(),
         'type': 'message',
+        // 'key': key.base64,
+        // 'iv': iv.base64,
       });
 
       await FirebaseFirestore.instance
@@ -66,11 +81,13 @@ class ChatMethods {
           .doc(userID)
           .collection('messageList')
           .add({
-        'text': text,
+        'text': encrypted.base64,
         'sender': userID,
         'receiver': receiverID,
         'created': Timestamp.now(),
         'type': 'message',
+        // 'key': key.base64,
+        // 'iv': iv.base64,
       });
     } catch (e) {
       displaySnack(context, "Please check your internet connection");
@@ -118,4 +135,6 @@ class ChatMethods {
       displaySnack(context, "Please check your internet connection");
     }
   }
+
+
 }
