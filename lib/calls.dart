@@ -6,15 +6,10 @@ import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as rtc_local_view;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as rtc_remote_view;
 import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
-// import 'package:flutter_callkeep/flutter_callkeep.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
-import 'package:no_context_navigation/no_context_navigation.dart';
-import 'package:uuid/uuid.dart';
 
 import 'Models/user_model.dart';
 
@@ -120,12 +115,12 @@ class _VideoCallState extends State<VideoCall>
     VideoEncoderConfiguration configuration = VideoEncoderConfiguration();
     configuration.dimensions = const VideoDimensions(width: 1920, height: 1000);
     await _engine.setVideoEncoderConfiguration(configuration);
-    // await getToken();
+    await getToken();
     await _engine.joinChannel(token, widget.channelName, null, 0);
   }
 
   String baseUrl =
-      'http://localhost:8080'; //Add the link to your deployed server here
+      'https://core.api.beepoapp.net'; //Add the link to your deployed server here
   int uid = 0;
 
   Future<void> getToken() async {
@@ -234,7 +229,7 @@ class _VideoCallState extends State<VideoCall>
                   const EdgeInsets.all(8.0) + const EdgeInsets.only(top: 3),
               child: AnimatedContainer(
                 width: size.width,
-                height: underHeight - 92,
+                height: underHeight - 40,
                 clipBehavior: Clip.hardEdge,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
@@ -242,12 +237,10 @@ class _VideoCallState extends State<VideoCall>
 
                 // color: Colors.amber,
                 duration: const Duration(milliseconds: 50),
-                child: views[0],
+                child: views[1],
               ),
             ),
-            const SizedBox(
-              height: 10.0,
-            ),
+
             GestureDetector(
               onPanDown: (details) {
                 _controller.stop();
@@ -286,7 +279,7 @@ class _VideoCallState extends State<VideoCall>
                     ),
                     // color: Colors.pink,
                     duration: const Duration(milliseconds: 50),
-                    child: views[1],
+                    child: views[0],
                   ),
                 ),
               ),

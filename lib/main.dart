@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_this
 
-import 'package:beepo/calls.dart';
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
 import 'package:beepo/story_download_provider.dart';
@@ -12,10 +11,15 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 import 'Screens/Auth/lock_screen.dart';
 import 'Screens/Auth/onboarding.dart';
 import 'bottom_nav.dart';
+import 'package:flutter_incoming_call/flutter_incoming_call.dart';
+
+import 'calll_notify.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,9 +50,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _debugLabelString = "";
 
-  // String _emailAddress;
-  // String _smsNumber;
-  // String _language;
   bool _enableConsentButton = true;
 
   oneSignalInAppMessagingTriggerExamples() async {
@@ -161,19 +162,6 @@ class _MyAppState extends State<MyApp> {
       });
     });
 
-    OneSignal.shared.setNotificationWillShowInForegroundHandler(
-        (OSNotificationReceivedEvent event) {
-      print('FOREGROUND HANDLER CALLED WITH: $event');
-
-      /// Display Notification, send null to not display
-      event.complete(null);
-
-      setState(() {
-        _debugLabelString =
-            "Notification received in foreground notification: \n${event.notification.jsonRepresentation().replaceAll("\\n", "\n")}";
-      });
-    });
-
     OneSignal.shared
         .setInAppMessageClickedHandler((OSInAppMessageAction action) {
       setState(() {
@@ -191,15 +179,15 @@ class _MyAppState extends State<MyApp> {
       print("PERMISSION STATE CHANGED: ${changes.jsonRepresentation()}");
     });
 
-    OneSignal.shared.setEmailSubscriptionObserver(
-        (OSEmailSubscriptionStateChanges changes) {
-      print("EMAIL SUBSCRIPTION STATE CHANGED ${changes.jsonRepresentation()}");
-    });
+    // OneSignal.shared.setEmailSubscriptionObserver(
+    //     (OSEmailSubscriptionStateChanges changes) {
+    //   print("EMAIL SUBSCRIPTION STATE CHANGED ${changes.jsonRepresentation()}");
+    // });
 
-    OneSignal.shared
-        .setSMSSubscriptionObserver((OSSMSSubscriptionStateChanges changes) {
-      print("SMS SUBSCRIPTION STATE CHANGED ${changes.jsonRepresentation()}");
-    });
+    // OneSignal.shared
+    //     .setSMSSubscriptionObserver((OSSMSSubscriptionStateChanges changes) {
+    //   print("SMS SUBSCRIPTION STATE CHANGED ${changes.jsonRepresentation()}");
+    // });
 
     OneSignal.shared.setOnWillDisplayInAppMessageHandler((message) {
       print("ON WILL DISPLAY IN APP MESSAGE ${message.messageId}");
@@ -241,13 +229,36 @@ class _MyAppState extends State<MyApp> {
         await OneSignal.shared.userProvidedPrivacyConsent();
     print("USER PROVIDED PRIVACY CONSENT: $userProvidedPrivacyConsent");
   }
+  var uuid = Uuid();
+
+
 
   @override
   void initState() {
     initPlatformState();
+    FlutterIncomingCall.configure(
+        appName: 'beepo',
+        duration: 30000,
+        android: ConfigAndroid(
+          vibration: true,
+          ringtonePath: 'default',
+          channelId: 'calls',
+          channelName: 'peace',
+          channelDescription: 'Calls channel description',
+        ),
+        ios: ConfigIOS(
+          iconName: 'AppIcon40x40',
+          ringtonePath: null,
+          includesCallsInRecents: false,
+          supportsVideo: true,
+          maximumCallGroups: 2,
+          maximumCallsPerCallGroup: 1,
+        )
+    );
 
     super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -268,10 +279,6 @@ class _MyAppState extends State<MyApp> {
         title: 'Beepo',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primarySwatch: Colors.blue),
-        // routes: {
-        //   '/' : (context)=> BottomNavHome(),
-        //   '/call' : (context) => VideoCall(name: name, isVideo: isVideo)
-        // },
         home: isLoggedIn
             ? isLocked
                 ? LockScreen()

@@ -181,11 +181,11 @@ class _ChatTabState extends State<ChatTab> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) =>
-                      Test()
-                      // AddStory(
-                      //   camera1: firstCamera,
-                      //   camera2: secondCamera,
-                      // )
+                      // Test()
+                      AddStory(
+                        camera1: firstCamera,
+                        camera2: secondCamera,
+                      )
                       ),
                 );
               },

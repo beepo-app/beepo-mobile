@@ -405,6 +405,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.10.0"
+  flutter_incoming_call:
+    dependency: "direct main"
+    description:
+      name: flutter_incoming_call
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.1"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -751,13 +758,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
-  no_context_navigation:
-    dependency: "direct main"
-    description:
-      name: no_context_navigation
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.2"
   octo_image:
     dependency: transitive
     description:
