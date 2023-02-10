@@ -532,7 +532,7 @@ class _VideoCallState extends State<VideoCall>
                 RawMaterialButton(
                   onPressed: () {
                     Calls().endCall(const Uuid().v4());
-                    Navigator.pop(context);
+                    // Navigator.pop(context);
                     },
                   child: const Icon(
                     Icons.call_end,

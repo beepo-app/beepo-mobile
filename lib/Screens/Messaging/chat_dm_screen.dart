@@ -12,14 +12,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:encrypt/encrypt.dart' as enc;
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart' as navy;
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:lottie/lottie.dart';
@@ -35,7 +34,6 @@ import '../../components.dart';
 import '../../generate_keywords.dart';
 import '../../provider.dart';
 import '../Profile/user_profile_screen.dart';
-import 'package:http/http.dart' as http;
 
 const APP_ID = '29454d2c6f01445fbbb6db095adec156';
 
@@ -155,30 +153,30 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
     );
   }
 
-
-
   int _messageCount = 0;
+
   String constructFCMPayload(String token, bool video) {
     _messageCount++;
     return jsonEncode({
-      "to" : token,
-      "collapse_key" : "New Message",
+      "to": token,
+      "collapse_key": "New Message",
       "priority": "high",
-      "notification" : {
+      "notification": {
         "title": "Title of Your Notification",
-        "body" : "Body of Your Notification",
+        "body": "Body of Your Notification",
       },
       "data": {
-    "name": userM['displayName'],
-        "uid" : userM['uid'],
-    // model: widget.model,
-    "hasVideo": "$video",
-    "userName": userM['username'],
-    "image": userM['profilePictureUrl'],
-    // context: context,
+        "name": userM['displayName'],
+        "uid": userM['uid'],
+        // model: widget.model,
+        "hasVideo": "$video",
+        "userName": userM['username'],
+        "image": userM['profilePictureUrl'],
+        // context: context,
       }
     });
   }
+
   Future<void> sendPushMessage(bool video) async {
     if (tokens == null) {
       print('Unable to send FCM message, no token exists.');
@@ -190,7 +188,8 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization' : 'key=AAAAI_k21-0:APA91bEhToRGxcNDYLkqXBBxhVWFBnrq7qeHc0bh3DE_w1cOzp39rjXTDW8J3mql7UI-LWuAzWi7Vh4ifvT0zz1pRqLZSldLuEshgxSjqEwvJAnO0P1zUjPfNwOBx6hm_xRGN9N1CM9s'
+          'Authorization':
+              'key=AAAAI_k21-0:APA91bEhToRGxcNDYLkqXBBxhVWFBnrq7qeHc0bh3DE_w1cOzp39rjXTDW8J3mql7UI-LWuAzWi7Vh4ifvT0zz1pRqLZSldLuEshgxSjqEwvJAnO0P1zUjPfNwOBx6hm_xRGN9N1CM9s'
         },
         body: constructFCMPayload(tokens, video),
       );
@@ -199,7 +198,6 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
       print(e);
     }
   }
-
 
   getCurrentCall() async {
     //check current call from pushkit if possible
@@ -241,8 +239,6 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
       checkAndNavigationCallingPage(false);
     }
   }
-
-
 
   @override
   void initState() {
@@ -419,10 +415,8 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                             SizedBox(width: 15),
                             GestureDetector(
                               onTap: () async {
-
                                 await sendPushMessage(false);
                                 checkAndNavigationCallingPage(false);
-
                               },
                               child: Icon(
                                 Icons.call,

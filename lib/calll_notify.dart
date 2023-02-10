@@ -1,7 +1,6 @@
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/calls.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming/entities/android_params.dart';
 import 'package:flutter_callkit_incoming/entities/call_event.dart';
 import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
@@ -10,70 +9,82 @@ import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:get/get.dart' as note;
 
 class Calls {
-  startCall({String uid, String name, String userName, UserModel model, bool hasVideo}) async {
+  startCall(
+      {String uid,
+      String name,
+      String userName,
+      UserModel model,
+      bool hasVideo}) async {
     // this._currentUuid = _uuid.v4();
     CallKitParams params = CallKitParams(
-        id: uid,
-        nameCaller: name,
-        handle: userName,
-        type: 1,
-        extra: <String, dynamic>{'userId': '1a2b3c4d'},
-        ios: IOSParams(handleType: 'generic'),
+      id: uid,
+      nameCaller: name,
+      handle: userName,
+      type: 1,
+      extra: <String, dynamic>{'userId': '1a2b3c4d'},
+      ios: IOSParams(handleType: 'generic'),
     );
     await FlutterCallkitIncoming.startCall(params);
     FlutterCallkitIncoming.onEvent.listen((CallEvent event) {
       switch (event.event) {
-        case Event.ACTION_CALL_INCOMING: ()async{
-          await FlutterCallkitIncoming.showCallkitIncoming(params);
-        };
-        // TODO: received an incoming call
-        break;
-        case Event.ACTION_CALL_START: (){
-
-        };
-        // TODO: started an outgoing call
-        // TODO: show screen calling in Flutter
-        break;
+        case Event.ACTION_CALL_START:
+          () {
+            // note.Get.to(VideoCall(
+            //   name: model,
+            //   isVideo: hasVideo,
+            //   channelName: 'peace',
+            //   role: ClientRole.Audience,
+            // ));
+          };
+          // TODO: started an outgoing call
+          // TODO: show screen calling in Flutter
+          break;
         case Event.ACTION_CALL_ACCEPT:
           note.Get.to(VideoCall(
             name: model,
             isVideo: hasVideo,
             channelName: 'peace',
-            role: ClientRole.Audience,
+            role: ClientRole.Broadcaster,
           ));
 
           // TODO: accepted an incoming call
           // TODO: show screen calling in Flutter
           break;
-        case Event.ACTION_CALL_DECLINE: showMissedCall(uid: uid, name: name);
-        // TODO: declined an incoming call
-        break;
-        case Event.ACTION_CALL_ENDED: endCall(uid);
-        // TODO: ended an incoming/outgoing call
-        break;
+        case Event.ACTION_CALL_DECLINE:
+          showMissedCall(uid: uid, name: name);
+          // TODO: declined an incoming call
+          break;
+        case Event.ACTION_CALL_ENDED:
+          // ()=>
+          //
+          //   note.Get.back();
+
+          // TODO: ended an incoming/outgoing call
+          break;
+
         case Event.ACTION_CALL_TIMEOUT:
-        // TODO: missed an incoming call
+          // TODO: missed an incoming call
           break;
         case Event.ACTION_CALL_CALLBACK:
-        // TODO: only Android - click action `Call back` from missed call notification
+          // TODO: only Android - click action `Call back` from missed call notification
           break;
         case Event.ACTION_CALL_TOGGLE_HOLD:
-        // TODO: only iOS
+          // TODO: only iOS
           break;
         case Event.ACTION_CALL_TOGGLE_MUTE:
-        // TODO: only iOS
+          // TODO: only iOS
           break;
         case Event.ACTION_CALL_TOGGLE_DMTF:
-        // TODO: only iOS
+          // TODO: only iOS
           break;
         case Event.ACTION_CALL_TOGGLE_GROUP:
-        // TODO: only iOS
+          // TODO: only iOS
           break;
         case Event.ACTION_CALL_TOGGLE_AUDIO_SESSION:
-        // TODO: only iOS
+          // TODO: only iOS
           break;
         case Event.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
-        // TODO: only iOS
+          // TODO: only iOS
           break;
       }
     });
@@ -84,8 +95,14 @@ class Calls {
     note.Get.back();
   }
 
-  receiveIncomingCall(
-      {String uid, String name, UserModel model, bool hasVideo, String userName, String image,}) async {
+  receiveIncomingCall({
+    String uid,
+    String name,
+    UserModel model,
+    bool hasVideo,
+    String userName,
+    String image,
+  }) async {
     // this._currentUuid = _uuid.v4();
     CallKitParams callKitParams = CallKitParams(
       id: uid,
@@ -133,19 +150,21 @@ class Calls {
 
     FlutterCallkitIncoming.onEvent.listen((CallEvent event) {
       switch (event.event) {
-        case Event.ACTION_CALL_INCOMING: (){
-          print('$name Call incoming');
-        };
+        case Event.ACTION_CALL_INCOMING:
+          () {
+            print('$name Call incoming');
+          };
           // TODO: received an incoming call
           break;
-        case Event.ACTION_CALL_START: (){
-          // note.Get.to(VideoCall(
-          //   name: model,
-          //   isVideo: hasVideo,
-          //   channelName: 'peace',
-          //   role: ClientRole.Audience,
-          // ));
-        };
+        case Event.ACTION_CALL_START:
+          () {
+            // note.Get.to(VideoCall(
+            //   name: model,
+            //   isVideo: hasVideo,
+            //   channelName: 'peace',
+            //   role: ClientRole.Audience,
+            // ));
+          };
           // TODO: started an outgoing call
           // TODO: show screen calling in Flutter
           break;
@@ -160,12 +179,12 @@ class Calls {
           // TODO: accepted an incoming call
           // TODO: show screen calling in Flutter
           break;
-        case Event.ACTION_CALL_DECLINE: showMissedCall(uid: uid, name: name);
+        case Event.ACTION_CALL_DECLINE:
+          showMissedCall(uid: uid, name: name);
           // TODO: declined an incoming call
           break;
-        case Event.ACTION_CALL_ENDED: ()=>
-
-          note.Get.back();
+        case Event.ACTION_CALL_ENDED:
+          () => note.Get.back();
 
           // TODO: ended an incoming/outgoing call
           break;
