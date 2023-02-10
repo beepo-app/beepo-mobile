@@ -37,7 +37,7 @@ class _BottomNavHomeState extends State<BottomNavHome> {
         currentIndex: index,
         type: BottomNavigationBarType.fixed,
         unselectedItemColor: Colors.grey,
-        selectedItemColor: Color(0xffFF9C34),
+        selectedItemColor: const Color(0xffFF9C34),
         onTap: (int selectedPage) {
           setState(() => index = selectedPage);
         },

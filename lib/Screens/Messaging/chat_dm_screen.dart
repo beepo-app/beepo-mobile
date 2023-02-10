@@ -3,15 +3,21 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
+import 'package:beepo/calls.dart';
 import 'package:beepo/record.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:encrypt/encrypt.dart' as enc;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart' as navy;
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart';
 import 'package:iconsax/iconsax.dart';
@@ -29,6 +35,7 @@ import '../../components.dart';
 import '../../generate_keywords.dart';
 import '../../provider.dart';
 import '../Profile/user_profile_screen.dart';
+import 'package:http/http.dart' as http;
 
 const APP_ID = '29454d2c6f01445fbbb6db095adec156';
 
@@ -42,49 +49,17 @@ class ChatDm extends StatefulWidget {
 }
 
 class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
-  // Uuid _uuid;
-  // String _currentUuid;
-
   TextEditingController messageController = TextEditingController();
   bool isTyping = true;
   AnimationController controller;
   String player;
+  String tokens;
 
   Map userM = Hive.box('beepo').get('userData');
   int isPlaying;
 
-  // BaseCallEvent _lastEvent;
-  // CallEvent _lastCallEvent;
-  // HoldEvent _lastHoldEvent;
-  // MuteEvent _lastMuteEvent;
-  // DmtfEvent _lastDmtfEvent;
-  // AudioSessionEvent _lastAudioSessionEvent;
-  //
   var uuid = Uuid();
-
-  //
-  // void _incomingCall(String name) {
-  //   final uid = uuid.v4();
-  //   // final name = 'Daenerys Targaryen';
-  //   final avatar =
-  //       'https://scontent.fhel6-1.fna.fbcdn.net/v/t1.0-9/62009611_2487704877929752_6506356917743386624_n.jpg?_nc_cat=102&_nc_sid=09cbfe&_nc_ohc=cIgJjOYlVj0AX_J7pnl&_nc_ht=scontent.fhel6-1.fna&oh=ef2b213b74bd6999cd74e3d5de235cf4&oe=5F6E3331';
-  //   final handle = 'beepo';
-  //   final type = HandleType.generic;
-  //   final isVideo = true;
-  //   FlutterIncomingCall.displayIncomingCall(
-  //       uid, name, avatar, handle, type, isVideo);
-  // }
-  //
-  // void _endCurrentCall() {
-  //   if (_lastEvent != null) {
-  //     FlutterIncomingCall.endCall(_lastCallEvent.uuid);
-  //   }
-  // }
-  //
-  // void _endAllCalls() {
-  //   FlutterIncomingCall.endAllCalls();
-  //   // FlutterIncomingCall.
-  // }
+  String _currentUuid;
 
   getId() async {
     final get = await FirebaseFirestore.instance
@@ -94,6 +69,17 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
 
     setState(() {
       player = get['playerId'];
+    });
+  }
+
+  getToken() async {
+    final get = await FirebaseFirestore.instance
+        .collection('FCMToken')
+        .doc(widget.model.uid)
+        .get();
+
+    setState(() {
+      tokens = get['token'];
     });
   }
 
@@ -107,6 +93,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
       print('FOREGROUND HANDLER CALLED WITH: $event');
 
       /// Display Notification, send null to not display
+      // event.notification.
       event.complete(OSNotification({
         "app_id": "8f26effe-fda3-4034-a262-be12f4c5c47e",
         //kAppId is the App Id that one get from the OneSignal When the application is registered.
@@ -130,7 +117,6 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
           "contents_color": "FF0d004c"
         }
       }));
-
       setState(() {
         _debugLabelString =
             "Notification received in foreground notification: \n${event.notification.jsonRepresentation().replaceAll("\\n", "\n")}";
@@ -169,158 +155,98 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
     );
   }
 
-  // Future<void> _firebaseMessagingBackgroundHandler(
-  //     RemoteMessage message) async {
-  //   print("Handling a background message: ${message.data}");
-  //   showCallkitIncoming(
-  //       uuid: userM['uid'],
-  //       name: userM['displayName'],
-  //       channelName: 'peace',
-  //       callId: '1',
-  //   );
-  // }
-  //
-  // Future<void> showCallkitIncoming(
-  //     {@required String uuid,
-  //     @required String name,
-  //     @required String channelName,
-  //     @required String callId}) async {
-  //   final params = CallKitParams(
-  //     id: uuid,
-  //     nameCaller: name,
-  //     appName: 'Callkit',
-  //     avatar: 'https://i.pravatar.cc/100',
-  //     handle: '0123456789',
-  //     type: 0,
-  //     duration: 30000,
-  //     textAccept: 'Accept',
-  //     textDecline: 'Decline',
-  //     textMissedCall: 'Missed call',
-  //     textCallback: 'Call back',
-  //     extra: <String, dynamic>{
-  //       'channelName': channelName,
-  //       'callId': callId
-  //     },
-  //     headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
-  //     android: AndroidParams(
-  //       isCustomNotification: true,
-  //       isShowLogo: false,
-  //       isShowCallback: true,
-  //       isShowMissedCallNotification: true,
-  //       ringtonePath: 'system_ringtone_default',
-  //       backgroundColor: '#0955fa',
-  //       backgroundUrl: 'assets/test.png',
-  //       actionColor: '#4CAF50',
-  //     ),
-  //     ios: IOSParams(
-  //       iconName: 'CallKitLogo',
-  //       handleType: '',
-  //       supportsVideo: true,
-  //       maximumCallGroups: 2,
-  //       maximumCallsPerCallGroup: 1,
-  //       audioSessionMode: 'default',
-  //       audioSessionActive: true,
-  //       audioSessionPreferredSampleRate: 44100.0,
-  //       audioSessionPreferredIOBufferDuration: 0.005,
-  //       supportsDTMF: true,
-  //       supportsHolding: true,
-  //       supportsGrouping: false,
-  //       supportsUngrouping: false,
-  //       ringtonePath: 'system_ringtone_default',
-  //     ),
-  //   );
-  //   await FlutterCallkitIncoming.showCallkitIncoming(params);
-  // }
-  //
-  // FirebaseMessaging _firebaseMessaging;
-  //
-  // initFirebase() async {
-  //   await Firebase.initializeApp();
-  //   _firebaseMessaging = FirebaseMessaging.instance;
-  //   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  //   FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-  //     print(
-  //         'Message title: ${message.notification?.title}, body: ${message.notification?.body}, data: ${message.data}');
-  //     _currentUuid = userM['uid'];
-  //     showCallkitIncoming(
-  //       uuid: _currentUuid,
-  //       channelName: 'peace',
-  //       callId: '1',
-  //       name: userM['displayName'],
-  //     );
-  //   });
-  //   FlutterCallkitIncoming.onEvent.listen((CallEvent event) {
-  //     switch (event.event) {
-  //       case Event.ACTION_CALL_INCOMING:
-  //         Timer(Duration(seconds: 10), () {
-  //           FlutterCallkitIncoming.endAllCalls();
-  //         });
-  //         break;
-  //       case Event.ACTION_CALL_START:
-  //         () async {
-  //
-  //         };
-  //         break;
-  //       case Event.ACTION_CALL_ACCEPT:
-  //         () {
-  //           Navigator.push(
-  //             context,
-  //             MaterialPageRoute(
-  //               builder: (context) => VideoCall(
-  //                 channelName: 'peace',
-  //                 // channelName: '${userM['displayName'] + widget.model.name}',
-  //                 role: ClientRole.Broadcaster,
-  //                 name: widget.model,
-  //                 isVideo: false,
-  //               ),
-  //             ),
-  //           );
-  //         };
-  //         // TODO: accepted an incoming call
-  //         // TODO: show screen calling in Flutter
-  //         break;
-  //       case Event.ACTION_CALL_DECLINE:
-  //         FlutterCallkitIncoming.endAllCalls();
-  //
-  //         break;
-  //       case Event.ACTION_CALL_ENDED:
-  //         // TODO: ended an incoming/outgoing call
-  //         break;
-  //       case Event.ACTION_CALL_TIMEOUT:
-  //         // TODO: missed an incoming call
-  //         break;
-  //       case Event.ACTION_CALL_CALLBACK:
-  //         // TODO: only Android - click action `Call back` from missed call notification
-  //         break;
-  //       case Event.ACTION_CALL_TOGGLE_HOLD:
-  //         // TODO: only iOS
-  //         break;
-  //       case Event.ACTION_CALL_TOGGLE_MUTE:
-  //         // TODO: only iOS
-  //         break;
-  //       case Event.ACTION_CALL_TOGGLE_DMTF:
-  //         // TODO: only iOS
-  //         break;
-  //       case Event.ACTION_CALL_TOGGLE_GROUP:
-  //         // TODO: only iOS
-  //         break;
-  //       case Event.ACTION_CALL_TOGGLE_AUDIO_SESSION:
-  //         // TODO: only iOS
-  //         break;
-  //       case Event.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
-  //         // TODO: only iOS
-  //         break;
-  //     }
-  //   });
-  //
-  //   _firebaseMessaging.getToken().then((token) {
-  //     print('Device Token FCM: $token');
-  //   });
-  // }
-  //
+
+
+  int _messageCount = 0;
+  String constructFCMPayload(String token, bool video) {
+    _messageCount++;
+    return jsonEncode({
+      "to" : token,
+      "collapse_key" : "New Message",
+      "priority": "high",
+      "notification" : {
+        "title": "Title of Your Notification",
+        "body" : "Body of Your Notification",
+      },
+      "data": {
+    "name": userM['displayName'],
+        "uid" : userM['uid'],
+    // model: widget.model,
+    "hasVideo": "$video",
+    "userName": userM['username'],
+    "image": userM['profilePictureUrl'],
+    // context: context,
+      }
+    });
+  }
+  Future<void> sendPushMessage(bool video) async {
+    if (tokens == null) {
+      print('Unable to send FCM message, no token exists.');
+      return;
+    }
+
+    try {
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization' : 'key=AAAAI_k21-0:APA91bEhToRGxcNDYLkqXBBxhVWFBnrq7qeHc0bh3DE_w1cOzp39rjXTDW8J3mql7UI-LWuAzWi7Vh4ifvT0zz1pRqLZSldLuEshgxSjqEwvJAnO0P1zUjPfNwOBx6hm_xRGN9N1CM9s'
+        },
+        body: constructFCMPayload(tokens, video),
+      );
+      print('FCM request for device sent!');
+    } catch (e) {
+      print(e);
+    }
+  }
+
+
+  getCurrentCall() async {
+    //check current call from pushkit if possible
+    var calls = await FlutterCallkitIncoming.activeCalls();
+    if (calls is List) {
+      if (calls.isNotEmpty) {
+        print('DATA: $calls');
+        _currentUuid = calls[0]['id'];
+        return calls[0];
+      } else {
+        _currentUuid = "";
+        return null;
+      }
+    }
+  }
+
+  checkAndNavigationCallingPage(bool video) async {
+    var currentCall = await getCurrentCall();
+    if (currentCall != null) {
+      navy.Get.to(
+        VideoCall(
+          channelName: 'peace',
+          // channelName: '${userM['displayName'] + widget.model.name}',
+          role: ClientRole.Broadcaster,
+          name: widget.model,
+          isVideo: video,
+        ),
+      );
+      // NavigationService.instance
+      //     .pushNamedIfNotCurrent(AppRoute.callingPage, args: currentCall);
+    }
+  }
+
+  // @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    print(state);
+    if (state == AppLifecycleState.resumed) {
+      //Check call when open app from background
+      checkAndNavigationCallingPage(false);
+    }
+  }
+
+
 
   @override
   void initState() {
+    // initFirebase(true);
     controller = AnimationController(
       vsync: this,
       duration: Duration(microseconds: 100000),
@@ -329,19 +255,11 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
     FirebaseAuth.instance.signInAnonymously();
     isPlaying = -1;
     getId();
+    getToken();
+
     messageController.addListener(() {
       setState(() {});
     });
-
-    Calls().receiveIncomingCall(
-        uid: Uuid().v4(),
-        name: userM['displayName'],
-        model: widget.model,
-        hasVideo: true,
-        userName: userM['username'],
-        image: userM['profilePictureUrl'],
-      context: context,
-    );
     //
     // FlutterIncomingCall.onEvent.listen((event) {
     //   setState(() {
@@ -489,45 +407,22 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                   uid: uuid.v4(),
                                   name: widget.model.name,
                                   userName: widget.model.userName,
+                                  hasVideo: true,
+                                  model: widget.model,
                                 );
+                                await sendPushMessage(true);
 
-                                // _incomingCall(userM['displayName']);
-                                // await Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) => VideoCall(
-                                //       channelName: 'peace',
-                                //       // channelName:
-                                //       //     '${userM['displayName'] + widget.model.name}',
-                                //       role: ClientRole.Broadcaster,
-                                //       name: widget.model,
-                                //       isVideo: true,
-                                //     ),
-                                //   ),
-                                // );
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (context) => IndexPage()
-                                //     ));
+                                checkAndNavigationCallingPage(true);
                               },
                               child: SvgPicture.asset('assets/video_call.svg'),
                             ),
                             SizedBox(width: 15),
                             GestureDetector(
                               onTap: () async {
-                                // await Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) => VideoCall(
-                                //       channelName:
-                                //           '${userM['displayName'] + widget.model.name}',
-                                //       role: ClientRole.Broadcaster,
-                                //       name: widget.model,
-                                //       isVideo: false,
-                                //     ),
-                                //   ),
-                                // );
+
+                                await sendPushMessage(false);
+                                checkAndNavigationCallingPage(false);
+
                               },
                               child: Icon(
                                 Icons.call,

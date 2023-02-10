@@ -64,6 +64,7 @@ class _AddStoryState extends State<AddStory> {
 
   @override
   void initState() {
+
     controlle = CameraController(
       // Get a specific camera from the list of available cameras.
       widget.camera1,
@@ -71,6 +72,7 @@ class _AddStoryState extends State<AddStory> {
       ResolutionPreset.ultraHigh,
     );
     initializeControllerFuture = controlle.initialize();
+    selected = widget.camera1;
 
     super.initState();
   }
@@ -251,9 +253,15 @@ class _AddStoryState extends State<AddStory> {
                         onTap: () {
                           setState(() {
                             // hasChanged = !hasChanged;
-                            selected =
-                            selected == widget.camera1 ? widget.camera2 : widget
-                                .camera1;
+                            if( selected == widget.camera1){
+                              selected = widget.camera2;
+                            }
+                            // else{
+                            //   selected = widget.camera1;
+                            // }
+                            // selected =
+                            // selected == widget.camera1 ? widget.camera2 : widget
+                            //     .camera1;
                           });
                           controlle = CameraController(
                               selected, ResolutionPreset.ultraHigh);

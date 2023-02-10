@@ -6,15 +6,19 @@ import 'package:beepo/story_download_provider.dart';
 import 'package:beepo/story_upload_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import 'Models/user_model.dart';
 import 'Screens/Auth/lock_screen.dart';
 import 'Screens/Auth/onboarding.dart';
+import 'Screens/Messaging/chat_dm_screen.dart';
 import 'bottom_nav.dart';
 import 'package:flutter_incoming_call/flutter_incoming_call.dart';
 
@@ -156,6 +160,7 @@ class _MyAppState extends State<MyApp> {
     OneSignal.shared
         .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
       print('NOTIFICATION OPENED HANDLER CALLED WITH: $result');
+      // Get.to(ChatDm());
       setState(() {
         _debugLabelString =
             "Opened notification: \n${result.notification.jsonRepresentation().replaceAll("\\n", "\n")}";
@@ -231,8 +236,58 @@ class _MyAppState extends State<MyApp> {
   }
   var uuid = Uuid();
 
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  Future<void> _firebaseMessagingBackgroundHandler(
+      RemoteMessage message) async {
+    print("Handling a background message: ${message.messageId}");
+    Calls().receiveIncomingCall(
+      uid: uuid.v4(),
+      name: message.data['name'],
+      model: UserModel(name: message.data['name'], uid: message.data['uid'], userName: message.data['userName'], image: message.data['image'],),
+      hasVideo: message.data['hasVideo'] == 'true'? true: false,
+      userName: message.data['userName'],
+      image: message.data['image'],
+    );
+  }
+
+  initFirebase(bool hasVideo) async {
+    NotificationSettings settings = await _firebaseMessaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+    print('User granted permission: ${settings.authorizationStatus}');
+    await Firebase.initializeApp();
+
+    _firebaseMessaging.getToken().then((token) {
+      print('Device Token FCM: $token');
+      FirebaseFirestore.instance.collection('FCMToken').doc(userM['uid']).set({
+        'token': token,
+      });
+    });
 
 
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print(
+          'Message title: ${message.notification?.title}, body: ${message.notification?.body}, data: ${message.data}');
+      // _currentUuid = uuid.v4();
+      Calls().receiveIncomingCall(
+        uid: uuid.v4(),
+        name: message.data['name'],
+        model: UserModel(name: message.data['name'], uid: message.data['uid'], userName: message.data['userName'], image: message.data['image'],),
+        hasVideo: message.data['hasVideo'] == 'true'? true: false,
+        userName: message.data['userName'],
+        image: message.data['image'],
+
+      );
+    });
+
+  }
   @override
   void initState() {
     initPlatformState();
@@ -255,7 +310,7 @@ class _MyAppState extends State<MyApp> {
           maximumCallsPerCallGroup: 1,
         )
     );
-
+initFirebase(true);
     super.initState();
   }
 

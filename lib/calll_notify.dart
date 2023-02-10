@@ -7,9 +7,10 @@ import 'package:flutter_callkit_incoming/entities/call_event.dart';
 import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
 import 'package:flutter_callkit_incoming/entities/ios_params.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:get/get.dart' as note;
 
 class Calls {
-  startCall({String uid, String name, String userName}) async {
+  startCall({String uid, String name, String userName, UserModel model, bool hasVideo}) async {
     // this._currentUuid = _uuid.v4();
     CallKitParams params = CallKitParams(
         id: uid,
@@ -20,14 +21,71 @@ class Calls {
         ios: IOSParams(handleType: 'generic'),
     );
     await FlutterCallkitIncoming.startCall(params);
+    FlutterCallkitIncoming.onEvent.listen((CallEvent event) {
+      switch (event.event) {
+        case Event.ACTION_CALL_INCOMING: ()async{
+          await FlutterCallkitIncoming.showCallkitIncoming(params);
+        };
+        // TODO: received an incoming call
+        break;
+        case Event.ACTION_CALL_START: (){
+
+        };
+        // TODO: started an outgoing call
+        // TODO: show screen calling in Flutter
+        break;
+        case Event.ACTION_CALL_ACCEPT:
+          note.Get.to(VideoCall(
+            name: model,
+            isVideo: hasVideo,
+            channelName: 'peace',
+            role: ClientRole.Audience,
+          ));
+
+          // TODO: accepted an incoming call
+          // TODO: show screen calling in Flutter
+          break;
+        case Event.ACTION_CALL_DECLINE: showMissedCall(uid: uid, name: name);
+        // TODO: declined an incoming call
+        break;
+        case Event.ACTION_CALL_ENDED: endCall(uid);
+        // TODO: ended an incoming/outgoing call
+        break;
+        case Event.ACTION_CALL_TIMEOUT:
+        // TODO: missed an incoming call
+          break;
+        case Event.ACTION_CALL_CALLBACK:
+        // TODO: only Android - click action `Call back` from missed call notification
+          break;
+        case Event.ACTION_CALL_TOGGLE_HOLD:
+        // TODO: only iOS
+          break;
+        case Event.ACTION_CALL_TOGGLE_MUTE:
+        // TODO: only iOS
+          break;
+        case Event.ACTION_CALL_TOGGLE_DMTF:
+        // TODO: only iOS
+          break;
+        case Event.ACTION_CALL_TOGGLE_GROUP:
+        // TODO: only iOS
+          break;
+        case Event.ACTION_CALL_TOGGLE_AUDIO_SESSION:
+        // TODO: only iOS
+          break;
+        case Event.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
+        // TODO: only iOS
+          break;
+      }
+    });
   }
 
   endCall(String uid) async {
     await FlutterCallkitIncoming.endCall(uid);
+    note.Get.back();
   }
 
   receiveIncomingCall(
-      {String uid, String name, UserModel model, bool hasVideo, String userName, String image, BuildContext context,}) async {
+      {String uid, String name, UserModel model, bool hasVideo, String userName, String image,}) async {
     // this._currentUuid = _uuid.v4();
     CallKitParams callKitParams = CallKitParams(
       id: uid,
@@ -39,7 +97,7 @@ class Calls {
       textAccept: 'Accept',
       textDecline: 'Decline',
       textMissedCall: 'Missed call',
-      textCallback: 'Call back',
+      // textCallback: 'Call back',
       duration: 30000,
       extra: <String, dynamic>{'userId': '1a2b3c4d'},
       headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
@@ -71,35 +129,33 @@ class Calls {
         ringtonePath: 'system_ringtone_default',
       ),
     );
+    await FlutterCallkitIncoming.showCallkitIncoming(callKitParams);
 
     FlutterCallkitIncoming.onEvent.listen((CallEvent event) {
       switch (event.event) {
-        case Event.ACTION_CALL_INCOMING: ()async{
-          await FlutterCallkitIncoming.showCallkitIncoming(callKitParams);
+        case Event.ACTION_CALL_INCOMING: (){
+          print('$name Call incoming');
         };
           // TODO: received an incoming call
           break;
         case Event.ACTION_CALL_START: (){
-           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => VideoCall(
-                name: model,
-                isVideo: hasVideo,
-                channelName: 'peace',
-                role: ClientRole.Audience,
-              )));
+          // note.Get.to(VideoCall(
+          //   name: model,
+          //   isVideo: hasVideo,
+          //   channelName: 'peace',
+          //   role: ClientRole.Audience,
+          // ));
         };
           // TODO: started an outgoing call
           // TODO: show screen calling in Flutter
           break;
         case Event.ACTION_CALL_ACCEPT:
-
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => VideoCall(
-                      name: model,
-                      isVideo: hasVideo,
-                      channelName: 'peace',
-                      role: ClientRole.Audience,
-                    )));
+          note.Get.to(VideoCall(
+            name: model,
+            isVideo: hasVideo,
+            channelName: 'peace',
+            role: ClientRole.Broadcaster,
+          ));
 
           // TODO: accepted an incoming call
           // TODO: show screen calling in Flutter
@@ -107,9 +163,13 @@ class Calls {
         case Event.ACTION_CALL_DECLINE: showMissedCall(uid: uid, name: name);
           // TODO: declined an incoming call
           break;
-        case Event.ACTION_CALL_ENDED: endCall(uid);
+        case Event.ACTION_CALL_ENDED: ()=>
+
+          note.Get.back();
+
           // TODO: ended an incoming/outgoing call
           break;
+
         case Event.ACTION_CALL_TIMEOUT:
           // TODO: missed an incoming call
           break;
@@ -146,7 +206,7 @@ class Calls {
       handle: '0123456789',
       type: 1,
       textMissedCall: 'Missed call',
-      textCallback: 'Call back',
+      // textCallback: 'Call back',
       extra: <String, dynamic>{'userId': '1a2b3c4d'},
     );
     await FlutterCallkitIncoming.showMissCallNotification(params);

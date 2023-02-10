@@ -10,8 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 
 import 'Models/user_model.dart';
+import 'calll_notify.dart';
 
 class VideoCall extends StatefulWidget {
   final String channelName;
@@ -136,10 +138,11 @@ class _VideoCallState extends State<VideoCall>
     );
 
     if (response.statusCode == 200) {
+      if(mounted){
       setState(() {
         token = response.body;
         token = jsonDecode(token)['rtcToken'];
-      });
+      });}
     } else {
       print('Failed to fetch the token');
     }
@@ -418,7 +421,7 @@ class _VideoCallState extends State<VideoCall>
                   ),
                 ),
                 const SizedBox(
-                  height: 150,
+                  height: 100,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -527,7 +530,10 @@ class _VideoCallState extends State<VideoCall>
                   height: 53,
                 ),
                 RawMaterialButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    Calls().endCall(const Uuid().v4());
+                    Navigator.pop(context);
+                    },
                   child: const Icon(
                     Icons.call_end,
                     color: Colors.white,
@@ -591,10 +597,12 @@ class _VideoCallState extends State<VideoCall>
 
   @override
   void dispose() {
+
     _users.clear();
     _engine.leaveChannel();
     _engine.destroy();
     _controller.dispose();
+
     super.dispose();
   }
 
