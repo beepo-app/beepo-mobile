@@ -14,7 +14,9 @@ class Calls {
       String name,
       String userName,
       UserModel model,
-      bool hasVideo}) async {
+      bool hasVideo,
+        String channel,
+      }) async {
     // this._currentUuid = _uuid.v4();
     CallKitParams params = CallKitParams(
       id: uid,
@@ -43,7 +45,7 @@ class Calls {
           note.Get.to(VideoCall(
             name: model,
             isVideo: hasVideo,
-            channelName: 'peace',
+            channelName: channel,
             role: ClientRole.Broadcaster,
           ));
 
@@ -86,6 +88,9 @@ class Calls {
         case Event.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
           // TODO: only iOS
           break;
+        case Event.ACTION_CALL_INCOMING:
+          // TODO: Handle this case.
+          break;
       }
     });
   }
@@ -102,6 +107,7 @@ class Calls {
     bool hasVideo,
     String userName,
     String image,
+    String channel,
   }) async {
     // this._currentUuid = _uuid.v4();
     CallKitParams callKitParams = CallKitParams(
@@ -172,7 +178,7 @@ class Calls {
           note.Get.to(VideoCall(
             name: model,
             isVideo: hasVideo,
-            channelName: 'peace',
+            channelName: channel,
             role: ClientRole.Broadcaster,
           ));
 

@@ -247,6 +247,7 @@ class _MyAppState extends State<MyApp> {
       hasVideo: message.data['hasVideo'] == 'true'? true: false,
       userName: message.data['userName'],
       image: message.data['image'],
+      channel: message.data['channelName']
     );
   }
 
@@ -283,6 +284,7 @@ class _MyAppState extends State<MyApp> {
         hasVideo: message.data['hasVideo'] == 'true'? true: false,
         userName: message.data['userName'],
         image: message.data['image'],
+        channel: message.data['channelName']
 
       );
     });
@@ -291,25 +293,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     initPlatformState();
-    FlutterIncomingCall.configure(
-        appName: 'beepo',
-        duration: 30000,
-        android: ConfigAndroid(
-          vibration: true,
-          ringtonePath: 'default',
-          channelId: 'calls',
-          channelName: 'peace',
-          channelDescription: 'Calls channel description',
-        ),
-        ios: ConfigIOS(
-          iconName: 'AppIcon40x40',
-          ringtonePath: null,
-          includesCallsInRecents: false,
-          supportsVideo: true,
-          maximumCallGroups: 2,
-          maximumCallsPerCallGroup: 1,
-        )
-    );
 initFirebase(true);
     super.initState();
   }

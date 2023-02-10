@@ -172,6 +172,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
         "hasVideo": "$video",
         "userName": userM['username'],
         "image": userM['profilePictureUrl'],
+        "channelName" : userM['uid'],
         // context: context,
       }
     });
@@ -214,12 +215,12 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
     }
   }
 
-  checkAndNavigationCallingPage(bool video) async {
+  checkAndNavigationCallingPage(bool video, String channel) async {
     var currentCall = await getCurrentCall();
     if (currentCall != null) {
       navy.Get.to(
         VideoCall(
-          channelName: 'peace',
+          channelName: channel,
           // channelName: '${userM['displayName'] + widget.model.name}',
           role: ClientRole.Broadcaster,
           name: widget.model,
@@ -232,11 +233,11 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
   }
 
   // @override
-  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state, String channel) async {
     print(state);
     if (state == AppLifecycleState.resumed) {
       //Check call when open app from background
-      checkAndNavigationCallingPage(false);
+      checkAndNavigationCallingPage(false, channel);
     }
   }
 
@@ -405,10 +406,11 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                   userName: widget.model.userName,
                                   hasVideo: true,
                                   model: widget.model,
+                                  channel: userM['uid']
                                 );
                                 await sendPushMessage(true);
 
-                                checkAndNavigationCallingPage(true);
+                                checkAndNavigationCallingPage(true, userM['uid']);
                               },
                               child: SvgPicture.asset('assets/video_call.svg'),
                             ),
@@ -416,7 +418,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                             GestureDetector(
                               onTap: () async {
                                 await sendPushMessage(false);
-                                checkAndNavigationCallingPage(false);
+                                checkAndNavigationCallingPage(false, userM['uid']);
                               },
                               child: Icon(
                                 Icons.call,
