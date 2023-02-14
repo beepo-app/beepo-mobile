@@ -28,12 +28,11 @@ class _ChatScreenState extends State<ChatScreen> {
           items: [
             HawkFabMenuItem(
               label: 'New Chat',
-              ontap: ()=> Navigator.push(
+              ontap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => SearchSearch(),
-                  )
-              ),
+                  )),
               icon: const Icon(Icons.add),
               color: txtColor1,
               labelColor: Colors.white,

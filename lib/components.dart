@@ -180,8 +180,7 @@ class _ChatTabState extends State<ChatTab> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) =>
-                      Test()
+                  MaterialPageRoute(builder: (context) => Test()
                       // AddStory(
                       //   camera1: firstCamera,
                       //   camera2: secondCamera,
@@ -490,7 +489,8 @@ class _CallTabState extends State<CallTab> {
                     "Messages",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 17,
                     ),
                   ),
                 ),
@@ -587,18 +587,18 @@ class MessageSender extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
-            topLeft: isMe ? Radius.circular(12) : Radius.circular(0),
-            topRight: isMe ? Radius.circular(0) : Radius.circular(12),
-            bottomLeft: Radius.circular(12),
-            bottomRight: Radius.circular(12),
+            topLeft: isMe ? Radius.circular(10) : Radius.circular(10),
+            topRight: isMe ? Radius.circular(10) : Radius.circular(10),
+            bottomLeft: Radius.circular(10),
+            bottomRight: Radius.circular(10),
           ),
-          color: !isMe ? Color(0xffc4c4c4) : Color(0xff0E014C),
+          color: !isMe ? Color(0xFFE6E9EE) : Color(0xff0E014C),
         ),
         constraints: BoxConstraints(
           // maxWidth: double.infinity
           maxWidth: MediaQuery.of(context).size.width * 0.5,
         ),
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -610,17 +610,19 @@ class MessageSender extends StatelessWidget {
                   ? TextStyle(
                       fontFamily: 'Roboto',
                       color: Colors.white,
-                      fontSize: 11,
+                      fontSize: 11.5,
                     )
                   : TextStyle(
                       fontFamily: 'Roboto',
-                      color: Colors.black,
-                      fontSize: 11,
+                      color: secondaryColor,
+                      //Colors.black,
+                      fontSize: 11.5,
                     ),
               linkStyle: TextStyle(
-                  fontFamily: 'Roboto',
-                  color: primaryColor,
-                  fontSize: 11,),
+                fontFamily: 'Roboto',
+                color: primaryColor,
+                fontSize: 11.5,
+              ),
             ),
             SizedBox(height: 5),
             Row(
@@ -631,11 +633,12 @@ class MessageSender extends StatelessWidget {
                   style: isMe
                       ? TextStyle(
                           color: Colors.white,
-                          fontSize: 10,
+                          fontSize: 9,
                         )
                       : TextStyle(
-                          color: Colors.black,
-                          fontSize: 10,
+                          color: secondaryColor,
+                          //Colors.black,
+                          fontSize: 9,
                         ),
                 ),
                 isMe
@@ -647,7 +650,7 @@ class MessageSender extends StatelessWidget {
                     ? Icon(
                         Icons.done_all,
                         color: Colors.white,
-                        size: 15,
+                        size: 14,
                       )
                     : SizedBox(
                         width: 0,

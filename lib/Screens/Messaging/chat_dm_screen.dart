@@ -133,15 +133,17 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
       gestures: const [GestureType.onPanUpdateDownDirection],
       child: Scaffold(
         body: Scaffold(
-          backgroundColor: const Color(0xffECE5DD),
+          backgroundColor: Colors.white,
+          //const Color(0xffECE5DD),
           body: Container(
-            color: const Color(0xffECE5DD),
+            color: Colors.white,
+            //const Color(0xffECE5DD),
             child: Column(
               children: [
                 Align(
                   alignment: Alignment.topCenter,
                   child: Container(
-                    padding: const EdgeInsets.only(left: 5, right: 10),
+                    padding: const EdgeInsets.only(left: 5, right: 13),
                     height: 110,
                     width: double.infinity,
                     decoration: const BoxDecoration(
@@ -157,7 +159,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                             IconButton(
                               icon: Icon(
                                 Icons.arrow_back_outlined,
-                                size: 30,
+                                size: 28,
                                 color: Colors.white,
                               ),
                               onPressed: () => Navigator.push(
@@ -165,7 +167,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                   MaterialPageRoute(
                                       builder: (context) => BottomNavHome())),
                             ),
-                            SizedBox(width: 6),
+                            SizedBox(width: 5),
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -223,14 +225,15 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                 widget.model.name,
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 14,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),
                             SizedBox(width: 6),
                             Container(
-                              width: 4,
-                              height: 4,
+                              width: 5,
+                              height: 5,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Color(0xff08aa48),
@@ -269,9 +272,13 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                 //         builder: (context) => IndexPage()
                                 //     ));
                               },
-                              child: SvgPicture.asset('assets/video_call.svg'),
+                              child: SizedBox(
+                                  height: 23,
+                                  width: 23,
+                                  child: SvgPicture.asset(
+                                      'assets/video_call.svg')),
                             ),
-                            SizedBox(width: 15),
+                            SizedBox(width: 17),
                             GestureDetector(
                               onTap: () async {
                                 await Navigator.push(
@@ -288,15 +295,15 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                               },
                               child: Icon(
                                 Icons.call,
-                                size: 20,
+                                size: 23,
                                 color: Colors.white,
                               ),
                             ),
-                            SizedBox(width: 15),
+                            SizedBox(width: 16),
                             Icon(
                               Icons.more_vert_outlined,
                               color: Colors.white,
-                              size: 25,
+                              size: 23,
                             ),
                           ],
                         ),
@@ -310,7 +317,8 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                       left: 20,
                       right: 20,
                     ),
-                    color: Color(0xffECE5DD),
+                    color: Colors.white,
+                    //Color(0xffECE5DD),
                     child: StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('messages')
@@ -337,7 +345,8 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                 var date = day + '-' + month + '-' + year;
                                 var hour = time.toDate().hour;
                                 var min = time.toDate().minute;
-                                final encrypter = enc.Encrypter(enc.AES(enc.Key.fromLength(32)));
+                                final encrypter = enc.Encrypter(
+                                    enc.AES(enc.Key.fromLength(32)));
 
                                 var ampm;
                                 if (hour > 12) {
@@ -359,11 +368,11 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                         isMe: userM['uid'] ==
                                             snapshot.data.docs[index]["sender"],
                                         displayname: widget.model.name,
-                                        text: encrypter.decrypt64(snapshot.data.docs[index]
-                                                ["text"],
+                                        text: encrypter.decrypt64(
+                                            snapshot.data.docs[index]["text"],
                                             iv: enc.IV.fromLength(16)
-                                        // ["iv"]
-                                        ),
+                                            // ["iv"]
+                                            ),
                                         time: snapshot.data.docs[index]
                                             ["created"],
                                       )
@@ -438,7 +447,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                         ),
                                       ),
                                     SizedBox(
-                                      height: 5,
+                                      height: 7,
                                     )
                                   ],
                                 );
@@ -458,7 +467,8 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
           ),
           bottomNavigationBar: Container(
             width: double.infinity,
-            color: Color(0xffECE5DD),
+            color: Colors.white,
+            //Color(0xffECE5DD),
             margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
@@ -500,15 +510,18 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                       : TextField(
                           style: TextStyle(
                             color: Color(0xff697077),
-                            fontSize: 14,
+                            fontSize: 15,
                           ),
                           controller: messageController,
                           decoration: InputDecoration(
-                            fillColor: Colors.white,
-                            hintText: 'Message',
+                            contentPadding: EdgeInsets.fromLTRB(1, 2, 1, 2),
+                            fillColor: Color(0xFFE6E9EE),
+                            hintText: 'Type a message',
                             isDense: false,
                             hintStyle: TextStyle(
-                                color: Color(0xff697077), fontSize: 14),
+                              color: Color(0xff697077),
+                              fontSize: 15,
+                            ),
                             prefixIcon: GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -537,7 +550,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                     ),
                                     icon: Icon(
                                       Iconsax.dollar_circle,
-                                      size: 20,
+                                      size: 21,
                                       color: secondaryColor,
                                     ),
                                   ),
@@ -557,7 +570,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                       color: secondaryColor,
                                     ),
                                   ),
-                                  SizedBox(width: 10),
+                                  SizedBox(width: 8),
                                 ],
                               ),
                             ),
@@ -574,7 +587,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                         ),
                 ),
                 SizedBox(
-                  width: 10,
+                  width: 2,
                 ),
                 context.watch<ChatNotifier>().isRecording
                     ? SizedBox(
@@ -594,7 +607,6 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                               .read<ChatNotifier>()
                               .storeText(messageController.text.trim());
                           messageController.clear();
-
 
                           ChatMethods().storeMessages(
                             context: context,
@@ -641,7 +653,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                         icon: const Icon(
                           Icons.send,
                           color: secondaryColor,
-                          size: 30,
+                          size: 35,
                         ),
                       ),
               ],
