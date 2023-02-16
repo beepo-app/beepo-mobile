@@ -325,7 +325,7 @@ class _VideoCallState extends State<VideoCall>
   bool enabled = true;
 
   Widget _toolbar() {
-    if (widget.role == ClientRole.Audience) return const SizedBox();
+    // if (widget.role == ClientRole.Audience) return const SizedBox();
     return Container(
       alignment: Alignment.bottomCenter,
       padding: const EdgeInsets.symmetric(vertical: 48),

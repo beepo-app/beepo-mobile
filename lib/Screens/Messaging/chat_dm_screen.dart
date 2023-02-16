@@ -102,7 +102,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
         // android_accent_color reprsent the color of the heading text in the notifiction
         "android_accent_color": "FFFF9C34",
 
-        "small_icon": "ic_stat_onesignal_default",
+        "small_icon": "ic_launcher",
 
         "large_icon": userM['profilePictureUrl'],
 
@@ -137,7 +137,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
         // android_accent_color reprsent the color of the heading text in the notifiction
         "android_accent_color": "FFFF9C34",
 
-        "small_icon": "ic_stat_onesignal_default",
+        "small_icon": "ic_launcher",
 
         "large_icon": userM['profilePictureUrl'],
 
@@ -417,6 +417,14 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                             SizedBox(width: 15),
                             GestureDetector(
                               onTap: () async {
+                                Calls().startCall(
+                                    uid: uuid.v4(),
+                                    name: widget.model.name,
+                                    userName: widget.model.userName,
+                                    hasVideo: false,
+                                    model: widget.model,
+                                    channel: userM['uid']
+                                );
                                 await sendPushMessage(false);
                                 checkAndNavigationCallingPage(false, userM['uid']);
                               },
@@ -706,6 +714,10 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                               borderSide: BorderSide.none,
                             ),
                           ),
+                    // expands: true,
+                    keyboardType: TextInputType.multiline,
+                    minLines: 1,
+                    maxLines: 5,
                         ),
                 ),
                 SizedBox(

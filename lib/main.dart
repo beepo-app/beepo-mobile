@@ -239,7 +239,13 @@ class _MyAppState extends State<MyApp> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
+    await Firebase.initializeApp();
     print("Handling a background message: ${message.messageId}");
+    // await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    //   alert: true,
+    //   badge: true,
+    //   sound: true,
+    // );
     Calls().receiveIncomingCall(
       uid: uuid.v4(),
       name: message.data['name'],
@@ -247,7 +253,7 @@ class _MyAppState extends State<MyApp> {
       hasVideo: message.data['hasVideo'] == 'true'? true: false,
       userName: message.data['userName'],
       image: message.data['image'],
-      channel: message.data['channelName']
+      channel: message.data['channelName'],
     );
   }
 
@@ -272,7 +278,6 @@ class _MyAppState extends State<MyApp> {
     });
 
 
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print(
           'Message title: ${message.notification?.title}, body: ${message.notification?.body}, data: ${message.data}');
@@ -288,6 +293,8 @@ class _MyAppState extends State<MyApp> {
 
       );
     });
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
 
   }
   @override

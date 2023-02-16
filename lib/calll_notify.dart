@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/calls.dart';
@@ -7,16 +9,20 @@ import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
 import 'package:flutter_callkit_incoming/entities/ios_params.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:get/get.dart' as note;
+import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class Calls {
-  startCall(
-      {String uid,
-      String name,
-      String userName,
-      UserModel model,
-      bool hasVideo,
-        String channel,
-      }) async {
+  final stopWatchTimer = StopWatchTimer(mode: StopWatchMode.countUp);
+  int time = 0;
+
+  startCall({
+    String uid,
+    String name,
+    String userName,
+    UserModel model,
+    bool hasVideo,
+    String channel,
+  }) async {
     // this._currentUuid = _uuid.v4();
     CallKitParams params = CallKitParams(
       id: uid,
@@ -31,40 +37,46 @@ class Calls {
       switch (event.event) {
         case Event.ACTION_CALL_START:
           () {
-            // note.Get.to(VideoCall(
-            //   name: model,
-            //   isVideo: hasVideo,
-            //   channelName: 'peace',
-            //   role: ClientRole.Audience,
-            // ));
+            while (event.event != Event.ACTION_CALL_ACCEPT) {
+              Timer(const Duration(seconds: 30), () {
+                endCall(uid);
+                showMissedCall();
+                note.Get.back();
+              });
+            }
           };
-          // TODO: started an outgoing call
-          // TODO: show screen calling in Flutter
           break;
         case Event.ACTION_CALL_ACCEPT:
-          note.Get.to(VideoCall(
-            name: model,
-            isVideo: hasVideo,
-            channelName: channel,
-            role: ClientRole.Broadcaster,
-          ));
+          () {
+            note.Get.to(VideoCall(
+              name: model,
+              isVideo: hasVideo,
+              channelName: channel,
+              role: ClientRole.Broadcaster,
+              // time: time,
+            ));
+            stopWatchTimer.rawTime.listen((event) {
+              time = event;
+              print(event);
+            });
+          };
 
           // TODO: accepted an incoming call
           // TODO: show screen calling in Flutter
           break;
         case Event.ACTION_CALL_DECLINE:
+          endCall(uid);
           showMissedCall(uid: uid, name: name);
           // TODO: declined an incoming call
           break;
         case Event.ACTION_CALL_ENDED:
-          // ()=>
-          //
-          //   note.Get.back();
+          stopWatchTimer.onStopTimer();
 
           // TODO: ended an incoming/outgoing call
           break;
 
         case Event.ACTION_CALL_TIMEOUT:
+          showMissedCall(uid: uid, name: name);
           // TODO: missed an incoming call
           break;
         case Event.ACTION_CALL_CALLBACK:
@@ -164,33 +176,37 @@ class Calls {
           break;
         case Event.ACTION_CALL_START:
           () {
-            // note.Get.to(VideoCall(
-            //   name: model,
-            //   isVideo: hasVideo,
-            //   channelName: 'peace',
-            //   role: ClientRole.Audience,
-            // ));
+            note.Get.to(VideoCall(
+              name: model,
+              isVideo: hasVideo,
+              channelName: channel,
+              role: ClientRole.Broadcaster,
+              // time: time,
+            ));
           };
           // TODO: started an outgoing call
           // TODO: show screen calling in Flutter
           break;
         case Event.ACTION_CALL_ACCEPT:
-          note.Get.to(VideoCall(
-            name: model,
-            isVideo: hasVideo,
-            channelName: channel,
-            role: ClientRole.Broadcaster,
-          ));
 
+            note.Get.to(VideoCall(
+              name: model,
+              isVideo: hasVideo,
+              channelName: channel,
+              role: ClientRole.Broadcaster,
+              // time: time,
+            ));
+          //   stopWatchTimer.onStartTimer();
+          // };
           // TODO: accepted an incoming call
           // TODO: show screen calling in Flutter
           break;
         case Event.ACTION_CALL_DECLINE:
-          showMissedCall(uid: uid, name: name);
+          // showMissedCall(uid: uid, name: name);
           // TODO: declined an incoming call
           break;
         case Event.ACTION_CALL_ENDED:
-          () => note.Get.back();
+           note.Get.back();
 
           // TODO: ended an incoming/outgoing call
           break;
