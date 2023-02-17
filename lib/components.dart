@@ -180,12 +180,11 @@ class _ChatTabState extends State<ChatTab> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) =>
-                      // Test()
-                      AddStory(
-                        camera1: firstCamera,
-                        camera2: secondCamera,
-                      )
+                  MaterialPageRoute(builder: (context) => Test()
+                      // AddStory(
+                      //   camera1: firstCamera,
+                      //   camera2: secondCamera,
+                      // )
                       ),
                 );
               },
@@ -314,70 +313,123 @@ class _ChatTabState extends State<ChatTab> {
             width: double.infinity,
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
+                topLeft: Radius.circular(0),
+                topRight: Radius.circular(0),
               ),
               color: Colors.white,
             ),
             child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  showInput
-                      ? TextField(
-                          onSubmitted: (value) {
-                            setState(() {
-                              showInput = !showInput;
-                            });
-                          },
-                          decoration: InputDecoration(
-                            hintText: 'Search messages',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
+              child: Padding(
+                padding: const EdgeInsets.all(
+                  10.0,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    showInput
+                        ? TextField(
+                            onSubmitted: (value) {
+                              setState(() {
+                                showInput = !showInput;
+                              });
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Search messages...',
+                              hintStyle: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.w500),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
-                          ),
-                        )
-                      : Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                "Messages",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20,
+                          )
+                        : Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "Messages",
+                                  style: TextStyle(
+                                    color: secondaryColor,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  showInput = !showInput;
-                                });
-                              },
-                              icon: Icon(
-                                Icons.search,
-                                color: Color(0xff908f8d),
-                                size: 20,
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    showInput = !showInput;
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.search,
+                                  color: Color(0xff697077),
+                                  //Color(0xff908f8d),
+                                  size: 25,
+                                ),
                               ),
-                            ),
-                            // SizedBox(width: 20),
-                            // Icon(
-                            //   Icons.more_vert_outlined,
-                            //   color: Color(0xff908f8d),
-                            //   size: 18,
-                            // ),
-                          ],
-                        ),
-                  Consumer<ChatNotifier>(
-                    builder: (context, pro, _) => Column(
-                      children: [
-                        StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection('groups')
-                              .snapshots(),
-                          builder:
-                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                            if (snapshot.hasData) {
-                              if (snapshot.data.docs.isNotEmpty) {
+                              // SizedBox(width: 20),
+                              // Icon(
+                              //   Icons.more_vert_outlined,
+                              //   color: Color(0xff908f8d),
+                              //   size: 18,
+                              // ),
+                            ],
+                          ),
+                    Consumer<ChatNotifier>(
+                      builder: (context, pro, _) => Column(
+                        children: [
+                          StreamBuilder(
+                            stream: FirebaseFirestore.instance
+                                .collection('groups')
+                                .snapshots(),
+                            builder: (context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.hasData) {
+                                if (snapshot.data.docs.isNotEmpty) {
+                                  return ListView.separated(
+                                    padding: const EdgeInsets.only(top: 10),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: snapshot.data.docs.length,
+                                    separatorBuilder: (ctx, i) =>
+                                        const SizedBox(height: 0),
+                                    itemBuilder: (ctx, index) {
+                                      return GroupMessages(
+                                        uid: snapshot.data.docs[index].id,
+                                        index: index,
+                                        docu: snapshot.data.docs,
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  return SizedBox();
+                                }
+                              }
+                              return const SizedBox();
+                            },
+                          ),
+                          StreamBuilder(
+                            stream: FirebaseFirestore.instance
+                                .collection('conversation')
+                                .doc(userM['uid'] == '' ? ' ' : userM['uid'])
+                                .collection("currentConversation")
+                                .orderBy('created', descending: true)
+                                .snapshots(),
+                            builder: (context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.hasData) {
+                                if (snapshot.data.docs.isEmpty) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 50),
+                                    child: const Center(
+                                      child: Text(
+                                        'No Messages\n Tap on the + icon to start a conversation',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+                                }
                                 return ListView.separated(
                                   padding: const EdgeInsets.only(top: 10),
                                   physics: const NeverScrollableScrollPhysics(),
@@ -386,68 +438,26 @@ class _ChatTabState extends State<ChatTab> {
                                   separatorBuilder: (ctx, i) =>
                                       const SizedBox(height: 0),
                                   itemBuilder: (ctx, index) {
-                                    return GroupMessages(
+                                    return MyMessages(
                                       uid: snapshot.data.docs[index].id,
                                       index: index,
                                       docu: snapshot.data.docs,
                                     );
                                   },
                                 );
-                              } else {
-                                return SizedBox();
                               }
-                            }
-                            return const SizedBox();
-                          },
-                        ),
-                        StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection('conversation')
-                              .doc(userM['uid'] == '' ? ' ' : userM['uid'])
-                              .collection("currentConversation")
-                              .orderBy('created', descending: true)
-                              .snapshots(),
-                          builder:
-                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                            if (snapshot.hasData) {
-                              if (snapshot.data.docs.isEmpty) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(top: 50),
-                                  child: const Center(
-                                    child: Text(
-                                      'No Messages\n Tap on the + icon to start a conversation',
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                );
-                              }
-                              return ListView.separated(
-                                padding: const EdgeInsets.only(top: 10),
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: snapshot.data.docs.length,
-                                separatorBuilder: (ctx, i) =>
-                                    const SizedBox(height: 0),
-                                itemBuilder: (ctx, index) {
-                                  return MyMessages(
-                                    uid: snapshot.data.docs[index].id,
-                                    index: index,
-                                    docu: snapshot.data.docs,
-                                  );
-                                },
+                              return const Center(
+                                child: CircularProgressIndicator(),
                               );
-                            }
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          },
-                        ),
-                      ],
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
 
-                  //),
-                ],
+                    //),
+                  ],
+                ),
               ),
             ),
           ),
@@ -477,12 +487,12 @@ class _CallTabState extends State<CallTab> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 17),
       color: Colors.white,
       child: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 25),
+            const SizedBox(height: 20),
             Row(
               children: [
                 Expanded(
@@ -490,19 +500,20 @@ class _CallTabState extends State<CallTab> {
                     "Messages",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 19,
                     ),
                   ),
                 ),
                 Icon(
                   Icons.search,
-                  color: Color(0xff908f8d),
+                  color: Color(0xff697077),
                   size: 20,
                 ),
                 SizedBox(width: 20),
                 Icon(
                   Icons.more_vert_outlined,
-                  color: Color(0xff908f8d),
+                  color: Color(0xff697077),
                   size: 18,
                 ),
               ],
@@ -516,21 +527,24 @@ class _CallTabState extends State<CallTab> {
                   'assets/profile2.png',
                   height: 50,
                   width: 50,
+                  fit: BoxFit.cover,
                 ),
               ),
               title: const Text(
                 "Precious ",
                 style: TextStyle(
-                  color: Colors.black,
+                  color: Color.fromRGBO(0, 0, 0, 1),
                   fontSize: 14,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               subtitle: const Text(
                 "9:13",
                 style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                  color: secondaryColor,
+                  //Color(0xff697077),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
                 ),
 
                 // );
@@ -539,6 +553,7 @@ class _CallTabState extends State<CallTab> {
               trailing: const Icon(
                 Icons.phone_missed_sharp,
                 color: Colors.red,
+                size: 20,
               ),
             ),
           ],
@@ -587,18 +602,18 @@ class MessageSender extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
-            topLeft: isMe ? Radius.circular(12) : Radius.circular(0),
-            topRight: isMe ? Radius.circular(0) : Radius.circular(12),
-            bottomLeft: Radius.circular(12),
-            bottomRight: Radius.circular(12),
+            topLeft: isMe ? Radius.circular(10) : Radius.circular(10),
+            topRight: isMe ? Radius.circular(10) : Radius.circular(10),
+            bottomLeft: Radius.circular(10),
+            bottomRight: Radius.circular(10),
           ),
-          color: !isMe ? Color(0xffc4c4c4) : Color(0xff0E014C),
+          color: !isMe ? Color(0xFFE6E9EE) : Color(0xff0E014C),
         ),
         constraints: BoxConstraints(
           // maxWidth: double.infinity
           maxWidth: MediaQuery.of(context).size.width * 0.5,
         ),
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -610,17 +625,19 @@ class MessageSender extends StatelessWidget {
                   ? TextStyle(
                       fontFamily: 'Roboto',
                       color: Colors.white,
-                      fontSize: 11,
+                      fontSize: 11.5,
                     )
                   : TextStyle(
                       fontFamily: 'Roboto',
-                      color: Colors.black,
-                      fontSize: 11,
+                      color: secondaryColor,
+                      //Colors.black,
+                      fontSize: 11.5,
                     ),
               linkStyle: TextStyle(
-                  fontFamily: 'Roboto',
-                  color: primaryColor,
-                  fontSize: 11,),
+                fontFamily: 'Roboto',
+                color: primaryColor,
+                fontSize: 11.5,
+              ),
             ),
             SizedBox(height: 5),
             Row(
@@ -631,11 +648,12 @@ class MessageSender extends StatelessWidget {
                   style: isMe
                       ? TextStyle(
                           color: Colors.white,
-                          fontSize: 10,
+                          fontSize: 9,
                         )
                       : TextStyle(
-                          color: Colors.black,
-                          fontSize: 10,
+                          color: secondaryColor,
+                          //Colors.black,
+                          fontSize: 9,
                         ),
                 ),
                 isMe
@@ -647,7 +665,7 @@ class MessageSender extends StatelessWidget {
                     ? Icon(
                         Icons.done_all,
                         color: Colors.white,
-                        size: 15,
+                        size: 14,
                       )
                     : SizedBox(
                         width: 0,
@@ -723,17 +741,17 @@ class Group extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
-                topLeft: isMe ? Radius.circular(12) : Radius.circular(0),
-                topRight: isMe ? Radius.circular(0) : Radius.circular(12),
-                bottomLeft: Radius.circular(12),
-                bottomRight: Radius.circular(12),
+                topLeft: isMe ? Radius.circular(10) : Radius.circular(10),
+                topRight: isMe ? Radius.circular(10) : Radius.circular(10),
+                bottomLeft: Radius.circular(10),
+                bottomRight: Radius.circular(10),
               ),
-              color: !isMe ? Color(0xffc4c4c4) : Color(0xff0E014C),
+              color: !isMe ? Color(0xFFE6E9EE) : Color(0xff0E014C),
             ),
             constraints: BoxConstraints(
               maxWidth: MediaQuery.of(context).size.width * 0.5,
             ),
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(8),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -746,20 +764,22 @@ class Group extends StatelessWidget {
                     style: TextStyle(
                       color: txtColor1,
                       fontFamily: 'SignikaNegative',
-                      fontSize: 18,
+                      fontSize: 13,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                SizedBox(height: 1),
                 Text(
                   text,
                   style: isMe
                       ? TextStyle(
                           color: Colors.white,
-                          fontSize: 14,
+                          fontSize: 11.5,
                         )
                       : TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
+                          color: secondaryColor,
+                          //Colors.black,
+                          fontSize: 11.5,
                         ),
                 ),
                 SizedBox(height: 5),
@@ -771,11 +791,11 @@ class Group extends StatelessWidget {
                       style: isMe
                           ? TextStyle(
                               color: Colors.white,
-                              fontSize: 10,
+                              fontSize: 9,
                             )
                           : TextStyle(
                               color: Colors.black,
-                              fontSize: 10,
+                              fontSize: 9,
                             ),
                     ),
                     isMe
@@ -787,7 +807,7 @@ class Group extends StatelessWidget {
                         ? Icon(
                             Icons.done_all,
                             color: Colors.white,
-                            size: 15,
+                            size: 14,
                           )
                         : SizedBox(
                             width: 0,
@@ -1142,9 +1162,9 @@ class ContainerButton extends StatelessWidget {
               width: 60,
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(35),
-                  bottomLeft: const Radius.circular(35),
+                  bottomLeft: Radius.circular(35),
                 ),
               ),
               child: Row(
@@ -1179,7 +1199,7 @@ class ContainerButton extends StatelessWidget {
                   const Spacer(),
                   const Text(
                     'Granda',
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: Colors.grey),
@@ -1198,14 +1218,14 @@ class ContainerButton extends StatelessWidget {
               width: 60,
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: const BorderRadius.only(
-                  topRight: const Radius.circular(35),
-                  bottomRight: const Radius.circular(35),
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(35),
+                  bottomRight: Radius.circular(35),
                 ),
               ),
               child: const Text(
                 'About',
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.grey),

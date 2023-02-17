@@ -61,6 +61,7 @@ class _GroupMessagesState extends State<GroupMessages> {
             borderRadius: BorderRadius.circular(25),
             child: Image.asset(
               "assets/group.jpg",
+              fit: BoxFit.cover,
               // width: 25,
               // height: 25,
             ),
@@ -86,8 +87,8 @@ class _GroupMessagesState extends State<GroupMessages> {
                     .format(widget.docu[widget.index]['created'].toDate()),
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 8,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             if (DateTime.now()
@@ -134,8 +135,8 @@ class _GroupMessagesState extends State<GroupMessages> {
           style: isTapped == false
               ? TextStyle(
                   color: Colors.black,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 8,
+                  fontWeight: FontWeight.w400,
                 )
               : TextStyle(
                   color: Color(0x82000000),
