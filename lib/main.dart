@@ -241,11 +241,7 @@ class _MyAppState extends State<MyApp> {
       RemoteMessage message) async {
     await Firebase.initializeApp();
     print("Handling a background message: ${message.messageId}");
-    // await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    //   alert: true,
-    //   badge: true,
-    //   sound: true,
-    // );
+
     Calls().receiveIncomingCall(
       uid: uuid.v4(),
       name: message.data['name'],
