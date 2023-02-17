@@ -211,7 +211,7 @@ class _ChatTabState extends State<ChatTab> {
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
