@@ -650,8 +650,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                           // width: 20,
                         )
                       : TextField(
-                          maxLines: null,
-                          style: TextStyle(
+                    style: TextStyle(
                             color: Color(0xff697077),
                             fontSize: 15,
                           ),
