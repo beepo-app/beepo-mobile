@@ -602,10 +602,10 @@ class MessageSender extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
-            topLeft: isMe ? Radius.circular(10) : Radius.circular(10),
-            topRight: isMe ? Radius.circular(10) : Radius.circular(10),
-            bottomLeft: Radius.circular(10),
-            bottomRight: Radius.circular(10),
+            topLeft: isMe ? Radius.circular(15) : Radius.circular(15),
+            topRight: isMe ? Radius.circular(15) : Radius.circular(15),
+            bottomLeft: Radius.circular(15),
+            bottomRight: Radius.circular(15),
           ),
           color: !isMe ? Color(0xFFE6E9EE) : Color(0xff0E014C),
         ),
@@ -738,13 +738,14 @@ class Group extends StatelessWidget {
                 ),
               ),
             ),
+          SizedBox(width: 4),
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
-                topLeft: isMe ? Radius.circular(10) : Radius.circular(10),
-                topRight: isMe ? Radius.circular(10) : Radius.circular(10),
-                bottomLeft: Radius.circular(10),
-                bottomRight: Radius.circular(10),
+                topLeft: isMe ? Radius.circular(12) : Radius.circular(12),
+                topRight: isMe ? Radius.circular(12) : Radius.circular(12),
+                bottomLeft: Radius.circular(12),
+                bottomRight: Radius.circular(12),
               ),
               color: !isMe ? Color(0xFFE6E9EE) : Color(0xff0E014C),
             ),
@@ -756,19 +757,36 @@ class Group extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment:
-                  isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  isMe ? CrossAxisAlignment.start : CrossAxisAlignment.start,
               children: [
                 if (!isMe)
-                  Text(
-                    user.name,
-                    style: TextStyle(
-                      color: txtColor1,
-                      fontFamily: 'SignikaNegative',
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user.name,
+                        style: TextStyle(
+                          color: secondaryColor,
+                          //txtColor1,
+                          fontFamily: 'SignikaNegative',
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Spacer(),
+                      Text(
+                        user.name,
+                        style: TextStyle(
+                          color: secondaryColor,
+                          //txtColor1,
+                          fontFamily: '@Precious001',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
                   ),
-                SizedBox(height: 1),
+                SizedBox(height: 2),
                 Text(
                   text,
                   style: isMe
@@ -777,7 +795,7 @@ class Group extends StatelessWidget {
                           fontSize: 11.5,
                         )
                       : TextStyle(
-                          color: secondaryColor,
+                          color: Colors.black,
                           //Colors.black,
                           fontSize: 11.5,
                         ),

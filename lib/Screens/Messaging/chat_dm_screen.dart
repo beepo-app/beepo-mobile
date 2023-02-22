@@ -187,11 +187,11 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(19),
                                 child: SizedBox(
-                                  height: 35,
-                                  width: 35,
+                                  height: 37,
+                                  width: 37,
                                   child: CachedNetworkImage(
-                                    height: 35,
-                                    width: 35,
+                                    height: 37,
+                                    width: 37,
                                     imageUrl: widget.model.image,
                                     placeholder: (context, url) => Center(
                                         child: CircularProgressIndicator()),
@@ -204,7 +204,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                 ),
                               ),
                             ),
-                            SizedBox(width: 6),
+                            SizedBox(width: 8),
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -508,6 +508,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                           // width: 20,
                         )
                       : TextField(
+                          textCapitalization: TextCapitalization.sentences,
                           maxLines: null,
                           minLines: 1,
                           style: TextStyle(
@@ -516,9 +517,9 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                           ),
                           controller: messageController,
                           decoration: InputDecoration(
-                            contentPadding: EdgeInsets.fromLTRB(1, 2, 1, 2),
+                            contentPadding: EdgeInsets.fromLTRB(1, 0, 1, 0),
                             fillColor: Color(0xFFE6E9EE),
-                            hintText: 'Type a message',
+                            hintText: 'Message',
                             isDense: false,
                             hintStyle: TextStyle(
                               color: Color(0xff697077),

@@ -21,7 +21,8 @@ import 'chat_methods.dart';
 import 'generate_keywords.dart';
 
 class GroupDm extends StatefulWidget {
-  const GroupDm({Key key}) : super(key: key);
+  final bool isMe;
+  const GroupDm({Key key, @required this.isMe}) : super(key: key);
 
   @override
   State<GroupDm> createState() => _GroupDmState();
@@ -64,11 +65,14 @@ class _GroupDmState extends State<GroupDm> {
                     children: [
                       Container(
                         padding: const EdgeInsets.only(left: 5, right: 13),
-                        height: 110,
+                        height: 120,
                         width: double.infinity,
                         decoration: const BoxDecoration(
-                          color: Color(0xff0e014c),
-                        ),
+                            color: Color(0xff0e014c),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(20),
+                              bottomRight: Radius.circular(20),
+                            )),
                         child: Column(
                           children: [
                             SizedBox(
@@ -101,16 +105,26 @@ class _GroupDmState extends State<GroupDm> {
                                     //       widget.model.searchKeywords),
                                     // ));
                                   },
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(19),
-                                    child: SizedBox(
-                                      height: 35,
-                                      width: 35,
-                                      child: Image.asset('assets/group.jpg'),
+                                  child: SizedBox(
+                                    height: 37,
+                                    width: 37,
+                                    child: ClipOval(
+                                      child: Image.asset(
+                                        'assets/group.jpg',
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
+                                  // ClipRRect(
+                                  //   borderRadius: BorderRadius.circular(19),
+                                  //   child: SizedBox(
+                                  //     height: 35,
+                                  //     width: 35,
+                                  //     child: Image.asset('assets/group.jpg'),
+                                  //   ),
+                                  // ),
                                 ),
-                                SizedBox(width: 6),
+                                SizedBox(width: 8),
                                 GestureDetector(
                                   onTap: () {
                                     // Get.to(UserProfile(
@@ -123,63 +137,81 @@ class _GroupDmState extends State<GroupDm> {
                                     //       widget.model.searchKeywords),
                                     // ));
                                   },
-                                  child: Text(
-                                    'Beepo',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: const [
+                                      SizedBox(height: 5),
+                                      Text(
+                                        'Beepo Public Chat',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      SizedBox(height: 3),
+                                      Text(
+                                        '12,580 members',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w100,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                SizedBox(width: 6),
-                                Container(
-                                  width: 4,
-                                  height: 4,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color(0xff08aa48),
-                                  ),
-                                ),
+                                // SizedBox(width: 6),
+                                // Container(
+                                //   width: 4,
+                                //   height: 4,
+                                //   decoration: BoxDecoration(
+                                //     shape: BoxShape.circle,
+                                //     color: Color(0xff08aa48),
+                                //   ),
+                                // ),
                                 Spacer(),
-                                SizedBox(
-                                    height: 23,
-                                    width: 23,
-                                    child: SvgPicture.asset(
-                                        'assets/video_call.svg')),
-                                SizedBox(width: 17),
-                                Icon(
-                                  Icons.call,
-                                  size: 23,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(width: 16),
+                                // SizedBox(
+                                //     height: 23,
+                                //     width: 23,
+                                //     child: SvgPicture.asset(
+                                //         'assets/video_call.svg')),
+                                // SizedBox(width: 17),
+                                // Icon(
+                                //   Icons.call,
+                                //   size: 23,
+                                //   color: Colors.white,
+                                // ),
+                                // SizedBox(width: 16),
                                 Icon(
                                   Icons.more_vert_outlined,
                                   color: Colors.white,
                                   size: 23,
                                 ),
+                                SizedBox(width: 8),
                               ],
                             ),
                           ],
                         ),
                       ),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 20,
-                        color: Color(0xff000000).withOpacity(0.1),
-                        child: Center(
-                          child: Text(
-                            'Beepo General Group',
-                            style: TextStyle(
-                              color: secondaryColor,
-                              fontFamily: 'SignikaNegative',
-                              fontWeight: FontWeight.w300,
-                              // fontStyle: FontStyle.italic
-                            ),
-                          ),
-                        ),
-                      ),
+                      // SizedBox(height: 5),
+                      // Container(
+                      //   width: MediaQuery.of(context).size.width,
+                      //   height: 20,
+                      //   color: Color(0xff000000).withOpacity(0.1),
+                      //   child: Center(
+                      //     child: Text(
+                      //       'Beepo General Group',
+                      //       style: TextStyle(
+                      //         color: secondaryColor,
+                      //         fontFamily: 'SignikaNegative',
+                      //         fontWeight: FontWeight.w300,
+                      //         // fontStyle: FontStyle.italic
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -443,7 +475,7 @@ class _GroupDmState extends State<GroupDm> {
                                         ),
                                       ),
                                     SizedBox(
-                                      height: 7,
+                                      height: 15,
                                     )
                                   ],
                                 );
@@ -504,6 +536,7 @@ class _GroupDmState extends State<GroupDm> {
                           // width: 20,
                         )
                       : TextField(
+                          textCapitalization: TextCapitalization.sentences,
                           maxLines: null,
                           minLines: 1,
                           style: TextStyle(
@@ -512,8 +545,9 @@ class _GroupDmState extends State<GroupDm> {
                           ),
                           controller: messageController,
                           decoration: InputDecoration(
+                            contentPadding: EdgeInsets.fromLTRB(1, 0, 1, 0),
                             fillColor: Color(0xFFE6E9EE),
-                            hintText: 'Type a message',
+                            hintText: 'Message',
                             isDense: false,
                             hintStyle: TextStyle(
                                 color: Color(0xff697077), fontSize: 15),
@@ -537,17 +571,17 @@ class _GroupDmState extends State<GroupDm> {
                             suffixIcon: FittedBox(
                               child: Row(
                                 children: [
-                                  IconButton(
-                                    onPressed: () {},
-                                    constraints: const BoxConstraints(
-                                      maxWidth: 30,
-                                    ),
-                                    icon: Icon(
-                                      Iconsax.dollar_circle,
-                                      size: 21,
-                                      color: secondaryColor,
-                                    ),
-                                  ),
+                                  // IconButton(
+                                  //   onPressed: () {},
+                                  //   constraints: const BoxConstraints(
+                                  //     maxWidth: 30,
+                                  //   ),
+                                  //   icon: Icon(
+                                  //     Iconsax.dollar_circle,
+                                  //     size: 21,
+                                  //     color: secondaryColor,
+                                  //   ),
+                                  // ),
                                   IconButton(
                                     onPressed: () {
                                       // context
@@ -563,7 +597,7 @@ class _GroupDmState extends State<GroupDm> {
                                       color: secondaryColor,
                                     ),
                                   ),
-                                  SizedBox(width: 8),
+                                  SizedBox(width: 15),
                                 ],
                               ),
                             ),
@@ -580,7 +614,7 @@ class _GroupDmState extends State<GroupDm> {
                         ),
                 ),
                 SizedBox(
-                  width: 5,
+                  width: 10,
                 ),
                 context.watch<ChatNotifier>().isRecording
                     ? SizedBox(
