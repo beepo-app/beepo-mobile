@@ -121,8 +121,8 @@ class _CreateAccountState extends State<CreateAccount> {
               text: 'Next',
               color: Color(0xffFF9C34),
               onPressed: () async {
-                if (displayName.text.trim().isEmpty) {
-                  showToast('Please enter a display name');
+                if (displayName.text.trim().isEmpty || selectedImage == null) {
+                  showToast('Please enter a display name and picture');
                   return;
                 } else {
                   // Get.to(

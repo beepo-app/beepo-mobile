@@ -480,13 +480,13 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                               itemBuilder: (context, index) {
                                 Timestamp time =
                                     snapshot.data.docs[index]['created'];
-                                var day = time.toDate().day.toString();
-                                var month = time.toDate().month.toString();
-                                var year =
-                                    time.toDate().toString().substring(2);
-                                var date = day + '-' + month + '-' + year;
+                                // var day = time.toDate().day.toString();
+                                // var month = time.toDate().month.toString();
+                                // var year =
+                                //     time.toDate().toString().substring(2);
+                                // var date = day + '-' + month + '-' + year;
                                 var hour = time.toDate().hour;
-                                var min = time.toDate().minute;
+                                // var min = time.toDate().minute;
                                 final encrypter = enc.Encrypter(
                                     enc.AES(enc.Key.fromLength(32)));
 
