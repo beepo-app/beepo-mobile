@@ -25,8 +25,8 @@ import 'Screens/Wallet/token_screen.dart';
 import 'Utils/styles.dart';
 import 'add_story.dart';
 import 'bubble_stories.dart';
-import 'callkeep.dart';
 import 'groupMessages.dart';
+import 'mic_anime.dart';
 import 'myMessages.dart';
 
 class FilledButton extends StatelessWidget {
@@ -182,11 +182,12 @@ class _ChatTabState extends State<ChatTab> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          // Test()
-                          AddStory(
-                            camera1: firstCamera,
-                            camera2: secondCamera,
-                          )),
+                          WhatsAppMicAnimation(),
+                          // AddStory(
+                          //   camera1: firstCamera,
+                          //   camera2: secondCamera,
+                          // ),
+                  ),
                 );
               },
               child: Column(
@@ -564,18 +565,75 @@ class _CallTabState extends State<CallTab> {
   }
 }
 
-class MessageSender extends StatelessWidget {
+class MessageReply extends StatelessWidget {
   final bool isMe;
   final String text;
   final Timestamp time;
-  final String displayname;
+  final bool onSwipedMessage;
+  final String replyMessage;
+  final String replyName;
+  final String replyUsername;
 
-  const MessageSender({
+  const MessageReply({
     @required this.isMe,
     @required this.text,
     @required this.time,
-    @required this.displayname,
+     this.onSwipedMessage,
+    this.replyMessage,
+    this.replyName,
+    this.replyUsername,
   });
+
+  Widget buildReply(String message, String username, String displayName) =>
+      Container(
+        decoration: BoxDecoration(
+          color: Color(0xffc4c4c4),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        padding: EdgeInsets.only(
+          left: 14,
+          right: 10,
+          top: 5,
+          bottom: 5,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  displayName,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xffc82513),
+                  ),
+                ),
+                Text(
+                  '@${username}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xffc82513),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Text(
+              message,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+                color: Color(0xff120b0b),
+              ),
+            )
+          ],
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -620,6 +678,7 @@ class MessageSender extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if(onSwipedMessage)buildReply(replyMessage, replyUsername, replyName),
             LinkWell(
               text,
               style: isMe
@@ -679,6 +738,7 @@ class MessageSender extends StatelessWidget {
     );
   }
 }
+
 
 class Group extends StatelessWidget {
   final bool isMe;

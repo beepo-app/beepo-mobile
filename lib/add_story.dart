@@ -256,9 +256,9 @@ class _AddStoryState extends State<AddStory> {
                             if( selected == widget.camera1){
                               selected = widget.camera2;
                             }
-                            // else{
-                            //   selected = widget.camera1;
-                            // }
+                            else{
+                              selected = widget.camera1;
+                            }
                             // selected =
                             // selected == widget.camera1 ? widget.camera2 : widget
                             //     .camera1;
