@@ -610,14 +610,14 @@ class MessageReply extends StatelessWidget {
                     color: Color(0xffc82513),
                   ),
                 ),
-                Text(
-                  '@${username}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xffc82513),
-                  ),
-                ),
+                // Text(
+                //   '@${username}',
+                //   style: TextStyle(
+                //     fontSize: 12,
+                //     fontWeight: FontWeight.w400,
+                //     color: Color(0xffc82513),
+                //   ),
+                // ),
               ],
             ),
             SizedBox(
@@ -690,7 +690,6 @@ class MessageReply extends StatelessWidget {
                   : TextStyle(
                       fontFamily: 'Roboto',
                       color: secondaryColor,
-                      //Colors.black,
                       fontSize: 11.5,
                     ),
               linkStyle: TextStyle(
@@ -712,7 +711,6 @@ class MessageReply extends StatelessWidget {
                         )
                       : TextStyle(
                           color: secondaryColor,
-                          //Colors.black,
                           fontSize: 9,
                         ),
                 ),
