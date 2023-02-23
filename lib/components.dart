@@ -182,11 +182,10 @@ class _ChatTabState extends State<ChatTab> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          WhatsAppMicAnimation(),
-                          // AddStory(
-                          //   camera1: firstCamera,
-                          //   camera2: secondCamera,
-                          // ),
+                          AddStory(
+                            camera1: firstCamera,
+                            camera2: secondCamera,
+                          ),
                   ),
                 );
               },
@@ -587,7 +586,7 @@ class MessageReply extends StatelessWidget {
   Widget buildReply(String message, String username, String displayName) =>
       Container(
         decoration: BoxDecoration(
-          color: Color(0xffc4c4c4),
+          color: isMe? Color(0xffffffff).withOpacity(0.3): Color(0xff697077).withOpacity(0.2),
           borderRadius: BorderRadius.circular(5),
         ),
         padding: EdgeInsets.only(
@@ -607,7 +606,7 @@ class MessageReply extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xffc82513),
+                    color: primaryColor,
                   ),
                 ),
                 // Text(
@@ -628,7 +627,7 @@ class MessageReply extends StatelessWidget {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
-                color: Color(0xff120b0b),
+                color: Colors.white,
               ),
             )
           ],
@@ -793,7 +792,7 @@ class Group extends StatelessWidget {
                 },
                 child: CircleAvatar(
                   radius: 20,
-                  backgroundImage: CachedNetworkImageProvider(user.image),
+                  backgroundImage: CachedNetworkImageProvider(user.image==null?'https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg': user.image),
                 ),
               ),
             ),

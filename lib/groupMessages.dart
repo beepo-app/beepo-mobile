@@ -71,7 +71,7 @@ class _GroupMessagesState extends State<GroupMessages> {
           children: [
             Expanded(
               child: Text(
-                "Beepo",
+                "Beepo Public Chat",
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 14,

@@ -2,6 +2,7 @@
 
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
+import 'package:beepo/mic_anime.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,6 +23,7 @@ import 'generate_keywords.dart';
 
 class GroupDm extends StatefulWidget {
   final bool isMe;
+
   const GroupDm({Key key, @required this.isMe}) : super(key: key);
 
   @override
@@ -94,17 +96,7 @@ class _GroupDmState extends State<GroupDm> {
                                 ),
                                 SizedBox(width: 5),
                                 GestureDetector(
-                                  onTap: () {
-                                    // Get.to(UserProfile(
-                                    //   model: UserModel(
-                                    //       uid: widget.model.uid,
-                                    //       name: widget.model.name,
-                                    //       userName: widget.model.userName,
-                                    //       image: widget.model.image,
-                                    //       searchKeywords:
-                                    //       widget.model.searchKeywords),
-                                    // ));
-                                  },
+                                  onTap: () {},
                                   child: SizedBox(
                                     height: 37,
                                     width: 37,
@@ -115,32 +107,16 @@ class _GroupDmState extends State<GroupDm> {
                                       ),
                                     ),
                                   ),
-                                  // ClipRRect(
-                                  //   borderRadius: BorderRadius.circular(19),
-                                  //   child: SizedBox(
-                                  //     height: 35,
-                                  //     width: 35,
-                                  //     child: Image.asset('assets/group.jpg'),
-                                  //   ),
-                                  // ),
                                 ),
                                 SizedBox(width: 8),
                                 GestureDetector(
                                   onTap: () {
-                                    // Get.to(UserProfile(
-                                    //   model: UserModel(
-                                    //       uid: widget.model.uid,
-                                    //       name: widget.model.name,
-                                    //       userName: widget.model.userName,
-                                    //       image: widget.model.image,
-                                    //       searchKeywords:
-                                    //       widget.model.searchKeywords),
-                                    // ));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> GroupProfile(image: 'assets/group.jpg' ,)));
                                   },
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    children: const [
+                                    children: [
                                       SizedBox(height: 5),
                                       Text(
                                         'Beepo Public Chat',
@@ -151,14 +127,25 @@ class _GroupDmState extends State<GroupDm> {
                                         ),
                                       ),
                                       SizedBox(height: 3),
-                                      Text(
-                                        '12,580 members',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w100,
-                                        ),
-                                      ),
+                                      StreamBuilder(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('users')
+                                              .snapshots(),
+                                          builder: (context,
+                                              AsyncSnapshot<QuerySnapshot>
+                                                  snapshot) {
+                                            if (snapshot.hasData) {
+                                              return Text(
+                                                '${snapshot.data.docs.length} members',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w100,
+                                                ),
+                                              );
+                                            }
+                                            return SizedBox();
+                                          }),
                                     ],
                                   ),
                                 ),
