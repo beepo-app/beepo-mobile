@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
-import 'Models/story_model/storyModel.dart';
+import '../../Models/story_model/storyModel.dart';
 
 class StoryDownloadMethod {
   Map userM = Hive.box('beepo').get('userData');

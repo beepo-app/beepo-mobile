@@ -2,11 +2,11 @@ import 'dart:async';
 
 // import 'package:beepo/Models/story_model/story.dart';
 import 'package:beepo/Models/user_model.dart';
-import 'package:beepo/story_download_method.dart';
+import 'package:beepo/Screens/moments/story_download_method.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
-import 'Models/story_model/storyModel.dart';
+import '../../Models/story_model/storyModel.dart';
 
 class StoryDownloadProvider extends ChangeNotifier {
   final StoryDownloadMethod _storyMethod;

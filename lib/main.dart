@@ -2,8 +2,6 @@
 
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
-import 'package:beepo/story_download_provider.dart';
-import 'package:beepo/story_upload_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -17,8 +15,10 @@ import 'package:uuid/uuid.dart';
 import 'Models/user_model.dart';
 import 'Screens/Auth/lock_screen.dart';
 import 'Screens/Auth/onboarding.dart';
+import 'Screens/moments/story_download_provider.dart';
+import 'Screens/moments/story_upload_provider.dart';
 import 'bottom_nav.dart';
-import 'calll_notify.dart';
+import 'Screens/Messaging/calls/calll_notify.dart';
 
 
 void main() async {
@@ -286,8 +286,6 @@ class _MyAppState extends State<MyApp> {
       );
     });
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-
   }
   @override
   void initState() {

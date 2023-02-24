@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:beepo/extensions.dart';
 import 'package:beepo/response.dart';
-import 'package:beepo/story_upload_method.dart';
+import 'package:beepo/Screens/moments/story_upload_method.dart';
 import 'package:camera/camera.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
@@ -11,7 +11,7 @@ import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:image/image.dart' as img;
-import 'Models/story_model/storyModel.dart';
+import '../../Models/story_model/storyModel.dart';
 import 'add_story.dart';
 
 enum StoryUploadStatus {

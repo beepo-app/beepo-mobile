@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
-import 'package:beepo/story_download_provider.dart';
+import 'package:beepo/Screens/moments/story_download_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';

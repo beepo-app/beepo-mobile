@@ -4,7 +4,7 @@ import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import './calls.dart';
+import 'Screens/Messaging/calls/calls.dart';
 import 'Utils/styles.dart';
 
 class IndexPage extends StatefulWidget {

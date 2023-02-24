@@ -3,7 +3,7 @@
 import 'package:beepo/Screens/Profile/user_profile_screen.dart';
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
-import 'package:beepo/story_download_provider.dart';
+import 'package:beepo/Screens/moments/story_download_provider.dart';
 
 // import 'package:beepo/story_screen.dart';
 import 'package:beepo/story_view.dart';
@@ -23,11 +23,11 @@ import 'Models/wallet.dart';
 import 'Screens/Browser/browser_page.dart';
 import 'Screens/Wallet/token_screen.dart';
 import 'Utils/styles.dart';
-import 'add_story.dart';
-import 'bubble_stories.dart';
-import 'groupMessages.dart';
+import 'Screens/moments/add_story.dart';
+import 'Screens/moments/bubble_stories.dart';
+import 'Screens/Messaging/groupMessages.dart';
 import 'mic_anime.dart';
-import 'myMessages.dart';
+import 'Screens/Messaging/myMessages.dart';
 
 class FilledButton extends StatelessWidget {
   final String text;

@@ -1,7 +1,7 @@
 import 'package:beepo/Models/story_model/storyModel.dart';
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
-import 'package:beepo/story_download_provider.dart';
+import 'package:beepo/Screens/moments/story_download_provider.dart';
 import 'package:beepo/story_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

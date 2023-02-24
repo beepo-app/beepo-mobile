@@ -12,7 +12,7 @@ import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
-import 'Models/user_model.dart';
+import '../../../Models/user_model.dart';
 import 'calll_notify.dart';
 
 class VideoCall extends StatefulWidget {

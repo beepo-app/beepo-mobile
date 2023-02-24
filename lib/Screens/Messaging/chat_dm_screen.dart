@@ -6,8 +6,8 @@ import 'dart:convert';
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
-import 'package:beepo/calls.dart';
-import 'package:beepo/record.dart';
+import 'package:beepo/Screens/Messaging/calls/calls.dart';
+import 'package:beepo/Screens/Messaging/record.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:encrypt/encrypt.dart' as enc;
@@ -29,8 +29,8 @@ import 'package:uuid/uuid.dart';
 import 'package:voice_message_package/voice_message_package.dart';
 
 import '../../bottom_nav.dart';
-import '../../calll_notify.dart';
-import '../../chat_methods.dart';
+import 'calls/calll_notify.dart';
+import 'services/chat_methods.dart';
 import '../../components.dart';
 import '../../generate_keywords.dart';
 import '../../provider.dart';
@@ -563,8 +563,8 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                                     snapshot.data.docs[index]
                                                         ["text"],
                                                     iv: enc.IV.fromLength(16)),
-                                                userM['username'],
-                                                userM['displayName']);
+                                                '',
+                                                userM['displayName'],);
                                           }
 
                                           focusNode.requestFocus();

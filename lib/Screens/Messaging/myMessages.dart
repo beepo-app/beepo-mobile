@@ -9,10 +9,10 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 
-import 'Models/user_model.dart';
-import 'Screens/Messaging/chat_dm_screen.dart';
+import '../../Models/user_model.dart';
+import 'chat_dm_screen.dart';
 import 'package:encrypt/encrypt.dart' as enc;
-import 'generate_keywords.dart';
+import '../../generate_keywords.dart';
 
 class MyMessages extends StatefulWidget {
   const MyMessages({Key key, @required this.uid, this.index, this.docu}) : super(key: key);

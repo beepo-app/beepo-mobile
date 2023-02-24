@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:iconsax/iconsax.dart';
 
-import '../../media_links_docs.dart';
+import '../Messaging/media_links_docs.dart';
 
 class UserProfile extends StatefulWidget {
   // const UserProfile({Key key}) : super(key: key);

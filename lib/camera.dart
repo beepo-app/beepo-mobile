@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:video_player/video_player.dart';
 
-import 'add_story.dart';
+import 'Screens/moments/add_story.dart';
 
 /// Camera example home widget.
 class CameraExampleHome extends StatefulWidget {

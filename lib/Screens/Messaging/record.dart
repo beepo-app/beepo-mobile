@@ -7,10 +7,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
-import 'Models/user_model.dart';
-import 'Screens/Messaging/flow_shader.dart';
-import 'Screens/Messaging/globals.dart';
-import 'Screens/Messaging/lottie_animation.dart';
+import '../../Models/user_model.dart';
+import 'flow_shader.dart';
+import 'globals.dart';
+import 'lottie_animation.dart';
 
 class RecordButton extends StatefulWidget {
   const RecordButton({

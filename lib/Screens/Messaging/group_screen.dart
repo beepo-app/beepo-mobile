@@ -14,12 +14,12 @@ import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
-import '../../Widgets/toasts.dart';
-import '../../bottom_nav.dart';
-import '../../components.dart';
-import '../../provider.dart';
-import 'chat_methods.dart';
-import 'generate_keywords.dart';
+import '../../../../Widgets/toasts.dart';
+import '../../../../bottom_nav.dart';
+import '../../../../components.dart';
+import '../../../../provider.dart';
+import 'services/chat_methods.dart';
+import '../../generate_keywords.dart';
 
 class GroupDm extends StatefulWidget {
   final bool isMe;

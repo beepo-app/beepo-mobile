@@ -2,15 +2,15 @@
 
 import 'dart:io';
 
-import 'package:beepo/story_settings_modal.dart';
-import 'package:beepo/story_upload_provider.dart';
+import 'package:beepo/Screens/moments/story_settings_modal.dart';
+import 'package:beepo/Screens/moments/story_upload_provider.dart';
 import 'package:beepo/text_styles.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
-import 'Utils/styles.dart';
+import '../../Utils/styles.dart';
 
 CameraController controlle;
 
