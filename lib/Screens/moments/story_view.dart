@@ -8,7 +8,7 @@ import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:story_view/story_view.dart';
 
-import 'Models/user_model.dart';
+import '../../Models/user_model.dart';
 
 class Homes extends StatefulWidget {
   final UserModel user;

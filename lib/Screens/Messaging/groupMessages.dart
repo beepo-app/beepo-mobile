@@ -41,7 +41,6 @@ class _GroupMessagesState extends State<GroupMessages> {
   @override
   void initState() {
     // TODO: implement initState
-
     super.initState();
   }
 

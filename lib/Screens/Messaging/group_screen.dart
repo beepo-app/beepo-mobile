@@ -149,28 +149,8 @@ class _GroupDmState extends State<GroupDm> {
                                     ],
                                   ),
                                 ),
-                                // SizedBox(width: 6),
-                                // Container(
-                                //   width: 4,
-                                //   height: 4,
-                                //   decoration: BoxDecoration(
-                                //     shape: BoxShape.circle,
-                                //     color: Color(0xff08aa48),
-                                //   ),
-                                // ),
+
                                 Spacer(),
-                                // SizedBox(
-                                //     height: 23,
-                                //     width: 23,
-                                //     child: SvgPicture.asset(
-                                //         'assets/video_call.svg')),
-                                // SizedBox(width: 17),
-                                // Icon(
-                                //   Icons.call,
-                                //   size: 23,
-                                //   color: Colors.white,
-                                // ),
-                                // SizedBox(width: 16),
                                 Icon(
                                   Icons.more_vert_outlined,
                                   color: Colors.white,
