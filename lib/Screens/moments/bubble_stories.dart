@@ -82,7 +82,26 @@ class _BubbleStoriesState extends State<BubbleStories> {
     if (widget.myStory == false) {
       return InkWell(
         onTap: () {
-          // goToMoment();
+          goToMoment();
+          Get.to(PageView(
+            children: moment,
+            // itemCount: widget.docu.length,
+            // itemBuilder: (context, int num) {
+            //   return MoreStories(
+            //     uid: widget.docu[num]['uid'],
+            //     docu: widget.docu,
+            //     user: beta,
+            //   );
+            // },
+            controller: cont,
+            // onPageChanged: (jk) {
+            //   setState(() {
+            //     momentIndex = num as int;
+            //   });
+            // },
+            // allowImplicitScrolling: true,
+            // scrollDirection: Axis.vertical,
+          ));
         },
         child: StreamBuilder(
             stream: FirebaseFirestore.instance
