@@ -129,30 +129,27 @@ class StoryUploadProvider extends ChangeNotifier {
     }
   }
 
-
-
-  int ity=0;
-changeCamera(CameraDescription camera){
-  if(camera.lensDirection.index != 0) {
-    // setState(() {
-      ity=  camera.lensDirection.index + 1;
+  int ity = 0;
+  changeCamera(CameraDescription camera) {
+    if (camera.lensDirection.index != 0) {
+      // setState(() {
+      ity = camera.lensDirection.index + 1;
 
       notifyListeners();
       // i = 1;
       print('Camera Changed');
-    // });
-  }else{
-    // setState(() {
+      // });
+    } else {
+      // setState(() {
       ity = 0;
       notifyListeners();
       print('Camera Changed back');
 
-    // });
+      // });
+    }
   }
-}
 
   Future<Either<Failure, Success>> pickImageCamera1() async {
-
     // notifyListeners();
 
     // initializeControllerFuture =  controller.initialize();
@@ -168,9 +165,10 @@ changeCamera(CameraDescription camera){
 
       // final result = await _imagePicker.pickImage(source: ImageSource.camera);
       if (result != null) {
-        final img.Image capturedImage = img.decodeImage(await File(result.path).readAsBytes());
+        final img.Image capturedImage =
+            img.decodeImage(await File(result.path).readAsBytes());
         final img.Image orientedImage = img.bakeOrientation(capturedImage);
-        final noke =         img.flipHorizontal(orientedImage);
+        final noke = img.flipHorizontal(orientedImage);
         final yeske = await File(result.path).writeAsBytes(img.encodeJpg(noke));
         _selectFile(yeske);
         if (_file != null) {
@@ -200,8 +198,8 @@ changeCamera(CameraDescription camera){
       return left(Failure(e.message));
     }
   }
-  Future<Either<Failure, Success>> pickImageCamera() async {
 
+  Future<Either<Failure, Success>> pickImageCamera() async {
     // notifyListeners();
 
     // initializeControllerFuture =  controller.initialize();
@@ -217,10 +215,12 @@ changeCamera(CameraDescription camera){
 
       // final result = await _imagePicker.pickImage(source: ImageSource.camera);
       if (result != null) {
-        final img.Image capturedImage = img.decodeImage(await File(result.path).readAsBytes());
+        final img.Image capturedImage =
+            img.decodeImage(await File(result.path).readAsBytes());
         final img.Image orientedImage = img.bakeOrientation(capturedImage);
         // final noke =         img.flipHorizontal(orientedImage);
-        final yeske = await File(result.path).writeAsBytes(img.encodeJpg(orientedImage));
+        final yeske =
+            await File(result.path).writeAsBytes(img.encodeJpg(orientedImage));
         _selectFile(yeske);
         if (_file != null) {
           _setMediaType("image");
@@ -249,6 +249,7 @@ changeCamera(CameraDescription camera){
       return left(Failure(e.message));
     }
   }
+
   Future<Either<Failure, Success>> pickVideo() async {
     try {
       _setStoryUploadStatus(StoryUploadStatus.gettingReady);

@@ -4,9 +4,11 @@ import 'dart:io';
 
 import 'package:beepo/Screens/moments/story_settings_modal.dart';
 import 'package:beepo/Screens/moments/story_upload_provider.dart';
+import 'package:beepo/components.dart';
 import 'package:beepo/text_styles.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
@@ -32,6 +34,8 @@ class _AddStoryState extends State<AddStory> {
   Future<void> initializeControllerFuture;
 
   CameraDescription selected;
+
+  String currentCameraTab;
 
   @override
   void dispose() {
@@ -64,7 +68,6 @@ class _AddStoryState extends State<AddStory> {
 
   @override
   void initState() {
-
     controlle = CameraController(
       // Get a specific camera from the list of available cameras.
       widget.camera1,
@@ -94,51 +97,49 @@ class _AddStoryState extends State<AddStory> {
               return Stack(
                 children: [
                   Container(
-                    height: MediaQuery
-                        .of(context)
-                        .size
-                        .height,
+                    height: MediaQuery.of(context).size.height,
                     alignment: Alignment.topCenter,
                     decoration: BoxDecoration(
 
-                      // If the selected media is an image, show the selected image,
-                      // else it is a video, show the video thumbnail.
-                      // If no media is selected, decoration image will be null.
+                        // If the selected media is an image, show the selected image,
+                        // else it is a video, show the video thumbnail.
+                        // If no media is selected, decoration image will be null.
 
-                      // If image is selected (file is not null)
+                        // If image is selected (file is not null)
                         image: (selectedFile != null &&
-                            selectedMediaType == "image")
+                                selectedMediaType == "image")
                             ? DecorationImage(
-                          image: FileImage(File(selectedFile.path)),
-                          fit: BoxFit.cover,
-                        )
-                        // If video is selected (file is not null)
+                                image: FileImage(File(selectedFile.path)),
+                                fit: BoxFit.cover,
+                              )
+                            // If video is selected (file is not null)
                             : (selectedFile != null &&
-                            selectedMediaType == "video" &&
-                            videoThumbnail != null)
-                            ? DecorationImage(
-                          image: MemoryImage(videoThumbnail),
-                          fit: BoxFit.cover,
-                        )
-                            : null,
+                                    selectedMediaType == "video" &&
+                                    videoThumbnail != null)
+                                ? DecorationImage(
+                                    image: MemoryImage(videoThumbnail),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
                         color: Colors.transparent),
                     child: (selectedFile != null)
                         ? const SizedBox.shrink()
                         : FutureBuilder<void>(
-                      future: initializeControllerFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.done) {
-                          // If the Future is complete, display the preview.
-                          return CameraPreview(controlle);
-                        } else {
-                          // Otherwise, display a loading indicator.
-                          return const Center(
-                              child: CircularProgressIndicator(
-                                color: secondaryColor,));
-                        }
-                      },
-                    ),
+                            future: initializeControllerFuture,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                // If the Future is complete, display the preview.
+                                return CameraPreview(controlle);
+                              } else {
+                                // Otherwise, display a loading indicator.
+                                return const Center(
+                                    child: CircularProgressIndicator(
+                                  color: secondaryColor,
+                                ));
+                              }
+                            },
+                          ),
                     // (selectedFile != null)
                     //     ? const SizedBox.shrink()
                     //     : Text(
@@ -147,7 +148,7 @@ class _AddStoryState extends State<AddStory> {
                     //       ),
                   ),
                   if (selectedFile != null)
-                  // The upload button is only visible when the user has selected a file
+                    // The upload button is only visible when the user has selected a file
                     Positioned(
                       top: 40,
                       right: 15,
@@ -163,20 +164,16 @@ class _AddStoryState extends State<AddStory> {
                                 message: 'Upload in progress');
                           } else {
                             await uploader.getCaption(
-                                controller.text
-                                    .trim()
-                                    .isEmpty
+                                controller.text.trim().isEmpty
                                     ? " "
                                     : controller.text.trim());
                             final result = await uploader.uploadStory();
 
                             result.fold(
-                                  (failure) =>
-                                  _showSnackBar(context,
-                                      message: failure.message),
-                                  (success) =>
-                                  _showSnackBar(context,
-                                      message: 'Story uploaded successfully'),
+                              (failure) => _showSnackBar(context,
+                                  message: failure.message),
+                              (success) => _showSnackBar(context,
+                                  message: 'Story uploaded successfully'),
                             );
                             Navigator.pop(context);
                             controller.clear();
@@ -186,13 +183,13 @@ class _AddStoryState extends State<AddStory> {
                         icon: const Icon(Icons.upload_rounded),
                         label: (status == StoryUploadStatus.uploading)
                             ? const SizedBox(
-                          height: 25,
-                          width: 25,
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white),
-                          ),
-                        )
+                                height: 25,
+                                width: 25,
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              )
                             : const Text('Upload'),
                       ),
                     ),
@@ -205,18 +202,23 @@ class _AddStoryState extends State<AddStory> {
                         Navigator.pop(context);
                         context.read<StoryUploadProvider>().reset();
                       },
-                      icon: const Icon(Icons.close, color: Colors.white,),
+                      icon: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                   Align(
                     alignment: Alignment.topRight,
                     child: IconButton(
-                      onPressed: () =>
-                          StoryModalSheet.openModalBottomSheet(
-                            child: const StorySettings(),
-                            context: context,
-                          ),
-                      icon: const Icon(Icons.settings, color: Colors.white,),
+                      onPressed: () => StoryModalSheet.openModalBottomSheet(
+                        child: const StorySettings(),
+                        context: context,
+                      ),
+                      icon: const Icon(
+                        Icons.settings,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -226,62 +228,63 @@ class _AddStoryState extends State<AddStory> {
         ),
         bottomNavigationBar: Padding(
           padding:
-          const EdgeInsets.only(top: 0, left: 20.0, right: 20.0, bottom: 0),
+              const EdgeInsets.only(top: 0, left: 20.0, right: 20.0, bottom: 0),
           child: Container(
             width: double.infinity,
-            height: 100,
+            height: 130,
             // decoration: BoxDecoration(
             //   // color: Colors.black,
             // ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // if (context.read<StoryUploadProvider>().file != null)
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: "Add a caption...",
-                      isDense: false,
-                      hintStyle: TextStyle(
-                          fontSize: 15,
-                          fontStyle: FontStyle.italic,
-                          color: Colors.white
-                      ),
+                // Expanded(
+                //   child: TextField(
+                //     decoration: InputDecoration(
+                //       hintText: "Add a caption...",
+                //       isDense: false,
+                //       hintStyle: TextStyle(
+                //           fontSize: 14.5,
+                //           fontStyle: FontStyle.italic,
+                //           color: Colors.white),
+                // suffixIcon: GestureDetector(
+                //   child: Icon(
+                //     Icons.change_circle_outlined,
+                //     color: Colors.white,
+                //   ),
+                //   onTap: () {
+                //     setState(() {
+                //       // hasChanged = !hasChanged;
+                //       if (selected == widget.camera1) {
+                //         selected = widget.camera2;
+                //       } else {
+                //         selected = widget.camera1;
+                //       }
+                //       // selected =
+                //       // selected == widget.camera1 ? widget.camera2 : widget
+                //       //     .camera1;
+                //     });
+                //     controlle = CameraController(
+                //         selected, ResolutionPreset.ultraHigh);
+                //     initializeControllerFuture = controlle.initialize();
+                //   },
+                // ),
+                //       filled: true,
+                //       enabledBorder: OutlineInputBorder(
+                //           // borderSide: BorderSide.
 
-                      suffixIcon: GestureDetector(
-                        child: Icon(Icons.change_circle_outlined, color: Colors
-                            .white,),
-                        onTap: () {
-                          setState(() {
-                            // hasChanged = !hasChanged;
-                            if( selected == widget.camera1){
-                              selected = widget.camera2;
-                            }
-                            else{
-                              selected = widget.camera1;
-                            }
-                            // selected =
-                            // selected == widget.camera1 ? widget.camera2 : widget
-                            //     .camera1;
-                          });
-                          controlle = CameraController(
-                              selected, ResolutionPreset.ultraHigh);
-                          initializeControllerFuture = controlle.initialize();
-                        },
-                      ),
-                      // filled: true,
-                      // enabledBorder: OutlineInputBorder(
-                      //   // borderSide: BorderSide.
-                      //
-                      // ),
-                      // focusedBorder: OutlineInputBorder(),
-                    ),
-                    expands: true,
-                    maxLines: null,
-                    style: TextStyle(color: Colors.white),
-                    minLines: null,
-                    controller: controller,
-                  ),
-                ),
+                //           ),
+                //       focusedBorder: OutlineInputBorder(),
+                //     ),
+                //     expands: true,
+                //     maxLines: null,
+                //     style: TextStyle(color: Colors.white),
+                //     minLines: null,
+                //     controller: controller,
+                //   ),
+                // ),
+                // SizedBox(height: 13),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -302,89 +305,125 @@ class _AddStoryState extends State<AddStory> {
                           SizedBox(
                             width: 8,
                           ),
-                          const Text(
-                            'Gallery',
-                            style: TextStyle(fontWeight: FontWeight.w600,
-                                color: Colors.white),
-                          )
+                          // const Text(
+                          //   'Gallery',
+                          //   style: TextStyle(
+                          //       fontWeight: FontWeight.w600,
+                          //       color: Colors.white),
+                          // )
+                          IconButton(
+                            onPressed: () async {
+                              await context
+                                  .read<StoryUploadProvider>()
+                                  .pickImageGallery();
+                              if (mounted) {
+                                final selectedFile =
+                                    context.read<StoryUploadProvider>().file;
+                                final selectedMediaType = context
+                                    .read<StoryUploadProvider>()
+                                    .mediaType;
+                                if (selectedFile != null &&
+                                    selectedMediaType == "gallery") {
+                                  final isVideoDurationNotLong =
+                                      await _checkVideoDurationIsNotLong(
+                                          selectedFile);
+                                  if (isVideoDurationNotLong && mounted) {
+                                    final result = await context
+                                        .read<StoryUploadProvider>()
+                                        .getVideoThumbnail();
+                                    result.fold(
+                                      (failure) => _showSnackBar(context,
+                                          message: failure.message),
+                                      (success) {},
+                                    );
+                                  } else {
+                                    _showSnackBar(context,
+                                        message:
+                                            'Video duration cannot be more than 40 seconds');
+                                    context.read<StoryUploadProvider>().reset();
+                                  }
+                                }
+                              }
+                            },
+                            icon: Icon(
+                              Icons.photo,
+                              size: 38,
+                              color: Colors.white,
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                    IconButton(
-                        onPressed: () async {
-                          await initializeControllerFuture;
-                          if (selected == widget.camera2) {
-                            await context
-                                .read<StoryUploadProvider>()
-                                .pickImageCamera1();
-                          } else {
-                            await context
-                                .read<StoryUploadProvider>()
-                                .pickImageCamera();
-                          }
-                          // selected == widget.camera1?
-
-                          // : await context
-                          // .read<StoryUploadProvider>()
-                          // .pickImageCamera1();
-                        },
-                        icon: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.black,
-                            border: Border.all(color: Colors.white, width: 3),
-                            // borderRadius: BorderRadius.circular(50)
-                          ),
-                        )
-                      // SvgPicture.asset(
-                      //   AppImages.camera,
-                      //   color: secondaryColor,
-                      // ),
-                    ),
-                    IconButton(
-                      onPressed: () async {
-                        await context.read<StoryUploadProvider>().pickVideo();
-                        if (mounted) {
-                          final selectedFile =
-                              context
+                    SizedBox(
+                      height: 85,
+                      width: 85,
+                      child: IconButton(
+                          onPressed: () async {
+                            await initializeControllerFuture;
+                            if (selected == widget.camera2) {
+                              await context
                                   .read<StoryUploadProvider>()
-                                  .file;
-                          final selectedMediaType =
-                              context
-                                  .read<StoryUploadProvider>()
-                                  .mediaType;
-                          if (selectedFile != null &&
-                              selectedMediaType == "video") {
-                            final isVideoDurationNotLong =
-                            await _checkVideoDurationIsNotLong(
-                                selectedFile);
-                            if (isVideoDurationNotLong && mounted) {
-                              final result = await context
-                                  .read<StoryUploadProvider>()
-                                  .getVideoThumbnail();
-                              result.fold(
-                                    (failure) =>
-                                    _showSnackBar(context,
-                                        message: failure.message),
-                                    (success) {},
-                              );
+                                  .pickImageCamera1();
                             } else {
-                              _showSnackBar(context,
-                                  message:
-                                  'Video duration cannot be more than 40 seconds');
-                              context.read<StoryUploadProvider>().reset();
+                              await context
+                                  .read<StoryUploadProvider>()
+                                  .pickImageCamera();
                             }
-                          }
-                        }
-                      },
-                      icon: const Icon(
-                        Icons.videocam_outlined,
-                        size: 35,
+                            // selected == widget.camera1?
+
+                            // : await context
+                            // .read<StoryUploadProvider>()
+                            // .pickImageCamera1();
+                          },
+                          icon: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color(0xFFE6E9EE),
+                              border:
+                                  Border.all(color: Colors.orange, width: 2),
+                              // borderRadius: BorderRadius.circular(50)
+                            ),
+                          )
+                          // SvgPicture.asset(
+                          //   AppImages.camera,
+                          //   color: secondaryColor,
+                          // ),
+                          ),
+                    ),
+                    GestureDetector(
+                      child: Icon(
+                        Icons.flip_camera_android,
+                        //change_circle_outlined,
+                        size: 38,
                         color: Colors.white,
                       ),
+                      onTap: () {
+                        setState(() {
+                          // hasChanged = !hasChanged;
+                          if (selected == widget.camera1) {
+                            selected = widget.camera2;
+                          } else {
+                            selected = widget.camera1;
+                          }
+                          // selected =
+                          // selected == widget.camera1 ? widget.camera2 : widget
+                          //     .camera1;
+                        });
+                        controlle = CameraController(
+                            selected, ResolutionPreset.ultraHigh);
+                        initializeControllerFuture = controlle.initialize();
+                      },
                     ),
                   ],
                 ),
+                SizedBox(height: 10),
+                Text(
+                  "Tap for photo, hold for videos",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 5),
               ],
             ),
           ),
