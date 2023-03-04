@@ -1,12 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, missing_return
 
 import 'package:beepo/Screens/Profile/user_profile_screen.dart';
-import 'package:beepo/extensions.dart';
-import 'package:beepo/provider.dart';
 import 'package:beepo/Screens/moments/story_download_provider.dart';
 
 // import 'package:beepo/story_screen.dart';
 import 'package:beepo/Screens/moments/story_view.dart';
+import 'package:beepo/extensions.dart';
+import 'package:beepo/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,13 +21,12 @@ import 'Models/story_model/storyModel.dart';
 import 'Models/user_model.dart';
 import 'Models/wallet.dart';
 import 'Screens/Browser/browser_page.dart';
+import 'Screens/Messaging/groupMessages.dart';
+import 'Screens/Messaging/myMessages.dart';
 import 'Screens/Wallet/token_screen.dart';
-import 'Utils/styles.dart';
 import 'Screens/moments/add_story.dart';
 import 'Screens/moments/bubble_stories.dart';
-import 'Screens/Messaging/groupMessages.dart';
-import 'mic_anime.dart';
-import 'Screens/Messaging/myMessages.dart';
+import 'Utils/styles.dart';
 
 class FilledButton extends StatelessWidget {
   final String text;
@@ -181,11 +180,10 @@ class _ChatTabState extends State<ChatTab> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          AddStory(
-                            camera1: firstCamera,
-                            camera2: secondCamera,
-                          ),
+                    builder: (context) => AddStory(
+                      camera1: firstCamera,
+                      camera2: secondCamera,
+                    ),
                   ),
                 );
               },
@@ -577,7 +575,7 @@ class MessageReply extends StatelessWidget {
     @required this.isMe,
     @required this.text,
     @required this.time,
-     this.onSwipedMessage,
+    this.onSwipedMessage,
     this.replyMessage,
     this.replyName,
     this.replyUsername,
@@ -586,7 +584,9 @@ class MessageReply extends StatelessWidget {
   Widget buildReply(String message, String username, String displayName) =>
       Container(
         decoration: BoxDecoration(
-          color: isMe? Color(0xffffffff).withOpacity(0.3): Color(0xff697077).withOpacity(0.2),
+          color: isMe
+              ? Color(0xffffffff).withOpacity(0.3)
+              : Color(0xff697077).withOpacity(0.2),
           borderRadius: BorderRadius.circular(5),
         ),
         padding: EdgeInsets.only(
@@ -677,7 +677,8 @@ class MessageReply extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if(onSwipedMessage)buildReply(replyMessage, replyUsername, replyName),
+            if (onSwipedMessage)
+              buildReply(replyMessage, replyUsername, replyName),
             LinkWell(
               text,
               style: isMe
@@ -736,12 +737,12 @@ class MessageReply extends StatelessWidget {
   }
 }
 
-
 class Group extends StatelessWidget {
   final bool isMe;
   final String text;
   final Timestamp time;
   final UserModel user;
+  final bool sameUser;
 
   const Group({
     Key key,
@@ -749,6 +750,7 @@ class Group extends StatelessWidget {
     @required this.text,
     @required this.time,
     this.user,
+    @required this.sameUser,
   }) : super(key: key);
 
   @override
@@ -780,119 +782,151 @@ class Group extends StatelessWidget {
         mainAxisAlignment:
             isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
+          if(isMe)SizedBox(width: 46,),
+
           if (!isMe)
+            if (!sameUser)
+              Padding(
+                padding: const EdgeInsets.only(right: 5),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UserProfile(model: user)));
+                  },
+                  child: CircleAvatar(
+                    radius: 20,
+                    backgroundImage: CachedNetworkImageProvider(user.image ==
+                            null
+                        ? 'https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg'
+                        : user.image),
+                  ),
+                ),
+              ),
+          if (sameUser)
             Padding(
               padding: const EdgeInsets.only(right: 5),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => UserProfile(model: user)));
-                },
-                child: CircleAvatar(
-                  radius: 20,
-                  backgroundImage: CachedNetworkImageProvider(user.image==null?'https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg': user.image),
-                ),
+              child: CircleAvatar(
+                radius: 20,
+                backgroundColor: Colors.white,
               ),
             ),
           SizedBox(width: 4),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: isMe ? Radius.circular(12) : Radius.circular(12),
-                topRight: isMe ? Radius.circular(12) : Radius.circular(12),
-                bottomLeft: Radius.circular(12),
-                bottomRight: Radius.circular(12),
-              ),
-              color: !isMe ? Color(0xFFE6E9EE) : Color(0xff0E014C),
-            ),
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.5,
-            ),
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment:
-                  isMe ? CrossAxisAlignment.start : CrossAxisAlignment.start,
-              children: [
-                if (!isMe)
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        user.name,
-                        style: TextStyle(
-                          color: secondaryColor,
-                          //txtColor1,
-                          fontFamily: 'SignikaNegative',
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Spacer(),
-                      Text(
-                        user.name,
-                        style: TextStyle(
-                          color: secondaryColor,
-                          //txtColor1,
-                          fontFamily: '@Precious001',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ),
-                SizedBox(height: 2),
-                Text(
-                  text,
-                  style: isMe
-                      ? TextStyle(
-                          color: Colors.white,
-                          fontSize: 11.5,
-                        )
-                      : TextStyle(
-                          color: Colors.black,
-                          //Colors.black,
-                          fontSize: 11.5,
-                        ),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: isMe ? Radius.circular(12) : Radius.circular(12),
+                  topRight: isMe ? Radius.circular(12) : Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
                 ),
-                SizedBox(height: 5),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      hour.toString() + ":" + min.toString() + ampm,
+                color: !isMe ? Color(0xFFE6E9EE) : Color(0xff0E014C),
+              ),
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.8,
+                minWidth: MediaQuery.of(context).size.width * 0.15,
+              ),
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment:
+                    isMe ? CrossAxisAlignment.start : CrossAxisAlignment.start,
+                children: [
+                  if (!isMe)
+                    if (!sameUser)
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            user.name,
+                            style: TextStyle(
+                              color: secondaryColor,
+                              fontFamily: 'SignikaNegative',
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Spacer(),
+                          Text(
+                            '@${user.userName}',
+                            style: TextStyle(
+                              color: secondaryColor,
+                              fontFamily: '@Precious001',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                  SizedBox(height: 2),
+                  RichText(
+                    text: TextSpan(
+                      text: text,
                       style: isMe
                           ? TextStyle(
                               color: Colors.white,
-                              fontSize: 9,
+                              fontSize: 11.5,
                             )
                           : TextStyle(
                               color: Colors.black,
-                              fontSize: 9,
+                              //Colors.black,
+                              fontSize: 11.5,
                             ),
                     ),
-                    isMe
-                        ? SizedBox(width: 5)
-                        : SizedBox(
-                            width: 0,
-                          ),
-                    isMe
-                        ? Icon(
-                            Icons.done_all,
-                            color: Colors.white,
-                            size: 14,
-                          )
-                        : SizedBox(
-                            width: 0,
-                          ),
-                  ],
-                )
-              ],
+                  ),
+                  // Text(
+                  //   text,
+                  //   style: isMe
+                  //       ? TextStyle(
+                  //           color: Colors.white,
+                  //           fontSize: 11.5,
+                  //         )
+                  //       : TextStyle(
+                  //           color: Colors.black,
+                  //           //Colors.black,
+                  //           fontSize: 11.5,
+                  //         ),
+                  // ),
+                  SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        hour.toString() + ":" + min.toString() + ampm,
+                        style: isMe
+                            ? TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                              )
+                            : TextStyle(
+                                color: Colors.black,
+                                fontSize: 9,
+                              ),
+                      ),
+                      isMe
+                          ? SizedBox(width: 5)
+                          : SizedBox(
+                              width: 0,
+                            ),
+                      isMe
+                          ? Icon(
+                              Icons.done_all,
+                              color: Colors.white,
+                              size: 14,
+                            )
+                          : SizedBox(
+                              width: 0,
+                            ),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
+          if(!isMe)SizedBox(width: 26,),
         ],
       ),
     );
