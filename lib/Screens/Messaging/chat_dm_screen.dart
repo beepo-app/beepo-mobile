@@ -25,6 +25,7 @@ import 'package:lottie/lottie.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:swipe_to/swipe_to.dart';
+
 import 'package:uuid/uuid.dart';
 import 'package:voice_message_package/voice_message_package.dart';
 
@@ -559,12 +560,13 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                               snapshot.data.docs[index]
                                                   ["sender"]) {
                                             replyToMessage(
-                                                encrypter.decrypt64(
-                                                    snapshot.data.docs[index]
-                                                        ["text"],
-                                                    iv: enc.IV.fromLength(16)),
-                                                '',
-                                                userM['displayName'],);
+                                              encrypter.decrypt64(
+                                                  snapshot.data.docs[index]
+                                                      ["text"],
+                                                  iv: enc.IV.fromLength(16)),
+                                              '',
+                                              userM['displayName'],
+                                            );
                                           }
 
                                           focusNode.requestFocus();
