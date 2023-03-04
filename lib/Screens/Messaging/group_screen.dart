@@ -18,8 +18,8 @@ import '../../../../Widgets/toasts.dart';
 import '../../../../bottom_nav.dart';
 import '../../../../components.dart';
 import '../../../../provider.dart';
-import 'services/chat_methods.dart';
 import '../../generate_keywords.dart';
+import 'services/chat_methods.dart';
 
 class GroupDm extends StatefulWidget {
   final bool isMe;
@@ -111,7 +111,12 @@ class _GroupDmState extends State<GroupDm> {
                                 SizedBox(width: 8),
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> GroupProfile(image: 'assets/group.jpg' ,)));
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => GroupProfile(
+                                                  image: 'assets/group.jpg',
+                                                )));
                                   },
                                   child: Column(
                                     crossAxisAlignment:
@@ -149,28 +154,7 @@ class _GroupDmState extends State<GroupDm> {
                                     ],
                                   ),
                                 ),
-                                // SizedBox(width: 6),
-                                // Container(
-                                //   width: 4,
-                                //   height: 4,
-                                //   decoration: BoxDecoration(
-                                //     shape: BoxShape.circle,
-                                //     color: Color(0xff08aa48),
-                                //   ),
-                                // ),
                                 Spacer(),
-                                // SizedBox(
-                                //     height: 23,
-                                //     width: 23,
-                                //     child: SvgPicture.asset(
-                                //         'assets/video_call.svg')),
-                                // SizedBox(width: 17),
-                                // Icon(
-                                //   Icons.call,
-                                //   size: 23,
-                                //   color: Colors.white,
-                                // ),
-                                // SizedBox(width: 16),
                                 Icon(
                                   Icons.more_vert_outlined,
                                   color: Colors.white,
@@ -182,23 +166,6 @@ class _GroupDmState extends State<GroupDm> {
                           ],
                         ),
                       ),
-                      // SizedBox(height: 5),
-                      // Container(
-                      //   width: MediaQuery.of(context).size.width,
-                      //   height: 20,
-                      //   color: Color(0xff000000).withOpacity(0.1),
-                      //   child: Center(
-                      //     child: Text(
-                      //       'Beepo General Group',
-                      //       style: TextStyle(
-                      //         color: secondaryColor,
-                      //         fontFamily: 'SignikaNegative',
-                      //         fontWeight: FontWeight.w300,
-                      //         // fontStyle: FontStyle.italic
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
@@ -209,13 +176,12 @@ class _GroupDmState extends State<GroupDm> {
                       right: 20,
                     ),
                     color: Colors.white,
-                    //Color(0xffECE5DD),
                     child: StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('groupMessages')
                             .orderBy("created", descending: true)
                             .snapshots(),
-                        builder: (context, AsyncSnapshot snapshot) {
+                        builder: (context, AsyncSnapshot <QuerySnapshot>snapshot) {
                           if (snapshot.hasData) {
                             return ListView.builder(
                               reverse: true,
@@ -265,6 +231,9 @@ class _GroupDmState extends State<GroupDm> {
                                           userName: snapshot.data.docs[index]
                                               ["userName"],
                                         ),
+                                        sameUser: snapshot.data.docs[index + 1]
+                                                ["sender"] ==
+                                            snapshot.data.docs[index]["sender"],
                                       )
                                     else if (snapshot.data.docs[index]
                                             ["type"] ==
@@ -461,9 +430,14 @@ class _GroupDmState extends State<GroupDm> {
                                           ),
                                         ),
                                       ),
-                                    SizedBox(
-                                      height: 15,
-                                    )
+                                    SizedBox(height: 3,),
+                                    // for(var i=index; i< (snapshot.data.docs.length-1); i++)
+                                    if(index != 0)
+                                    if(snapshot.data.docs[index-1]
+                                    ["sender"] !=
+                                        snapshot.data.docs[index]["sender"]) SizedBox(
+                                      height: 14,
+                                    ),
                                   ],
                                 );
                               },
