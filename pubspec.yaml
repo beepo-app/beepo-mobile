@@ -88,7 +88,7 @@ dependencies:
   stop_watch_timer: ^2.0.0
   xmtp: ^0.0.1-development.1
   swipe_to: ^1.0.2
-  firebase_analytics: ^9.3.8
+  wechat_assets_picker:
 
 
 

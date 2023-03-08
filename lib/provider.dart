@@ -9,6 +9,7 @@ import 'package:encrypt/encrypt.dart';
 import 'package:encrypt/encrypt_io.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,10 +18,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 import 'package:record_mp3/record_mp3.dart';
 import 'package:rsa_encrypt/rsa_encrypt.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 import 'Utils/functions.dart';
-import 'package:encrypt/encrypt.dart' as encrypt;
-
 
 class ChatNotifier extends ChangeNotifier {
   List<String> _users = [];
@@ -40,17 +40,18 @@ class ChatNotifier extends ChangeNotifier {
   // String decrypted;
   Encrypted encrypted;
 
-
   //  preload(BuildContext context, String path) {
   //   final configuration = createLocalImageConfiguration(context);
   //   return NetworkImage(path).resolve(configuration);
   // }
-   Future<String>encrypt(String text) async {
+  Future<String> encrypt(String text) async {
     var helper = RsaKeyHelper();
 
-    final serverPublicKey = await parseKeyFromFile<RSAPublicKey>('test/public.pem');
+    final serverPublicKey =
+        await parseKeyFromFile<RSAPublicKey>('test/public.pem');
 
-    final privateKey = await parseKeyFromFile<RSAPrivateKey>('test/private.pem');
+    final privateKey =
+        await parseKeyFromFile<RSAPrivateKey>('test/private.pem');
 
     final encrypterer = Encrypter(
       RSA(
@@ -66,12 +67,14 @@ class ChatNotifier extends ChangeNotifier {
     return encrypted.base16;
   }
 
-  decrypt(Encrypted encrypting)async {
+  decrypt(Encrypted encrypting) async {
     var helper = RsaKeyHelper();
 
-    final serverPublicKey = await parseKeyFromFile<RSAPublicKey>('test/public.pem');
+    final serverPublicKey =
+        await parseKeyFromFile<RSAPublicKey>('test/public.pem');
 
-    final privateKey = await parseKeyFromFile<RSAPrivateKey>('test/private.pem');
+    final privateKey =
+        await parseKeyFromFile<RSAPrivateKey>('test/private.pem');
 
     final encrypterer = Encrypter(
       RSA(
@@ -80,11 +83,10 @@ class ChatNotifier extends ChangeNotifier {
         encoding: RSAEncoding.PKCS1,
       ),
     );
-     String decrypted = encrypterer.decrypt16(encrypting.base16);
-     return decrypted;
-     // notifyListeners();
+    String decrypted = encrypterer.decrypt16(encrypting.base16);
+    return decrypted;
+    // notifyListeners();
   }
-
 
   pickUploadImage() async {
     final image = await ImagePicker().pickImage(
@@ -114,38 +116,41 @@ class ChatNotifier extends ChangeNotifier {
     }
   }
 
-  pickUploadImageChat(String id) async {
-    // bool hasPermission = await checkPermissionImage();
-// if(hasPermission){
-    Reference reg = FirebaseStorage.instance.ref();
+  pickUploadImageChat(String id, BuildContext context) async {
 
-    final image = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 512,
-        maxHeight: 512,
-        imageQuality: 100);
-    reg = FirebaseStorage.instance.ref().child(image.path);
-    // notifyListeners();
 
-    if (image != null) {
-      File file = File(image.path);
-      await ImageUtil().cropProfileImage(file).then((value) {
-        if (value != null) {
-          // setState(() {
-          selectedImageForChat = value;
+    List<AssetEntity> image;
+    // Reference reg = FirebaseStorage.instance.ref();
+    try {
+      image = await AssetPicker.pickAssets(
+        context,
+        pickerConfig: AssetPickerConfig(
+          maxAssets: 1,
+          requestType: RequestType.all,
+          selectedAssets: [
+
+          ]
+        ),
+      );
+
+      ref = FirebaseStorage.instance.ref().child('image.png');
+      notifyListeners();
+
+      if (image != null) {
+        File file = await image.first.file;
+
+        await ref.putFile(file);
+        ref.getDownloadURL().then((value) {
+          print(value);
+          photoUrl = value;
           notifyListeners();
-          // });
-        }
-      });
-
-      await reg.putFile(File(image.path));
-      reg.getDownloadURL().then((value) {
-        print(value);
-        photoUrl = value;
-        notifyListeners();
-        sendPhotoMsg(photoUrl, receiverId: id);
-      });
+          sendPhotoMsg(photoUrl, receiverId: id);
+        });
+      }
+    } on PlatformException catch (e) {
+      print(e.message);
     }
+
 // }
   }
 
@@ -302,6 +307,7 @@ class ChatNotifier extends ChangeNotifier {
       sendPhotoMsg(photoUrl, receiverId: id);
     });
   }
+
   void storeText(newText) {
     chatText = newText;
     notifyListeners();
@@ -392,9 +398,10 @@ class ChatNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void cancelRecord(){
+  void cancelRecord() {
     RecordMp3.instance.stop();
   }
+
   void stopRecord(String receiverId) async {
     bool s = RecordMp3.instance.stop();
     if (s) {
@@ -485,7 +492,7 @@ class ChatNotifier extends ChangeNotifier {
           .collection('messageList')
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-         transaction.set(ref, {
+        transaction.set(ref, {
           "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
@@ -510,7 +517,7 @@ class ChatNotifier extends ChangeNotifier {
           .collection('messageList')
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-         transaction.set(ref1, {
+        transaction.set(ref1, {
           "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
@@ -533,7 +540,7 @@ class ChatNotifier extends ChangeNotifier {
           .collection("currentConversation")
           .doc(receiverId);
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-         transaction.set(ref2, {
+        transaction.set(ref2, {
           "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
@@ -556,7 +563,7 @@ class ChatNotifier extends ChangeNotifier {
           .collection("currentConversation")
           .doc(userM['uid']);
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-         transaction.set(ref3, {
+        transaction.set(ref3, {
           "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),

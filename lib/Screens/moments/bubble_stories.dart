@@ -57,7 +57,25 @@ class _BubbleStoriesState extends State<BubbleStories> {
                 user: beta,
               ));
               cont = PageController(initialPage: widget.index);
-              return const SizedBox.shrink();
+              return PageView(
+                children: moment,
+                // itemCount: widget.docu.length,
+                // itemBuilder: (context, int num) {
+                //   return MoreStories(
+                //     uid: widget.docu[num]['uid'],
+                //     docu: widget.docu,
+                //     user: beta,
+                //   );
+                // },
+                controller: cont,
+                // onPageChanged: (jk) {
+                //   setState(() {
+                //     momentIndex = num as int;
+                //   });
+                // },
+                // allowImplicitScrolling: true,
+                // scrollDirection: Axis.vertical,
+              );
             }
             return const Center(
               child: CircularProgressIndicator(
@@ -83,25 +101,6 @@ class _BubbleStoriesState extends State<BubbleStories> {
       return InkWell(
         onTap: () {
           goToMoment();
-          Get.to(PageView(
-            children: moment,
-            // itemCount: widget.docu.length,
-            // itemBuilder: (context, int num) {
-            //   return MoreStories(
-            //     uid: widget.docu[num]['uid'],
-            //     docu: widget.docu,
-            //     user: beta,
-            //   );
-            // },
-            controller: cont,
-            // onPageChanged: (jk) {
-            //   setState(() {
-            //     momentIndex = num as int;
-            //   });
-            // },
-            // allowImplicitScrolling: true,
-            // scrollDirection: Axis.vertical,
-          ));
         },
         child: StreamBuilder(
             stream: FirebaseFirestore.instance
