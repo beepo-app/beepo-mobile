@@ -93,6 +93,8 @@ class _ChatTokenState extends State<ChatToken> {
                       ),
                       const SizedBox(height: 10),
                       TextField(
+                        textCapitalization: TextCapitalization.sentences,
+                        maxLines: null,
                         keyboardType: TextInputType.phone,
                         controller: value,
                         decoration: InputDecoration(
@@ -123,14 +125,16 @@ class _ChatTokenState extends State<ChatToken> {
                           ),
                           isDense: true,
                           border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
                               borderSide: BorderSide(
                                 color: Colors.grey,
                                 width: 1,
                               )),
                           focusedBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(15)),
-                            borderSide: BorderSide(width: 1, color: Colors.grey),
+                            borderSide:
+                                BorderSide(width: 1, color: Colors.grey),
                           ),
                         ),
                       ),
