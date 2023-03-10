@@ -1,5 +1,5 @@
+
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
 import 'Screens/Browser/browser.dart';
@@ -8,13 +8,18 @@ import 'Screens/Profile/profile_screen.dart';
 import 'Screens/Wallet/wallet_screen.dart';
 
 class BottomNavHome extends StatefulWidget {
-  BottomNavHome({Key key}) : super(key: key);
+  const BottomNavHome({Key key}) : super(key: key);
 
   @override
   State<BottomNavHome> createState() => _BottomNavHomeState();
 }
 
 class _BottomNavHomeState extends State<BottomNavHome> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   int index = 0;
   List body = [
     ChatScreen(),
@@ -22,6 +27,7 @@ class _BottomNavHomeState extends State<BottomNavHome> {
     Browser(),
     Profile(),
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +37,7 @@ class _BottomNavHomeState extends State<BottomNavHome> {
         currentIndex: index,
         type: BottomNavigationBarType.fixed,
         unselectedItemColor: Colors.grey,
-        selectedItemColor: Color(0xffFF9C34),
+        selectedItemColor: const Color(0xffFF9C34),
         onTap: (int selectedPage) {
           setState(() => index = selectedPage);
         },

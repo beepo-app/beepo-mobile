@@ -4,13 +4,14 @@ import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:iconsax/iconsax.dart';
 
-import '../../Models/user_model.dart';
-import '../../Utils/styles.dart';
-import '../store_screen.dart';
+import '../Messaging/media_links_docs.dart';
 
 class UserProfile extends StatefulWidget {
   // const UserProfile({Key key}) : super(key: key);
@@ -26,6 +27,8 @@ class _UserProfileState extends State<UserProfile> {
   bool enable = false;
   bool enable2 = true;
   bool enable3 = false;
+
+  Map userM = Hive.box('beepo').get('userData');
 
   @override
   Widget build(BuildContext context) {
@@ -64,13 +67,33 @@ class _UserProfileState extends State<UserProfile> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: 56),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(60),
-                    child: CachedNetworkImage(
-                      width: 110,
-                      height: 110,
-                      imageUrl: widget.model.image,
-                      // fit: BoxFit.cover,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) {
+                        return FullScreenImage(
+                          imageUrl: widget.model.image,
+                          tag: "imagex",
+                        );
+                      }));
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(60),
+                      child: Hero(
+                        tag: 'imagex',
+                        child: CachedNetworkImage(
+                          width: 110,
+                          height: 110,
+                          imageUrl: widget.model.image,
+                          placeholder: (context, url) =>
+                              Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) => Icon(
+                            Icons.person,
+                            color: secondaryColor,
+                          ),
+                          filterQuality: FilterQuality.high,
+                          // fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(height: 12),
@@ -144,14 +167,10 @@ class _UserProfileState extends State<UserProfile> {
                       ),
                       Column(
                         children: [
-                          Icon(
-                            Icons.forward,
-                            size: 35,
-                            color: Color(0xffFF9C34),
-                          ),
+                          SvgPicture.asset('assets/block.svg'),
                           SizedBox(height: 12),
                           Text(
-                            "Share",
+                            "Block",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 13,
@@ -165,130 +184,178 @@ class _UserProfileState extends State<UserProfile> {
               ),
             ),
             Expanded(
-                child: Container(
-                    padding: EdgeInsets.only(left: 20, right: 20),
-                    color: Colors.white,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+              child: Container(
+                padding: EdgeInsets.only(left: 20, right: 20),
+                color: Colors.white,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 30),
+                      Center(
+                        child: Text(
+                          "Hi there, am new to Beepo and I love it",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xff0e014c),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Divider(),
+                      SizedBox(height: 10),
+                      Row(
                         children: [
-                          SizedBox(height: 30),
-                          Center(
+                          Expanded(
                             child: Text(
-                              "Hi there, am new to Beepo and I love it",
-                              textAlign: TextAlign.center,
+                              "Mute notifications",
                               style: TextStyle(
                                 color: Color(0xff0e014c),
                                 fontSize: 14,
-                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
-                          SizedBox(height: 10),
-                          Divider(),
-                          SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Mute notifications",
-                                  style: TextStyle(
-                                    color: Color(0xff0e014c),
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Switch(
-                                value: enable,
-                                activeColor: secondaryColor,
-                                onChanged: (value) {
-                                  setState(() {
-                                    enable = value;
-                                  });
-                                },
-                              ),
-                            ],
+                          Switch(
+                            value: enable,
+                            activeColor: secondaryColor,
+                            onChanged: (value) {
+                              setState(() {
+                                enable = value;
+                              });
+                            },
                           ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Allow Screenshot",
-                                  style: TextStyle(
-                                    color: Color(0xff0e014c),
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Switch(
-                                value: enable2,
-                                activeColor: secondaryColor,
-                                onChanged: (val) {
-                                  setState(() {
-                                    enable2 = val;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Allow media",
-                                  style: TextStyle(
-                                    color: Color(0xff0e014c),
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Switch(
-                                value: enable3,
-                                activeColor: secondaryColor,
-                                onChanged: (value) {
-                                  setState(() {
-                                    enable3 = value;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-                          Divider(),
-                          SizedBox(height: 20),
-                          // Text(
-                          //   "Store",
-                          //   style: TextStyle(
-                          //     color: Color(0xff0e014c),
-                          //     fontSize: 14,
-                          //   ),
-                          // ),
-                          SizedBox(height: 22),
-                          // GridView.count(
-                          //   physics: NeverScrollableScrollPhysics(),
-                          //   padding: const EdgeInsets.only(bottom: 20),
-                          //   mainAxisSpacing: 20,
-                          //   shrinkWrap: true,
-                          //   crossAxisSpacing: 15,
-                          //   crossAxisCount: 3,
-                          //   children: List.generate(9, (index) {
-                          //     return GestureDetector(
-                          //       onTap: () => Get.to(Store()),
-                          //       child: Container(
-                          //         padding: const EdgeInsets.all(10),
-                          //         height: 91,
-                          //         width: 102,
-                          //         decoration: BoxDecoration(
-                          //           color: Colors.grey,
-                          //           borderRadius: BorderRadius.circular(15),
-                          //         ),
-                          //       ),
-                          //     );
-                          //   }),
-                          // ),
                         ],
                       ),
-                    )))
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "Allow Screenshot",
+                              style: TextStyle(
+                                color: Color(0xff0e014c),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          Switch(
+                            value: enable2,
+                            activeColor: secondaryColor,
+                            onChanged: (val) {
+                              setState(() {
+                                enable2 = val;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "Allow media",
+                              style: TextStyle(
+                                color: Color(0xff0e014c),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          Switch(
+                            value: enable3,
+                            activeColor: secondaryColor,
+                            onChanged: (value) {
+                              setState(() {
+                                enable3 = value;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      Divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Shared Media, Links and Docs',
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              color: txtColor1,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MediaLinks(
+                                            model: widget.model,
+                                          )));
+                            },
+                            icon: Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              color: secondaryColor,
+                              size: 15,
+                            ),
+                          )
+                        ],
+                      ),
+                      StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('messages')
+                              .doc(userM['uid'])
+                              .collection('userMessages')
+                              .doc(widget.model.uid)
+                              .collection('messageList')
+                              .where('type', isEqualTo: 'photo')
+                              .snapshots(),
+                          builder:
+                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.hasData) {
+                              return GridView.count(
+                                physics: NeverScrollableScrollPhysics(),
+                                padding: const EdgeInsets.only(bottom: 20),
+                                mainAxisSpacing: 20,
+                                shrinkWrap: true,
+                                crossAxisSpacing: 15,
+                                crossAxisCount: 3,
+                                children: List.generate(
+                                    snapshot.data.docs.length, (index) {
+                                  return GestureDetector(
+                                    // onTap: () => Get.to(Store()),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(10),
+                                      height: 91,
+                                      width: 102,
+                                      decoration: BoxDecoration(
+                                        // color: Colors.grey,
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child: ClipRRect(
+                                        child: CachedNetworkImage(
+                                          imageUrl: snapshot.data.docs[index]
+                                              ['content'],
+                                          fit: BoxFit.fill,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              );
+                            }
+                            return CircularProgressIndicator(
+                              color: primaryColor,
+                            );
+                          }),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

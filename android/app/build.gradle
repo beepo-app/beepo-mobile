@@ -34,6 +34,15 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+
+    lintOptions {
+        disable 'Instantiable'
+        disable 'InvalidPackage'
+        //Put the following line
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
@@ -44,7 +53,7 @@ android {
 
     defaultConfig {
         applicationId "com.beepo.app"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -68,4 +77,5 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:31.1.1')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.google.firebase:firebase-messaging:20.1.0'
 }

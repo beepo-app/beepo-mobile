@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:io';
 
 import 'package:beepo/Service/auth.dart';
@@ -16,6 +18,7 @@ import '../../Widgets/toasts.dart';
 
 class EditProfile extends StatefulWidget {
   final Map data;
+
   const EditProfile(this.data);
 
   @override

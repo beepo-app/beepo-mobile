@@ -1,12 +1,13 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../Utils/styles.dart';
 import '../../components.dart';
 
 class Browser extends StatefulWidget {
-  Browser({Key key}) : super(key: key);
+  const Browser({Key key}) : super(key: key);
 
   @override
   State<Browser> createState() => _BrowserState();

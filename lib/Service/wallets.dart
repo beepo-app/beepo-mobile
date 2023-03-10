@@ -2,12 +2,10 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:beepo/Service/auth.dart';
-import 'package:hive/hive.dart';
+import 'package:http/http.dart' as http;
 
 import '../Constants/network.dart';
 import '../Models/wallet.dart';
-import 'package:http/http.dart' as http;
-
 import '../Widgets/toasts.dart';
 
 class WalletsService {

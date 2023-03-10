@@ -43,7 +43,7 @@ class SignUp extends StatelessWidget {
               const SizedBox(height: 12),
               OutlnButton(
                 text: 'Login',
-                onPressed: () => Get.to(Login()),
+                onPressed: () => Get.to(const Login()),
               ),
               const SizedBox(height: 90),
             ],

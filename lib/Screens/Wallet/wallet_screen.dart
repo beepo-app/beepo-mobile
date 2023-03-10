@@ -1,17 +1,11 @@
 import 'dart:developer';
 
-import 'package:beepo/Service/auth.dart';
-import 'package:beepo/Service/encryption.dart';
 import 'package:beepo/Service/wallets.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../Models/wallet.dart';
 import '../../Utils/styles.dart';
 import '../../components.dart';
-import '../send_global.dart';
-import 'receive_token.dart';
-import 'token_screen.dart';
 
 class WalletScreen extends StatefulWidget {
   WalletScreen({Key key}) : super(key: key);

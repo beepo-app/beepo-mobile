@@ -1,8 +1,7 @@
 import 'dart:convert';
-
-import 'package:beepo/Utils/functions.dart';
-import 'package:http/http.dart' as http;
 import 'dart:io';
+
+import 'package:http/http.dart' as http;
 
 import '../Constants/network.dart';
 import '../Widgets/toasts.dart';
