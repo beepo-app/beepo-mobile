@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:beepo/Models/market_data.dart';
 import 'package:beepo/Service/auth.dart';
 import 'package:http/http.dart' as http;
 
@@ -116,6 +117,31 @@ class WalletsService {
 
       showToast(e.toString());
       return null;
+    }
+  }
+
+  //get coin market data
+  Future<List<CoinMarketData>> getCoinMarketData() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/marketdata'),
+        headers: {
+          'Accept': 'application/json',
+        },
+      );
+
+      print(response.body);
+      if (response.statusCode == 200) {
+        List data = json.decode(response.body)['data'];
+        return data.map((e) => CoinMarketData.fromJson(e)).toList();
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print(e);
+
+      showToast(e.toString());
+      return [];
     }
   }
 }

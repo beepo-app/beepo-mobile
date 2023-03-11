@@ -17,6 +17,7 @@ import 'package:linkwell/linkwell.dart';
 import 'package:provider/provider.dart';
 
 // import 'Models/story_model/story.dart';
+import 'Models/market_data.dart';
 import 'Models/story_model/storyModel.dart';
 import 'Models/user_model.dart';
 import 'Models/wallet.dart';
@@ -782,8 +783,10 @@ class Group extends StatelessWidget {
         mainAxisAlignment:
             isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          if(isMe)SizedBox(width: 46,),
-
+          if (isMe)
+            SizedBox(
+              width: 46,
+            ),
           if (!isMe)
             if (!sameUser)
               Padding(
@@ -926,7 +929,10 @@ class Group extends StatelessWidget {
               ),
             ),
           ),
-          if(!isMe)SizedBox(width: 26,),
+          if (!isMe)
+            SizedBox(
+              width: 26,
+            ),
         ],
       ),
     );
@@ -965,6 +971,7 @@ class WalletListTile extends StatelessWidget {
   final String subtext;
   final String amount;
   final Wallet wallet;
+  final CoinMarketData coinMarketData;
   final String fiatValue;
 
   WalletListTile({
@@ -972,12 +979,16 @@ class WalletListTile extends StatelessWidget {
     @required this.title,
     @required this.subtext,
     @required this.amount,
+    this.coinMarketData,
     this.wallet,
     this.fiatValue,
   });
 
   @override
   Widget build(BuildContext context) {
+    String currentMarketPrice = coinMarketData?.data?.currentPrice ?? '0';
+    String change24h = coinMarketData?.data?.priceChangePercentage24H ?? '0';
+    bool isPositive = change24h.startsWith('-') ? false : true;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -997,6 +1008,7 @@ class WalletListTile extends StatelessWidget {
           wallet: wallet,
           balance: amount,
           value: fiatValue,
+          coinMarketData: coinMarketData,
         )),
         dense: true,
         leading: ClipRRect(
@@ -1034,12 +1046,26 @@ class WalletListTile extends StatelessWidget {
         subtitle: Row(
           children: [
             Expanded(
-              child: Text(
-                subtext,
-                style: const TextStyle(
-                  color: Color(0xcc000000),
-                  fontSize: 12,
-                ),
+              child: Row(
+                children: [
+                  Text(
+                    '\$$currentMarketPrice',
+                    style: const TextStyle(
+                      color: Color(0xcc000000),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    (isPositive ? '+' : '') + '$change24h%',
+                    style: TextStyle(
+                      color: isPositive ? Colors.green : Colors.red,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
             ),
             Text(
