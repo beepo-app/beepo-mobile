@@ -2,8 +2,6 @@
 
 import 'package:beepo/Screens/Profile/user_profile_screen.dart';
 import 'package:beepo/Screens/moments/story_download_provider.dart';
-
-// import 'package:beepo/story_screen.dart';
 import 'package:beepo/Screens/moments/story_view.dart';
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
@@ -16,7 +14,6 @@ import 'package:hive/hive.dart';
 import 'package:linkwell/linkwell.dart';
 import 'package:provider/provider.dart';
 
-// import 'Models/story_model/story.dart';
 import 'Models/story_model/storyModel.dart';
 import 'Models/user_model.dart';
 import 'Models/wallet.dart';
@@ -33,7 +30,12 @@ class FilledButton extends StatelessWidget {
   final VoidCallback onPressed;
   final Color color;
 
-  FilledButton({@required this.text, this.color, @required this.onPressed});
+  const FilledButton({
+    Key key,
+    @required this.text,
+    this.color,
+    @required this.onPressed,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -782,8 +784,10 @@ class Group extends StatelessWidget {
         mainAxisAlignment:
             isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          if(isMe)SizedBox(width: 46,),
-
+          if (isMe)
+            SizedBox(
+              width: 46,
+            ),
           if (!isMe)
             if (!sameUser)
               Padding(
@@ -926,7 +930,10 @@ class Group extends StatelessWidget {
               ),
             ),
           ),
-          if(!isMe)SizedBox(width: 26,),
+          if (!isMe)
+            SizedBox(
+              width: 26,
+            ),
         ],
       ),
     );

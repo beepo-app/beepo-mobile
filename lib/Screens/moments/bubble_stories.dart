@@ -7,7 +7,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class BubbleStories extends StatefulWidget {
@@ -84,7 +83,6 @@ class _BubbleStoriesState extends State<BubbleStories> {
             );
           });
     }
-
   }
 
   @override
@@ -99,9 +97,7 @@ class _BubbleStoriesState extends State<BubbleStories> {
   Widget build(BuildContext context) {
     if (widget.myStory == false) {
       return InkWell(
-        onTap: () {
-          goToMoment();
-        },
+        onTap: goToMoment(),
         child: StreamBuilder(
             stream: FirebaseFirestore.instance
                 .collection('users')
