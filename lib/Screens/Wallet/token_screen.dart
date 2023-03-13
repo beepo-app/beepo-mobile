@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:beepo/Models/market_data.dart';
 import 'package:beepo/Models/transaction.dart';
+import 'package:beepo/Screens/Wallet/transaction_details.dart';
 import 'package:beepo/Service/transactions.dart';
 import 'package:beepo/Utils/functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -18,13 +20,27 @@ class WalletToken extends StatefulWidget {
   final Wallet wallet;
   final String balance;
   final String value;
-  const WalletToken({Key key, this.wallet, this.balance, this.value}) : super(key: key);
+  final CoinMarketData coinMarketData;
+  const WalletToken(
+      {Key key, this.wallet, this.balance, this.value, this.coinMarketData})
+      : super(key: key);
 
   @override
   State<WalletToken> createState() => _WalletTokenState();
 }
 
 class _WalletTokenState extends State<WalletToken> {
+  String currentMarketPrice;
+  String change24h;
+  bool isPositive;
+  @override
+  void initState() {
+    super.initState();
+    currentMarketPrice = widget.coinMarketData?.data?.currentPrice ?? '0';
+    change24h = widget.coinMarketData?.data?.priceChangePercentage24H ?? '0';
+    isPositive = change24h.startsWith('-') ? false : true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,6 +57,32 @@ class _WalletTokenState extends State<WalletToken> {
             color: Colors.white,
           ),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Text(
+                  '\$$currentMarketPrice',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  (isPositive ? '+' : '') + '$change24h%',
+                  style: TextStyle(
+                    color: isPositive ? Colors.green : Colors.red,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -180,8 +222,13 @@ class _WalletTokenState extends State<WalletToken> {
               widget.wallet.address.toLowerCase(),
             ),
             builder: (_, snapshot) {
+              if (snapshot.hasError) {
+                return Expanded(
+                    child: Center(child: Text(snapshot.error.toString())));
+              }
               if (!snapshot.hasData) {
-                return const Expanded(child: Center(child: CircularProgressIndicator()));
+                return const Expanded(
+                    child: Center(child: CircularProgressIndicator()));
               }
 
               return Expanded(
@@ -204,12 +251,17 @@ class _WalletTokenState extends State<WalletToken> {
                               return ListTile(
                                 minLeadingWidth: 10,
                                 leading: Icon(
-                                  isSent ? Icons.arrow_upward : Icons.arrow_downward,
+                                  isSent
+                                      ? Icons.arrow_upward
+                                      : Icons.arrow_downward,
                                   size: 20,
                                   color: isSent ? Colors.red : Colors.green,
                                 ),
                                 onTap: () {
-                                  launchUrlString(transaction.url);
+                                  Get.to(TransactionDetails(
+                                    transaction: transaction,
+                                    walletTicker: widget.wallet.ticker,
+                                  ));
                                 },
                                 title: Row(
                                   children: [
@@ -226,7 +278,8 @@ class _WalletTokenState extends State<WalletToken> {
                                       (isSent ? '-' : '+') +
                                           "${transaction.value.toPrecision(5)} ${widget.wallet.ticker}",
                                       style: TextStyle(
-                                        color: isSent ? Colors.red : Colors.green,
+                                        color:
+                                            isSent ? Colors.red : Colors.green,
                                         fontSize: 13,
                                       ),
                                     )
@@ -247,7 +300,8 @@ class _WalletTokenState extends State<WalletToken> {
                                     ),
                                     const SizedBox(width: 10),
                                     Text(
-                                      formatDate(DateTime.fromMillisecondsSinceEpoch(
+                                      formatDate(
+                                          DateTime.fromMillisecondsSinceEpoch(
                                         transaction.timestamp * 1000,
                                       )),
                                       style: TextStyle(

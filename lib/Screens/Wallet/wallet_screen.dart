@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:beepo/Models/market_data.dart';
 import 'package:beepo/Service/wallets.dart';
 import 'package:flutter/material.dart';
 
@@ -49,6 +50,7 @@ class _WalletScreenState extends State<WalletScreen> {
       body: FutureBuilder(
         future: Future.wait([
           WalletsService().getWallets(),
+          WalletsService().getCoinMarketData(),
         ]),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -56,7 +58,7 @@ class _WalletScreenState extends State<WalletScreen> {
           }
 
           final List<Wallet> wallets = snapshot.data[0] ?? [];
-          log(wallets.toString());
+          final List<CoinMarketData> coinMarketDataList = snapshot.data[1];
 
           Wallet btcWallet = wallets.firstWhere((e) => e.name == 'Bitcoin');
           Wallet ethWallet = wallets.firstWhere((e) => e.ticker == 'ETH');
@@ -80,7 +82,8 @@ class _WalletScreenState extends State<WalletScreen> {
               double totalBalance = 0;
 
               for (var balance in ercBalances) {
-                var balanceDouble = num.parse(balance['USD']?.toString() ?? '0');
+                var balanceDouble =
+                    num.parse(balance['USD']?.toString() ?? '0');
                 totalBalance += balanceDouble;
               }
 
@@ -218,7 +221,10 @@ class _WalletScreenState extends State<WalletScreen> {
                             itemBuilder: (_, int index) {
                               Wallet wallet = wallets[index];
                               String fiatValue = '0';
-
+                              CoinMarketData coinMarketData =
+                                  coinMarketDataList.firstWhere(
+                                      (e) => e.id == wallet.chainId.toString(),
+                                      orElse: () => null);
                               String balance;
 
                               if (wallet.ticker == 'BITCOIN') {
@@ -230,7 +236,8 @@ class _WalletScreenState extends State<WalletScreen> {
                                 }
                               } else {
                                 Map bal = ercBalances.firstWhere(
-                                  (balance) => balance['symbol'] == wallet.ticker,
+                                  (balance) =>
+                                      balance['symbol'] == wallet.ticker,
                                   orElse: () => {'balance': "0.0"},
                                 );
                                 balance = bal['balance'].toString();
@@ -244,7 +251,11 @@ class _WalletScreenState extends State<WalletScreen> {
                                 subtext: wallet.ticker,
                                 amount: balance ?? 'N/A',
                                 wallet: wallet,
-                                fiatValue: num.parse(fiatValue).toStringAsFixed(2),
+                                coinMarketData: coinMarketData,
+                                fiatValue: fiatValue == 'null'
+                                    ? '0.00'
+                                    : num.parse(fiatValue ?? "0.00")
+                                        .toStringAsFixed(2),
                               );
                             },
                           ),

@@ -2,6 +2,8 @@
 
 import 'package:beepo/Screens/Profile/user_profile_screen.dart';
 import 'package:beepo/Screens/moments/story_download_provider.dart';
+
+// import 'package:beepo/story_screen.dart';
 import 'package:beepo/Screens/moments/story_view.dart';
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
@@ -14,6 +16,8 @@ import 'package:hive/hive.dart';
 import 'package:linkwell/linkwell.dart';
 import 'package:provider/provider.dart';
 
+// import 'Models/story_model/story.dart';
+import 'Models/market_data.dart';
 import 'Models/story_model/storyModel.dart';
 import 'Models/user_model.dart';
 import 'Models/wallet.dart';
@@ -30,12 +34,7 @@ class FilledButton extends StatelessWidget {
   final VoidCallback onPressed;
   final Color color;
 
-  const FilledButton({
-    Key key,
-    @required this.text,
-    this.color,
-    @required this.onPressed,
-  }) : super(key: key);
+  FilledButton({@required this.text, this.color, @required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -972,6 +971,7 @@ class WalletListTile extends StatelessWidget {
   final String subtext;
   final String amount;
   final Wallet wallet;
+  final CoinMarketData coinMarketData;
   final String fiatValue;
 
   WalletListTile({
@@ -979,12 +979,16 @@ class WalletListTile extends StatelessWidget {
     @required this.title,
     @required this.subtext,
     @required this.amount,
+    this.coinMarketData,
     this.wallet,
     this.fiatValue,
   });
 
   @override
   Widget build(BuildContext context) {
+    String currentMarketPrice = coinMarketData?.data?.currentPrice ?? '0';
+    String change24h = coinMarketData?.data?.priceChangePercentage24H ?? '0';
+    bool isPositive = change24h.startsWith('-') ? false : true;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -1004,6 +1008,7 @@ class WalletListTile extends StatelessWidget {
           wallet: wallet,
           balance: amount,
           value: fiatValue,
+          coinMarketData: coinMarketData,
         )),
         dense: true,
         leading: ClipRRect(
@@ -1041,12 +1046,26 @@ class WalletListTile extends StatelessWidget {
         subtitle: Row(
           children: [
             Expanded(
-              child: Text(
-                subtext,
-                style: const TextStyle(
-                  color: Color(0xcc000000),
-                  fontSize: 12,
-                ),
+              child: Row(
+                children: [
+                  Text(
+                    '\$$currentMarketPrice',
+                    style: const TextStyle(
+                      color: Color(0xcc000000),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    (isPositive ? '+' : '') + '$change24h%',
+                    style: TextStyle(
+                      color: isPositive ? Colors.green : Colors.red,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
             ),
             Text(

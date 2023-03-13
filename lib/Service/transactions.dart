@@ -90,13 +90,18 @@ class TransactionService {
   }
 
   //Transaction history
-  Future<List<Transaction>> transactionHistory(String networkId, String address) async {
+  Future<List<Transaction>> transactionHistory(
+      String networkId, String address) async {
     try {
       final response = await http.post(
         Uri.parse('${baseUrl}transaction/history'),
-        headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
         body: jsonEncode({"networkId": networkId, "address": address}),
       );
+      log(response.statusCode.toString());
       if (response.statusCode == 200) {
         return transactionFromJson(jsonDecode(response.body)['data']);
       } else {
