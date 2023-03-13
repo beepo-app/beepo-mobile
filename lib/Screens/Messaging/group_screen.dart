@@ -231,9 +231,9 @@ class _GroupDmState extends State<GroupDm> {
                                           userName: snapshot.data.docs[index]
                                               ["userName"],
                                         ),
-                                        sameUser: snapshot.data.docs[index + 1]
+                                        sameUser: snapshot.data.docs[index]["sender"] != snapshot.data.docs.last["sender"]? (snapshot.data.docs[index + 1]
                                                 ["sender"] ==
-                                            snapshot.data.docs[index]["sender"],
+                                            snapshot.data.docs[index]["sender"]) : false,
                                       )
                                     else if (snapshot.data.docs[index]
                                             ["type"] ==
@@ -322,12 +322,6 @@ class _GroupDmState extends State<GroupDm> {
                                                                             .docs[
                                                                         index][
                                                                     'content']);
-                                                            //  Future.delayed(context.read<ChatNotifier>().dure, (){
-                                                            //   setState(() {
-                                                            //     isPlaying = -1;
-                                                            //
-                                                            //   });
-                                                            // });
                                                           },
                                                         ),
                                                   Center(
