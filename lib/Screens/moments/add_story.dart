@@ -4,11 +4,10 @@ import 'dart:io';
 
 import 'package:beepo/Screens/moments/story_settings_modal.dart';
 import 'package:beepo/Screens/moments/story_upload_provider.dart';
-import 'package:beepo/components.dart';
 import 'package:beepo/text_styles.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
@@ -85,7 +84,7 @@ class _AddStoryState extends State<AddStory> {
     return Scaffold(
       body: Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         body: SafeArea(
           // maintainBottomViewPadding: true,
           child: Consumer<StoryUploadProvider>(
@@ -147,67 +146,22 @@ class _AddStoryState extends State<AddStory> {
                     //         style: context.textTheme.headline5,
                     //       ),
                   ),
-                  if (selectedFile != null)
                     // The upload button is only visible when the user has selected a file
-                    Positioned(
-                      top: 40,
-                      right: 15,
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: primaryColor,
-                        ),
-                        onPressed: () async {
-                          if (status == StoryUploadStatus.uploading) {
-                            // If the user is uploading a story, we don't want to do anything,
-                            // so we show a snackbar to let them know that they are already uploading
-                            _showSnackBar(context,
-                                message: 'Upload in progress');
-                          } else {
-                            await uploader.getCaption(
-                                controller.text.trim().isEmpty
-                                    ? " "
-                                    : controller.text.trim());
-                            final result = await uploader.uploadStory();
-
-                            result.fold(
-                              (failure) => _showSnackBar(context,
-                                  message: failure.message),
-                              (success) => _showSnackBar(context,
-                                  message: 'Story uploaded successfully'),
-                            );
-                            Navigator.pop(context);
-                            controller.clear();
-                            context.read<StoryUploadProvider>().reset();
-                          }
+                    Align(
+                      alignment: Alignment.topLeft,
+                      //TODO: Detect when the user navigates away from the screen without pressing the close button
+                      // and call reset() on the provider
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          context.read<StoryUploadProvider>().reset();
                         },
-                        icon: const Icon(Icons.upload_rounded),
-                        label: (status == StoryUploadStatus.uploading)
-                            ? const SizedBox(
-                                height: 25,
-                                width: 25,
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white),
-                                ),
-                              )
-                            : const Text('Upload'),
+                        icon: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    //TODO: Detect when the user navigates away from the screen without pressing the close button
-                    // and call reset() on the provider
-                    child: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        context.read<StoryUploadProvider>().reset();
-                      },
-                      icon: const Icon(
-                        Icons.close,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
                   Align(
                     alignment: Alignment.topRight,
                     child: IconButton(
@@ -221,211 +175,243 @@ class _AddStoryState extends State<AddStory> {
                       ),
                     ),
                   ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: (context.watch<StoryUploadProvider>().file == null)
+                        ? Container(
+                            // width: double.infinity,
+                            height: 140,
+                            decoration: BoxDecoration(color: Colors.black),
+                            padding: EdgeInsets.only(
+                              left: 20,
+                              right: 20,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          onPressed: () async {
+                                            await context
+                                                .read<StoryUploadProvider>()
+                                                .pickImageGallery(context);
+                                            if (mounted) {
+                                              final selectedFile = context
+                                                  .read<StoryUploadProvider>()
+                                                  .file;
+                                              final selectedMediaType = context
+                                                  .read<StoryUploadProvider>()
+                                                  .mediaType;
+                                              if (selectedFile != null &&
+                                                  selectedMediaType ==
+                                                      "gallery") {
+                                                final isVideoDurationNotLong =
+                                                    await _checkVideoDurationIsNotLong(
+                                                        selectedFile);
+                                                if (isVideoDurationNotLong &&
+                                                    mounted) {
+                                                  final result = await context
+                                                      .read<
+                                                          StoryUploadProvider>()
+                                                      .getVideoThumbnail();
+                                                  result.fold(
+                                                    (failure) => _showSnackBar(
+                                                        context,
+                                                        message:
+                                                            failure.message),
+                                                    (success) {},
+                                                  );
+                                                } else {
+                                                  _showSnackBar(context,
+                                                      message:
+                                                          'Video duration cannot be more than 40 seconds');
+                                                  context
+                                                      .read<
+                                                          StoryUploadProvider>()
+                                                      .reset();
+                                                }
+                                              }
+                                            }
+                                          },
+                                          icon: Icon(
+                                            Icons.photo,
+                                            size: 38,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 75,
+                                      width: 75,
+                                      child: IconButton(
+                                          onPressed: () async {
+                                            await initializeControllerFuture;
+                                            if (selected == widget.camera2) {
+                                              await context
+                                                  .read<StoryUploadProvider>()
+                                                  .pickImageCamera1();
+                                            } else {
+                                              await context
+                                                  .read<StoryUploadProvider>()
+                                                  .pickImageCamera();
+                                            }
+                                            // selected == widget.camera1?
+
+                                            // : await context
+                                            // .read<StoryUploadProvider>()
+                                            // .pickImageCamera1();
+                                          },
+                                          icon: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Color(0xFFE6E9EE),
+                                              border: Border.all(
+                                                  color: Colors.orange,
+                                                  width: 2),
+                                              // borderRadius: BorderRadius.circular(50)
+                                            ),
+                                          )
+                                          // SvgPicture.asset(
+                                          //   AppImages.camera,
+                                          //   color: secondaryColor,
+                                          // ),
+                                          ),
+                                    ),
+                                    GestureDetector(
+                                      child:
+                                          SvgPicture.asset('assets/Rotate.svg'),
+                                      onTap: () {
+                                        setState(() {
+                                          // hasChanged = !hasChanged;
+                                          if (selected == widget.camera1) {
+                                            selected = widget.camera2;
+                                          } else {
+                                            selected = widget.camera1;
+                                          }
+                                          // selected =
+                                          // selected == widget.camera1 ? widget.camera2 : widget
+                                          //     .camera1;
+                                        });
+                                        controlle = CameraController(selected,
+                                            ResolutionPreset.ultraHigh);
+                                        initializeControllerFuture =
+                                            controlle.initialize();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  "Tap for photo, hold for videos",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                              ],
+                            ))
+                        : Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: TextField(
+                                      controller: controller,
+                                      decoration: InputDecoration(
+                                        hintText: "Add a caption...",
+                                        isDense: false,
+                                        hintStyle: TextStyle(
+                                          fontSize: 14.5,
+                                          fontStyle: FontStyle.italic,
+                                          color: Colors.black,
+                                        ),
+                                        fillColor: Colors.white,
+                                        hoverColor: Colors.white,
+                                        focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    if (status == StoryUploadStatus.uploading) {
+                                      // If the user is uploading a story, we don't want to do anything,
+                                      // so we show a snackbar to let them know that they are already uploading
+                                      _showSnackBar(context,
+                                          message: 'Upload in progress');
+                                    } else {
+                                      await uploader.getCaption(
+                                          controller.text.trim().isEmpty
+                                              ? " "
+                                              : controller.text.trim());
+                                      final result =
+                                          await uploader.uploadStory();
+
+                                      result.fold(
+                                        (failure) => _showSnackBar(context,
+                                            message: failure.message),
+                                        (success) => _showSnackBar(context,
+                                            message:
+                                                'Story uploaded successfully'),
+                                      );
+                                      Navigator.pop(context);
+                                      controller.clear();
+                                      context
+                                          .read<StoryUploadProvider>()
+                                          .reset();
+                                    }
+                                  },
+                                  child: Container(
+                                    height: 40,
+                                    width: 40,
+                                    decoration: BoxDecoration(
+                                      color: secondaryColor,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: (status ==
+                                            StoryUploadStatus.uploading)
+                                        ? const SizedBox(
+                                            height: 25,
+                                            width: 25,
+                                            child: CircularProgressIndicator(
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      Colors.white),
+                                              // value: 20,
+                                            ),
+                                          )
+                                        : Icon(
+                                            Icons.send,
+                                            color: Colors.white,
+                                          ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                  ),
                 ],
               );
             },
-          ),
-        ),
-        bottomNavigationBar: Padding(
-          padding:
-              const EdgeInsets.only(top: 0, left: 20.0, right: 20.0, bottom: 0),
-          child: Container(
-            width: double.infinity,
-            height: 130,
-            // decoration: BoxDecoration(
-            //   // color: Colors.black,
-            // ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // if (context.read<StoryUploadProvider>().file != null)
-                // Expanded(
-                //   child: TextField(
-                //     decoration: InputDecoration(
-                //       hintText: "Add a caption...",
-                //       isDense: false,
-                //       hintStyle: TextStyle(
-                //           fontSize: 14.5,
-                //           fontStyle: FontStyle.italic,
-                //           color: Colors.white),
-                // suffixIcon: GestureDetector(
-                //   child: Icon(
-                //     Icons.change_circle_outlined,
-                //     color: Colors.white,
-                //   ),
-                //   onTap: () {
-                //     setState(() {
-                //       // hasChanged = !hasChanged;
-                //       if (selected == widget.camera1) {
-                //         selected = widget.camera2;
-                //       } else {
-                //         selected = widget.camera1;
-                //       }
-                //       // selected =
-                //       // selected == widget.camera1 ? widget.camera2 : widget
-                //       //     .camera1;
-                //     });
-                //     controlle = CameraController(
-                //         selected, ResolutionPreset.ultraHigh);
-                //     initializeControllerFuture = controlle.initialize();
-                //   },
-                // ),
-                //       filled: true,
-                //       enabledBorder: OutlineInputBorder(
-                //           // borderSide: BorderSide.
-
-                //           ),
-                //       focusedBorder: OutlineInputBorder(),
-                //     ),
-                //     expands: true,
-                //     maxLines: null,
-                //     style: TextStyle(color: Colors.white),
-                //     minLines: null,
-                //     controller: controller,
-                //   ),
-                // ),
-                // SizedBox(height: 13),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () async {
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => CameraApp()));
-                        await context
-                            .read<StoryUploadProvider>()
-                            .pickImageGallery();
-                        // Navigator.pop(context);
-                      },
-                      child: Row(
-                        children: [
-                          // SvgPicture.asset(AppImages.newGallery),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          // const Text(
-                          //   'Gallery',
-                          //   style: TextStyle(
-                          //       fontWeight: FontWeight.w600,
-                          //       color: Colors.white),
-                          // )
-                          IconButton(
-                            onPressed: () async {
-                              await context
-                                  .read<StoryUploadProvider>()
-                                  .pickImageGallery();
-                              if (mounted) {
-                                final selectedFile =
-                                    context.read<StoryUploadProvider>().file;
-                                final selectedMediaType = context
-                                    .read<StoryUploadProvider>()
-                                    .mediaType;
-                                if (selectedFile != null &&
-                                    selectedMediaType == "gallery") {
-                                  final isVideoDurationNotLong =
-                                      await _checkVideoDurationIsNotLong(
-                                          selectedFile);
-                                  if (isVideoDurationNotLong && mounted) {
-                                    final result = await context
-                                        .read<StoryUploadProvider>()
-                                        .getVideoThumbnail();
-                                    result.fold(
-                                      (failure) => _showSnackBar(context,
-                                          message: failure.message),
-                                      (success) {},
-                                    );
-                                  } else {
-                                    _showSnackBar(context,
-                                        message:
-                                            'Video duration cannot be more than 40 seconds');
-                                    context.read<StoryUploadProvider>().reset();
-                                  }
-                                }
-                              }
-                            },
-                            icon: Icon(
-                              Icons.photo,
-                              size: 38,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 85,
-                      width: 85,
-                      child: IconButton(
-                          onPressed: () async {
-                            await initializeControllerFuture;
-                            if (selected == widget.camera2) {
-                              await context
-                                  .read<StoryUploadProvider>()
-                                  .pickImageCamera1();
-                            } else {
-                              await context
-                                  .read<StoryUploadProvider>()
-                                  .pickImageCamera();
-                            }
-                            // selected == widget.camera1?
-
-                            // : await context
-                            // .read<StoryUploadProvider>()
-                            // .pickImageCamera1();
-                          },
-                          icon: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Color(0xFFE6E9EE),
-                              border:
-                                  Border.all(color: Colors.orange, width: 2),
-                              // borderRadius: BorderRadius.circular(50)
-                            ),
-                          )
-                          // SvgPicture.asset(
-                          //   AppImages.camera,
-                          //   color: secondaryColor,
-                          // ),
-                          ),
-                    ),
-                    GestureDetector(
-                      child: Icon(
-                        Icons.flip_camera_android,
-                        //change_circle_outlined,
-                        size: 38,
-                        color: Colors.white,
-                      ),
-                      onTap: () {
-                        setState(() {
-                          // hasChanged = !hasChanged;
-                          if (selected == widget.camera1) {
-                            selected = widget.camera2;
-                          } else {
-                            selected = widget.camera1;
-                          }
-                          // selected =
-                          // selected == widget.camera1 ? widget.camera2 : widget
-                          //     .camera1;
-                        });
-                        controlle = CameraController(
-                            selected, ResolutionPreset.ultraHigh);
-                        initializeControllerFuture = controlle.initialize();
-                      },
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "Tap for photo, hold for videos",
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-                SizedBox(height: 5),
-              ],
-            ),
           ),
         ),
       ),

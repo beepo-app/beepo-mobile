@@ -785,7 +785,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                           context
                                               .read<ChatNotifier>()
                                               .pickUploadImageChat(
-                                                  widget.model.uid);
+                                                  widget.model.uid, context);
                                         },
                                         constraints: const BoxConstraints(
                                           maxWidth: 30,
@@ -947,7 +947,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              '@${username}',
+                              '@$username',
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w400,
