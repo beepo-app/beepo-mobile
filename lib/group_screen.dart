@@ -37,13 +37,12 @@ class _GroupDmState extends State<GroupDm> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    super.initState();
     FirebaseAuth.instance.signInAnonymously();
     isPlaying = -1;
     messageController.addListener(() {
       setState(() {});
     });
-    super.initState();
   }
 
   @override

@@ -40,10 +40,6 @@ class ChatNotifier extends ChangeNotifier {
   // String decrypted;
   Encrypted encrypted;
 
-  //  preload(BuildContext context, String path) {
-  //   final configuration = createLocalImageConfiguration(context);
-  //   return NetworkImage(path).resolve(configuration);
-  // }
   Future<String> encrypt(String text) async {
     var helper = RsaKeyHelper();
 
@@ -117,20 +113,13 @@ class ChatNotifier extends ChangeNotifier {
   }
 
   pickUploadImageChat(String id, BuildContext context) async {
-
-
     List<AssetEntity> image;
     // Reference reg = FirebaseStorage.instance.ref();
     try {
       image = await AssetPicker.pickAssets(
         context,
         pickerConfig: AssetPickerConfig(
-          maxAssets: 1,
-          requestType: RequestType.all,
-          selectedAssets: [
-
-          ]
-        ),
+            maxAssets: 1, requestType: RequestType.all, selectedAssets: []),
       );
 
       ref = FirebaseStorage.instance.ref().child('image.png');
@@ -600,4 +589,10 @@ class ChatNotifier extends ChangeNotifier {
       print(e);
     });
   }
+
+
+
+
+
+
 }

@@ -7,6 +7,7 @@ import 'package:beepo/Screens/moments/story_download_provider.dart';
 import 'package:beepo/Screens/moments/story_view.dart';
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
+import 'package:beepo/xmtp/screens/login/login_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,7 +26,6 @@ import 'Screens/Browser/browser_page.dart';
 import 'Screens/Messaging/groupMessages.dart';
 import 'Screens/Messaging/myMessages.dart';
 import 'Screens/Wallet/token_screen.dart';
-import 'Screens/moments/add_story.dart';
 import 'Screens/moments/bubble_stories.dart';
 import 'Utils/styles.dart';
 
@@ -155,17 +155,10 @@ class _ChatTabState extends State<ChatTab> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    // context.read<ChatNotifier>().getUsers();
+    super.initState();
     currentUserStories =
         context.read<StoryDownloadProvider>().getCurrentUserStories();
-    // currentUserFollowingStories =
-    //     context.read<StoryDownloadProvider>().getFollowingUsersStories();
-    // friendsStories = context.read<StoryDownloadProvider>().getFriendStories();
-    // currentUserFollowing =
-    //     context.read<StoryDownloadProvider>().getUsers();
     gethg();
-    super.initState();
   }
 
   @override
@@ -181,10 +174,11 @@ class _ChatTabState extends State<ChatTab> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AddStory(
-                      camera1: firstCamera,
-                      camera2: secondCamera,
-                    ),
+                    builder: (context) => LoginScreen(),
+                    // AddStory(
+                    // camera1: firstCamera,
+                    // camera2: secondCamera,
+                    // ),
                   ),
                 );
               },
@@ -566,7 +560,7 @@ class _CallTabState extends State<CallTab> {
 class MessageReply extends StatelessWidget {
   final bool isMe;
   final String text;
-  final Timestamp time;
+  final String time;
   final bool onSwipedMessage;
   final String replyMessage;
   final String replyName;
@@ -637,25 +631,25 @@ class MessageReply extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var day = time.toDate().day.toString();
-    var month = time.toDate().month.toString();
-    var year = time.toDate().toString().substring(2);
-    var date = day + '-' + month + '-' + year;
-    var hour = time.toDate().hour;
-    var min = time.toDate().minute;
+    // var day = time.toDate().day.toString();
+    // var month = time.toDate().month.toString();
+    // var year = time.toDate().toString().substring(2);
+    // var date = day + '-' + month + '-' + year;
+    // var hour = time.toDate().hour;
+    // var min = time.toDate().minute;
 
-    var ampm;
-    if (hour > 12) {
-      hour = hour % 12;
-      ampm = 'pm';
-    } else if (hour == 12) {
-      ampm = 'pm';
-    } else if (hour == 0) {
-      hour = 12;
-      ampm = 'am';
-    } else {
-      ampm = 'am';
-    }
+    // var ampm;
+    // if (hour > 12) {
+    //   hour = hour % 12;
+    //   ampm = 'pm';
+    // } else if (hour == 12) {
+    //   ampm = 'pm';
+    // } else if (hour == 0) {
+    //   hour = 12;
+    //   ampm = 'am';
+    // } else {
+    //   ampm = 'am';
+    // }
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -704,7 +698,8 @@ class MessageReply extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  hour.toString() + ":" + min.toString() + ampm,
+                  '',
+                  // hour.toString() + ":" + min.toString() + ampm,
                   style: isMe
                       ? TextStyle(
                           color: Colors.white,

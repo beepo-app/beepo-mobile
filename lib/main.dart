@@ -2,6 +2,9 @@
 
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
+import 'package:beepo/xmtp/data/xmtp/session.dart';
+import 'package:beepo/xmtp/di/injection.dart';
+import 'package:beepo/xmtp/domain/repository/account_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,6 +14,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:web3dart/credentials.dart';
 
 import 'Models/user_model.dart';
 import 'Screens/Auth/lock_screen.dart';
@@ -28,9 +32,21 @@ void main() async {
       // options: DefaultF
       // options: DefaultFirebaseOptions.currentPlatform,
       );
+  configureDependencies();
 
   await Hive.initFlutter();
   await Hive.openBox('beepo');
+  var session = getIt<Session>();
+  Map userM = Hive.box('beepo').get('userData');
+
+  // var accountRepository = getIt<AccountRepository>();
+
+  var privateKey = userM['privateKey'];
+  if (privateKey != null) {
+    var wallet = EthPrivateKey.fromHex(privateKey);
+    await session.initSession(wallet);
+  }
+
   runApp(MyApp());
 }
 
@@ -289,9 +305,10 @@ class _MyAppState extends State<MyApp> {
   }
   @override
   void initState() {
+
+    super.initState();
     initPlatformState();
 initFirebase(true);
-    super.initState();
   }
 
 

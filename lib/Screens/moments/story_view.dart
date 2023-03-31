@@ -58,6 +58,8 @@ class _HomesState extends State<Homes> {
 
   @override
   void initState() {
+
+    super.initState();
     addStoryItems();
     // calDate(date);
     i = 0;
@@ -84,7 +86,6 @@ class _HomesState extends State<Homes> {
         });
       }
     }
-    super.initState();
   }
 
   @override
@@ -207,7 +208,7 @@ class _MoreStoriesState extends State<MoreStories> {
 
   @override
   void initState() {
-    // getProfileData();
+    super.initState();
     addStoryItems();
     // calDate(date);
     i = 0;
@@ -234,7 +235,6 @@ class _MoreStoriesState extends State<MoreStories> {
         });
       }
     }
-    super.initState();
   }
 
   @override

@@ -67,6 +67,8 @@ class _AddStoryState extends State<AddStory> {
 
   @override
   void initState() {
+
+    super.initState();
     controlle = CameraController(
       // Get a specific camera from the list of available cameras.
       widget.camera1,
@@ -76,7 +78,6 @@ class _AddStoryState extends State<AddStory> {
     initializeControllerFuture = controlle.initialize();
     selected = widget.camera1;
 
-    super.initState();
   }
 
   @override

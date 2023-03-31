@@ -86,8 +86,8 @@ class _VideoCallState extends State<VideoCall>
 
   @override
   void initState() {
-    initialize();
     super.initState();
+    initialize();
     _controller = AnimationController(vsync: this);
 
     _controller.addListener(() {

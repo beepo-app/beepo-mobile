@@ -91,40 +91,40 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
     String _debugLabelString = "";
 
     OneSignal.shared.setNotificationWillShowInForegroundHandler(
-        (OSNotificationReceivedEvent event) {
-      print('FOREGROUND HANDLER CALLED WITH: $event');
+            (OSNotificationReceivedEvent event) {
+          print('FOREGROUND HANDLER CALLED WITH: $event');
 
-      /// Display Notification, send null to not display
-      // event.notification.
-      event.complete(OSNotification({
-        "app_id": "8f26effe-fda3-4034-a262-be12f4c5c47e",
-        //kAppId is the App Id that one get from the OneSignal When the application is registered.
+          /// Display Notification, send null to not display
+          // event.notification.
+          event.complete(OSNotification({
+            "app_id": "8f26effe-fda3-4034-a262-be12f4c5c47e",
+            //kAppId is the App Id that one get from the OneSignal When the application is registered.
 
-        "include_player_ids": tokenIdList,
-        //tokenIdList Is the List of All the Token Id to to Whom notification must be sent.
+            "include_player_ids": tokenIdList,
+            //tokenIdList Is the List of All the Token Id to to Whom notification must be sent.
 
-        // android_accent_color reprsent the color of the heading text in the notifiction
-        "android_accent_color": "FFFF9C34",
+            // android_accent_color reprsent the color of the heading text in the notifiction
+            "android_accent_color": "FFFF9C34",
 
-        "small_icon": "ic_launcher",
+            "small_icon": "ic_launcher",
 
-        "large_icon": userM['profilePictureUrl'],
+            "large_icon": userM['profilePictureUrl'],
 
-        "headings": {"en": heading},
+            "headings": {"en": heading},
 
-        "contents": {"en": contents},
-        "android_background_layout": {
-          "image": "https://domain.com/background_image.jpg",
-          "headings_color": "FFFF0000",
-          "contents_color": "FF0d004c"
-        }
-      }));
-      setState(() {
-        _debugLabelString =
+            "contents": {"en": contents},
+            "android_background_layout": {
+              "image": "https://domain.com/background_image.jpg",
+              "headings_color": "FFFF0000",
+              "contents_color": "FF0d004c"
+            }
+          }));
+          setState(() {
+            _debugLabelString =
             "Notification received in foreground notification: \n${event.notification.jsonRepresentation().replaceAll("\\n", "\n")}";
-      });
-      print(_debugLabelString);
-    });
+          });
+          print(_debugLabelString);
+        });
     // OneSignal.shared.
     return await post(
       Uri.parse('https://onesignal.com/api/v1/notifications'),
@@ -194,7 +194,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization':
-              'key=AAAAI_k21-0:APA91bEhToRGxcNDYLkqXBBxhVWFBnrq7qeHc0bh3DE_w1cOzp39rjXTDW8J3mql7UI-LWuAzWi7Vh4ifvT0zz1pRqLZSldLuEshgxSjqEwvJAnO0P1zUjPfNwOBx6hm_xRGN9N1CM9s'
+          'key=AAAAI_k21-0:APA91bEhToRGxcNDYLkqXBBxhVWFBnrq7qeHc0bh3DE_w1cOzp39rjXTDW8J3mql7UI-LWuAzWi7Vh4ifvT0zz1pRqLZSldLuEshgxSjqEwvJAnO0P1zUjPfNwOBx6hm_xRGN9N1CM9s'
         },
         body: constructFCMPayload(tokens, video),
       );
@@ -248,7 +248,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    // initFirebase(true);
+    super.initState();
     controller = AnimationController(
       vsync: this,
       duration: Duration(microseconds: 100000),
@@ -262,35 +262,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
     messageController.addListener(() {
       setState(() {});
     });
-    //
-    // FlutterIncomingCall.onEvent.listen((event) {
-    //   setState(() {
-    //     _lastEvent = event;
-    //   });
-    //   if (event is CallEvent) {
-    //     setState(() {
-    //       _lastCallEvent = event;
-    //     });
-    //   } else if (event is HoldEvent) {
-    //     setState(() {
-    //       _lastHoldEvent = event;
-    //     });
-    //   } else if (event is MuteEvent) {
-    //     setState(() {
-    //       _lastMuteEvent = event;
-    //     });
-    //   } else if (event is DmtfEvent) {
-    //     setState(() {
-    //       _lastDmtfEvent = event;
-    //     });
-    //   } else if (event is AudioSessionEvent) {
-    //     setState(() {
-    //       _lastAudioSessionEvent = event;
-    //     });
-    //   }
-    // });
-    // initFirebase();
-    super.initState();
+
   }
 
   String replyMessage = '';
@@ -364,15 +336,15 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => UserProfile(
-                                              model: UserModel(
-                                                  uid: widget.model.uid,
-                                                  name: widget.model.name,
-                                                  userName:
-                                                      widget.model.userName,
-                                                  image: widget.model.image,
-                                                  searchKeywords: widget
-                                                      .model.searchKeywords),
-                                            )));
+                                          model: UserModel(
+                                              uid: widget.model.uid,
+                                              name: widget.model.name,
+                                              userName:
+                                              widget.model.userName,
+                                              image: widget.model.image,
+                                              searchKeywords: widget
+                                                  .model.searchKeywords),
+                                        )));
                               },
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(19),
@@ -401,15 +373,15 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => UserProfile(
-                                              model: UserModel(
-                                                  uid: widget.model.uid,
-                                                  name: widget.model.name,
-                                                  userName:
-                                                      widget.model.userName,
-                                                  image: widget.model.image,
-                                                  searchKeywords: widget
-                                                      .model.searchKeywords),
-                                            )));
+                                          model: UserModel(
+                                              uid: widget.model.uid,
+                                              name: widget.model.name,
+                                              userName:
+                                              widget.model.userName,
+                                              image: widget.model.image,
+                                              searchKeywords: widget
+                                                  .model.searchKeywords),
+                                        )));
                               },
                               child: Text(
                                 widget.model.name,
@@ -504,11 +476,11 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                             return ListView.builder(
                               reverse: true,
                               controller:
-                                  context.read<ChatNotifier>().scrollController,
+                              context.read<ChatNotifier>().scrollController,
                               itemCount: snapshot.data.docs.length,
                               itemBuilder: (context, index) {
                                 Timestamp time =
-                                    snapshot.data.docs[index]['created'];
+                                snapshot.data.docs[index]['created'];
                                 // var day = time.toDate().day.toString();
                                 // var month = time.toDate().month.toString();
                                 // var year =
@@ -541,11 +513,11 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                           swiped = true;
                                           if (userM['uid'] !=
                                               snapshot.data.docs[index]
-                                                  ["sender"]) {
+                                              ["sender"]) {
                                             replyToMessage(
                                                 encrypter.decrypt64(
                                                     snapshot.data.docs[index]
-                                                        ["text"],
+                                                    ["text"],
                                                     iv: enc.IV.fromLength(16)),
                                                 widget.model.userName,
                                                 widget.model.name);
@@ -558,11 +530,11 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                           swiped = true;
                                           if (userM['uid'] ==
                                               snapshot.data.docs[index]
-                                                  ["sender"]) {
+                                              ["sender"]) {
                                             replyToMessage(
                                               encrypter.decrypt64(
                                                   snapshot.data.docs[index]
-                                                      ["text"],
+                                                  ["text"],
                                                   iv: enc.IV.fromLength(16)),
                                               '',
                                               userM['displayName'],
@@ -574,38 +546,38 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                         child: MessageReply(
                                           isMe: userM['uid'] ==
                                               snapshot.data.docs[index]
-                                                  ["sender"],
+                                              ["sender"],
                                           // displayname: widget.model.name,
                                           text: encrypter.decrypt64(
                                             snapshot.data.docs[index]["text"],
                                             iv: enc.IV.fromLength(16),
                                           ),
                                           time: snapshot.data.docs[index]
-                                              ["created"],
+                                          ["created"],
                                           onSwipedMessage: snapshot
                                               .data.docs[index]["swiped"],
                                           replyUsername: snapshot
                                               .data.docs[index]["replyUser"],
                                           replyName: snapshot.data.docs[index]
-                                              ["replyName"],
+                                          ["replyName"],
                                           replyMessage: snapshot
                                               .data.docs[index]["replyMessage"],
                                         ),
                                       )
                                     else if (snapshot.data.docs[index]
-                                            ["type"] ==
+                                    ["type"] ==
                                         'audio')
                                       Align(
                                         alignment: (snapshot.data.docs[index]
-                                                    ['sender'] ==
-                                                userM['uid'])
+                                        ['sender'] ==
+                                            userM['uid'])
                                             ? Alignment.centerRight
                                             : Alignment.centerLeft,
                                         child: VoiceMessage(
                                           audioSrc: snapshot.data.docs[index]
-                                              ['content'],
+                                          ['content'],
                                           me: snapshot.data.docs[index]
-                                                  ['sender'] ==
+                                          ['sender'] ==
                                               userM['uid'],
                                           meBgColor: secondaryColor,
                                           contactBgColor: Color(0xffc4c4c4),
@@ -616,8 +588,8 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                     else
                                       Align(
                                         alignment: (snapshot.data.docs[index]
-                                                    ['sender'] ==
-                                                userM['uid'])
+                                        ['sender'] ==
+                                            userM['uid'])
                                             ? Alignment.centerRight
                                             : Alignment.centerLeft,
                                         child: SizedBox(
@@ -628,12 +600,12 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                               Navigator.push(context,
                                                   MaterialPageRoute(
                                                       builder: (_) {
-                                                return FullScreenImage(
-                                                  imageUrl: snapshot.data
-                                                      .docs[index]["content"],
-                                                  tag: "image",
-                                                );
-                                              }));
+                                                        return FullScreenImage(
+                                                          imageUrl: snapshot.data
+                                                              .docs[index]["content"],
+                                                          tag: "image",
+                                                        );
+                                                      }));
                                             },
                                             child: ClipRRect(
                                               child: Hero(
@@ -645,19 +617,19 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                                   placeholder: (context, url) =>
                                                       Center(
                                                           child:
-                                                              CircularProgressIndicator()),
+                                                          CircularProgressIndicator()),
                                                   errorWidget:
                                                       (context, url, error) =>
-                                                          Icon(
-                                                    Icons.person,
-                                                    color: secondaryColor,
-                                                  ),
+                                                      Icon(
+                                                        Icons.person,
+                                                        color: secondaryColor,
+                                                      ),
                                                   filterQuality:
-                                                      FilterQuality.high,
+                                                  FilterQuality.high,
                                                 ),
                                               ),
                                               borderRadius:
-                                                  BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                             ),
                                           ),
                                         ),
@@ -698,122 +670,122 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                         buildReply(replyMessage, uName, dName, isReplying),
                       context.watch<ChatNotifier>().isRecording
                           ? Container(
-                              margin: EdgeInsets.only(bottom: 10),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.only(bottom: 10, left: 10),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Center(
-                                      child: Lottie.asset(
-                                          'assets/lottie/recording.json',
-                                          height: 40,
-                                          width: 27,
-                                          fit: BoxFit.fitHeight),
-                                    ),
-                                    Expanded(
-                                      child: Lottie.asset(
-                                        'assets/lottie/Linear_determinate.json',
-                                        height: double.infinity,
-                                        width: double.infinity,
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                  ],
+                        margin: EdgeInsets.only(bottom: 10),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Padding(
+                          padding:
+                          const EdgeInsets.only(bottom: 10, left: 10),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Center(
+                                child: Lottie.asset(
+                                    'assets/lottie/recording.json',
+                                    height: 40,
+                                    width: 27,
+                                    fit: BoxFit.fitHeight),
+                              ),
+                              Expanded(
+                                child: Lottie.asset(
+                                  'assets/lottie/Linear_determinate.json',
+                                  height: double.infinity,
+                                  width: double.infinity,
+                                  fit: BoxFit.fill,
                                 ),
                               ),
-                              height: 40,
-                              // width: 20,
-                            )
+                            ],
+                          ),
+                        ),
+                        height: 40,
+                        // width: 20,
+                      )
                           : TextField(
-                              style: TextStyle(
-                                color: Color(0xff697077),
-                                fontSize: 15,
-                              ),
-                              focusNode: focusNode,
-                              controller: messageController,
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.fromLTRB(1, 2, 1, 2),
-                                fillColor: Color(0xFFE6E9EE),
-                                hintText: 'Type a message',
-                                isDense: false,
-                                hintStyle: TextStyle(
-                                  color: Color(0xff697077),
-                                  fontSize: 15,
+                        style: TextStyle(
+                          color: Color(0xff697077),
+                          fontSize: 15,
+                        ),
+                        focusNode: focusNode,
+                        controller: messageController,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(1, 2, 1, 2),
+                          fillColor: Color(0xFFE6E9EE),
+                          hintText: 'Type a message',
+                          isDense: false,
+                          hintStyle: TextStyle(
+                            color: Color(0xff697077),
+                            fontSize: 15,
+                          ),
+                          prefixIcon: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isTyping = !isTyping;
+                              });
+                            },
+                            child: IconButton(
+                                onPressed: () {
+                                  context
+                                      .read<ChatNotifier>()
+                                      .cameraUploadImageChat(
+                                      widget.model.uid);
+                                },
+                                constraints: BoxConstraints(
+                                  maxWidth: 30,
                                 ),
-                                prefixIcon: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      isTyping = !isTyping;
-                                    });
-                                  },
-                                  child: IconButton(
-                                      onPressed: () {
-                                        context
-                                            .read<ChatNotifier>()
-                                            .cameraUploadImageChat(
-                                                widget.model.uid);
-                                      },
-                                      constraints: BoxConstraints(
-                                        maxWidth: 30,
-                                      ),
-                                      icon: SvgPicture.asset(
-                                          'assets/camera.svg')),
-                                ),
-                                suffixIcon: FittedBox(
-                                  child: Row(
-                                    children: [
-                                      IconButton(
-                                        onPressed: () {},
-                                        constraints: const BoxConstraints(
-                                          maxWidth: 30,
-                                        ),
-                                        icon: Icon(
-                                          Iconsax.dollar_circle,
-                                          size: 21,
-                                          color: secondaryColor,
-                                        ),
-                                      ),
-                                      IconButton(
-                                        onPressed: () {
-                                          context
-                                              .read<ChatNotifier>()
-                                              .pickUploadImageChat(
-                                                  widget.model.uid, context);
-                                        },
-                                        constraints: const BoxConstraints(
-                                          maxWidth: 30,
-                                        ),
-                                        icon: Icon(
-                                          Iconsax.gallery,
-                                          size: 20,
-                                          color: secondaryColor,
-                                        ),
-                                      ),
-                                      SizedBox(width: 8),
-                                    ],
+                                icon: SvgPicture.asset(
+                                    'assets/camera.svg')),
+                          ),
+                          suffixIcon: FittedBox(
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {},
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 30,
+                                  ),
+                                  icon: Icon(
+                                    Iconsax.dollar_circle,
+                                    size: 21,
+                                    color: secondaryColor,
                                   ),
                                 ),
-                                filled: true,
-                                enabledBorder: OutlineInputBorder(
-                                  // borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide.none,
+                                IconButton(
+                                  onPressed: () {
+                                    context
+                                        .read<ChatNotifier>()
+                                        .pickUploadImageChat(
+                                        widget.model.uid, context);
+                                  },
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 30,
+                                  ),
+                                  icon: Icon(
+                                    Iconsax.gallery,
+                                    size: 20,
+                                    color: secondaryColor,
+                                  ),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  // borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
-                              // expands: true,
-                              keyboardType: TextInputType.multiline,
-                              minLines: 1,
-                              maxLines: 5,
+                                SizedBox(width: 8),
+                              ],
                             ),
+                          ),
+                          filled: true,
+                          enabledBorder: OutlineInputBorder(
+                            // borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            // borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        // expands: true,
+                        keyboardType: TextInputType.multiline,
+                        minLines: 1,
+                        maxLines: 5,
+                      ),
                     ],
                   ),
                 ),
@@ -822,79 +794,79 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                 ),
                 context.watch<ChatNotifier>().isRecording
                     ? SizedBox(
-                        height: 5,
-                        width: 40,
-                      )
+                  height: 5,
+                  width: 40,
+                )
                     : SizedBox(),
                 messageController.text.isEmpty
                     ? RecordButton(
-                        controller: controller,
-                        model: widget.model,
-                      )
+                  controller: controller,
+                  model: widget.model,
+                )
                     : IconButton(
-                        onPressed: () async {
-                          context
-                              .read<ChatNotifier>()
-                              .storeText(messageController.text.trim());
-                          messageController.clear();
+                  onPressed: () async {
+                    context
+                        .read<ChatNotifier>()
+                        .storeText(messageController.text.trim());
+                    messageController.clear();
 
-                          ChatMethods().storeMessages(
-                            context: context,
-                            text: context.read<ChatNotifier>().chatText,
-                            userID: userM['uid'],
-                            receiverID: widget.model.uid,
-                            searchKeywords:
-                                createKeywords(widget.model.userName),
-                            img: widget.model.image,
-                            displayName: widget.model.name,
-                            userName: widget.model.userName,
-                            key: enc.Key.fromLength(32),
-                            iv: enc.IV.fromLength(16),
-                            swiped: swiped,
-                            replyMessage: replyMessage,
-                            replyName: dName,
-                            replyUsername: uName,
-                          );
-                          sendNotification(
-                            tokenIdList: [player],
-                            heading: userM['displayName'],
-                            contents: context.read<ChatNotifier>().chatText,
-                          );
-                          // // var status = await OneSignal.shared.getDeviceState();
-                          // //
-                          // // var playerId = status.userId;
-                          // await OneSignal.shared
-                          //     .postNotification(OSCreateNotification(
-                          //   playerIds: [player],
-                          //   content: context.read<ChatNotifier>().chatText,
-                          //   heading: 'Beepo',
-                          //   subtitle: userM['displayName'],
-                          //   sendAfter: DateTime.now(),
-                          //   buttons: [
-                          //     OSActionButton(text: "test1", id: "id1"),
-                          //     OSActionButton(text: "test2", id: "id2"),
-                          //   ],
-                          //   androidSound:
-                          //       'assets/mixkit-interface-hint-notification-911.wav',
-                          //   androidSmallIcon: 'assets/beepo_img.png',
-                          //
-                          // )
-                          // );
-                          context.read<ChatNotifier>().clearText();
+                    ChatMethods().storeMessages(
+                      context: context,
+                      text: context.read<ChatNotifier>().chatText,
+                      userID: userM['uid'],
+                      receiverID: widget.model.uid,
+                      searchKeywords:
+                      createKeywords(widget.model.userName),
+                      img: widget.model.image,
+                      displayName: widget.model.name,
+                      userName: widget.model.userName,
+                      key: enc.Key.fromLength(32),
+                      iv: enc.IV.fromLength(16),
+                      swiped: swiped,
+                      replyMessage: replyMessage,
+                      replyName: dName,
+                      replyUsername: uName,
+                    );
+                    sendNotification(
+                      tokenIdList: [player],
+                      heading: userM['displayName'],
+                      contents: context.read<ChatNotifier>().chatText,
+                    );
+                    // // var status = await OneSignal.shared.getDeviceState();
+                    // //
+                    // // var playerId = status.userId;
+                    // await OneSignal.shared
+                    //     .postNotification(OSCreateNotification(
+                    //   playerIds: [player],
+                    //   content: context.read<ChatNotifier>().chatText,
+                    //   heading: 'Beepo',
+                    //   subtitle: userM['displayName'],
+                    //   sendAfter: DateTime.now(),
+                    //   buttons: [
+                    //     OSActionButton(text: "test1", id: "id1"),
+                    //     OSActionButton(text: "test2", id: "id2"),
+                    //   ],
+                    //   androidSound:
+                    //       'assets/mixkit-interface-hint-notification-911.wav',
+                    //   androidSmallIcon: 'assets/beepo_img.png',
+                    //
+                    // )
+                    // );
+                    context.read<ChatNotifier>().clearText();
 
-                          setState(() {
-                            isReplying = false;
-                            replyMessage = '';
-                          });
-                          // EncryptData.encryptFernet(context.read<ChatNotifier>().chatText);
-                          // OneSignal.shared.
-                        },
-                        icon: const Icon(
-                          Icons.send,
-                          color: secondaryColor,
-                          size: 35,
-                        ),
-                      ),
+                    setState(() {
+                      isReplying = false;
+                      replyMessage = '';
+                    });
+                    // EncryptData.encryptFernet(context.read<ChatNotifier>().chatText);
+                    // OneSignal.shared.
+                  },
+                  icon: const Icon(
+                    Icons.send,
+                    color: secondaryColor,
+                    size: 35,
+                  ),
+                ),
               ],
             ),
           ),
@@ -904,7 +876,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
   }
 
   Widget buildReply(String message, String username, String displayName,
-          bool isReplying) =>
+      bool isReplying) =>
       Container(
         decoration: BoxDecoration(
           color: Color(0xff697077).withOpacity(0.2),

@@ -87,6 +87,15 @@ dependencies:
   xmtp: ^0.0.1-development.1
   swipe_to: ^1.0.2
   wechat_assets_picker:
+  web3dart: ^2.5.1
+  blockies_ethereum: ^0.0.2
+  mobx: ^2.1.3
+  flutter_mobx: ^2.0.6+5
+  mobx_codegen: ^2.1.1
+  walletconnect_dart: ^0.0.11
+  flutter_secure_storage: ^7.0.1
+
+  injectable: ^2.1.0
 
 
 
