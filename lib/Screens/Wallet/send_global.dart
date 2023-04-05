@@ -69,7 +69,7 @@ class _SendGlobalState extends State<SendGlobal> {
             ),
             SizedBox(height: 3),
             Text(
-              "Choose and asset",
+              "Choose an asset",
               style: TextStyle(
                 color: Color(0xccffffff),
                 fontSize: 14,

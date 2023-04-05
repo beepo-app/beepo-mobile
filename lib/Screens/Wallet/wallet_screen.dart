@@ -217,6 +217,7 @@ class _WalletScreenState extends State<WalletScreen> {
                               WalletIcon(
                                 text: 'Send',
                                 icon: Icons.send_outlined,
+                                angle: 5.7,
                                 onTap: () {
                                   Get.to(SendGlobal(
                                     wallets: wallets,
@@ -371,20 +372,25 @@ class WalletIcon extends StatelessWidget {
   final String text;
   final IconData icon;
   final VoidCallback onTap;
+  final double angle;
   const WalletIcon({
     Key key,
     this.text,
     this.icon,
     this.onTap,
+    this.angle = 0,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        IconButton(
-          onPressed: onTap,
-          icon: Icon(icon, size: 30, color: Colors.white),
+        Transform.rotate(
+          angle: angle,
+          child: IconButton(
+            onPressed: onTap,
+            icon: Icon(icon, size: 30, color: Colors.white),
+          ),
         ),
         const SizedBox(height: 5),
         Text(
