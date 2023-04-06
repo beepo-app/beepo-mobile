@@ -52,7 +52,8 @@ class _Store2State extends State<Store2> {
               width: double.infinity,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
+                      bottomLeft: Radius.circular(20),
+                      bottomRight: Radius.circular(20)),
                   color: secondaryColor),
             ),
             Expanded(
@@ -226,7 +227,7 @@ class _Store2State extends State<Store2> {
                     ),
                     SizedBox(height: 25),
                     Center(
-                      child: FilledButton(
+                      child: CustomFilledButton(
                         color: secondaryColor,
                         text: "Add item",
                         onPressed: () => Get.to(ChatToken()),

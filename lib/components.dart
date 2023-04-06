@@ -29,12 +29,13 @@ import 'Screens/moments/add_story.dart';
 import 'Screens/moments/bubble_stories.dart';
 import 'Utils/styles.dart';
 
-class FilledButton extends StatelessWidget {
+class CustomFilledButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final Color color;
 
-  FilledButton({@required this.text, this.color, @required this.onPressed});
+  CustomFilledButton(
+      {@required this.text, this.color, @required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

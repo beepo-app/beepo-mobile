@@ -167,7 +167,7 @@ class _SendTokenState extends State<SendToken> {
               // ),
 
               const SizedBox(height: 70),
-              FilledButton(
+              CustomFilledButton(
                 color: secondaryColor,
                 text: "Continue",
                 onPressed: () {
