@@ -322,12 +322,11 @@ class _MyAppState extends State<MyApp> {
         title: 'Beepo',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primarySwatch: Colors.blue),
-        home: TransferPage(),
-        // isLoggedIn
-        //     ? isLocked
-        //         ? LockScreen()
-        //         : BottomNavHome()
-        //     : Onboarding(),
+        home: isLoggedIn
+            ? isLocked
+                ? LockScreen()
+                : BottomNavHome()
+            : Onboarding(),
       ),
     );
   }

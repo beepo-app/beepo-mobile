@@ -117,20 +117,13 @@ class ChatNotifier extends ChangeNotifier {
   }
 
   pickUploadImageChat(String id, BuildContext context) async {
-
-
     List<AssetEntity> image;
     // Reference reg = FirebaseStorage.instance.ref();
     try {
       image = await AssetPicker.pickAssets(
         context,
         pickerConfig: AssetPickerConfig(
-          maxAssets: 1,
-          requestType: RequestType.all,
-          selectedAssets: [
-
-          ]
-        ),
+            maxAssets: 1, requestType: RequestType.all, selectedAssets: []),
       );
 
       ref = FirebaseStorage.instance.ref().child('image.png');
