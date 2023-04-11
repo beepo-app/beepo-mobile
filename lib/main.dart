@@ -20,7 +20,6 @@ import 'Screens/moments/story_upload_provider.dart';
 import 'bottom_nav.dart';
 import 'Screens/Messaging/calls/calll_notify.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -230,6 +229,7 @@ class _MyAppState extends State<MyApp> {
         await OneSignal.shared.userProvidedPrivacyConsent();
     print("USER PROVIDED PRIVACY CONSENT: $userProvidedPrivacyConsent");
   }
+
   var uuid = Uuid();
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -241,8 +241,13 @@ class _MyAppState extends State<MyApp> {
     Calls().receiveIncomingCall(
       uid: uuid.v4(),
       name: message.data['name'],
-      model: UserModel(name: message.data['name'], uid: message.data['uid'], userName: message.data['userName'], image: message.data['image'],),
-      hasVideo: message.data['hasVideo'] == 'true'? true: false,
+      model: UserModel(
+        name: message.data['name'],
+        uid: message.data['uid'],
+        userName: message.data['userName'],
+        image: message.data['image'],
+      ),
+      hasVideo: message.data['hasVideo'] == 'true' ? true : false,
       userName: message.data['userName'],
       image: message.data['image'],
       channel: message.data['channelName'],
@@ -269,31 +274,33 @@ class _MyAppState extends State<MyApp> {
       });
     });
 
-
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print(
           'Message title: ${message.notification?.title}, body: ${message.notification?.body}, data: ${message.data}');
       // _currentUuid = uuid.v4();
       Calls().receiveIncomingCall(
-        uid: uuid.v4(),
-        name: message.data['name'],
-        model: UserModel(name: message.data['name'], uid: message.data['uid'], userName: message.data['userName'], image: message.data['image'],),
-        hasVideo: message.data['hasVideo'] == 'true'? true: false,
-        userName: message.data['userName'],
-        image: message.data['image'],
-        channel: message.data['channelName']
-
-      );
+          uid: uuid.v4(),
+          name: message.data['name'],
+          model: UserModel(
+            name: message.data['name'],
+            uid: message.data['uid'],
+            userName: message.data['userName'],
+            image: message.data['image'],
+          ),
+          hasVideo: message.data['hasVideo'] == 'true' ? true : false,
+          userName: message.data['userName'],
+          image: message.data['image'],
+          channel: message.data['channelName']);
     });
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
+
   @override
   void initState() {
     initPlatformState();
-initFirebase(true);
+    initFirebase(true);
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
