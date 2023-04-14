@@ -27,7 +27,7 @@ class SignUp extends StatelessWidget {
                 width: 252,
               ),
               const Spacer(),
-              FilledButton(
+              CustomFilledButton(
                 text: 'Create Account',
                 onPressed: () => Get.to( CreateAccount()),
               ),

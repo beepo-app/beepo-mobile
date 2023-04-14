@@ -90,7 +90,7 @@ class _VerifyCodeState extends State<VerifyCode> {
               ),
             ),
             const Spacer(),
-            FilledButton(
+            CustomFilledButton(
               text: 'Continue',
               onPressed: () async {
                 String pin = Hive.box('beepo').get('PIN');

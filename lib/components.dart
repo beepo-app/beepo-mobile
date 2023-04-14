@@ -7,7 +7,6 @@ import 'package:beepo/Screens/moments/story_download_provider.dart';
 import 'package:beepo/Screens/moments/story_view.dart';
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
-import 'package:beepo/xmtp/screens/login/login_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,15 +25,16 @@ import 'Screens/Browser/browser_page.dart';
 import 'Screens/Messaging/groupMessages.dart';
 import 'Screens/Messaging/myMessages.dart';
 import 'Screens/Wallet/token_screen.dart';
+import 'Screens/moments/add_story.dart';
 import 'Screens/moments/bubble_stories.dart';
 import 'Utils/styles.dart';
 
-class FilledButton extends StatelessWidget {
+class CustomFilledButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final Color color;
 
-  FilledButton({@required this.text, this.color, @required this.onPressed});
+  CustomFilledButton({@required this.text, this.color, @required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -174,11 +174,12 @@ class _ChatTabState extends State<ChatTab> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LoginScreen(),
-                    // AddStory(
-                    // camera1: firstCamera,
-                    // camera2: secondCamera,
-                    // ),
+                    builder: (context) =>
+                        // LoginScreen(),
+                    AddStory(
+                    camera1: firstCamera,
+                    camera2: secondCamera,
+                    ),
                   ),
                 );
               },

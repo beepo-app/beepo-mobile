@@ -135,7 +135,7 @@ class _ChatTokenState extends State<ChatToken> {
                         ),
                       ),
                       const SizedBox(height: 130),
-                      FilledButton(
+                      CustomFilledButton(
                         text: 'Send',
                         color: secondaryColor,
                         onPressed: () => Get.to(RequestToken()),

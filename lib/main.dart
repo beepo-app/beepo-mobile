@@ -2,9 +2,6 @@
 
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
-import 'package:beepo/xmtp/data/xmtp/session.dart';
-import 'package:beepo/xmtp/di/injection.dart';
-import 'package:beepo/xmtp/domain/repository/account_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -32,11 +29,11 @@ void main() async {
       // options: DefaultF
       // options: DefaultFirebaseOptions.currentPlatform,
       );
-  configureDependencies();
+  // configureDependencies();
 
   await Hive.initFlutter();
   await Hive.openBox('beepo');
-  var session = getIt<Session>();
+  // var session = getIt<Session>();
   Map userM = Hive.box('beepo').get('userData');
 
   // var accountRepository = getIt<AccountRepository>();
@@ -44,7 +41,7 @@ void main() async {
   var privateKey = userM['privateKey'];
   if (privateKey != null) {
     var wallet = EthPrivateKey.fromHex(privateKey);
-    await session.initSession(wallet);
+    // await session.initSession(wallet);
   }
 
   runApp(MyApp());
