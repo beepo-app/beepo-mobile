@@ -36,13 +36,6 @@ void main() async {
   // var session = getIt<Session>();
   Map userM = Hive.box('beepo').get('userData');
 
-  // var accountRepository = getIt<AccountRepository>();
-
-  var privateKey = userM['privateKey'];
-  if (privateKey != null) {
-    var wallet = EthPrivateKey.fromHex(privateKey);
-    // await session.initSession(wallet);
-  }
 
   runApp(MyApp());
 }
