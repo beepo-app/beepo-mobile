@@ -967,6 +967,7 @@ class WalletListTile extends StatelessWidget {
   final String subtext;
   final String amount;
   final Wallet wallet;
+  final String fiatSymbol;
   final CoinMarketData coinMarketData;
   final String fiatValue;
 
@@ -978,6 +979,7 @@ class WalletListTile extends StatelessWidget {
     this.coinMarketData,
     this.wallet,
     this.fiatValue,
+    this.fiatSymbol,
   });
 
   @override
@@ -1030,7 +1032,7 @@ class WalletListTile extends StatelessWidget {
             ),
             const SizedBox(width: 5),
             Text(
-              '\$$fiatValue',
+             fiatSymbol  +fiatValue,
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 14,
@@ -1048,7 +1050,7 @@ class WalletListTile extends StatelessWidget {
                     '\$$currentMarketPrice',
                     style: const TextStyle(
                       color: Color(0xcc000000),
-                      fontSize: 13,
+                      fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -1057,18 +1059,19 @@ class WalletListTile extends StatelessWidget {
                     (isPositive ? '+' : '') + '$change24h%',
                     style: TextStyle(
                       color: isPositive ? Colors.green : Colors.red,
-                      fontSize: 13,
+                      fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
               ),
             ),
+            SizedBox(width: 10),
             Text(
               amount,
               style: const TextStyle(
                 color: Color(0xcc000000),
-                fontSize: 14,
+                fontSize: 13,
               ),
             )
           ],
