@@ -47,6 +47,7 @@ class _GroupDmState extends State<GroupDm> {
     });
   }
 
+  var selectedValue = "";
   @override
   Widget build(BuildContext context) {
     return KeyboardDismisser(
@@ -154,10 +155,53 @@ class _GroupDmState extends State<GroupDm> {
                                   ),
                                 ),
                                 Spacer(),
-                                Icon(
-                                  Icons.more_vert_outlined,
+                                // Icon(
+                                //   Icons.more_vert_outlined,
+                                //   color: Colors.white,
+                                //   size: 23,
+                                // ),
+                                // SizedBox(width: 8),
+                                PopupMenuButton(
+                                  icon: Icon(Icons.more_vert,
+                                      color: Colors.white),
                                   color: Colors.white,
-                                  size: 23,
+                                  onSelected: (value) {
+                                    setState(() {
+                                      selectedValue = value.toString();
+                                    });
+                                    print(value);
+                                    Navigator.pushNamed(
+                                        context, value.toString());
+                                  },
+                                  itemBuilder: (BuildContext context) {
+                                    return [
+                                      PopupMenuItem(
+                                        child: Text("Group info"),
+                                        value: '/group info',
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  GroupProfile(
+                                                image: 'assets/group.jpg',
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Leave group"),
+                                        value: '/leave group',
+                                        onTap: () {},
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Mute"),
+                                        value: '/notificaton',
+                                        onTap: () {},
+                                      )
+                                    ];
+                                  },
                                 ),
                                 SizedBox(width: 8),
                               ],
@@ -180,7 +224,8 @@ class _GroupDmState extends State<GroupDm> {
                             .collection('groupMessages')
                             .orderBy("created", descending: true)
                             .snapshots(),
-                        builder: (context, AsyncSnapshot <QuerySnapshot>snapshot) {
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (snapshot.hasData) {
                             return ListView.builder(
                               reverse: true,
@@ -230,9 +275,15 @@ class _GroupDmState extends State<GroupDm> {
                                           userName: snapshot.data.docs[index]
                                               ["userName"],
                                         ),
-                                        sameUser: snapshot.data.docs[index]["sender"] != snapshot.data.docs.last["sender"]? (snapshot.data.docs[index + 1]
-                                                ["sender"] ==
-                                            snapshot.data.docs[index]["sender"]) : false,
+                                        sameUser: snapshot.data.docs[index]
+                                                    ["sender"] !=
+                                                snapshot
+                                                    .data.docs.last["sender"]
+                                            ? (snapshot.data.docs[index + 1]
+                                                    ["sender"] ==
+                                                snapshot.data.docs[index]
+                                                    ["sender"])
+                                            : false,
                                       )
                                     else if (snapshot.data.docs[index]
                                             ["type"] ==
@@ -423,14 +474,17 @@ class _GroupDmState extends State<GroupDm> {
                                           ),
                                         ),
                                       ),
-                                    SizedBox(height: 3,),
-                                    // for(var i=index; i< (snapshot.data.docs.length-1); i++)
-                                    if(index != 0)
-                                    if(snapshot.data.docs[index-1]
-                                    ["sender"] !=
-                                        snapshot.data.docs[index]["sender"]) SizedBox(
-                                      height: 14,
+                                    SizedBox(
+                                      height: 3,
                                     ),
+                                    // for(var i=index; i< (snapshot.data.docs.length-1); i++)
+                                    if (index != 0)
+                                      if (snapshot.data.docs[index - 1]
+                                              ["sender"] !=
+                                          snapshot.data.docs[index]["sender"])
+                                        SizedBox(
+                                          height: 14,
+                                        ),
                                   ],
                                 );
                               },
