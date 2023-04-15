@@ -92,97 +92,43 @@ class _GroupDmState extends State<GroupDm> {
                                               BottomNavHome())),
                                 ),
                                 SizedBox(width: 5),
-                                GestureDetector(
-                                  onTap: () {
-                                    // Get.to(UserProfile(
-                                    //   model: UserModel(
-                                    //       uid: widget.model.uid,
-                                    //       name: widget.model.name,
-                                    //       userName: widget.model.userName,
-                                    //       image: widget.model.image,
-                                    //       searchKeywords:
-                                    //       widget.model.searchKeywords),
-                                    // ));
-                                  },
-                                  child: SizedBox(
-                                    height: 37,
-                                    width: 37,
-                                    child: ClipOval(
-                                      child: Image.asset(
-                                        'assets/group.jpg',
-                                        fit: BoxFit.cover,
-                                      ),
+                                SizedBox(
+                                  height: 37,
+                                  width: 37,
+                                  child: ClipOval(
+                                    child: Image.asset(
+                                      'assets/group.jpg',
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
-                                  // ClipRRect(
-                                  //   borderRadius: BorderRadius.circular(19),
-                                  //   child: SizedBox(
-                                  //     height: 35,
-                                  //     width: 35,
-                                  //     child: Image.asset('assets/group.jpg'),
-                                  //   ),
-                                  // ),
                                 ),
                                 SizedBox(width: 8),
-                                GestureDetector(
-                                  onTap: () {
-                                    // Get.to(UserProfile(
-                                    //   model: UserModel(
-                                    //       uid: widget.model.uid,
-                                    //       name: widget.model.name,
-                                    //       userName: widget.model.userName,
-                                    //       image: widget.model.image,
-                                    //       searchKeywords:
-                                    //       widget.model.searchKeywords),
-                                    // ));
-                                  },
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: const [
-                                      SizedBox(height: 5),
-                                      Text(
-                                        'Beepo Public Chat',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: const [
+                                    SizedBox(height: 5),
+                                    Text(
+                                      'Beepo Public Chat',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
                                       ),
-                                      SizedBox(height: 3),
-                                      Text(
-                                        '12,580 members',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w100,
-                                        ),
+                                    ),
+                                    SizedBox(height: 3),
+                                    Text(
+                                      '12,580 members',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w100,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                // SizedBox(width: 6),
-                                // Container(
-                                //   width: 4,
-                                //   height: 4,
-                                //   decoration: BoxDecoration(
-                                //     shape: BoxShape.circle,
-                                //     color: Color(0xff08aa48),
-                                //   ),
-                                // ),
+
                                 Spacer(),
-                                // SizedBox(
-                                //     height: 23,
-                                //     width: 23,
-                                //     child: SvgPicture.asset(
-                                //         'assets/video_call.svg')),
-                                // SizedBox(width: 17),
-                                // Icon(
-                                //   Icons.call,
-                                //   size: 23,
-                                //   color: Colors.white,
-                                // ),
-                                // SizedBox(width: 16),
                                 Icon(
                                   Icons.more_vert_outlined,
                                   color: Colors.white,
@@ -194,23 +140,7 @@ class _GroupDmState extends State<GroupDm> {
                           ],
                         ),
                       ),
-                      // SizedBox(height: 5),
-                      // Container(
-                      //   width: MediaQuery.of(context).size.width,
-                      //   height: 20,
-                      //   color: Color(0xff000000).withOpacity(0.1),
-                      //   child: Center(
-                      //     child: Text(
-                      //       'Beepo General Group',
-                      //       style: TextStyle(
-                      //         color: secondaryColor,
-                      //         fontFamily: 'SignikaNegative',
-                      //         fontWeight: FontWeight.w300,
-                      //         // fontStyle: FontStyle.italic
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
+
                     ],
                   ),
                 ),
@@ -221,7 +151,6 @@ class _GroupDmState extends State<GroupDm> {
                       right: 20,
                     ),
                     color: Colors.white,
-                    //Color(0xffECE5DD),
                     child: StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('groupMessages')

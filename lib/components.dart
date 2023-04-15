@@ -13,6 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:link_preview_generator/link_preview_generator.dart';
 import 'package:linkwell/linkwell.dart';
 import 'package:provider/provider.dart';
 
@@ -34,7 +35,8 @@ class CustomFilledButton extends StatelessWidget {
   final VoidCallback onPressed;
   final Color color;
 
-  CustomFilledButton({@required this.text, this.color, @required this.onPressed});
+  CustomFilledButton(
+      {@required this.text, this.color, @required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -176,9 +178,9 @@ class _ChatTabState extends State<ChatTab> {
                   MaterialPageRoute(
                     builder: (context) =>
                         // LoginScreen(),
-                    AddStory(
-                    camera1: firstCamera,
-                    camera2: secondCamera,
+                        AddStory(
+                      camera1: firstCamera,
+                      camera2: secondCamera,
                     ),
                   ),
                 );
@@ -561,7 +563,7 @@ class _CallTabState extends State<CallTab> {
 class MessageReply extends StatelessWidget {
   final bool isMe;
   final String text;
-  final String time;
+  final Timestamp time;
   final bool onSwipedMessage;
   final String replyMessage;
   final String replyName;
@@ -771,6 +773,31 @@ class Group extends StatelessWidget {
     } else {
       ampm = 'am';
     }
+
+    String convertStringToLink(String textData) {
+      final urlRegExp = RegExp(
+          r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
+      final urlMatches = urlRegExp.allMatches(textData);
+      List<String> urls = urlMatches
+          .map((urlMatch) => textData.substring(urlMatch.start, urlMatch.end))
+          .toList();
+      List linksString = [];
+      for (var linkText in urls) {
+        linksString.add(linkText);
+      }
+
+      if (linksString.isNotEmpty) {
+        for (var linkTextData in linksString) {
+          textData =
+              textData.replaceAll(linkTextData, 'https://' + linkTextData);
+        }
+      }
+      if (linksString.isEmpty) {
+        return null;
+      }
+      return textData;
+    }
+
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Row(
@@ -796,10 +823,8 @@ class Group extends StatelessWidget {
                   },
                   child: CircleAvatar(
                     radius: 20,
-                    backgroundImage: CachedNetworkImageProvider(user.image ==
-                            null
-                        ? 'https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg'
-                        : user.image),
+                    backgroundImage: CachedNetworkImageProvider(user.image ??
+                        'https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg'),
                   ),
                 ),
               ),
@@ -861,9 +886,16 @@ class Group extends StatelessWidget {
                         ],
                       ),
                   SizedBox(height: 2),
-                  RichText(
-                    text: TextSpan(
-                      text: text,
+                  if (convertStringToLink(text) != null)
+                    LinkPreviewGenerator(
+                      link: convertStringToLink(text),
+                      linkPreviewStyle: LinkPreviewStyle.small,
+                      graphicFit: BoxFit.contain,
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: LinkWell(
+                      text,
                       style: isMe
                           ? TextStyle(
                               color: Colors.white,
@@ -876,19 +908,6 @@ class Group extends StatelessWidget {
                             ),
                     ),
                   ),
-                  // Text(
-                  //   text,
-                  //   style: isMe
-                  //       ? TextStyle(
-                  //           color: Colors.white,
-                  //           fontSize: 11.5,
-                  //         )
-                  //       : TextStyle(
-                  //           color: Colors.black,
-                  //           //Colors.black,
-                  //           fontSize: 11.5,
-                  //         ),
-                  // ),
                   SizedBox(height: 5),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -1032,7 +1051,7 @@ class WalletListTile extends StatelessWidget {
             ),
             const SizedBox(width: 5),
             Text(
-             fiatSymbol  +fiatValue,
+              fiatSymbol + fiatValue,
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 14,
