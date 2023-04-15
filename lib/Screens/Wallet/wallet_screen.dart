@@ -1,8 +1,12 @@
 import 'dart:developer';
 
 import 'package:beepo/Models/market_data.dart';
+import 'package:beepo/Screens/Wallet/send_global.dart';
 import 'package:beepo/Service/wallets.dart';
 import 'package:flutter/material.dart';
+import 'package:beepo/Screens/Wallet/receive_token.dart';
+import 'package:beepo/Screens/Wallet/token_screen.dart';
+import 'package:get/get.dart';
 
 import '../../Models/wallet.dart';
 import '../../Utils/styles.dart';
@@ -125,77 +129,78 @@ class _WalletScreenState extends State<WalletScreen> {
                                 color: Colors.white,
                               ),
                             ),
+                            const SizedBox(height: 43),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [],
+                              children: [
+                                const SizedBox(),
+                                Column(
+                                  children: [
+                                    Transform.rotate(
+                                      angle: 24.5,
+                                      child: IconButton(
+                                        onPressed: () => Get.to(
+                                          SendGlobal(),
+                                        ),
+                                        icon: const Icon(
+                                          Icons.send_outlined,
+                                          size: 30,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 7),
+                                    const Text(
+                                      'Send',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () => Get.to(ReceiveToken()),
+                                      icon: const Icon(
+                                          Icons.file_download_sharp,
+                                          size: 30,
+                                          color: Colors.white),
+                                    ),
+                                    const SizedBox(height: 7),
+                                    const Text(
+                                      'Receive',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () =>
+                                          Get.to(const WalletToken()),
+                                      icon: const Icon(
+                                          Icons.shopping_cart_outlined,
+                                          size: 30,
+                                          color: Colors.white),
+                                    ),
+                                    const SizedBox(height: 7),
+                                    const Text(
+                                      'Buy',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(),
+                              ],
                             ),
-                            // const SizedBox(height: 43),
-                            // Row(
-                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            //   children: [
-                            //     const SizedBox(),
-                            //     Column(
-                            //       children: [
-                            //         Transform.rotate(
-                            //           angle: 24.5,
-                            //           child: IconButton(
-                            //             onPressed: () => Get.to(
-                            //               SendGlobal(),
-                            //             ),
-                            //             icon: const Icon(
-                            //               Icons.send_outlined,
-                            //               size: 30,
-                            //               color: Colors.white,
-                            //             ),
-                            //           ),
-                            //         ),
-                            //         const SizedBox(height: 7),
-                            //         const Text(
-                            //           'Send',
-                            //           style: TextStyle(
-                            //               fontSize: 18,
-                            //               fontWeight: FontWeight.bold,
-                            //               color: Colors.white),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     Column(
-                            //       children: [
-                            //         IconButton(
-                            //           onPressed: () => Get.to(ReceiveToken()),
-                            //           icon: const Icon(Icons.file_download_sharp,
-                            //               size: 30, color: Colors.white),
-                            //         ),
-                            //         const SizedBox(height: 7),
-                            //         const Text(
-                            //           'Receive',
-                            //           style: TextStyle(
-                            //               fontSize: 18,
-                            //               fontWeight: FontWeight.bold,
-                            //               color: Colors.white),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     Column(
-                            //       children: [
-                            //         IconButton(
-                            //           onPressed: () => Get.to(const WalletToken()),
-                            //           icon: const Icon(Icons.shopping_cart_outlined,
-                            //               size: 30, color: Colors.white),
-                            //         ),
-                            //         const SizedBox(height: 7),
-                            //         const Text(
-                            //           'Buy',
-                            //           style: TextStyle(
-                            //               fontSize: 18,
-                            //               fontWeight: FontWeight.bold,
-                            //               color: Colors.white),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     const SizedBox(),
-                            //   ],
-                            // ),
                           ],
                         ),
                       ),

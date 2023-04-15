@@ -49,7 +49,7 @@ class Wallet {
         ticker: json["ticker"],
         description: json["description"],
         chainId: json["chainId"],
-        name: json["name"],                                                                                         
+        name: json["name"],
         displayName: json["displayName"],
         isTestnet: json["isTestnet"],
         derivationPath: json["derivationPath"],
