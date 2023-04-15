@@ -248,7 +248,6 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    // initFirebase(true);
     controller = AnimationController(
       vsync: this,
       duration: Duration(microseconds: 100000),

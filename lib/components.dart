@@ -451,8 +451,6 @@ class _ChatTabState extends State<ChatTab> {
                         ],
                       ),
                     ),
-
-                    //),
                   ],
                 ),
               ),
@@ -573,10 +571,10 @@ class MessageReply extends StatelessWidget {
     @required this.isMe,
     @required this.text,
     @required this.time,
-    this.onSwipedMessage,
-    this.replyMessage,
-    this.replyName,
-    this.replyUsername,
+    @required this.onSwipedMessage,
+    @required this.replyMessage,
+    @required this.replyName,
+    @required this.replyUsername,
   });
 
   Widget buildReply(String message, String username, String displayName) =>
@@ -607,14 +605,6 @@ class MessageReply extends StatelessWidget {
                     color: primaryColor,
                   ),
                 ),
-                // Text(
-                //   '@${username}',
-                //   style: TextStyle(
-                //     fontSize: 12,
-                //     fontWeight: FontWeight.w400,
-                //     color: Color(0xffc82513),
-                //   ),
-                // ),
               ],
             ),
             SizedBox(
@@ -702,7 +692,6 @@ class MessageReply extends StatelessWidget {
               children: [
                 Text(
                   '',
-                  // hour.toString() + ":" + min.toString() + ampm,
                   style: isMe
                       ? TextStyle(
                           color: Colors.white,
@@ -742,6 +731,10 @@ class Group extends StatelessWidget {
   final Timestamp time;
   final UserModel user;
   final bool sameUser;
+  final bool onSwipedMessage;
+  final String replyMessage;
+  final String replyName;
+  final String replyUsername;
 
   const Group({
     Key key,
@@ -750,6 +743,10 @@ class Group extends StatelessWidget {
     @required this.time,
     this.user,
     @required this.sameUser,
+    @required this.onSwipedMessage,
+    @required this.replyMessage,
+    @required this.replyName,
+    @required this.replyUsername,
   }) : super(key: key);
 
   @override
@@ -773,6 +770,50 @@ class Group extends StatelessWidget {
     } else {
       ampm = 'am';
     }
+    Widget buildReply(String message, String username, String displayName) =>
+        Container(
+          decoration: BoxDecoration(
+            color: isMe
+                ? Color(0xffffffff).withOpacity(0.3)
+                : Color(0xff697077).withOpacity(0.2),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          padding: EdgeInsets.only(
+            left: 14,
+            right: 10,
+            top: 5,
+            bottom: 5,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    displayName,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Text(
+                message,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                ),
+              )
+            ],
+          ),
+        );
 
     String convertStringToLink(String textData) {
       final urlRegExp = RegExp(
@@ -886,6 +927,8 @@ class Group extends StatelessWidget {
                         ],
                       ),
                   SizedBox(height: 2),
+                  if (onSwipedMessage)
+                    buildReply(replyMessage, replyUsername, replyName),
                   if (convertStringToLink(text) != null)
                     LinkPreviewGenerator(
                       link: convertStringToLink(text),
