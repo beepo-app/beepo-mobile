@@ -125,6 +125,10 @@ class _WalletScreenState extends State<WalletScreen> {
                                 color: Colors.white,
                               ),
                             ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [],
+                            ),
                             // const SizedBox(height: 43),
                             // Row(
                             //   mainAxisAlignment: MainAxisAlignment.spaceBetween,

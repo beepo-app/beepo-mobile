@@ -77,7 +77,6 @@ class _ProfileState extends State<Profile> {
                               ),
                       ),
                     ),
-
                     const SizedBox(height: 24),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
