@@ -31,7 +31,7 @@ class Calls {
       nameCaller: name,
       handle: userName,
       type: 1,
-      extra: <String, dynamic>{'userId': '1a2b3c4d'},
+      extra: <String, dynamic>{'userId': uid},
       ios: IOSParams(handleType: 'generic'),
     );
     await FlutterCallkitIncoming.startCall(params);
@@ -136,8 +136,8 @@ class Calls {
       textMissedCall: 'Missed call',
       // textCallback: 'Call back',
       duration: 30000,
-      extra: <String, dynamic>{'userId': '1a2b3c4d'},
-      headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
+      extra: <String, dynamic>{'userId': uid},
+      // headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
       android: const AndroidParams(
           isCustomNotification: true,
           isShowLogo: true,
@@ -148,7 +148,8 @@ class Calls {
           backgroundUrl: 'https://beepoapp.net/images/landing/01.png',
           actionColor: '#4CAF50',
           incomingCallNotificationChannelName: "Incoming Call",
-          missedCallNotificationChannelName: "Missed Call"),
+          missedCallNotificationChannelName: "Missed Call",
+      ),
       ios: IOSParams(
         iconName: 'CallKitLogo',
         handleType: 'generic',

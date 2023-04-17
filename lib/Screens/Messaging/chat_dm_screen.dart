@@ -85,7 +85,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
     });
   }
 
-//One Signal
+//One Signal Notifications
   Future<Response> sendNotification(
       {List<String> tokenIdList, String contents, String heading}) async {
     String _debugLabelString = "";
@@ -138,7 +138,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
         "include_player_ids": tokenIdList,
         //tokenIdList Is the List of All the Token Id to to Whom notification must be sent.
 
-        // android_accent_color reprsent the color of the heading text in the notifiction
+        // android_accent_color reprsent the color of the heading text in the notification
         "android_accent_color": "FFFF9C34",
 
         "small_icon": "ic_launcher",
@@ -159,15 +159,16 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
 
   int _messageCount = 0;
 
+  //Calls
   String constructFCMPayload(String token, bool video) {
     _messageCount++;
     return jsonEncode({
       "to": token,
-      "collapse_key": "New Message",
+      "collapse_key": "Missed Call",
       "priority": "high",
       "notification": {
-        "title": "Title of Your Notification",
-        "body": "Body of Your Notification",
+        "title": "Missed call",
+        "body": "You missed a Call",
       },
       "data": {
         "name": userM['displayName'],
@@ -458,10 +459,10 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                     userName: widget.model.userName,
                                     hasVideo: false,
                                     model: widget.model,
-                                    channel: userM['uid']);
+                                    channel: userM['uid'],);
                                 await sendPushMessage(false);
                                 checkAndNavigationCallingPage(
-                                    false, userM['uid']);
+                                    false, userM['uid'],);
                               },
                               child: Icon(
                                 Icons.call,
