@@ -472,7 +472,8 @@ class _GroupDmState extends State<GroupDm> {
                                               snapshot.data.docs[index]["text"],
                                               snapshot.data.docs[index]
                                                   ["userName"],
-                                              snapshot.data.docs[index]["displayName"],
+                                              snapshot.data.docs[index]
+                                                  ["displayName"],
                                             );
                                           }
 
@@ -682,15 +683,19 @@ class _GroupDmState extends State<GroupDm> {
                                           height: 150,
                                           child: GestureDetector(
                                             onTap: () {
-                                              Navigator.push(context,
-                                                  MaterialPageRoute(
-                                                      builder: (_) {
-                                                return FullScreenImage(
-                                                  imageUrl: snapshot.data
-                                                      .docs[index]["content"],
-                                                  tag: "image",
-                                                );
-                                              }));
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (_) {
+                                                    return FullScreenImage(
+                                                      imageUrl: snapshot
+                                                              .data.docs[index]
+                                                          ["content"],
+                                                      tag: "image",
+                                                    );
+                                                  },
+                                                ),
+                                              );
                                             },
                                             child: ClipRRect(
                                               child: Hero(
@@ -818,9 +823,9 @@ class _GroupDmState extends State<GroupDm> {
                                   },
                                   child: IconButton(
                                       onPressed: () {
-                                        // context
-                                        //     .read<ChatNotifier>()
-                                        //     .cameraUploadImageChat(widget.model.uid);
+                                        context
+                                            .read<ChatNotifier>()
+                                            .cameraUploadImageGroup();
                                       },
                                       constraints: BoxConstraints(
                                         maxWidth: 30,
@@ -844,9 +849,9 @@ class _GroupDmState extends State<GroupDm> {
                                       // ),
                                       IconButton(
                                         onPressed: () {
-                                          // context
-                                          //     .read<ChatNotifier>()
-                                          //     .pickUploadImageChat(widget.model.uid);
+                                          context
+                                              .read<ChatNotifier>()
+                                              .pickUploadImageGroup(context);
                                         },
                                         constraints: const BoxConstraints(
                                           maxWidth: 30,

@@ -200,7 +200,7 @@ class _AddStoryState extends State<AddStory> {
                                           onPressed: () async {
                                             await context
                                                 .read<StoryUploadProvider>()
-                                                .pickImageGallery(context);
+                                                .pickMediaGallery(context);
                                             if (mounted) {
                                               final selectedFile = context
                                                   .read<StoryUploadProvider>()
