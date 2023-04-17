@@ -23,6 +23,8 @@ import 'Models/story_model/storyModel.dart';
 import 'Models/user_model.dart';
 import 'Models/wallet.dart';
 import 'Screens/Browser/browser_page.dart';
+import 'Screens/Messaging/calls/calll_notify.dart';
+import 'Screens/Messaging/calls/calls.dart';
 import 'Screens/Messaging/groupMessages.dart';
 import 'Screens/Messaging/myMessages.dart';
 import 'Screens/Wallet/token_screen.dart';
@@ -484,75 +486,41 @@ class _CallTabState extends State<CallTab> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 17),
       color: Colors.white,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    "Messages",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 19,
-                    ),
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  "Messages",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 19,
                   ),
                 ),
-                Icon(
-                  Icons.search,
-                  color: Color(0xff697077),
-                  size: 20,
-                ),
-                SizedBox(width: 20),
-                Icon(
-                  Icons.more_vert_outlined,
-                  color: Color(0xff697077),
-                  size: 18,
-                ),
-              ],
-            ),
-            const SizedBox(height: 27),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: ClipRRect(
-                borderRadius: BorderRadius.circular(25),
-                child: Image.asset(
-                  'assets/profile2.png',
-                  height: 50,
-                  width: 50,
-                  fit: BoxFit.cover,
-                ),
               ),
-              title: const Text(
-                "Precious ",
-                style: TextStyle(
-                  color: Color.fromRGBO(0, 0, 0, 1),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              subtitle: const Text(
-                "9:13",
-                style: TextStyle(
-                  color: secondaryColor,
-                  //Color(0xff697077),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                ),
-
-                // );
-                // },
-              ),
-              trailing: const Icon(
-                Icons.phone_missed_sharp,
-                color: Colors.red,
+              Icon(
+                Icons.search,
+                color: Color(0xff697077),
                 size: 20,
               ),
+              SizedBox(width: 20),
+              Icon(
+                Icons.more_vert_outlined,
+                color: Color(0xff697077),
+                size: 18,
+              ),
+            ],
+          ),
+          const SizedBox(height: 27),
+          Expanded(
+            child: ListView(
+              children: callLog,
             ),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
