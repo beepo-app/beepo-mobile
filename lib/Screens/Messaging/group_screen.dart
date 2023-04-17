@@ -46,13 +46,19 @@ class _GroupDmState extends State<GroupDm> {
   bool swiped = false;
   List<String> players = [];
 
-  Future getDocs() async {
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection("OneSignal").get();
-    for (int i = 0; i < querySnapshot.docs.length; i++) {
-      var a = querySnapshot.docs[i];
-      players.add(a.toString());
-    }
+  getDocs() async {
+    StreamBuilder(stream: FirebaseFirestore.instance.collection("OneSignal").snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+      if(snapshot.hasData){
+        for(var item in snapshot.data.docs){
+          setState(() {
+            players.add(item['playerId']);
+          });
+        }
+      }
+          return SizedBox();
+        }
+    );
   }
 
   // var isReplying = replyMessage != '';
