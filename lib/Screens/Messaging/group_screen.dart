@@ -471,8 +471,8 @@ class _GroupDmState extends State<GroupDm> {
                                             replyToMessage(
                                               snapshot.data.docs[index]["text"],
                                               snapshot.data.docs[index]
-                                                  ["username"],
-                                              snapshot.data.docs[index]["name"],
+                                                  ["userName"],
+                                              snapshot.data.docs[index]["displayName"],
                                             );
                                           }
 
@@ -802,6 +802,7 @@ class _GroupDmState extends State<GroupDm> {
                                 fontSize: 15,
                               ),
                               controller: messageController,
+                              focusNode: focusNode,
                               decoration: InputDecoration(
                                 contentPadding: EdgeInsets.fromLTRB(1, 0, 1, 0),
                                 fillColor: Color(0xFFE6E9EE),
@@ -937,6 +938,11 @@ class _GroupDmState extends State<GroupDm> {
                             swiped: swiped,
                           );
                           context.read<ChatNotifier>().clearText();
+
+                          setState(() {
+                            isReplying = false;
+                            replyMessage = '';
+                          });
                         },
                         icon: const Icon(
                           Icons.send,

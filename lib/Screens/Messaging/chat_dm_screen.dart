@@ -547,7 +547,8 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                                         ["text"],
                                                     iv: enc.IV.fromLength(16)),
                                                 widget.model.userName,
-                                                widget.model.name);
+                                                widget.model.name,
+                                            );
                                           }
 
                                           focusNode.requestFocus();
