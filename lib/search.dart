@@ -235,8 +235,14 @@ class SocialAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       elevation: 0,
-      backgroundColor: primaryColor,
+      backgroundColor: secondaryColor,
       title: title,
+      toolbarHeight: 150,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+        bottomLeft: Radius.circular(20),
+        bottomRight: Radius.circular(20),
+      )),
       leading: leading
           ? IconButton(
               onPressed: () => Navigator.pop(context),
@@ -270,10 +276,12 @@ class SearchBar extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: 271,
+          width: 290,
           height: 32,
           child: TextField(
+            cursorColor: Colors.white,
             controller: controller,
+            style: TextStyle(color: Colors.white),
             readOnly: readonly,
             autofocus: autofocus,
             onTap: ontap,
@@ -282,7 +290,11 @@ class SearchBar extends StatelessWidget {
               context: context,
               hint: 'search',
               suffixICon: null,
-              prefixIcon: const Icon(Icons.search_rounded),
+              prefixIcon: const Icon(
+                Icons.search_rounded,
+                size: 23,
+                color: Colors.white,
+              ),
               errorText: null,
             ),
           ),
@@ -292,18 +304,22 @@ class SearchBar extends StatelessWidget {
   }
 }
 
-customTextFieldDecoration(
-        {@required BuildContext context,
-        @required String hint,
-        Widget suffixICon,
-        Widget prefixIcon,
-        String errorText}) =>
+customTextFieldDecoration({
+  @required BuildContext context,
+  @required String hint,
+  Widget suffixICon,
+  Widget prefixIcon,
+  String errorText,
+  bool outline = false,
+}) =>
     InputDecoration(
       hintText: hint,
       hintStyle: TextStyle(
-          fontSize: 14,
-          fontStyle: FontStyle.italic,
-          fontWeight: FontWeight.w400),
+        fontSize: 15,
+        fontStyle: FontStyle.italic,
+        fontWeight: FontWeight.w400,
+        color: Colors.white,
+      ),
       suffixIcon: suffixICon,
       prefixIcon: prefixIcon,
       errorText: errorText,
@@ -311,14 +327,18 @@ customTextFieldDecoration(
       border: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(32.0)),
       ),
-      enabledBorder: OutlineInputBorder(
-        borderSide:
-            BorderSide(color: Theme.of(context).primaryColorLight, width: 1.0),
-        borderRadius: const BorderRadius.all(Radius.circular(32.0)),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderSide:
-            BorderSide(color: Theme.of(context).primaryColor, width: 1.5),
-        borderRadius: const BorderRadius.all(Radius.circular(32.0)),
-      ),
+      enabledBorder: outline
+          ? OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).primaryColorLight, width: 1.0),
+              borderRadius: const BorderRadius.all(Radius.circular(32.0)),
+            )
+          : InputBorder.none,
+      focusedBorder: outline
+          ? OutlineInputBorder(
+              borderSide:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 1.5),
+              borderRadius: const BorderRadius.all(Radius.circular(32.0)),
+            )
+          : InputBorder.none,
     );

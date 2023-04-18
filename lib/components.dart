@@ -354,6 +354,7 @@ class _ChatTabState extends State<ChatTab> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
+                            //later check
                           )
                         : Row(
                             children: [
