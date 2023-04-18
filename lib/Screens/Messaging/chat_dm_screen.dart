@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:beepo/Models/user_model.dart';
@@ -96,29 +97,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
 
       /// Display Notification, send null to not display
       // event.notification.
-      event.complete(OSNotification({
-        "app_id": "8f26effe-fda3-4034-a262-be12f4c5c47e",
-        //kAppId is the App Id that one get from the OneSignal When the application is registered.
-
-        "include_player_ids": tokenIdList,
-        //tokenIdList Is the List of All the Token Id to to Whom notification must be sent.
-
-        // android_accent_color reprsent the color of the heading text in the notifiction
-        "android_accent_color": "FFFF9C34",
-
-        "small_icon": "ic_launcher",
-
-        "large_icon": userM['profilePictureUrl'],
-
-        "headings": {"en": heading},
-
-        "contents": {"en": contents},
-        "android_background_layout": {
-          "image": "https://domain.com/background_image.jpg",
-          "headings_color": "FFFF0000",
-          "contents_color": "FF0d004c"
-        }
-      }));
+      event.complete(null);
       setState(() {
         _debugLabelString =
             "Notification received in foreground notification: \n${event.notification.jsonRepresentation().replaceAll("\\n", "\n")}";

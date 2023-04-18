@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
+import 'package:beepo/main.dart';
 import 'package:beepo/mic_anime.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -46,19 +47,22 @@ class _GroupDmState extends State<GroupDm> {
   bool swiped = false;
   List<String> players = [];
 
-  getDocs() async {
-    StreamBuilder(stream: FirebaseFirestore.instance.collection("OneSignal").snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-      if(snapshot.hasData){
-        for(var item in snapshot.data.docs){
-          setState(() {
-            players.add(item['playerId']);
-          });
-        }
-      }
-          return SizedBox();
-        }
-    );
+  final CollectionReference _collectionRef =
+      FirebaseFirestore.instance.collection('OneSignal');
+
+  Future<void> getData() async {
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot =
+        await _collectionRef.where('playerId', isNotEqualTo: playerId).get();
+
+    // Get data from docs and convert map to List
+    List result = querySnapshot.docs.map((doc) => doc.data()).toList();
+    for (var item in result) {
+      setState(() {
+        players.add(item['playerId']);
+      });
+    }
+    // print(players);
   }
 
   // var isReplying = replyMessage != '';
@@ -91,29 +95,7 @@ class _GroupDmState extends State<GroupDm> {
 
       /// Display Notification, send null to not display
       // event.notification.
-      event.complete(OSNotification({
-        "app_id": "8f26effe-fda3-4034-a262-be12f4c5c47e",
-        //kAppId is the App Id that one get from the OneSignal When the application is registered.
-
-        "include_player_ids": tokenIdList,
-        //tokenIdList Is the List of All the Token Id to to Whom notification must be sent.
-
-        // android_accent_color reprsent the color of the heading text in the notifiction
-        "android_accent_color": "FFFF9C34",
-
-        "small_icon": "ic_launcher",
-
-        "large_icon": userM['profilePictureUrl'],
-
-        "headings": {"en": heading},
-
-        "contents": {"en": contents},
-        "android_background_layout": {
-          "image": "https://domain.com/background_image.jpg",
-          "headings_color": "FFFF0000",
-          "contents_color": "FF0d004c"
-        }
-      }));
+      event.complete(null);
       setState(() {
         _debugLabelString =
             "Notification received in foreground notification: \n${event.notification.jsonRepresentation().replaceAll("\\n", "\n")}";
@@ -160,7 +142,6 @@ class _GroupDmState extends State<GroupDm> {
     messageController.addListener(() {
       setState(() {});
     });
-    getDocs();
   }
 
   Widget buildReply(String message, String username, String displayName,
@@ -924,11 +905,12 @@ class _GroupDmState extends State<GroupDm> {
                               ))
                     : IconButton(
                         onPressed: () async {
+                          getData();
                           context
                               .read<ChatNotifier>()
                               .storeText(messageController.text.trim());
                           messageController.clear();
-
+print(players.first);
                           sendNotification(
                             tokenIdList: players,
                             heading: userM['displayName'],
