@@ -1,16 +1,19 @@
 import 'dart:developer';
 
+import 'package:beepo/Models/balance.dart';
 import 'package:beepo/Models/market_data.dart';
 import 'package:beepo/Screens/Wallet/send_global.dart';
 import 'package:beepo/Service/wallets.dart';
+import 'package:beepo/Widgets/commons.dart';
+import 'package:beepo/Widgets/toasts.dart';
 import 'package:flutter/material.dart';
-import 'package:beepo/Screens/Wallet/receive_token.dart';
-import 'package:beepo/Screens/Wallet/token_screen.dart';
 import 'package:get/get.dart';
 
 import '../../Models/wallet.dart';
 import '../../Utils/styles.dart';
 import '../../components.dart';
+import '../requestToken.dart';
+import 'send_global.dart';
 
 class WalletScreen extends StatefulWidget {
   WalletScreen({Key key}) : super(key: key);
@@ -20,6 +23,10 @@ class WalletScreen extends StatefulWidget {
 }
 
 class _WalletScreenState extends State<WalletScreen> {
+  final Future<List> _getWallets = WalletsService().getWallets();
+  List<Map> currencies = [];
+  String selectedCurrency = 'usd';
+  String selectedCurrencySymbol = '\$';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,26 +41,85 @@ class _WalletScreenState extends State<WalletScreen> {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         actions: [
-          Row(
-            children: const [
-              // Icon(
-              //   Icons.search,
-              //   color: Color(0xff908f8d),
-              //   size: 25,
-              // ),
-              // SizedBox(width: 20),
-              Icon(
-                Icons.more_vert_outlined,
-                color: Color(0xff908f8d),
-                size: 25,
+          PopupMenuButton<int>(
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                child: Text('Currency - ' + selectedCurrency.toUpperCase()),
+                value: 1,
               ),
             ],
+            onSelected: (value) {
+              if (value == 1) {
+                Get.bottomSheet(
+                  Container(
+                    height: 300,
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Select Currency',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Expanded(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: currencies.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedCurrency =
+                                          currencies[index]['currency'];
+                                      selectedCurrencySymbol =
+                                          currencies[index]['symbol'];
+                                    });
+                                    Get.back();
+                                  },
+                                  child: Container(
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        currencies[index]['currency']
+                                                .toUpperCase() +
+                                            ' - ' +
+                                            currencies[index]['symbol'],
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+            },
           )
         ],
       ),
       body: FutureBuilder(
         future: Future.wait([
-          WalletsService().getWallets(),
+          _getWallets, //runs only once
           WalletsService().getCoinMarketData(),
         ]),
         builder: (context, snapshot) {
@@ -74,135 +140,125 @@ class _WalletScreenState extends State<WalletScreen> {
             ]),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return loader();
               }
 
-              Map btcBalance = snapshot.data[0];
+              CoinBalance btcBalance = snapshot.data[0];
               List ercBalances = snapshot.data[1];
+
+              //Get all currencies
+              List<Map> availableCurrencies = [];
+
+              for (var balance in btcBalance.prices) {
+                availableCurrencies.add({
+                  'currency': balance.currency,
+                  'symbol': balance.symbol,
+                });
+              }
+
+              currencies = availableCurrencies;
 
               //Calculate total balance
               double totalBalance = 0;
 
+              //add erc balances
               for (var balance in ercBalances) {
-                var balanceDouble =
-                    num.parse(balance['USD']?.toString() ?? '0');
+                //get balance in selected currency
+                var balanceDouble = double.parse(balance['prices'].firstWhere(
+                        (e) => e['currency'] == selectedCurrency)['value'] ??
+                    '0');
                 totalBalance += balanceDouble;
               }
 
-              totalBalance += num.parse(btcBalance['USD']?.toString() ?? '0');
+              //add btc balance
+              totalBalance += double.parse(btcBalance.prices
+                      .firstWhere((e) => e.currency == selectedCurrency)
+                      .value ??
+                  '0.00');
 
               return Container(
                 color: Colors.white,
                 child: Column(
                   children: [
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Container(
-                        height: 200,
-                        width: double.infinity,
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(20),
-                            bottomRight: Radius.circular(20),
-                          ),
-                          color: secondaryColor,
+                    Container(
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(20),
+                          bottomRight: Radius.circular(20),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const SizedBox(height: 100),
-                            const Text(
-                              'Total Balance',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            ),
-                            const SizedBox(height: 11),
-                            Text(
-                              "\$" + totalBalance.toStringAsFixed(2),
-                              style: const TextStyle(
-                                fontSize: 24,
+                        color: secondaryColor,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 100),
+                          const Text(
+                            'Total Balance',
+                            style: TextStyle(
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: Colors.white),
+                          ),
+                          const SizedBox(height: 11),
+                          Text(
+                            selectedCurrencySymbol +
+                                totalBalance.toStringAsFixed(2),
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const SizedBox(),
+                              WalletIcon(
+                                text: 'Send',
+                                icon: Icons.send_outlined,
+                                angle: 5.7,
+                                onTap: () {
+                                  Get.to(SendGlobal(
+                                    wallets: wallets,
+                                    coinMarketDataList: coinMarketDataList,
+                                    btcBalance: btcBalance,
+                                    ercBalances: ercBalances,
+                                    selectedCurrency: selectedCurrency,
+                                    selectedCurrencySymbol:
+                                        selectedCurrencySymbol,
+                                  ));
+                                },
                               ),
-                            ),
-                            const SizedBox(height: 43),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const SizedBox(),
-                                Column(
-                                  children: [
-                                    Transform.rotate(
-                                      angle: 24.5,
-                                      child: IconButton(
-                                        onPressed: () => Get.to(
-                                          SendGlobal(),
-                                        ),
-                                        icon: const Icon(
-                                          Icons.send_outlined,
-                                          size: 30,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 7),
-                                    const Text(
-                                      'Send',
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () => Get.to(ReceiveToken()),
-                                      icon: const Icon(
-                                          Icons.file_download_sharp,
-                                          size: 30,
-                                          color: Colors.white),
-                                    ),
-                                    const SizedBox(height: 7),
-                                    const Text(
-                                      'Receive',
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () =>
-                                          Get.to(const WalletToken()),
-                                      icon: const Icon(
-                                          Icons.shopping_cart_outlined,
-                                          size: 30,
-                                          color: Colors.white),
-                                    ),
-                                    const SizedBox(height: 7),
-                                    const Text(
-                                      'Buy',
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(),
-                              ],
-                            ),
-                          ],
-                        ),
+                              WalletIcon(
+                                text: 'Receive',
+                                icon: Icons.file_download_sharp,
+                                onTap: () {
+                                  Get.to(SendGlobal(
+                                    wallets: wallets,
+                                    coinMarketDataList: coinMarketDataList,
+                                    btcBalance: btcBalance,
+                                    ercBalances: ercBalances,
+                                    selectedCurrency: selectedCurrency,
+                                    selectedCurrencySymbol:
+                                        selectedCurrencySymbol,
+                                    isSending: false,
+                                  ));
+                                },
+                              ),
+                              WalletIcon(
+                                text: 'Buy',
+                                icon: Icons.shopping_cart_outlined,
+                                onTap: () {
+                                  showToast('Coming soon');
+                                },
+                              ),
+                              const SizedBox(),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                        ],
                       ),
                     ),
                     Expanded(
@@ -216,57 +272,13 @@ class _WalletScreenState extends State<WalletScreen> {
                           onRefresh: () async {
                             setState(() {});
                           },
-                          child: ListView.separated(
-                            itemCount: wallets.length,
-                            physics: const AlwaysScrollableScrollPhysics(
-                              parent: BouncingScrollPhysics(),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 10,
-                            ),
-                            separatorBuilder: (_, int index) {
-                              return const SizedBox(height: 10);
-                            },
-                            itemBuilder: (_, int index) {
-                              Wallet wallet = wallets[index];
-                              String fiatValue = '0';
-                              CoinMarketData coinMarketData =
-                                  coinMarketDataList.firstWhere(
-                                      (e) => e.id == wallet.chainId.toString(),
-                                      orElse: () => null);
-                              String balance;
-
-                              if (wallet.ticker == 'BITCOIN') {
-                                balance = btcBalance['balance'].toString();
-                                if (btcBalance['USD'] == null) {
-                                  fiatValue = "0";
-                                } else {
-                                  fiatValue = btcBalance['USD'].toString();
-                                }
-                              } else {
-                                Map bal = ercBalances.firstWhere(
-                                  (balance) =>
-                                      balance['symbol'] == wallet.ticker,
-                                  orElse: () => {'balance': "0.0"},
-                                );
-                                balance = bal['balance'].toString();
-
-                                fiatValue = bal['USD'].toString();
-                              }
-
-                              return WalletListTile(
-                                image: wallet.logoUrl,
-                                title: wallet.displayName,
-                                subtext: wallet.ticker,
-                                amount: balance ?? 'N/A',
-                                wallet: wallet,
-                                coinMarketData: coinMarketData,
-                                fiatValue: fiatValue == 'null'
-                                    ? '0.00'
-                                    : num.parse(fiatValue ?? "0.00")
-                                        .toStringAsFixed(2),
-                              );
-                            },
+                          child: WalletList(
+                            wallets: wallets,
+                            coinMarketDataList: coinMarketDataList,
+                            btcBalance: btcBalance,
+                            ercBalances: ercBalances,
+                            selectedCurrency: selectedCurrency,
+                            selectedCurrencySymbol: selectedCurrencySymbol,
                           ),
                         ),
                       ),
@@ -278,6 +290,116 @@ class _WalletScreenState extends State<WalletScreen> {
           );
         },
       ),
+    );
+  }
+}
+
+class WalletList extends StatelessWidget {
+  final List<Wallet> wallets;
+  final List<CoinMarketData> coinMarketDataList;
+  final CoinBalance btcBalance;
+  final List ercBalances;
+  final String selectedCurrencySymbol;
+  final String selectedCurrency;
+
+  const WalletList({
+    Key key,
+    @required this.wallets,
+    @required this.coinMarketDataList,
+    @required this.btcBalance,
+    @required this.ercBalances,
+    @required this.selectedCurrencySymbol,
+    @required this.selectedCurrency,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      itemCount: wallets.length,
+      physics: const AlwaysScrollableScrollPhysics(
+        parent: BouncingScrollPhysics(),
+      ),
+      padding: const EdgeInsets.symmetric(
+        vertical: 10,
+      ),
+      separatorBuilder: (_, int index) {
+        return const SizedBox(height: 10);
+      },
+      itemBuilder: (_, int index) {
+        Wallet wallet = wallets[index];
+        String fiatValue = '0';
+        CoinMarketData coinMarketData = coinMarketDataList.firstWhere(
+            (e) => e.id == wallet.chainId.toString(),
+            orElse: () => null);
+        String balance;
+
+        if (wallet.ticker == 'BITCOIN') {
+          balance = btcBalance.balance.toString();
+          fiatValue = btcBalance.prices
+              .firstWhere((e) => e.currency == selectedCurrency)
+              .value;
+        } else {
+          Map coinBalance = ercBalances.firstWhere(
+            (balance) => balance['symbol'] == wallet.ticker.toUpperCase(),
+            orElse: () => {
+              'balance': "0.0",
+              'symbol': wallet.ticker,
+            },
+          );
+          balance = coinBalance['balance'].toString();
+
+          fiatValue = coinBalance['prices']
+              .firstWhere((e) => e['currency'] == selectedCurrency)['value'];
+        }
+
+        return WalletListTile(
+          image: wallet.logoUrl,
+          title: wallet.displayName,
+          subtext: wallet.ticker,
+          amount: balance ?? 'N/A',
+          wallet: wallet,
+          coinMarketData: coinMarketData,
+          fiatSymbol: selectedCurrencySymbol,
+          fiatValue: fiatValue == 'null'
+              ? '0.00'
+              : num.parse(fiatValue ?? "0.00").toStringAsFixed(2),
+        );
+      },
+    );
+  }
+}
+
+class WalletIcon extends StatelessWidget {
+  final String text;
+  final IconData icon;
+  final VoidCallback onTap;
+  final double angle;
+  const WalletIcon({
+    Key key,
+    this.text,
+    this.icon,
+    this.onTap,
+    this.angle = 0,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Transform.rotate(
+          angle: angle,
+          child: IconButton(
+            onPressed: onTap,
+            icon: Icon(icon, size: 30, color: Colors.white),
+          ),
+        ),
+        const SizedBox(height: 5),
+        Text(
+          text,
+          style: const TextStyle(
+              fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+      ],
     );
   }
 }
