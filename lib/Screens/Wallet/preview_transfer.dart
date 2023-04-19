@@ -89,7 +89,7 @@ class _SendToken2State extends State<SendToken2> {
                   ),
                 ),
                 const Spacer(),
-                CustomFilledButton(
+                FilledButtons(
                   color: secondaryColor,
                   text: "Approve",
                   onPressed: () async {

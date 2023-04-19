@@ -227,7 +227,7 @@ class _Store2State extends State<Store2> {
                     ),
                     SizedBox(height: 25),
                     Center(
-                      child: CustomFilledButton(
+                      child: FilledButtons(
                         color: secondaryColor,
                         text: "Add item",
                         onPressed: () => Get.to(ChatToken()),
