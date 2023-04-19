@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:beepo/Models/balance.dart';
 import 'package:beepo/Models/market_data.dart';
+import 'package:beepo/Screens/Wallet/send_global.dart';
 import 'package:beepo/Service/wallets.dart';
 import 'package:beepo/Widgets/commons.dart';
 import 'package:beepo/Widgets/toasts.dart';

@@ -18,7 +18,7 @@ class SendGlobal extends StatefulWidget {
   final List ercBalances;
   final String selectedCurrencySymbol;
   final String selectedCurrency;
- final bool isSending;
+  final bool isSending;
   SendGlobal(
       {Key key,
       this.wallets,
@@ -26,7 +26,8 @@ class SendGlobal extends StatefulWidget {
       this.btcBalance,
       this.ercBalances,
       this.selectedCurrencySymbol,
-      this.selectedCurrency,this.isSending = true})
+      this.selectedCurrency,
+      this.isSending = true})
       : super(key: key);
 
   @override
