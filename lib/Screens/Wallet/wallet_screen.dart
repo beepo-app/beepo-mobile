@@ -182,7 +182,9 @@ class _WalletScreenState extends State<WalletScreen> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(20.0),
                                     child: GestureDetector(
-                                      onTap: () => Get.to(const ReceiveToken()),
+                                      onTap: () => Get.to(
+                                        ReceiveToken(),
+                                      ),
                                       child: Container(
                                         width: 63.0,
                                         height: 61.0,
