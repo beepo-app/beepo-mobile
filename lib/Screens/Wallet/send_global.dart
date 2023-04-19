@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'package:beepo/Screens/Wallet/wallet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -7,8 +8,8 @@ import '../../Models/balance.dart';
 import '../../Models/market_data.dart';
 import '../../Models/wallet.dart';
 import '../../Utils/styles.dart';
-
-
+import '../../components.dart';
+import 'send_token.dart';
 
 class SendGlobal extends StatefulWidget {
   final List<Wallet> wallets;
@@ -17,15 +18,15 @@ class SendGlobal extends StatefulWidget {
   final List ercBalances;
   final String selectedCurrencySymbol;
   final String selectedCurrency;
- final bool isSending;
+  final bool isSending;
   SendGlobal(
       {Key key,
-      this.wallets,
-      this.coinMarketDataList,
-      this.btcBalance,
-      this.ercBalances,
-      this.selectedCurrencySymbol,
-      this.selectedCurrency,this.isSending = true})
+        this.wallets,
+        this.coinMarketDataList,
+        this.btcBalance,
+        this.ercBalances,
+        this.selectedCurrencySymbol,
+        this.selectedCurrency,this.isSending = true})
       : super(key: key);
 
   @override
@@ -105,7 +106,7 @@ class _SendGlobalState extends State<SendGlobal> {
                     if (value.trim().isNotEmpty) {
                       wallets = widget.wallets
                           .where((element) =>
-                              element.name.toLowerCase().contains(value))
+                          element.name.toLowerCase().contains(value))
                           .toList();
                     } else {
                       wallets = widget.wallets;
@@ -131,20 +132,20 @@ class _SendGlobalState extends State<SendGlobal> {
                 ),
               ),
             ),
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.only(top: 10, left: 10, right: 10),
-                color: Colors.white,
-                child: WalletList(
-                  wallets: wallets,
-                  coinMarketDataList: widget.coinMarketDataList,
-                  btcBalance: widget.btcBalance,
-                  ercBalances: widget.ercBalances,
-                  selectedCurrencySymbol: widget.selectedCurrencySymbol,
-                  selectedCurrency: widget.selectedCurrency,
-                ),
-              ),
-            ),
+            // Expanded(
+            //   child: Container(
+            //     padding: EdgeInsets.only(top: 10, left: 10, right: 10),
+            //     color: Colors.white,
+            //     child: WalletList(
+            //       wallets: wallets,
+            //       coinMarketDataList: widget.coinMarketDataList,
+            //       btcBalance: widget.btcBalance,
+            //       ercBalances: widget.ercBalances,
+            //       selectedCurrencySymbol: widget.selectedCurrencySymbol,
+            //       selectedCurrency: widget.selectedCurrency,
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
