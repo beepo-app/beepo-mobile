@@ -17,13 +17,21 @@ class GroupProfile extends StatefulWidget {
 }
 
 class _GroupProfileState extends State<GroupProfile> {
+  var selectedValue = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      // extendBodyBehindAppBar: true,
       appBar: AppBar(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        )),
+        centerTitle: true,
+        toolbarHeight: 170,
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Color(0xff0e014c),
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
@@ -32,150 +40,192 @@ class _GroupProfileState extends State<GroupProfile> {
           onPressed: () => Get.back(),
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.more_vert_outlined),
-            onPressed: () {},
-          )
+          PopupMenuButton(
+            icon: Icon(
+              Icons.more_vert,
+              color: Colors.white,
+            ),
+            color: Colors.white,
+            onSelected: (value) {
+              setState(() {
+                selectedValue = value.toString();
+              });
+              print(value);
+              Navigator.pushNamed(context, value.toString());
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem(
+                  child: Text("Mute"),
+                  value: '/mute',
+                  onTap: () {},
+                ),
+                PopupMenuItem(
+                  child: Text("Leave"),
+                  value: '/leave group',
+                  onTap: () {},
+                ),
+              ];
+            },
+          ),
         ],
-      ),
-      body: Container(
-        color: Colors.white,
-        child: Column(
+        title: Column(
           children: [
-            Container(
-              height: 252,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20)),
-                  color: Color(0xff0e014c)),
+            GestureDetector(
+              onTap: () {},
+              child: SizedBox(
+                height: 100,
+                width: 100,
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/group.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 7),
+            Text(
+              'Beepo Public Chat Info',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            // SizedBox(height: 3),
+            StreamBuilder(
+                stream:
+                    FirebaseFirestore.instance.collection('users').snapshots(),
+                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasData) {
+                    return Text(
+                      '${snapshot.data.docs.length} members',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w100,
+                      ),
+                    );
+                  }
+                  return SizedBox();
+                }),
+          ],
+        ),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              color: Colors.white,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 56),
-                  GestureDetector(
-                    onTap: () {
-                      // Navigator.push(context, MaterialPageRoute(builder: (_) {
-                      //   return FullScreenImage(
-                      //     imageUrl: widget.image,
-                      //     tag: "imagex",
-                      //   );
-                      // }));
-                    },
-                    child: SizedBox(
-                      height: 100,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(30),
-                        child: Hero(
-                          tag: 'imagex',
-                          child: Image.asset(widget.image),
-                        ),
+                  SizedBox(height: 30),
+                  Center(
+                    child: Text(
+                      "Hi there, am new to Beepo and I love it",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xff0e014c),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.only(left: 20, right: 20),
-                color: Colors.white,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 30),
-                    Center(
-                      child: Text(
-                        "Hi there, am new to Beepo and I love it",
-                        textAlign: TextAlign.center,
+                  SizedBox(height: 10),
+                  Divider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Shared Media, Links and Docs',
                         style: TextStyle(
-                          color: Color(0xff0e014c),
+                          fontFamily: 'Roboto',
+                          color: txtColor1,
+                          fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Divider(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Shared Media, Links and Docs',
-                          style: TextStyle(
-                            fontFamily: 'Roboto',
-                            color: txtColor1,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                          ),
-                        ),
-                        IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.arrow_forward_ios_outlined))
-                      ],
-                    ),
-                    Text('Members',style: TextStyle(
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.arrow_forward_ios_outlined))
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Members',
+                    style: TextStyle(
                       fontFamily: 'Roboto',
                       color: txtColor1,
                       fontWeight: FontWeight.w700,
                       fontSize: 19,
-                    ),),
-                    Expanded(
-                      child: StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection('users')
-                              .snapshots(),
-                          builder: (context,
-                              AsyncSnapshot<QuerySnapshot> snapshot) {
-                            if (snapshot.hasData) {
-                              return ListView.builder(
-                                  itemCount: snapshot.data.docs.length,
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      padding: EdgeInsets.all(10),
-                                      margin: EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Expanded(
+                    child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .snapshots(),
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasData) {
+                            return ListView.builder(
+                                itemCount: snapshot.data.docs.length,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    // padding:
+                                    //     EdgeInsets.only(left: 20, right: 20),
+                                    margin: EdgeInsets.symmetric(vertical: 5),
+                                    decoration: BoxDecoration(
                                         // color: Color(0xffc4c4c4),
-                                        borderRadius: BorderRadius.circular(10)
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          CircleAvatar(
-                                            // borderRadius: BorderRadius.circular(5),
-                                            backgroundImage: CachedNetworkImageProvider(
-                                              snapshot
-                                                  .data.docs[index]['image'] == ""?'https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg':snapshot
-                                                  .data.docs[index]['image'],
-                                              maxHeight: 45,
-                                              maxWidth: 45,
-                                            ),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Row(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 25,
+                                          // borderRadius: BorderRadius.circular(5),
+                                          backgroundImage:
+                                              CachedNetworkImageProvider(
+                                            snapshot.data.docs[index]
+                                                        ['image'] ==
+                                                    ""
+                                                ? 'https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg'
+                                                : snapshot.data.docs[index]
+                                                    ['image'],
+                                            maxHeight: 45,
+                                            maxWidth: 45,
                                           ),
-                                          SizedBox(
-                                            width: 15,
-                                          ),
-                                          Text('${snapshot.data.docs[index]
-                                              ['name']}  \n@${snapshot.data.docs[index]
-                                          ['userName']}', style: TextStyle(
+                                        ),
+                                        SizedBox(
+                                          width: 15,
+                                        ),
+                                        // SizedBox(height: 10),
+                                        Text(
+                                          '${snapshot.data.docs[index]['name']}  \n@${snapshot.data.docs[index]['userName']}',
+                                          style: TextStyle(
                                             fontFamily: 'Roboto',
                                             color: Colors.black,
                                             fontWeight: FontWeight.w400,
                                             fontSize: 14,
-                                          ),),
-                                        ],
-                                      ),
-                                    );
-                                  });
-                            }
-                            return SizedBox();
-                          }),
-                    )
-                  ],
-                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                });
+                          }
+                          return SizedBox();
+                        }),
+                  )
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

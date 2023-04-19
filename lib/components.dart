@@ -328,19 +328,33 @@ class _ChatTabState extends State<ChatTab> {
                   children: [
                     showInput
                         ? TextField(
+                            textCapitalization: TextCapitalization.sentences,
+                            cursorColor: Colors.white,
                             onSubmitted: (value) {
                               setState(() {
                                 showInput = !showInput;
                               });
                             },
                             decoration: InputDecoration(
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.fromLTRB(15, 2, 0, 2),
                               hintText: 'Search messages...',
                               hintStyle: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.w500),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: secondaryColor.withOpacity(0.10),
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: secondaryColor.withOpacity(0.10),
+                                ),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                             ),
+                            //later check
                           )
                         : Row(
                             children: [
