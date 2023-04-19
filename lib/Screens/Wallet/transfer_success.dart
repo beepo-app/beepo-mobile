@@ -45,7 +45,7 @@ class _TransferSuccessState extends State<TransferSuccess> {
                 ),
               ),
               SizedBox(height: 60),
-              FilledButton(
+              FilledButtons(
                 text: 'Done',
                 onPressed: () => Get.close(2),
               )

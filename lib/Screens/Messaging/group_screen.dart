@@ -231,9 +231,9 @@ class _GroupDmState extends State<GroupDm> {
                                           userName: snapshot.data.docs[index]
                                               ["userName"],
                                         ),
-                                        sameUser: snapshot.data.docs[index + 1]
+                                        sameUser: index !=0? snapshot.data.docs[index -1]
                                                 ["sender"] ==
-                                            snapshot.data.docs[index]["sender"],
+                                            snapshot.data.docs[index]["sender"]: false,
                                       )
                                     else if (snapshot.data.docs[index]
                                             ["type"] ==
