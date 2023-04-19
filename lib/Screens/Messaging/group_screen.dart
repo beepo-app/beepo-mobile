@@ -5,14 +5,14 @@ import 'dart:convert';
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:beepo/mic_anime.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:http/http.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:lottie/lottie.dart';
@@ -87,7 +87,7 @@ class _GroupDmState extends State<GroupDm> {
     });
   }
 
-  Future<Response> sendNotification(
+  Future<http.Response> sendNotification(
       {List<String> tokenIdList, String contents, String heading}) async {
     String _debugLabelString = "";
 
@@ -105,7 +105,7 @@ class _GroupDmState extends State<GroupDm> {
       print(_debugLabelString);
     });
     // OneSignal.shared.
-    return await post(
+    return await http.post(
       Uri.parse('https://onesignal.com/api/v1/notifications'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
