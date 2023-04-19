@@ -38,7 +38,6 @@ class _BubbleStoriesState extends State<BubbleStories> {
 
   @override
   void initState() {
-    // getProfileData();
     super.initState();
   }
 

@@ -22,7 +22,6 @@ class _OnboardingState extends State<Onboarding> {
     controller = PageController(
       initialPage: 0,
     );
-    super.initState();
   }
 
   @override

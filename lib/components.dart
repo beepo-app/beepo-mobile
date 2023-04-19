@@ -13,6 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:link_preview_generator/link_preview_generator.dart';
 import 'package:linkwell/linkwell.dart';
 import 'package:provider/provider.dart';
 
@@ -180,10 +181,11 @@ class _ChatTabState extends State<ChatTab> {
         .get();
 
     tem.then((value) =>
-        setState(() {
-          remove = value.data()['isRemoved'].toString();
-          print(remove);
-        }));
+        // setState(() {
+          remove = value.data()['isRemoved'].toString()
+          // print(remove);
+    );
+        // }));
 
     return Column(
       children: [
@@ -776,13 +778,16 @@ class MessageReply extends StatelessWidget {
     );
   }
 }
-
 class Group extends StatelessWidget {
   final bool isMe;
   final String text;
   final Timestamp time;
   final UserModel user;
   final bool sameUser;
+  final bool onSwipedMessage;
+  final String replyMessage;
+  final String replyName;
+  final String replyUsername;
 
   const Group({
     Key key,
@@ -791,26 +796,20 @@ class Group extends StatelessWidget {
     @required this.time,
     this.user,
     @required this.sameUser,
+    @required this.onSwipedMessage,
+    @required this.replyMessage,
+    @required this.replyName,
+    @required this.replyUsername,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var day = time
-        .toDate()
-        .day
-        .toString();
-    var month = time
-        .toDate()
-        .month
-        .toString();
+    var day = time.toDate().day.toString();
+    var month = time.toDate().month.toString();
     var year = time.toDate().toString().substring(2);
     var date = day + '-' + month + '-' + year;
-    var hour = time
-        .toDate()
-        .hour;
-    var min = time
-        .toDate()
-        .minute;
+    var hour = time.toDate().hour;
+    var min = time.toDate().minute;
 
     var ampm;
     if (hour > 12) {
@@ -824,6 +823,75 @@ class Group extends StatelessWidget {
     } else {
       ampm = 'am';
     }
+    Widget buildReply(String message, String username, String displayName) =>
+        Container(
+          decoration: BoxDecoration(
+            color: isMe
+                ? Color(0xffffffff).withOpacity(0.3)
+                : Color(0xff697077).withOpacity(0.2),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          padding: EdgeInsets.only(
+            left: 14,
+            right: 10,
+            top: 5,
+            bottom: 5,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    displayName,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Text(
+                message,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                ),
+              )
+            ],
+          ),
+        );
+
+    String convertStringToLink(String textData) {
+      final urlRegExp = RegExp(
+          r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
+      final urlMatches = urlRegExp.allMatches(textData);
+      List<String> urls = urlMatches
+          .map((urlMatch) => textData.substring(urlMatch.start, urlMatch.end))
+          .toList();
+      List linksString = [];
+      for (var linkText in urls) {
+        linksString.add(linkText);
+      }
+
+      if (linksString.isNotEmpty) {
+        for (var linkTextData in linksString) {
+          textData =
+              textData.replaceAll(linkTextData, 'https://' + linkTextData);
+        }
+      }
+      if (linksString.isEmpty) {
+        return null;
+      }
+      return textData;
+    }
+
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Row(
@@ -849,10 +917,8 @@ class Group extends StatelessWidget {
                   },
                   child: CircleAvatar(
                     radius: 20,
-                    backgroundImage: CachedNetworkImageProvider(user.image ==
-                        null
-                        ? 'https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg'
-                        : user.image),
+                    backgroundImage: CachedNetworkImageProvider(user.image ??
+                        'https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg'),
                   ),
                 ),
               ),
@@ -877,14 +943,8 @@ class Group extends StatelessWidget {
                 color: !isMe ? Color(0xFFE6E9EE) : Color(0xff0E014C),
               ),
               constraints: BoxConstraints(
-                maxWidth: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.8,
-                minWidth: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.15,
+                maxWidth: MediaQuery.of(context).size.width * 0.8,
+                minWidth: MediaQuery.of(context).size.width * 0.15,
               ),
               padding: const EdgeInsets.all(8),
               child: Column(
@@ -920,9 +980,18 @@ class Group extends StatelessWidget {
                         ],
                       ),
                   SizedBox(height: 2),
-                  RichText(
-                    text: TextSpan(
-                      text: text,
+                  if (onSwipedMessage)
+                    buildReply(replyMessage, replyUsername, replyName),
+                  if (convertStringToLink(text) != null)
+                    LinkPreviewGenerator(
+                      link: convertStringToLink(text),
+                      linkPreviewStyle: LinkPreviewStyle.small,
+                      graphicFit: BoxFit.contain,
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: LinkWell(
+                      text,
                       style: isMe
                           ? TextStyle(
                         color: Colors.white,
@@ -935,19 +1004,6 @@ class Group extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Text(
-                  //   text,
-                  //   style: isMe
-                  //       ? TextStyle(
-                  //           color: Colors.white,
-                  //           fontSize: 11.5,
-                  //         )
-                  //       : TextStyle(
-                  //           color: Colors.black,
-                  //           //Colors.black,
-                  //           fontSize: 11.5,
-                  //         ),
-                  // ),
                   SizedBox(height: 5),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -993,6 +1049,7 @@ class Group extends StatelessWidget {
     );
   }
 }
+
 
 class CurrentUserStoryBubble extends StatelessWidget {
   const CurrentUserStoryBubble({

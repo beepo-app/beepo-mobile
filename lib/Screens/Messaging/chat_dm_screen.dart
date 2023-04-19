@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:beepo/Models/user_model.dart';
@@ -85,7 +86,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
     });
   }
 
-//One Signal
+//One Signal Notifications
   Future<Response> sendNotification(
       {List<String> tokenIdList, String contents, String heading}) async {
     String _debugLabelString = "";
@@ -96,29 +97,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
 
       /// Display Notification, send null to not display
       // event.notification.
-      event.complete(OSNotification({
-        "app_id": "8f26effe-fda3-4034-a262-be12f4c5c47e",
-        //kAppId is the App Id that one get from the OneSignal When the application is registered.
-
-        "include_player_ids": tokenIdList,
-        //tokenIdList Is the List of All the Token Id to to Whom notification must be sent.
-
-        // android_accent_color reprsent the color of the heading text in the notifiction
-        "android_accent_color": "FFFF9C34",
-
-        "small_icon": "ic_launcher",
-
-        "large_icon": userM['profilePictureUrl'],
-
-        "headings": {"en": heading},
-
-        "contents": {"en": contents},
-        "android_background_layout": {
-          "image": "https://domain.com/background_image.jpg",
-          "headings_color": "FFFF0000",
-          "contents_color": "FF0d004c"
-        }
-      }));
+      event.complete(null);
       setState(() {
         _debugLabelString =
             "Notification received in foreground notification: \n${event.notification.jsonRepresentation().replaceAll("\\n", "\n")}";
@@ -138,7 +117,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
         "include_player_ids": tokenIdList,
         //tokenIdList Is the List of All the Token Id to to Whom notification must be sent.
 
-        // android_accent_color reprsent the color of the heading text in the notifiction
+        // android_accent_color reprsent the color of the heading text in the notification
         "android_accent_color": "FFFF9C34",
 
         "small_icon": "ic_launcher",
@@ -159,15 +138,16 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
 
   int _messageCount = 0;
 
+  //Calls
   String constructFCMPayload(String token, bool video) {
     _messageCount++;
     return jsonEncode({
       "to": token,
-      "collapse_key": "New Message",
+      "collapse_key": "Missed Call",
       "priority": "high",
       "notification": {
-        "title": "Title of Your Notification",
-        "body": "Body of Your Notification",
+        "title": "Missed call",
+        "body": "You missed a Call",
       },
       "data": {
         "name": userM['displayName'],
@@ -248,7 +228,6 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    // initFirebase(true);
     controller = AnimationController(
       vsync: this,
       duration: Duration(microseconds: 100000),
@@ -459,10 +438,10 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                     userName: widget.model.userName,
                                     hasVideo: false,
                                     model: widget.model,
-                                    channel: userM['uid']);
+                                    channel: userM['uid'],);
                                 await sendPushMessage(false);
                                 checkAndNavigationCallingPage(
-                                    false, userM['uid']);
+                                    false, userM['uid'],);
                               },
                               child: Icon(
                                 Icons.call,
@@ -548,7 +527,8 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                                         ["text"],
                                                     iv: enc.IV.fromLength(16)),
                                                 widget.model.userName,
-                                                widget.model.name);
+                                                widget.model.name,
+                                            );
                                           }
 
                                           focusNode.requestFocus();

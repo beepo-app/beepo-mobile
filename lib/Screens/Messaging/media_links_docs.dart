@@ -30,8 +30,9 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    tabController = TabController(length: 3, vsync: this);
+
     super.initState();
+    tabController = TabController(length: 3, vsync: this);
   }
 
   @override

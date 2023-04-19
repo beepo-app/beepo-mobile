@@ -92,11 +92,10 @@ class StoryUploadProvider extends ChangeNotifier {
 
   Future<Either<Failure, Success>> getCaption(String text) {
     _caption = text;
-    // return _caption;
   }
 
   //TODO: Request permission to access media and camera
-  Future<Either<Failure, Success>> pickImageGallery(BuildContext context) async {
+  Future<Either<Failure, Success>> pickMediaGallery(BuildContext context) async {
     try {
       _setStoryUploadStatus(StoryUploadStatus.gettingReady);
       //TODO: Add permission check
@@ -104,14 +103,17 @@ class StoryUploadProvider extends ChangeNotifier {
         context,
         pickerConfig: const AssetPickerConfig(
           maxAssets: 1,
-          requestType: RequestType.image,
+          requestType: RequestType.all,
         ),
       );
       // await _imagePicker.pickImage(source: ImageSource.gallery);
       if (result != null) {
         _selectFile(await result.first.file);
         if (_file != null) {
-          _setMediaType("image");
+          result.first.type ==  AssetType.image?
+          _setMediaType("image") :
+          result.first.type ==  AssetType.video? _setMediaType('video') : _setMediaType("audio");
+
           final story = StoryModel(
             mediaType: _mediaType,
             uid: userM['uid'],

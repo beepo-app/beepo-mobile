@@ -4,6 +4,8 @@
 	<dict>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+        <string>myIosEmulator</string>
 		<key>CFBundleDisplayName</key>
 		<string>Beepo</string>
 		<key>NSMicrophoneUsageDescription</key>
@@ -51,5 +53,9 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
-	</dict>
+		<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+</dict>
 </plist>

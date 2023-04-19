@@ -1,19 +1,24 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
+
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:beepo/mic_anime.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:lottie/lottie.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:swipe_to/swipe_to.dart';
 
 import '../../../../Widgets/toasts.dart';
 import '../../../../bottom_nav.dart';
@@ -23,9 +28,7 @@ import '../../generate_keywords.dart';
 import 'services/chat_methods.dart';
 
 class GroupDm extends StatefulWidget {
-  final bool isMe;
-
-  const GroupDm({Key key, @required this.isMe}) : super(key: key);
+  const GroupDm({Key key}) : super(key: key);
 
   @override
   State<GroupDm> createState() => _GroupDmState();
@@ -38,21 +41,209 @@ class _GroupDmState extends State<GroupDm> {
   Map userM = Hive.box('beepo').get('userData');
   int isPlaying;
 
+  String replyMessage = '';
+  String uName = '';
+  String dName = '';
+  bool swiped = false;
+  List players = [];
+  List<String> ids = [];
+
+
+  final CollectionReference _collectionRef =
+      FirebaseFirestore.instance.collection('OneSignal');
+
+   getData() async {
+    // Get docs from collection reference
+    final QuerySnapshot querySnapshot =
+        await _collectionRef.get();
+
+    final List<DocumentSnapshot> documents = querySnapshot.docs;
+
+    for (var element in documents) {
+      players.add(element.data());
+      // print(players.first['playerId']);
+      // print(element.data().toString());
+    }
+
+  }
+
+  // var isReplying = replyMessage != '';
+  bool rightSwiped = false;
+  bool leftSwiped = false;
+
+  final focusNode = FocusNode();
+
+  void replyToMessage(String message, String userName, String name) {
+    setState(() {
+      replyMessage = message;
+      uName = userName;
+      dName = name;
+    });
+  }
+
+  void cancelReply() {
+    setState(() {
+      replyMessage = '';
+    });
+  }
+
+  Future<http.Response> sendNotification(
+      {List<String> tokenIdList, String contents, String heading}) async {
+    String _debugLabelString = "";
+
+    OneSignal.shared.setNotificationWillShowInForegroundHandler(
+        (OSNotificationReceivedEvent event) {
+      print('FOREGROUND HANDLER CALLED WITH: $event');
+
+      /// Display Notification, send null to not display
+      // event.notification.
+      event.complete(null);
+      setState(() {
+        _debugLabelString =
+            "Notification received in foreground notification: \n${event.notification.jsonRepresentation().replaceAll("\\n", "\n")}";
+      });
+      print(_debugLabelString);
+    });
+    // OneSignal.shared.
+    return await http.post(
+      Uri.parse('https://onesignal.com/api/v1/notifications'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        "app_id": "8f26effe-fda3-4034-a262-be12f4c5c47e",
+        //kAppId is the App Id that one get from the OneSignal When the application is registered.
+
+        "include_player_ids": tokenIdList,
+        //tokenIdList Is the List of All the Token Id to to Whom notification must be sent.
+
+        // android_accent_color reprsent the color of the heading text in the notifiction
+        "android_accent_color": "FFFF9C34",
+
+        "small_icon": "ic_launcher",
+
+        "large_icon": userM['profilePictureUrl'],
+
+        "headings": {"en": heading},
+
+        "contents": {"en": contents},
+        "android_background_layout": {
+          "image": "https://domain.com/background_image.jpg",
+          "headings_color": "FFFF0000",
+          "contents_color": "FF0d004c"
+        }
+      }),
+    );
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
+    super.initState();
+    getData();
+    for(var item in players){
+      ids.add(item[['playerId']]);
+    }
     FirebaseAuth.instance.signInAnonymously();
     isPlaying = -1;
     messageController.addListener(() {
       setState(() {});
     });
-    super.initState();
   }
+
+  Widget buildReply(String message, String username, String displayName,
+          bool isReplying) =>
+      Container(
+        decoration: BoxDecoration(
+          color: Color(0xff697077).withOpacity(0.2),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        padding: EdgeInsets.only(
+          // left: 14,
+          right: 10,
+          top: 5,
+          bottom: 5,
+        ),
+        margin: EdgeInsets.all(10),
+        child: IntrinsicHeight(
+          child: Row(
+            children: [
+              VerticalDivider(
+                thickness: 2,
+                // width: 10,
+                // indent: 12,
+                color: secondaryColor,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          displayName,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xffc82513),
+                          ),
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '@$username',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xffc82513),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            GestureDetector(
+                              child: Icon(
+                                Icons.close,
+                                size: 18,
+                              ),
+                              onTap: () {
+                                cancelReply();
+                                setState(() {
+                                  isReplying = false;
+                                });
+                              },
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Text(
+                      message,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xff120b0b),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
 
   var selectedValue = "";
 
   @override
   Widget build(BuildContext context) {
+    var isReplying = replyMessage != '';
+
     return KeyboardDismisser(
       gestures: const [GestureType.onPanUpdateDownDirection],
       child: Scaffold(
@@ -250,35 +441,80 @@ class _GroupDmState extends State<GroupDm> {
                                 } else {
                                   ampm = 'am';
                                 }
+
                                 return Column(
                                   children: [
                                     if (snapshot.data.docs[index]["type"] ==
                                         'message')
-                                      Group(
-                                        isMe: userM['uid'] ==
-                                            snapshot.data.docs[index]["sender"],
-                                        text: snapshot.data.docs[index]["text"],
-                                        time: snapshot.data.docs[index]
-                                            ["created"],
-                                        user: UserModel(
-                                          uid: snapshot.data.docs[index]
-                                              ["sender"],
-                                          name: snapshot.data.docs[index]
-                                              ["displayName"],
-                                          image: snapshot.data.docs[index]
-                                              ["image"],
-                                          userName: snapshot.data.docs[index]
-                                              ["userName"],
+                                      SwipeTo(
+                                        onRightSwipe: () {
+                                          rightSwiped = true;
+                                          swiped = true;
+                                          if (userM['uid'] !=
+                                              snapshot.data.docs[index]
+                                                  ["sender"]) {
+                                            replyToMessage(
+                                              snapshot.data.docs[index]["text"],
+                                              snapshot.data.docs[index]
+                                                  ["userName"],
+                                              snapshot.data.docs[index]
+                                                  ["displayName"],
+                                            );
+                                          }
+
+                                          focusNode.requestFocus();
+                                        },
+                                        onLeftSwipe: () {
+                                          leftSwiped = true;
+                                          swiped = true;
+                                          if (userM['uid'] ==
+                                              snapshot.data.docs[index]
+                                                  ["sender"]) {
+                                            replyToMessage(
+                                              snapshot.data.docs[index]["text"],
+                                              '',
+                                              userM['displayName'],
+                                            );
+                                          }
+
+                                          focusNode.requestFocus();
+                                        },
+                                        child: Group(
+                                          isMe: userM['uid'] ==
+                                              snapshot.data.docs[index]
+                                                  ["sender"],
+                                          text: snapshot.data.docs[index]
+                                              ["text"],
+                                          time: snapshot.data.docs[index]
+                                              ["created"],
+                                          user: UserModel(
+                                            uid: snapshot.data.docs[index]
+                                                ["sender"],
+                                            name: snapshot.data.docs[index]
+                                                ["displayName"],
+                                            image: snapshot.data.docs[index]
+                                                ["image"],
+                                            userName: snapshot.data.docs[index]
+                                                ["userName"],
+                                          ),
+                                          sameUser: snapshot.data.docs[index]
+                                                      ["sender"] !=
+                                                  snapshot
+                                                      .data.docs.last["sender"]
+                                              ? (snapshot.data.docs[index + 1]
+                                                      ["sender"] ==
+                                                  snapshot.data.docs[index]
+                                                      ["sender"])
+                                              : false,
+                                          onSwipedMessage: snapshot
+                                              .data.docs[index]["swiped"],
+                                          replyMessage: snapshot
+                                              .data.docs[index]["replyMessage"],
+                                          replyName: snapshot.data.docs[index]
+                                              ["replyName"],
+                                          replyUsername: snapshot
+                                              .data.docs[index]["replyUser"],
                                         ),
-                                        sameUser: snapshot.data.docs[index]
-                                                    ["sender"] !=
-                                                snapshot
-                                                    .data.docs.last["sender"]
-                                            ? (snapshot.data.docs[index + 1]
-                                                    ["sender"] ==
-                                                snapshot.data.docs[index]
-                                                    ["sender"])
-                                            : false,
                                       )
                                     else if (snapshot.data.docs[index]
                                             ["type"] ==
@@ -432,15 +668,19 @@ class _GroupDmState extends State<GroupDm> {
                                           height: 150,
                                           child: GestureDetector(
                                             onTap: () {
-                                              Navigator.push(context,
-                                                  MaterialPageRoute(
-                                                      builder: (_) {
-                                                return FullScreenImage(
-                                                  imageUrl: snapshot.data
-                                                      .docs[index]["content"],
-                                                  tag: "image",
-                                                );
-                                              }));
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (_) {
+                                                    return FullScreenImage(
+                                                      imageUrl: snapshot
+                                                              .data.docs[index]
+                                                          ["content"],
+                                                      tag: "image",
+                                                    );
+                                                  },
+                                                ),
+                                              );
                                             },
                                             child: ClipRRect(
                                               child: Hero(
@@ -504,117 +744,126 @@ class _GroupDmState extends State<GroupDm> {
             child: Row(
               children: [
                 Expanded(
-                  child: context.watch<ChatNotifier>().isRecording
-                      ? Container(
-                          margin: EdgeInsets.only(bottom: 10),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.only(bottom: 10, left: 10),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Center(
-                                  child: Lottie.asset(
-                                      'assets/lottie/recording.json',
-                                      height: 40,
-                                      width: 27,
-                                      fit: BoxFit.fitHeight),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (isReplying == true)
+                        buildReply(replyMessage, uName, dName, isReplying),
+                      context.watch<ChatNotifier>().isRecording
+                          ? Container(
+                              margin: EdgeInsets.only(bottom: 10),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(bottom: 10, left: 10),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Center(
+                                      child: Lottie.asset(
+                                          'assets/lottie/recording.json',
+                                          height: 40,
+                                          width: 27,
+                                          fit: BoxFit.fitHeight),
+                                    ),
+                                    Expanded(
+                                      child: Lottie.asset(
+                                        'assets/lottie/Linear_determinate.json',
+                                        height: double.infinity,
+                                        width: double.infinity,
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Expanded(
-                                  child: Lottie.asset(
-                                    'assets/lottie/Linear_determinate.json',
-                                    height: double.infinity,
-                                    width: double.infinity,
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          height: 40,
-                          // width: 20,
-                        )
-                      : TextField(
-                          textCapitalization: TextCapitalization.sentences,
-                          maxLines: null,
-                          minLines: 1,
-                          style: TextStyle(
-                            color: Color(0xff697077),
-                            fontSize: 15,
-                          ),
-                          controller: messageController,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.fromLTRB(1, 0, 1, 0),
-                            fillColor: Color(0xFFE6E9EE),
-                            hintText: 'Message',
-                            isDense: false,
-                            hintStyle: TextStyle(
-                                color: Color(0xff697077), fontSize: 15),
-                            prefixIcon: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  isTyping = !isTyping;
-                                });
-                              },
-                              child: IconButton(
-                                  onPressed: () {
-                                    // context
-                                    //     .read<ChatNotifier>()
-                                    //     .cameraUploadImageChat(widget.model.uid);
+                              ),
+                              height: 40,
+                              // width: 20,
+                            )
+                          : TextField(
+                              textCapitalization: TextCapitalization.sentences,
+                              maxLines: null,
+                              minLines: 1,
+                              style: TextStyle(
+                                color: Color(0xff697077),
+                                fontSize: 15,
+                              ),
+                              controller: messageController,
+                              focusNode: focusNode,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.fromLTRB(1, 0, 1, 0),
+                                fillColor: Color(0xFFE6E9EE),
+                                hintText: 'Message',
+                                isDense: false,
+                                hintStyle: TextStyle(
+                                    color: Color(0xff697077), fontSize: 15),
+                                prefixIcon: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      isTyping = !isTyping;
+                                    });
                                   },
-                                  constraints: BoxConstraints(
-                                    maxWidth: 30,
+                                  child: IconButton(
+                                      onPressed: () {
+                                        context
+                                            .read<ChatNotifier>()
+                                            .cameraUploadImageGroup();
+                                      },
+                                      constraints: BoxConstraints(
+                                        maxWidth: 30,
+                                      ),
+                                      icon: SvgPicture.asset(
+                                          'assets/camera.svg')),
+                                ),
+                                suffixIcon: FittedBox(
+                                  child: Row(
+                                    children: [
+                                      // IconButton(
+                                      //   onPressed: () {},
+                                      //   constraints: const BoxConstraints(
+                                      //     maxWidth: 30,
+                                      //   ),
+                                      //   icon: Icon(
+                                      //     Iconsax.dollar_circle,
+                                      //     size: 21,
+                                      //     color: secondaryColor,
+                                      //   ),
+                                      // ),
+                                      IconButton(
+                                        onPressed: () {
+                                          context
+                                              .read<ChatNotifier>()
+                                              .pickUploadImageGroup(context);
+                                        },
+                                        constraints: const BoxConstraints(
+                                          maxWidth: 30,
+                                        ),
+                                        icon: Icon(
+                                          Iconsax.gallery,
+                                          size: 20,
+                                          color: secondaryColor,
+                                        ),
+                                      ),
+                                      SizedBox(width: 15),
+                                    ],
                                   ),
-                                  icon: SvgPicture.asset('assets/camera.svg')),
-                            ),
-                            suffixIcon: FittedBox(
-                              child: Row(
-                                children: [
-                                  // IconButton(
-                                  //   onPressed: () {},
-                                  //   constraints: const BoxConstraints(
-                                  //     maxWidth: 30,
-                                  //   ),
-                                  //   icon: Icon(
-                                  //     Iconsax.dollar_circle,
-                                  //     size: 21,
-                                  //     color: secondaryColor,
-                                  //   ),
-                                  // ),
-                                  IconButton(
-                                    onPressed: () {
-                                      // context
-                                      //     .read<ChatNotifier>()
-                                      //     .pickUploadImageChat(widget.model.uid);
-                                    },
-                                    constraints: const BoxConstraints(
-                                      maxWidth: 30,
-                                    ),
-                                    icon: Icon(
-                                      Iconsax.gallery,
-                                      size: 20,
-                                      color: secondaryColor,
-                                    ),
-                                  ),
-                                  SizedBox(width: 15),
-                                ],
+                                ),
+                                filled: true,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide.none,
+                                ),
                               ),
                             ),
-                            filled: true,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
-                        ),
+                    ],
+                  ),
                 ),
                 SizedBox(
                   width: 10,
@@ -653,11 +902,23 @@ class _GroupDmState extends State<GroupDm> {
                                 height: 27,
                               ))
                     : IconButton(
-                        onPressed: () async {
+                        onPressed: ()  async{
+
+
                           context
                               .read<ChatNotifier>()
                               .storeText(messageController.text.trim());
                           messageController.clear();
+                          // print(players.first['playerId']);
+                          if(ids.isNotEmpty) {
+                            sendNotification(
+                              tokenIdList: ids,
+                              heading: userM['displayName'],
+                              contents: context
+                                  .read<ChatNotifier>()
+                                  .chatText,
+                            );
+                          }
                           ChatMethods().storeGroupMessages(
                             context: context,
                             text: context.read<ChatNotifier>().chatText,
@@ -666,8 +927,17 @@ class _GroupDmState extends State<GroupDm> {
                             image: userM['profilePictureUrl'],
                             displayName: userM['displayName'],
                             userName: userM['username'],
+                            replyMessage: replyMessage,
+                            replyName: dName,
+                            replyUsername: uName,
+                            swiped: swiped,
                           );
                           context.read<ChatNotifier>().clearText();
+
+                          setState(() {
+                            isReplying = false;
+                            replyMessage = '';
+                          });
                         },
                         icon: const Icon(
                           Icons.send,

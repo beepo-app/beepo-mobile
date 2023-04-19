@@ -13,15 +13,17 @@ import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
 import '../../../Models/user_model.dart';
+import '../../../Utils/styles.dart';
 import 'calll_notify.dart';
 
+List<Widget> callLog = [];
 class VideoCall extends StatefulWidget {
   final String channelName;
   final ClientRole role;
   final UserModel name;
   bool isVideo;
 
-   VideoCall(
+  VideoCall(
       {Key key,
       this.channelName,
       this.role,
@@ -35,13 +37,12 @@ class VideoCall extends StatefulWidget {
 
 class _VideoCallState extends State<VideoCall>
     with SingleTickerProviderStateMixin {
-
-
   final _users = <int>[];
   final _infoStrings = <String>[];
   bool muted = false;
   bool viewPanel = false;
   RtcEngine _engine;
+
 
   AnimationController _controller;
 
@@ -86,8 +87,8 @@ class _VideoCallState extends State<VideoCall>
 
   @override
   void initState() {
-    initialize();
     super.initState();
+    initialize();
     _controller = AnimationController(vsync: this);
 
     _controller.addListener(() {
@@ -138,11 +139,12 @@ class _VideoCallState extends State<VideoCall>
     );
 
     if (response.statusCode == 200) {
-      if(mounted){
-      setState(() {
-        token = response.body;
-        token = jsonDecode(token)['rtcToken'];
-      });}
+      if (mounted) {
+        setState(() {
+          token = response.body;
+          token = jsonDecode(token)['rtcToken'];
+        });
+      }
     } else {
       print('Failed to fetch the token');
     }
@@ -243,7 +245,6 @@ class _VideoCallState extends State<VideoCall>
                 child: views[1],
               ),
             ),
-
             GestureDetector(
               onPanDown: (details) {
                 _controller.stop();
@@ -531,9 +532,51 @@ class _VideoCallState extends State<VideoCall>
                 ),
                 RawMaterialButton(
                   onPressed: () {
-                    Calls().endCall(const Uuid().v4());
+                    Calls().endCall(
+                      const Uuid().v4(),
+                    );
+                    setState(() {
+
+                      callLog.add(ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(25),
+                          child: Image.network(
+                            widget.name.image,
+                            height: 50,
+                            width: 50,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        title: Text(
+                          widget.name.name,
+                          style: const TextStyle(
+                            color: Color.fromRGBO(0, 0, 0, 1),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        subtitle: const Text(
+                          "9:13",
+                          style: TextStyle(
+                            color: secondaryColor,
+                            //Color(0xff697077),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                          ),
+
+                          // );
+                          // },
+                        ),
+                        trailing: const Icon(
+                          Icons.phone_missed_sharp,
+                          color: Colors.green,
+                          size: 20,
+                        ),
+                      ));
+                    });
                     // Navigator.pop(context);
-                    },
+                  },
                   child: const Icon(
                     Icons.call_end,
                     color: Colors.white,
@@ -597,7 +640,6 @@ class _VideoCallState extends State<VideoCall>
 
   @override
   void dispose() {
-
     _users.clear();
     _engine.leaveChannel();
     _engine.destroy();
