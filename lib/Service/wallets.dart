@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:beepo/Models/balance.dart';
 import 'package:beepo/Models/market_data.dart';
 import 'package:beepo/Service/auth.dart';
 import 'package:http/http.dart' as http;
@@ -48,19 +49,19 @@ class WalletsService {
       // print(response.body);
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
+        // log(response.body);
+
         return data['balances'];
       } else {
         return [];
       }
     } catch (e) {
-      print(e);
-
       showToast(e.toString());
       return null;
     }
   }
 
-  Future<Map> getWalletBalance(String networkId, String address) async {
+  Future<CoinBalance> getWalletBalance(String networkId, String address) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/addressbalance'),
@@ -71,17 +72,17 @@ class WalletsService {
         body: jsonEncode({"networkId": networkId, "address": address}),
       );
 
-      log(response.body);
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
-        return data;
+        CoinBalance balance = CoinBalance.fromJson(data);
+        return balance;
       } else {
-        return {};
+        return null;
       }
     } catch (e) {
       print(e);
       showToast(e.toString());
-      return {};
+      return null;
     }
   }
 
@@ -130,7 +131,6 @@ class WalletsService {
         },
       );
 
-      print(response.body);
       if (response.statusCode == 200) {
         List data = json.decode(response.body)['data'];
         return data.map((e) => CoinMarketData.fromJson(e)).toList();
@@ -138,8 +138,6 @@ class WalletsService {
         return [];
       }
     } catch (e) {
-      print(e);
-
       showToast(e.toString());
       return [];
     }

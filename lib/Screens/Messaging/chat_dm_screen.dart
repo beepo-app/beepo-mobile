@@ -735,6 +735,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                 color: Color(0xff697077),
                                 fontSize: 15,
                               ),
+                              textCapitalization: TextCapitalization.sentences,
                               focusNode: focusNode,
                               controller: messageController,
                               decoration: InputDecoration(

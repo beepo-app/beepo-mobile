@@ -137,7 +137,7 @@ class _RequestTokenState extends State<RequestToken> {
                         ),
                       ),
                       const SizedBox(height: 130),
-                      CustomFilledButton(
+                      FilledButtons(
                         text: 'Request',
                         color: secondaryColor,
                       )

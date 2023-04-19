@@ -117,20 +117,13 @@ class ChatNotifier extends ChangeNotifier {
   }
 
   pickUploadImageChat(String id, BuildContext context) async {
-
-
     List<AssetEntity> image;
     // Reference reg = FirebaseStorage.instance.ref();
     try {
       image = await AssetPicker.pickAssets(
         context,
         pickerConfig: AssetPickerConfig(
-          maxAssets: 1,
-          requestType: RequestType.all,
-          selectedAssets: [
-
-          ]
-        ),
+            maxAssets: 1, requestType: RequestType.all, selectedAssets: []),
       );
 
       ref = FirebaseStorage.instance.ref().child('image.png');
@@ -164,7 +157,7 @@ class ChatNotifier extends ChangeNotifier {
           .collection('messageList')
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-        await transaction.set(ref, {
+        transaction.set(ref, {
           "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
@@ -187,7 +180,7 @@ class ChatNotifier extends ChangeNotifier {
           .collection('messageList')
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-        await transaction.set(ref1, {
+        transaction.set(ref1, {
           "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
@@ -208,7 +201,7 @@ class ChatNotifier extends ChangeNotifier {
           .collection("currentConversation")
           .doc(receiverId);
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-        await transaction.set(ref2, {
+        transaction.set(ref2, {
           "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
@@ -229,7 +222,7 @@ class ChatNotifier extends ChangeNotifier {
           .collection("currentConversation")
           .doc(userM['uid']);
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-        await transaction.set(ref3, {
+        transaction.set(ref3, {
           "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:beepo/Models/market_data.dart';
 import 'package:beepo/Screens/Wallet/receive_token.dart';
+import 'package:beepo/Screens/Wallet/send_global.dart';
 import 'package:beepo/Screens/Wallet/token_screen.dart';
 import 'package:beepo/Service/wallets.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ import 'package:get/get_core/src/get_main.dart';
 import '../../Models/wallet.dart';
 import '../../Utils/styles.dart';
 import '../../components.dart';
-import '../send_global.dart';
+//import '../send_global.dart';
 
 class WalletScreen extends StatefulWidget {
   WalletScreen({Key key}) : super(key: key);

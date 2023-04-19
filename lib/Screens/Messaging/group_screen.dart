@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
@@ -47,6 +48,8 @@ class _GroupDmState extends State<GroupDm> {
     });
     super.initState();
   }
+
+  var selectedValue = "";
 
   @override
   Widget build(BuildContext context) {
@@ -155,10 +158,45 @@ class _GroupDmState extends State<GroupDm> {
                                   ),
                                 ),
                                 Spacer(),
-                                Icon(
-                                  Icons.more_vert_outlined,
+                                // Icon(
+                                //   Icons.more_vert_outlined,
+                                //   color: Colors.white,
+                                //   size: 23,
+                                // ),
+                                // SizedBox(width: 8),
+                                PopupMenuButton(
+                                  icon: Icon(Icons.more_vert,
+                                      color: Colors.white),
                                   color: Colors.white,
-                                  size: 23,
+
+                                  itemBuilder: (BuildContext context) {
+                                    return [
+                                      PopupMenuItem(
+                                        child: Text("Group info"),
+                                        value: '/group info',
+                                        onTap: () {
+                                          Get.to(()=>GroupProfile(
+                                            image: 'assets/group.jpg',
+                                          ));
+                                        },
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Leave group"),
+                                        value: '/leave group',
+                                        onTap: () async{
+
+                                          await FirebaseFirestore.instance.collection('LeaveGroup').doc(
+                                              userM['uid']).update({'isRemoved': 'true'});
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Mute"),
+                                        value: '/notificaton',
+                                        onTap: () {},
+                                      )
+                                    ];
+                                  },
                                 ),
                                 SizedBox(width: 8),
                               ],
@@ -181,7 +219,8 @@ class _GroupDmState extends State<GroupDm> {
                             .collection('groupMessages')
                             .orderBy("created", descending: true)
                             .snapshots(),
-                        builder: (context, AsyncSnapshot <QuerySnapshot>snapshot) {
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (snapshot.hasData) {
                             return ListView.builder(
                               reverse: true,
@@ -231,9 +270,15 @@ class _GroupDmState extends State<GroupDm> {
                                           userName: snapshot.data.docs[index]
                                               ["userName"],
                                         ),
-                                        sameUser: snapshot.data.docs[index + 1]
-                                                ["sender"] ==
-                                            snapshot.data.docs[index]["sender"],
+                                        sameUser: snapshot.data.docs[index]
+                                                    ["sender"] !=
+                                                snapshot
+                                                    .data.docs.last["sender"]
+                                            ? (snapshot.data.docs[index + 1]
+                                                    ["sender"] ==
+                                                snapshot.data.docs[index]
+                                                    ["sender"])
+                                            : false,
                                       )
                                     else if (snapshot.data.docs[index]
                                             ["type"] ==
@@ -322,12 +367,6 @@ class _GroupDmState extends State<GroupDm> {
                                                                             .docs[
                                                                         index][
                                                                     'content']);
-                                                            //  Future.delayed(context.read<ChatNotifier>().dure, (){
-                                                            //   setState(() {
-                                                            //     isPlaying = -1;
-                                                            //
-                                                            //   });
-                                                            // });
                                                           },
                                                         ),
                                                   Center(
@@ -430,14 +469,17 @@ class _GroupDmState extends State<GroupDm> {
                                           ),
                                         ),
                                       ),
-                                    SizedBox(height: 3,),
-                                    // for(var i=index; i< (snapshot.data.docs.length-1); i++)
-                                    if(index != 0)
-                                    if(snapshot.data.docs[index-1]
-                                    ["sender"] !=
-                                        snapshot.data.docs[index]["sender"]) SizedBox(
-                                      height: 14,
+                                    SizedBox(
+                                      height: 3,
                                     ),
+                                    // for(var i=index; i< (snapshot.data.docs.length-1); i++)
+                                    if (index != 0)
+                                      if (snapshot.data.docs[index - 1]
+                                              ["sender"] !=
+                                          snapshot.data.docs[index]["sender"])
+                                        SizedBox(
+                                          height: 14,
+                                        ),
                                   ],
                                 );
                               },

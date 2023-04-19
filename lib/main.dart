@@ -1,7 +1,8 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_this
+// ignore_for_file: prefer_const_constructors, unnecessary_this, avoid_print
 
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
+import 'package:beepo/transfer_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -60,7 +61,7 @@ class _MyAppState extends State<MyApp> {
     /// Example addTriggers call for IAM
     /// This will add 2 triggers so if there are any IAM satisfying these, they
     /// will be shown to the user
-    Map<String, Object> triggers = Map<String, Object>();
+    Map<String, Object> triggers = <String, Object>{};
     triggers["trigger_2"] = "two";
     triggers["trigger_3"] = "three";
     OneSignal.shared.addTriggers(triggers);

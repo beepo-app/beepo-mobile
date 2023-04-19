@@ -93,6 +93,8 @@ class _ChatTokenState extends State<ChatToken> {
                       ),
                       const SizedBox(height: 10),
                       TextField(
+                        textCapitalization: TextCapitalization.sentences,
+                        maxLines: null,
                         keyboardType: TextInputType.phone,
                         controller: value,
                         decoration: InputDecoration(
@@ -137,7 +139,7 @@ class _ChatTokenState extends State<ChatToken> {
                         ),
                       ),
                       const SizedBox(height: 130),
-                      CustomFilledButton(
+                      FilledButtons(
                         text: 'Send',
                         color: secondaryColor,
                         onPressed: () => Get.to(RequestToken()),

@@ -110,7 +110,7 @@ class _WalletPhraseScreenState extends State<WalletPhraseScreen> {
                       ),
                     ),
                     const SizedBox(height: 30),
-                    CustomFilledButton(
+                    FilledButtons(
                       onPressed: () {
                         // Clipboard.setData(ClipboardData(text: walletPhrase));
                         // showToast("Copied to clipboard successfully");

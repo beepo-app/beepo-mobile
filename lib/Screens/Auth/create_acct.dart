@@ -76,9 +76,7 @@ class _CreateAccountState extends State<CreateAccount> {
                   bottom: 10,
                   child: GestureDetector(
                     onTap: () {
-                      ImageUtil()
-                          .pickProfileImage(context: context)
-                          .then((value) {
+                      ImageUtil().pickProfileImage(context: context).then((value) {
                         if (value != null) {
                           setState(() {
                             selectedImage = value;
@@ -119,7 +117,7 @@ class _CreateAccountState extends State<CreateAccount> {
               controller: displayName,
             ),
             const Spacer(),
-            CustomFilledButton(
+            FilledButtons(
               text: 'Next',
               color: Color(0xffFF9C34),
               onPressed: () async {

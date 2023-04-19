@@ -246,7 +246,7 @@ class _GroupDmState extends State<GroupDm> {
                                 var hour = time.toDate().hour;
                                 var min = time.toDate().minute;
 
-                                var ampm;
+                                String ampm;
                                 if (hour > 12) {
                                   hour = hour % 12;
                                   ampm = 'pm';
