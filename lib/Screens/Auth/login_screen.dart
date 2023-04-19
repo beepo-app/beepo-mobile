@@ -56,7 +56,7 @@ class Login extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            FilledButtons(
+            CustomFilledButton(
               text: 'Login',
               onPressed: () async {
                 String phrase = phraseController.text.trim();

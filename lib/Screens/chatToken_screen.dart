@@ -123,19 +123,21 @@ class _ChatTokenState extends State<ChatToken> {
                           ),
                           isDense: true,
                           border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
                               borderSide: BorderSide(
                                 color: Colors.grey,
                                 width: 1,
                               )),
                           focusedBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(15)),
-                            borderSide: BorderSide(width: 1, color: Colors.grey),
+                            borderSide:
+                                BorderSide(width: 1, color: Colors.grey),
                           ),
                         ),
                       ),
                       const SizedBox(height: 130),
-                      FilledButtons(
+                      CustomFilledButton(
                         text: 'Send',
                         color: secondaryColor,
                         onPressed: () => Get.to(RequestToken()),

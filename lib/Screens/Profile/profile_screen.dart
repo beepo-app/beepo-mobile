@@ -139,26 +139,7 @@ class _ProfileState extends State<Profile> {
                     // ),
 
                     // const SizedBox(height: 26),
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            "Theme",
-                            style: TextStyle(
-                              color: secondaryColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          "System Default",
-                          style: TextStyle(
-                            color: Color(0x660e014c),
-                            fontSize: 14,
-                          ),
-                        )
-                      ],
-                    ),
+
                     const SizedBox(height: 26),
                     Row(
                       children: [
@@ -171,54 +152,6 @@ class _ProfileState extends State<Profile> {
                                 color: secondaryColor,
                                 fontSize: 14,
                               ),
-                            ),
-                          ),
-                        ),
-                        const Icon(Icons.arrow_forward,
-                            color: Color(0x660e014c), size: 20),
-                      ],
-                    ),
-                    const SizedBox(height: 26),
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            "Help",
-                            style: TextStyle(
-                              color: secondaryColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                        const Icon(Icons.arrow_forward,
-                            color: Color(0x660e014c), size: 20),
-                      ],
-                    ),
-                    const SizedBox(height: 26),
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            "Invite Friends",
-                            style: TextStyle(
-                              color: secondaryColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                        const Icon(Icons.arrow_forward,
-                            color: Color(0x660e014c), size: 20),
-                      ],
-                    ),
-                    const SizedBox(height: 26),
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            "Notification",
-                            style: TextStyle(
-                              color: secondaryColor,
-                              fontSize: 14,
                             ),
                           ),
                         ),
@@ -263,6 +196,22 @@ class _ProfileState extends State<Profile> {
                               color: Color(0x660e014c), size: 20),
                         ],
                       ),
+                    ),
+                    const SizedBox(height: 26),
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            "Invite Friends",
+                            style: TextStyle(
+                              color: secondaryColor,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        const Icon(Icons.arrow_forward,
+                            color: Color(0x660e014c), size: 20),
+                      ],
                     ),
                     const SizedBox(height: 10),
                     ListTile(

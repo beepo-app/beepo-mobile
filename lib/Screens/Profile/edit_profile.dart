@@ -175,7 +175,7 @@ class _EditProfileState extends State<EditProfile> {
               ),
               SizedBox(height: 40),
               Center(
-                child: FilledButtons(
+                child: CustomFilledButton(
                   text: 'Save',
                   onPressed: () async {
                     if (displayNameController.text.isEmpty) {
