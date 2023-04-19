@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
-import 'package:beepo/main.dart';
 import 'package:beepo/mic_anime.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -45,24 +44,26 @@ class _GroupDmState extends State<GroupDm> {
   String uName = '';
   String dName = '';
   bool swiped = false;
-  List<String> players = [];
+  List players = [];
+  List<String> ids = [];
+
 
   final CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('OneSignal');
 
-  Future<void> getData() async {
+   getData() async {
     // Get docs from collection reference
-    QuerySnapshot querySnapshot =
-        await _collectionRef.where('playerId', isNotEqualTo: playerId).get();
+    final QuerySnapshot querySnapshot =
+        await _collectionRef.get();
 
-    // Get data from docs and convert map to List
-    List result = querySnapshot.docs.map((doc) => doc.data()).toList();
-    for (var item in result) {
-      setState(() {
-        players.add(item['playerId']);
-      });
+    final List<DocumentSnapshot> documents = querySnapshot.docs;
+
+    for (var element in documents) {
+      players.add(element.data());
+      // print(players.first['playerId']);
+      // print(element.data().toString());
     }
-    // print(players);
+
   }
 
   // var isReplying = replyMessage != '';
@@ -137,6 +138,10 @@ class _GroupDmState extends State<GroupDm> {
   @override
   void initState() {
     super.initState();
+    getData();
+    for(var item in players){
+      ids.add(item[['playerId']]);
+    }
     FirebaseAuth.instance.signInAnonymously();
     isPlaying = -1;
     messageController.addListener(() {
@@ -904,19 +909,23 @@ class _GroupDmState extends State<GroupDm> {
                                 height: 27,
                               ))
                     : IconButton(
-                        onPressed: () async {
-                          getData();
+                        onPressed: ()  async{
+
+
                           context
                               .read<ChatNotifier>()
                               .storeText(messageController.text.trim());
                           messageController.clear();
-print(players.first);
-                          sendNotification(
-                            tokenIdList: players,
-                            heading: userM['displayName'],
-                            contents: context.read<ChatNotifier>().chatText,
-                          );
-
+                          // print(players.first['playerId']);
+                          if(ids.isNotEmpty) {
+                            sendNotification(
+                              tokenIdList: ids,
+                              heading: userM['displayName'],
+                              contents: context
+                                  .read<ChatNotifier>()
+                                  .chatText,
+                            );
+                          }
                           ChatMethods().storeGroupMessages(
                             context: context,
                             text: context.read<ChatNotifier>().chatText,
