@@ -79,9 +79,9 @@ class _WalletScreenState extends State<WalletScreen> {
                                   onTap: () {
                                     setState(() {
                                       selectedCurrency =
-                                          currencies[index]['currency'];
+                                      currencies[index]['currency'];
                                       selectedCurrencySymbol =
-                                          currencies[index]['symbol'];
+                                      currencies[index]['symbol'];
                                     });
                                     Get.back();
                                   },
@@ -94,7 +94,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                     child: Center(
                                       child: Text(
                                         currencies[index]['currency']
-                                                .toUpperCase() +
+                                            .toUpperCase() +
                                             ' - ' +
                                             currencies[index]['symbol'],
                                         style: const TextStyle(
@@ -172,8 +172,8 @@ class _WalletScreenState extends State<WalletScreen> {
 
               //add btc balance
               totalBalance += double.parse(btcBalance.prices
-                      .firstWhere((e) => e.currency == selectedCurrency)
-                      .value ??
+                  .firstWhere((e) => e.currency == selectedCurrency)
+                  .value ??
                   '0.00');
 
               return Container(
@@ -227,7 +227,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                     ercBalances: ercBalances,
                                     selectedCurrency: selectedCurrency,
                                     selectedCurrencySymbol:
-                                        selectedCurrencySymbol,
+                                    selectedCurrencySymbol,
                                   ));
                                 },
                               ),
@@ -242,7 +242,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                     ercBalances: ercBalances,
                                     selectedCurrency: selectedCurrency,
                                     selectedCurrencySymbol:
-                                        selectedCurrencySymbol,
+                                    selectedCurrencySymbol,
                                     isSending: false,
                                   ));
                                 },
@@ -329,7 +329,7 @@ class WalletList extends StatelessWidget {
         Wallet wallet = wallets[index];
         String fiatValue = '0';
         CoinMarketData coinMarketData = coinMarketDataList.firstWhere(
-            (e) => e.id == wallet.chainId.toString(),
+                (e) => e.id == wallet.chainId.toString(),
             orElse: () => null);
         String balance;
 
@@ -340,7 +340,7 @@ class WalletList extends StatelessWidget {
               .value;
         } else {
           Map coinBalance = ercBalances.firstWhere(
-            (balance) => balance['symbol'] == wallet.ticker.toUpperCase(),
+                (balance) => balance['symbol'] == wallet.ticker.toUpperCase(),
             orElse: () => {
               'balance': "0.0",
               'symbol': wallet.ticker,

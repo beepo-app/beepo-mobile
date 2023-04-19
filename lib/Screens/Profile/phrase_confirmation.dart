@@ -112,7 +112,7 @@ class _PhraseConfirmationState extends State<PhraseConfirmation> {
                 ),
               ),
               SizedBox(height: 20),
-              CustomFilledButton(
+              FilledButtons(
                 text: 'Proceed',
                 onPressed: () {
                   if (value1 && value2 && value3 && value4) {

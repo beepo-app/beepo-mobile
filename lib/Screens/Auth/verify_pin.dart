@@ -19,7 +19,8 @@ class VerifyCode extends StatefulWidget {
   final String name;
   final bool isSignUp;
   final String seedPhrase;
-  const VerifyCode({Key key, this.image, this.name, this.isSignUp, this.seedPhrase})
+  const VerifyCode(
+      {Key key, this.image, this.name, this.isSignUp, this.seedPhrase})
       : super(key: key);
 
   @override
@@ -90,7 +91,7 @@ class _VerifyCodeState extends State<VerifyCode> {
               ),
             ),
             const Spacer(),
-            CustomFilledButton(
+            FilledButtons(
               text: 'Continue',
               onPressed: () async {
                 String pin = Hive.box('beepo').get('PIN');

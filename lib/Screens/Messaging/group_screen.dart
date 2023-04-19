@@ -10,6 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart';
 import 'package:iconsax/iconsax.dart';
@@ -358,35 +359,27 @@ class _GroupDmState extends State<GroupDm> {
                                   icon: Icon(Icons.more_vert,
                                       color: Colors.white),
                                   color: Colors.white,
-                                  onSelected: (value) {
-                                    setState(() {
-                                      selectedValue = value.toString();
-                                    });
-                                    print(value);
-                                    Navigator.pushNamed(
-                                        context, value.toString());
-                                  },
+
                                   itemBuilder: (BuildContext context) {
                                     return [
                                       PopupMenuItem(
                                         child: Text("Group info"),
                                         value: '/group info',
                                         onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  GroupProfile(
-                                                image: 'assets/group.jpg',
-                                              ),
-                                            ),
-                                          );
+                                          Get.to(()=>GroupProfile(
+                                            image: 'assets/group.jpg',
+                                          ));
                                         },
                                       ),
                                       PopupMenuItem(
                                         child: Text("Leave group"),
                                         value: '/leave group',
-                                        onTap: () {},
+                                        onTap: () async{
+
+                                          await FirebaseFirestore.instance.collection('LeaveGroup').doc(
+                                              userM['uid']).update({'isRemoved': 'true'});
+                                          Navigator.pop(context);
+                                        },
                                       ),
                                       PopupMenuItem(
                                         child: Text("Mute"),

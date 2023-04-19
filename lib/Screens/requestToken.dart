@@ -122,19 +122,22 @@ class _RequestTokenState extends State<RequestToken> {
                           ),
                           isDense: true,
                           border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(const Radius.circular(15)),
+                              borderRadius:
+                                  BorderRadius.all(const Radius.circular(15)),
                               borderSide: BorderSide(
                                 color: Colors.grey,
                                 width: 1,
                               )),
                           focusedBorder: const OutlineInputBorder(
-                            borderRadius: const BorderRadius.all(Radius.circular(15)),
-                            borderSide: BorderSide(width: 1, color: Colors.grey),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(15)),
+                            borderSide:
+                                BorderSide(width: 1, color: Colors.grey),
                           ),
                         ),
                       ),
                       const SizedBox(height: 130),
-                      CustomFilledButton(
+                      FilledButtons(
                         text: 'Request',
                         color: secondaryColor,
                       )

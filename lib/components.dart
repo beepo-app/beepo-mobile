@@ -13,7 +13,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:link_preview_generator/link_preview_generator.dart';
 import 'package:linkwell/linkwell.dart';
 import 'package:provider/provider.dart';
 
@@ -23,8 +22,6 @@ import 'Models/story_model/storyModel.dart';
 import 'Models/user_model.dart';
 import 'Models/wallet.dart';
 import 'Screens/Browser/browser_page.dart';
-import 'Screens/Messaging/calls/calll_notify.dart';
-import 'Screens/Messaging/calls/calls.dart';
 import 'Screens/Messaging/groupMessages.dart';
 import 'Screens/Messaging/myMessages.dart';
 import 'Screens/Wallet/token_screen.dart';
@@ -32,13 +29,12 @@ import 'Screens/moments/add_story.dart';
 import 'Screens/moments/bubble_stories.dart';
 import 'Utils/styles.dart';
 
-class CustomFilledButton extends StatelessWidget {
+class FilledButtons extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final Color color;
 
-  CustomFilledButton(
-      {@required this.text, this.color, @required this.onPressed});
+  FilledButtons({@required this.text, this.color, @required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -139,6 +135,15 @@ class _ChatTabState extends State<ChatTab> {
   // Stream<List<UserModel>> currentUserFollowingStories;
   Stream<List<DocumentSnapshot>> currentUserFollowing;
 
+  Box box1 = Hive.box('beepo');
+
+  setLeave() async {
+    await FirebaseFirestore.instance
+        .collection('LeaveGroup')
+        .doc(userM['uid'])
+        .set({'isRemoved': 'false'});
+  }
+
   Map userM = Hive.box('beepo').get('userData');
 
   Widget usert;
@@ -152,21 +157,34 @@ class _ChatTabState extends State<ChatTab> {
     // Get a specific camera from the list of available cameras.
     firstCamera = cameras[0];
     secondCamera = cameras[1];
-    print(
-        'number of cameras: ${cameras.length} ${firstCamera.lensDirection.name}');
+
 // cameras.take(2);
   }
 
+  String remove;
+
   @override
   void initState() {
-    super.initState();
     currentUserStories =
         context.read<StoryDownloadProvider>().getCurrentUserStories();
     gethg();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    final tem = FirebaseFirestore.instance
+        .collection('LeaveGroup')
+        .doc(userM['uid'])
+        .get();
+
+    tem.then((value) =>
+        setState(() {
+          remove = value.data()['isRemoved'].toString();
+          print(remove);
+        }));
+
     return Column(
       children: [
         Row(
@@ -179,11 +197,10 @@ class _ChatTabState extends State<ChatTab> {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        // LoginScreen(),
                         AddStory(
-                      camera1: firstCamera,
-                      camera2: secondCamera,
-                    ),
+                          camera1: firstCamera,
+                          camera2: secondCamera,
+                        ),
                   ),
                 );
               },
@@ -247,16 +264,10 @@ class _ChatTabState extends State<ChatTab> {
                             );
 
                             return CurrentUserStoryBubble(user: user);
-                          } catch (e) {
-                            print(e);
-                          }
+                          } catch (e) {}
                         }
-                        if (!snapshot.hasData) {
-                          print("i can't get data");
-                        }
-                        if (snapshot.hasError) {
-                          print(snapshot.error);
-                        }
+                        if (!snapshot.hasData) {}
+                        if (snapshot.hasError) {}
                         return Center(
                           child: CircularProgressIndicator(
                             color: primaryColor,
@@ -282,8 +293,6 @@ class _ChatTabState extends State<ChatTab> {
                             scrollDirection: Axis.horizontal,
                             itemCount: snapshot.data.docs.length,
                             itemBuilder: (context, index) {
-                              print(snapshot.data.docs.length);
-
                               return BubbleStories(
                                 uid: snapshot.data.docs[index].id,
                                 index: index,
@@ -327,146 +336,152 @@ class _ChatTabState extends State<ChatTab> {
                   children: [
                     showInput
                         ? TextField(
-                            textCapitalization: TextCapitalization.sentences,
-                            cursorColor: Colors.white,
-                            onSubmitted: (value) {
-                              setState(() {
-                                showInput = !showInput;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.fromLTRB(15, 2, 0, 2),
-                              hintText: 'Search messages...',
-                              hintStyle: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w500),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: secondaryColor.withOpacity(0.10),
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: secondaryColor.withOpacity(0.10),
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            //later check
-                          )
+                      textCapitalization: TextCapitalization.sentences,
+                      cursorColor: Colors.white,
+                      onSubmitted: (value) {
+                        setState(() {
+                          showInput = !showInput;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.fromLTRB(15, 2, 0, 2),
+                        hintText: 'Search messages...',
+                        hintStyle: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: secondaryColor.withOpacity(0.10),
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: secondaryColor.withOpacity(0.10),
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      //later check
+                    )
                         : Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "Messages",
+                            style: TextStyle(
+                              color: secondaryColor,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              showInput = !showInput;
+                            });
+                          },
+                          icon: Icon(
+                            Icons.search,
+                            color: Color(0xff697077),
+                            //Color(0xff908f8d),
+                            size: 25,
+                          ),
+                        ),
+                        // SizedBox(width: 20),
+                        // Icon(
+                        //   Icons.more_vert_outlined,
+                        //   color: Color(0xff908f8d),
+                        //   size: 18,
+                        // ),
+                      ],
+                    ),
+                    Consumer<ChatNotifier>(
+                      builder: (context, pro, _) =>
+                          Column(
                             children: [
-                              Expanded(
-                                child: Text(
-                                  "Messages",
-                                  style: TextStyle(
-                                    color: secondaryColor,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                              if (remove == 'false')
+                                StreamBuilder(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('groups')
+                                      .snapshots(),
+                                  builder: (context,
+                                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                                    if (snapshot.hasData) {
+                                      if (snapshot.data.docs.isNotEmpty) {
+                                        return ListView.separated(
+                                          padding: const EdgeInsets.only(
+                                              top: 10),
+                                          physics:
+                                          const NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemCount: snapshot.data.docs.length,
+                                          separatorBuilder: (ctx, i) =>
+                                          const SizedBox(height: 0),
+                                          itemBuilder: (ctx, index) {
+                                            return GroupMessages(
+                                              uid: snapshot.data.docs[index].id,
+                                              index: index,
+                                              docu: snapshot.data.docs,
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        return SizedBox();
+                                      }
+                                    }
+                                    return const SizedBox();
+                                  },
                                 ),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    showInput = !showInput;
-                                  });
+                              StreamBuilder(
+                                stream: FirebaseFirestore.instance
+                                    .collection('conversation')
+                                    .doc(
+                                    userM['uid'] == '' ? ' ' : userM['uid'])
+                                    .collection("currentConversation")
+                                    .orderBy('created', descending: true)
+                                    .snapshots(),
+                                builder: (context,
+                                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                                  if (snapshot.hasData) {
+                                    if (snapshot.data.docs.isEmpty) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(top: 50),
+                                        child: const Center(
+                                          child: Text(
+                                            'No Messages\n Tap on the + icon to start a conversation',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    return ListView.separated(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: snapshot.data.docs.length,
+                                      separatorBuilder: (ctx, i) =>
+                                      const SizedBox(height: 0),
+                                      itemBuilder: (ctx, index) {
+                                        return MyMessages(
+                                          uid: snapshot.data.docs[index].id,
+                                          index: index,
+                                          docu: snapshot.data.docs,
+                                        );
+                                      },
+                                    );
+                                  }
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
                                 },
-                                icon: Icon(
-                                  Icons.search,
-                                  color: Color(0xff697077),
-                                  //Color(0xff908f8d),
-                                  size: 25,
-                                ),
                               ),
-                              // SizedBox(width: 20),
-                              // Icon(
-                              //   Icons.more_vert_outlined,
-                              //   color: Color(0xff908f8d),
-                              //   size: 18,
-                              // ),
                             ],
                           ),
-                    Consumer<ChatNotifier>(
-                      builder: (context, pro, _) => Column(
-                        children: [
-                          StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('groups')
-                                .snapshots(),
-                            builder: (context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data.docs.isNotEmpty) {
-                                  return ListView.separated(
-                                    padding: const EdgeInsets.only(top: 10),
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: snapshot.data.docs.length,
-                                    separatorBuilder: (ctx, i) =>
-                                        const SizedBox(height: 0),
-                                    itemBuilder: (ctx, index) {
-                                      return GroupMessages(
-                                        uid: snapshot.data.docs[index].id,
-                                        index: index,
-                                        docu: snapshot.data.docs,
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  return SizedBox();
-                                }
-                              }
-                              return const SizedBox();
-                            },
-                          ),
-                          StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('conversation')
-                                .doc(userM['uid'] == '' ? ' ' : userM['uid'])
-                                .collection("currentConversation")
-                                .orderBy('created', descending: true)
-                                .snapshots(),
-                            builder: (context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data.docs.isEmpty) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 50),
-                                    child: const Center(
-                                      child: Text(
-                                        'No Messages\n Tap on the + icon to start a conversation',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  );
-                                }
-                                return ListView.separated(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: snapshot.data.docs.length,
-                                  separatorBuilder: (ctx, i) =>
-                                      const SizedBox(height: 0),
-                                  itemBuilder: (ctx, index) {
-                                    return MyMessages(
-                                      uid: snapshot.data.docs[index].id,
-                                      index: index,
-                                      docu: snapshot.data.docs,
-                                    );
-                                  },
-                                );
-                              }
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
                     ),
+
+                    //),
                   ],
                 ),
               ),
@@ -500,41 +515,75 @@ class _CallTabState extends State<CallTab> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 17),
       color: Colors.white,
-      child: Column(
-        children: [
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  "Messages",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 19,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    "Messages",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 19,
+                    ),
                   ),
                 ),
+                Icon(
+                  Icons.search,
+                  color: Color(0xff697077),
+                  size: 20,
+                ),
+                SizedBox(width: 20),
+                Icon(
+                  Icons.more_vert_outlined,
+                  color: Color(0xff697077),
+                  size: 18,
+                ),
+              ],
+            ),
+            const SizedBox(height: 27),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(25),
+                child: Image.asset(
+                  'assets/profile2.png',
+                  height: 50,
+                  width: 50,
+                  fit: BoxFit.cover,
+                ),
               ),
-              Icon(
-                Icons.search,
-                color: Color(0xff697077),
+              title: const Text(
+                "Precious ",
+                style: TextStyle(
+                  color: Color.fromRGBO(0, 0, 0, 1),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              subtitle: const Text(
+                "9:13",
+                style: TextStyle(
+                  color: secondaryColor,
+                  //Color(0xff697077),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                ),
+
+                // );
+                // },
+              ),
+              trailing: const Icon(
+                Icons.phone_missed_sharp,
+                color: Colors.red,
                 size: 20,
               ),
-              SizedBox(width: 20),
-              Icon(
-                Icons.more_vert_outlined,
-                color: Color(0xff697077),
-                size: 18,
-              ),
-            ],
-          ),
-          const SizedBox(height: 27),
-          Expanded(
-            child: ListView(
-              children: callLog,
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -553,10 +602,10 @@ class MessageReply extends StatelessWidget {
     @required this.isMe,
     @required this.text,
     @required this.time,
-    @required this.onSwipedMessage,
-    @required this.replyMessage,
-    @required this.replyName,
-    @required this.replyUsername,
+    this.onSwipedMessage,
+    this.replyMessage,
+    this.replyName,
+    this.replyUsername,
   });
 
   Widget buildReply(String message, String username, String displayName) =>
@@ -587,6 +636,14 @@ class MessageReply extends StatelessWidget {
                     color: primaryColor,
                   ),
                 ),
+                // Text(
+                //   '@${username}',
+                //   style: TextStyle(
+                //     fontSize: 12,
+                //     fontWeight: FontWeight.w400,
+                //     color: Color(0xffc82513),
+                //   ),
+                // ),
               ],
             ),
             SizedBox(
@@ -606,25 +663,35 @@ class MessageReply extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // var day = time.toDate().day.toString();
-    // var month = time.toDate().month.toString();
-    // var year = time.toDate().toString().substring(2);
-    // var date = day + '-' + month + '-' + year;
-    // var hour = time.toDate().hour;
-    // var min = time.toDate().minute;
+    var day = time
+        .toDate()
+        .day
+        .toString();
+    var month = time
+        .toDate()
+        .month
+        .toString();
+    var year = time.toDate().toString().substring(2);
+    var date = day + '-' + month + '-' + year;
+    var hour = time
+        .toDate()
+        .hour;
+    var min = time
+        .toDate()
+        .minute;
 
-    // var ampm;
-    // if (hour > 12) {
-    //   hour = hour % 12;
-    //   ampm = 'pm';
-    // } else if (hour == 12) {
-    //   ampm = 'pm';
-    // } else if (hour == 0) {
-    //   hour = 12;
-    //   ampm = 'am';
-    // } else {
-    //   ampm = 'am';
-    // }
+    var ampm;
+    if (hour > 12) {
+      hour = hour % 12;
+      ampm = 'pm';
+    } else if (hour == 12) {
+      ampm = 'pm';
+    } else if (hour == 0) {
+      hour = 12;
+      ampm = 'am';
+    } else {
+      ampm = 'am';
+    }
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -639,7 +706,10 @@ class MessageReply extends StatelessWidget {
         ),
         constraints: BoxConstraints(
           // maxWidth: double.infinity
-          maxWidth: MediaQuery.of(context).size.width * 0.5,
+          maxWidth: MediaQuery
+              .of(context)
+              .size
+              .width * 0.5,
         ),
         padding: const EdgeInsets.all(8),
         child: Column(
@@ -653,15 +723,15 @@ class MessageReply extends StatelessWidget {
               text,
               style: isMe
                   ? TextStyle(
-                      fontFamily: 'Roboto',
-                      color: Colors.white,
-                      fontSize: 11.5,
-                    )
+                fontFamily: 'Roboto',
+                color: Colors.white,
+                fontSize: 11.5,
+              )
                   : TextStyle(
-                      fontFamily: 'Roboto',
-                      color: secondaryColor,
-                      fontSize: 11.5,
-                    ),
+                fontFamily: 'Roboto',
+                color: secondaryColor,
+                fontSize: 11.5,
+              ),
               linkStyle: TextStyle(
                 fontFamily: 'Roboto',
                 color: primaryColor,
@@ -673,31 +743,31 @@ class MessageReply extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  '',
+                  hour.toString() + ":" + min.toString() + ampm,
                   style: isMe
                       ? TextStyle(
-                          color: Colors.white,
-                          fontSize: 9,
-                        )
+                    color: Colors.white,
+                    fontSize: 9,
+                  )
                       : TextStyle(
-                          color: secondaryColor,
-                          fontSize: 9,
-                        ),
+                    color: secondaryColor,
+                    fontSize: 9,
+                  ),
                 ),
                 isMe
                     ? SizedBox(width: 5)
                     : SizedBox(
-                        width: 0,
-                      ),
+                  width: 0,
+                ),
                 isMe
                     ? Icon(
-                        Icons.done_all,
-                        color: Colors.white,
-                        size: 14,
-                      )
+                  Icons.done_all,
+                  color: Colors.white,
+                  size: 14,
+                )
                     : SizedBox(
-                        width: 0,
-                      ),
+                  width: 0,
+                ),
               ],
             )
           ],
@@ -713,10 +783,6 @@ class Group extends StatelessWidget {
   final Timestamp time;
   final UserModel user;
   final bool sameUser;
-  final bool onSwipedMessage;
-  final String replyMessage;
-  final String replyName;
-  final String replyUsername;
 
   const Group({
     Key key,
@@ -725,20 +791,26 @@ class Group extends StatelessWidget {
     @required this.time,
     this.user,
     @required this.sameUser,
-    @required this.onSwipedMessage,
-    @required this.replyMessage,
-    @required this.replyName,
-    @required this.replyUsername,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var day = time.toDate().day.toString();
-    var month = time.toDate().month.toString();
+    var day = time
+        .toDate()
+        .day
+        .toString();
+    var month = time
+        .toDate()
+        .month
+        .toString();
     var year = time.toDate().toString().substring(2);
     var date = day + '-' + month + '-' + year;
-    var hour = time.toDate().hour;
-    var min = time.toDate().minute;
+    var hour = time
+        .toDate()
+        .hour;
+    var min = time
+        .toDate()
+        .minute;
 
     var ampm;
     if (hour > 12) {
@@ -752,82 +824,13 @@ class Group extends StatelessWidget {
     } else {
       ampm = 'am';
     }
-    Widget buildReply(String message, String username, String displayName) =>
-        Container(
-          decoration: BoxDecoration(
-            color: isMe
-                ? Color(0xffffffff).withOpacity(0.3)
-                : Color(0xff697077).withOpacity(0.2),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          padding: EdgeInsets.only(
-            left: 14,
-            right: 10,
-            top: 5,
-            bottom: 5,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    displayName,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: primaryColor,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Text(
-                message,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.white,
-                ),
-              )
-            ],
-          ),
-        );
-
-    String convertStringToLink(String textData) {
-      final urlRegExp = RegExp(
-          r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
-      final urlMatches = urlRegExp.allMatches(textData);
-      List<String> urls = urlMatches
-          .map((urlMatch) => textData.substring(urlMatch.start, urlMatch.end))
-          .toList();
-      List linksString = [];
-      for (var linkText in urls) {
-        linksString.add(linkText);
-      }
-
-      if (linksString.isNotEmpty) {
-        for (var linkTextData in linksString) {
-          textData =
-              textData.replaceAll(linkTextData, 'https://' + linkTextData);
-        }
-      }
-      if (linksString.isEmpty) {
-        return null;
-      }
-      return textData;
-    }
-
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Row(
         crossAxisAlignment:
-            !isMe ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        !isMe ? CrossAxisAlignment.start : CrossAxisAlignment.center,
         mainAxisAlignment:
-            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           if (isMe)
             SizedBox(
@@ -846,8 +849,10 @@ class Group extends StatelessWidget {
                   },
                   child: CircleAvatar(
                     radius: 20,
-                    backgroundImage: CachedNetworkImageProvider(user.image ??
-                        'https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg'),
+                    backgroundImage: CachedNetworkImageProvider(user.image ==
+                        null
+                        ? 'https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg'
+                        : user.image),
                   ),
                 ),
               ),
@@ -872,15 +877,21 @@ class Group extends StatelessWidget {
                 color: !isMe ? Color(0xFFE6E9EE) : Color(0xff0E014C),
               ),
               constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.8,
-                minWidth: MediaQuery.of(context).size.width * 0.15,
+                maxWidth: MediaQuery
+                    .of(context)
+                    .size
+                    .width * 0.8,
+                minWidth: MediaQuery
+                    .of(context)
+                    .size
+                    .width * 0.15,
               ),
               padding: const EdgeInsets.all(8),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment:
-                    isMe ? CrossAxisAlignment.start : CrossAxisAlignment.start,
+                isMe ? CrossAxisAlignment.start : CrossAxisAlignment.start,
                 children: [
                   if (!isMe)
                     if (!sameUser)
@@ -909,30 +920,34 @@ class Group extends StatelessWidget {
                         ],
                       ),
                   SizedBox(height: 2),
-                  if (onSwipedMessage)
-                    buildReply(replyMessage, replyUsername, replyName),
-                  if (convertStringToLink(text) != null)
-                    LinkPreviewGenerator(
-                      link: convertStringToLink(text),
-                      linkPreviewStyle: LinkPreviewStyle.small,
-                      graphicFit: BoxFit.contain,
-                    ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: LinkWell(
-                      text,
+                  RichText(
+                    text: TextSpan(
+                      text: text,
                       style: isMe
                           ? TextStyle(
-                              color: Colors.white,
-                              fontSize: 11.5,
-                            )
+                        color: Colors.white,
+                        fontSize: 11.5,
+                      )
                           : TextStyle(
-                              color: Colors.black,
-                              //Colors.black,
-                              fontSize: 11.5,
-                            ),
+                        color: Colors.black,
+                        //Colors.black,
+                        fontSize: 11.5,
+                      ),
                     ),
                   ),
+                  // Text(
+                  //   text,
+                  //   style: isMe
+                  //       ? TextStyle(
+                  //           color: Colors.white,
+                  //           fontSize: 11.5,
+                  //         )
+                  //       : TextStyle(
+                  //           color: Colors.black,
+                  //           //Colors.black,
+                  //           fontSize: 11.5,
+                  //         ),
+                  // ),
                   SizedBox(height: 5),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -941,28 +956,28 @@ class Group extends StatelessWidget {
                         hour.toString() + ":" + min.toString() + ampm,
                         style: isMe
                             ? TextStyle(
-                                color: Colors.white,
-                                fontSize: 9,
-                              )
+                          color: Colors.white,
+                          fontSize: 9,
+                        )
                             : TextStyle(
-                                color: Colors.black,
-                                fontSize: 9,
-                              ),
+                          color: Colors.black,
+                          fontSize: 9,
+                        ),
                       ),
                       isMe
                           ? SizedBox(width: 5)
                           : SizedBox(
-                              width: 0,
-                            ),
+                        width: 0,
+                      ),
                       isMe
                           ? Icon(
-                              Icons.done_all,
-                              color: Colors.white,
-                              size: 14,
-                            )
+                        Icons.done_all,
+                        color: Colors.white,
+                        size: 14,
+                      )
                           : SizedBox(
-                              width: 0,
-                            ),
+                        width: 0,
+                      ),
                     ],
                   )
                 ],
@@ -1046,12 +1061,13 @@ class WalletListTile extends StatelessWidget {
       ),
       margin: const EdgeInsets.symmetric(horizontal: 5),
       child: ListTile(
-        onTap: () => Get.to(WalletToken(
-          wallet: wallet,
-          balance: amount,
-          value: fiatValue,
-          coinMarketData: coinMarketData,
-        )),
+        onTap: () =>
+            Get.to(WalletToken(
+              wallet: wallet,
+              balance: amount,
+              value: fiatValue,
+              coinMarketData: coinMarketData,
+            )),
         dense: true,
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(17),
