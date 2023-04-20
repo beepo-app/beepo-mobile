@@ -168,6 +168,8 @@ class _ChatTabState extends State<ChatTab> {
     super.initState();
   }
 
+  final node1 = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -308,98 +310,146 @@ class _ChatTabState extends State<ChatTab> {
         ),
         const SizedBox(height: 20),
         Expanded(
-          child: Container(
-            padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(0),
-                topRight: Radius.circular(0),
-              ),
-              color: Colors.white,
-            ),
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(
-                  10.0,
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+            child: Container(
+              padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(0),
+                  topRight: Radius.circular(0),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    showInput
-                        ? TextField(
-                            textCapitalization: TextCapitalization.sentences,
-                            cursorColor: Colors.white,
-                            onSubmitted: (value) {
-                              setState(() {
-                                showInput = !showInput;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.fromLTRB(15, 2, 0, 2),
-                              hintText: 'Search messages...',
-                              hintStyle: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w500),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: secondaryColor.withOpacity(0.10),
+                color: Colors.white,
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(
+                    10.0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      showInput
+                          ? TextField(
+                              focusNode: node1,
+                              textCapitalization: TextCapitalization.sentences,
+                              cursorColor: Colors.white,
+                              onSubmitted: (value) {
+                                setState(() {
+                                  showInput = !showInput;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                contentPadding:
+                                    EdgeInsets.fromLTRB(15, 2, 0, 2),
+                                hintText: 'Search messages...',
+                                hintStyle: TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.w500),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: secondaryColor.withOpacity(0.10),
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: secondaryColor.withOpacity(0.10),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: secondaryColor.withOpacity(0.10),
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                borderRadius: BorderRadius.circular(12),
                               ),
-                            ),
-                            //later check
-                          )
-                        : Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Messages",
-                                  style: TextStyle(
-                                    color: secondaryColor,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600,
+                              //later check
+                            )
+                          : Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Messages",
+                                    style: TextStyle(
+                                      color: secondaryColor,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    showInput = !showInput;
-                                  });
-                                },
-                                icon: Icon(
-                                  Icons.search,
-                                  color: Color(0xff697077),
-                                  //Color(0xff908f8d),
-                                  size: 25,
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      showInput = !showInput;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    Icons.search,
+                                    color: Color(0xff697077),
+                                    //Color(0xff908f8d),
+                                    size: 25,
+                                  ),
                                 ),
-                              ),
-                              // SizedBox(width: 20),
-                              // Icon(
-                              //   Icons.more_vert_outlined,
-                              //   color: Color(0xff908f8d),
-                              //   size: 18,
-                              // ),
-                            ],
-                          ),
-                    Consumer<ChatNotifier>(
-                      builder: (context, pro, _) => Column(
-                        children: [
-                          StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('groups')
-                                .snapshots(),
-                            builder: (context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data.docs.isNotEmpty) {
+                                // SizedBox(width: 20),
+                                // Icon(
+                                //   Icons.more_vert_outlined,
+                                //   color: Color(0xff908f8d),
+                                //   size: 18,
+                                // ),
+                              ],
+                            ),
+                      Consumer<ChatNotifier>(
+                        builder: (context, pro, _) => Column(
+                          children: [
+                            StreamBuilder(
+                              stream: FirebaseFirestore.instance
+                                  .collection('groups')
+                                  .snapshots(),
+                              builder: (context,
+                                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                                if (snapshot.hasData) {
+                                  if (snapshot.data.docs.isNotEmpty) {
+                                    return ListView.separated(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: snapshot.data.docs.length,
+                                      separatorBuilder: (ctx, i) =>
+                                          const SizedBox(height: 0),
+                                      itemBuilder: (ctx, index) {
+                                        return GroupMessages(
+                                          uid: snapshot.data.docs[index].id,
+                                          index: index,
+                                          docu: snapshot.data.docs,
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    return SizedBox();
+                                  }
+                                }
+                                return const SizedBox();
+                              },
+                            ),
+                            StreamBuilder(
+                              stream: FirebaseFirestore.instance
+                                  .collection('conversation')
+                                  .doc(userM['uid'] == '' ? ' ' : userM['uid'])
+                                  .collection("currentConversation")
+                                  .orderBy('created', descending: true)
+                                  .snapshots(),
+                              builder: (context,
+                                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                                if (snapshot.hasData) {
+                                  if (snapshot.data.docs.isEmpty) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 50),
+                                      child: const Center(
+                                        child: Text(
+                                          'No Messages\n Tap on the + icon to start a conversation',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    );
+                                  }
                                   return ListView.separated(
                                     padding: const EdgeInsets.only(top: 10),
                                     physics:
@@ -409,68 +459,26 @@ class _ChatTabState extends State<ChatTab> {
                                     separatorBuilder: (ctx, i) =>
                                         const SizedBox(height: 0),
                                     itemBuilder: (ctx, index) {
-                                      return GroupMessages(
+                                      return MyMessages(
                                         uid: snapshot.data.docs[index].id,
                                         index: index,
                                         docu: snapshot.data.docs,
                                       );
                                     },
                                   );
-                                } else {
-                                  return SizedBox();
                                 }
-                              }
-                              return const SizedBox();
-                            },
-                          ),
-                          StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('conversation')
-                                .doc(userM['uid'] == '' ? ' ' : userM['uid'])
-                                .collection("currentConversation")
-                                .orderBy('created', descending: true)
-                                .snapshots(),
-                            builder: (context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data.docs.isEmpty) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 50),
-                                    child: const Center(
-                                      child: Text(
-                                        'No Messages\n Tap on the + icon to start a conversation',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  );
-                                }
-                                return ListView.separated(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: snapshot.data.docs.length,
-                                  separatorBuilder: (ctx, i) =>
-                                      const SizedBox(height: 0),
-                                  itemBuilder: (ctx, index) {
-                                    return MyMessages(
-                                      uid: snapshot.data.docs[index].id,
-                                      index: index,
-                                      docu: snapshot.data.docs,
-                                    );
-                                  },
+                                return const Center(
+                                  child: CircularProgressIndicator(),
                                 );
-                              }
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            },
-                          ),
-                        ],
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
 
-                    //),
-                  ],
+                      //),
+                    ],
+                  ),
                 ),
               ),
             ),

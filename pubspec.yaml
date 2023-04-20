@@ -87,6 +87,7 @@ dependencies:
   xmtp: ^0.0.1-development.1
   swipe_to: ^1.0.2
   wechat_assets_picker:
+  flutter_windowmanager:
 
 
 
