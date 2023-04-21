@@ -73,14 +73,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.20.1"
-  awesome_notifications:
-    dependency: "direct main"
-    description:
-      name: awesome_notifications
-      sha256: "2b430c75cc879d6cfd52bb6eb2b5c1591ed425347816408cdcbd3f6916bba14c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.4+1"
   boolean_selector:
     dependency: transitive
     description:
@@ -221,10 +213,10 @@ packages:
     dependency: "direct main"
     description:
       name: convert
-      sha256: "1be13198012c1d5bc042dc40ad1d7f16cbd522350984c0c1abf471d6d7e305c6"
+      sha256: "0f08b14755d163f6e2134cb58222dd25ea2a2ee8a195e53983d57c075324d592"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.0"
+    version: "3.1.1"
   country_picker:
     dependency: "direct main"
     description:
@@ -289,6 +281,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.8"
+  eip1559:
+    dependency: transitive
+    description:
+      name: eip1559
+      sha256: de454d6321bd753eb79116e9ec4f8df20895c2e97f9a3839a032f3a728985516
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.1"
   eip55:
     dependency: transitive
     description:
@@ -592,22 +592,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.6.1"
-  googleapis_auth:
-    dependency: transitive
-    description:
-      name: googleapis_auth
-      sha256: "127b1bbd32170ab8312f503bd57f1d654d8e4039ddfbc63c027d3f7ade0eff74"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.3.1"
-  grpc:
-    dependency: transitive
-    description:
-      name: grpc
-      sha256: a73c16e4f6a4a819be892bb2c73cc1d0b00e36095f69b0738cc91a733e3d27ba
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.0"
   hawk_fab_menu:
     dependency: "direct main"
     description:
@@ -648,14 +632,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.13.5"
-  http2:
-    dependency: transitive
-    description:
-      name: http2
-      sha256: "58805ebc6513eed3b98ee0a455a8357e61d187bf2e0fdc1e53120770f78de258"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.1"
   http_client_helper:
     dependency: transitive
     description:
@@ -1112,14 +1088,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.4"
-  protobuf:
-    dependency: transitive
-    description:
-      name: protobuf
-      sha256: "01dd9bd0fa02548bf2ceee13545d4a0ec6046459d847b6b061d8a27237108a08"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
   provider:
     dependency: "direct main"
     description:
@@ -1240,6 +1208,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.27.7"
+  sec:
+    dependency: transitive
+    description:
+      name: sec
+      sha256: "8bbd56df884502192a441b5f5d667265498f2f8728a282beccd9db79e215f379"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   share_plus:
     dependency: "direct main"
     description:
@@ -1256,6 +1232,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.0"
+  simple_url_preview:
+    dependency: "direct main"
+    description:
+      name: simple_url_preview
+      sha256: c91c34c9aa80f5d61afa7b731997548c7df97ccd45b5050d6e618a019dda786b
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -1333,6 +1317,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  string_validator:
+    dependency: transitive
+    description:
+      name: string_validator
+      sha256: "50dd8ecf91db6a732f4a851eeae81ee12406eedc62d0da72f2d91a04a2d10dd8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   swipe_to:
     dependency: "direct main"
     description:
@@ -1541,14 +1533,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.74"
-  web3dart:
+  wallet:
     dependency: transitive
     description:
-      name: web3dart
-      sha256: d40d3b2173b982e2b94c9e9589539b8556e9d0a44d3d79cd97d1f2ab2c35d7fe
+      name: wallet
+      sha256: "569c91c2af13a9e1119c001f9c09218eccf3f383eb8d15ba13a5b558010c1bc0"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.1"
+    version: "0.0.12+1"
+  web3dart:
+    dependency: "direct main"
+    description:
+      name: web3dart
+      sha256: "0b96223a6b284e3146e65dc842ded139eca68a85c4ab79c5ba1a73284927d3cd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.6.1"
   wechat_assets_picker:
     dependency: "direct main"
     description:
@@ -1581,22 +1581,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.0"
-  xmtp:
-    dependency: "direct main"
-    description:
-      name: xmtp
-      sha256: "55a933cabf034bade07f742723926c8b9860398d9fbbaef1148f99e57e9eb211"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.1-development.1"
-  xmtp_proto:
-    dependency: transitive
-    description:
-      name: xmtp_proto
-      sha256: "455517589b7d6b8ed892aa6d2ab958d53869fe545fdd10f95edd88c4e5e96d40"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.1-development"
   yaml:
     dependency: transitive
     description:
@@ -1606,5 +1590,5 @@ packages:
     source: hosted
     version: "3.1.1"
 sdks:
-  dart: ">=2.18.4 <3.0.0"
+  dart: ">=2.18.0 <3.0.0"
   flutter: ">=3.3.0"
