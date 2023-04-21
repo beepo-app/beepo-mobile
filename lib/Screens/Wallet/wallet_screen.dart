@@ -167,12 +167,15 @@ class _WalletScreenState extends State<WalletScreen> {
                 double totalBalance = 0;
 
                 //add erc balances
+                try{
                 for (var balance in ercBalances) {
                   //get balance in selected currency
                   var balanceDouble = double.parse(balance['prices'].firstWhere(
                           (e) => e['currency'] == selectedCurrency)['value'] ??
                       '0');
                   totalBalance += balanceDouble;
+                }}catch(e){
+                  print(e);
                 }
 
                 //add btc balance
@@ -433,9 +436,10 @@ class WalletIcon extends StatelessWidget {
           child: GestureDetector(
             onTap: onTap,
             child: Container(
-              // width: 63.0,
-              // height: 61.0,
-              padding: const EdgeInsets.only(left: 15, top: 16, right: 15, bottom: 20,),
+              width: 100.0,
+              height: 100.0,
+              // alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(vertical: 20,),
               color: secondaryColor,
               child: Column(
                 children: [
