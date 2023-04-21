@@ -297,7 +297,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height *0.55,
+                        height: MediaQuery.of(context).size.height * 0.55,
                         child: TabBarView(children: [
                           Container(
                             padding: const EdgeInsets.only(top: 10),
@@ -435,7 +435,12 @@ class WalletIcon extends StatelessWidget {
             child: Container(
               // width: 63.0,
               // height: 61.0,
-              padding: const EdgeInsets.only(left: 15, top: 16, right: 15, bottom: 20,),
+              padding: const EdgeInsets.only(
+                left: 15,
+                top: 16,
+                right: 15,
+                bottom: 20,
+              ),
               color: secondaryColor,
               child: Column(
                 children: [
