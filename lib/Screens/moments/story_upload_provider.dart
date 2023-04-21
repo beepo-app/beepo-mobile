@@ -308,7 +308,7 @@ class StoryUploadProvider extends ChangeNotifier {
       final thumbImage = await video.VideoThumbnail.thumbnailData(
         video: _file.path,
         maxWidth: 128,
-        imageFormat: ImageFormat,
+        imageFormat: video.ImageFormat.JPEG,
         // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
         quality: 25,
       );

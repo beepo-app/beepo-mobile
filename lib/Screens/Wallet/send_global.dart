@@ -132,20 +132,20 @@ class _SendGlobalState extends State<SendGlobal> {
                 ),
               ),
             ),
-            // Expanded(
-            //   child: Container(
-            //     padding: EdgeInsets.only(top: 10, left: 10, right: 10),
-            //     color: Colors.white,
-            //     child: WalletList(
-            //       wallets: wallets,
-            //       coinMarketDataList: widget.coinMarketDataList,
-            //       btcBalance: widget.btcBalance,
-            //       ercBalances: widget.ercBalances,
-            //       selectedCurrencySymbol: widget.selectedCurrencySymbol,
-            //       selectedCurrency: widget.selectedCurrency,
-            //     ),
-            //   ),
-            // ),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.only(top: 10, left: 10, right: 10),
+                color: Colors.white,
+                child: WalletList(
+                  wallets: wallets,
+                  coinMarketDataList: widget.coinMarketDataList,
+                  btcBalance: widget.btcBalance,
+                  ercBalances: widget.ercBalances,
+                  selectedCurrencySymbol: widget.selectedCurrencySymbol,
+                  selectedCurrency: widget.selectedCurrency,
+                ),
+              ),
+            ),
           ],
         ),
       ),

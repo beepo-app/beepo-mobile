@@ -300,7 +300,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height *0.55,
+                        height: MediaQuery.of(context).size.height *0.52,
                         child: TabBarView(children: [
                           Container(
                             padding: const EdgeInsets.only(top: 10),
@@ -394,7 +394,7 @@ class WalletList extends StatelessWidget {
           balance = coinBalance['balance'].toString();
 
           fiatValue = coinBalance['prices']
-              .firstWhere((e) => e['currency'] == selectedCurrency)['value'];
+              .firstWhere((e) => e['currency'] == selectedCurrency, )['value'];
         }
 
         return WalletListTile(
