@@ -101,6 +101,7 @@ class _AddStoryState extends State<AddStory> {
                     alignment: Alignment.topCenter,
                     decoration: BoxDecoration(
 
+
                         // If the selected media is an image, show the selected image,
                         // else it is a video, show the video thumbnail.
                         // If no media is selected, decoration image will be null.
@@ -110,7 +111,7 @@ class _AddStoryState extends State<AddStory> {
                                 selectedMediaType == "image")
                             ? DecorationImage(
                                 image: FileImage(File(selectedFile.path)),
-                                fit: BoxFit.cover,
+                                fit: BoxFit.contain,
                               )
                             // If video is selected (file is not null)
                             : (selectedFile != null &&
@@ -118,10 +119,11 @@ class _AddStoryState extends State<AddStory> {
                                     videoThumbnail != null)
                                 ? DecorationImage(
                                     image: MemoryImage(videoThumbnail),
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.contain,
                                   )
                                 : null,
-                        color: Colors.transparent),
+                        color: Colors.black,
+                    ),
                     child: (selectedFile != null)
                         ? const SizedBox.shrink()
                         : FutureBuilder<void>(

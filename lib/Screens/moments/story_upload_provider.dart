@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:video_thumbnail/video_thumbnail.dart' as video;
 import 'package:image/image.dart' as img;
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import '../../Models/story_model/storyModel.dart';
@@ -305,9 +305,10 @@ class StoryUploadProvider extends ChangeNotifier {
 
   Future<Either<Failure, Success>> getVideoThumbnail() async {
     try {
-      final thumbImage = await VideoThumbnail.thumbnailData(
+      final thumbImage = await video.VideoThumbnail.thumbnailData(
         video: _file.path,
         maxWidth: 128,
+        imageFormat: ImageFormat,
         // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
         quality: 25,
       );
