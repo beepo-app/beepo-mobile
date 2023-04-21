@@ -13,7 +13,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:link_preview_generator/link_preview_generator.dart';
 import 'package:linkwell/linkwell.dart';
 import 'package:provider/provider.dart';
 
