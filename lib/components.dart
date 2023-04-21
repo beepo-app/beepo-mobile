@@ -415,7 +415,7 @@ class _ChatTabState extends State<ChatTab> {
                           stream: FirebaseFirestore.instance
                               .collection("conversation")
                               .doc(userM['uid'])
-                              .collection('currentConversation').
+                              .collection('currentConversation')
                               .where("searchKeywords",
                               arrayContains: _searchcontroller.text.trim().toLowerCase())
                               .snapshots(),

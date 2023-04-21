@@ -297,7 +297,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: 380,
+                        height: MediaQuery.of(context).size.height *0.55,
                         child: TabBarView(children: [
                           Container(
                             padding: const EdgeInsets.only(top: 10),
@@ -433,27 +433,25 @@ class WalletIcon extends StatelessWidget {
           child: GestureDetector(
             onTap: onTap,
             child: Container(
-              width: 63.0,
-              height: 61.0,
+              // width: 63.0,
+              // height: 61.0,
+              padding: const EdgeInsets.only(left: 15, top: 16, right: 15, bottom: 20,),
               color: secondaryColor,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Transform.rotate(
-                      angle: angle,
-                      child: Icon(icon, size: 30, color: Colors.white),
-                    ),
-                    // const SizedBox(height: 7),
-                    Text(
-                      text,
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white),
-                    ),
-                  ],
-                ),
+              child: Column(
+                children: [
+                  Transform.rotate(
+                    angle: angle,
+                    child: Icon(icon, size: 30, color: Colors.white),
+                  ),
+                  // const SizedBox(height: 7),
+                  Text(
+                    text,
+                    style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white),
+                  ),
+                ],
               ),
             ),
           ),
