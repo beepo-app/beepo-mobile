@@ -23,6 +23,7 @@ import 'Models/story_model/storyModel.dart';
 import 'Models/user_model.dart';
 import 'Models/wallet.dart';
 import 'Screens/Browser/browser_page.dart';
+import 'Screens/Messaging/chat_dm_screen.dart';
 import 'Screens/Messaging/groupMessages.dart';
 import 'Screens/Messaging/myMessages.dart';
 import 'Screens/Wallet/token_screen.dart';
@@ -161,6 +162,7 @@ class _ChatTabState extends State<ChatTab> {
 
 // cameras.take(2);
   }
+  final TextEditingController _searchcontroller = TextEditingController();
 
   String remove;
 
@@ -170,6 +172,13 @@ class _ChatTabState extends State<ChatTab> {
         context.read<StoryDownloadProvider>().getCurrentUserStories();
     gethg();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+
+    super.dispose();
+    _searchcontroller.dispose();
   }
 
   @override
@@ -397,6 +406,85 @@ class _ChatTabState extends State<ChatTab> {
                               // ),
                             ],
                           ),
+                    showInput? Padding(
+                      padding: const EdgeInsets.only(
+                        left: 22.0,
+                        right: 22.0,
+                      ),
+                      child: StreamBuilder<QuerySnapshot<Map>>(
+                          stream: FirebaseFirestore.instance
+                              .collection("conversation")
+                              .doc(userM['uid'])
+                              .collection('currentConversation').
+                              .where("searchKeywords",
+                              arrayContains: _searchcontroller.text.trim().toLowerCase())
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const Center(
+                                child: CircularProgressIndicator(
+                                  color: primaryColor,
+                                ),
+                              );
+                            }
+                            if (snapshot.data == null) {
+                              return const SizedBox();
+                            }
+                            return ListView.builder(
+                              itemCount: snapshot.data.docs.length,
+                              itemBuilder: (context, index) {
+                                final data = snapshot.data.docs[index].data();
+                                return _searchcontroller.text.isNotEmpty
+                                    ? ListTile(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ChatDm(
+                                          model: UserModel(
+                                            uid: data['receiver'],
+                                            name: data['displayName'],
+                                            image: data['image'],
+                                            userName: data['name'],
+                                            searchKeywords: data['searchKeywords'],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  leading: Container(
+                                    width: 46,
+                                    height: 46,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: ClipOval(
+                                      child: CachedNetworkImage(
+                                        imageUrl: data['image'],
+                                        placeholder: (context, url) =>
+                                            Center(child: CircularProgressIndicator()),
+                                        errorWidget: (context, url, error) => Icon(
+                                          Icons.person,
+                                          color: secondaryColor,
+                                        ),
+                                        filterQuality: FilterQuality.high,
+                                      ),
+                                    ),
+                                  ),
+                                  title: Text(
+                                    data['name'],
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  // subtitle: Text('@${data['username']}'),
+                                )
+                                    : const SizedBox();
+                              },
+                            );
+                          }),
+                    ):
                     Consumer<ChatNotifier>(
                       builder: (context, pro, _) => Column(
                         children: [
