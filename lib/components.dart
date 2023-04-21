@@ -7,6 +7,7 @@ import 'package:beepo/Screens/moments/story_download_provider.dart';
 import 'package:beepo/Screens/moments/story_view.dart';
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
+import 'package:beepo/search.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -134,7 +135,6 @@ class _ChatTabState extends State<ChatTab> {
   Stream<List<StoryModel>> currentUserStories;
   Stream<List<StoryModel>> friendsStories;
 
-  // Stream<List<UserModel>> currentUserFollowingStories;
   Stream<List<DocumentSnapshot>> currentUserFollowing;
 
   Box box1 = Hive.box('beepo');
@@ -159,9 +159,8 @@ class _ChatTabState extends State<ChatTab> {
     // Get a specific camera from the list of available cameras.
     firstCamera = cameras[0];
     secondCamera = cameras[1];
-
-// cameras.take(2);
   }
+
   final TextEditingController _searchcontroller = TextEditingController();
 
   String remove;
@@ -176,7 +175,6 @@ class _ChatTabState extends State<ChatTab> {
 
   @override
   void dispose() {
-
     super.dispose();
     _searchcontroller.dispose();
   }
@@ -198,7 +196,6 @@ class _ChatTabState extends State<ChatTab> {
     return Column(
       children: [
         Row(
-          // scrollDirection: Axis.horizontal,
           children: [
             const SizedBox(width: 20),
             GestureDetector(
@@ -340,40 +337,128 @@ class _ChatTabState extends State<ChatTab> {
                 padding: const EdgeInsets.all(
                   10.0,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    showInput
-                        ? TextField(
-                            textCapitalization: TextCapitalization.sentences,
-                            cursorColor: Colors.white,
-                            onSubmitted: (value) {
-                              setState(() {
-                                showInput = !showInput;
-                              });
+                child: showInput
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SearchBar2(
+                            controller: _searchcontroller,
+                            autofocus: true,
+                            showInput: showInput,
+                            onChanged: (value) {
+                              setState(() {});
                             },
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.fromLTRB(15, 2, 0, 2),
-                              hintText: 'Search messages...',
-                              hintStyle: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w500),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: secondaryColor.withOpacity(0.10),
-                                ),
-                                borderRadius: BorderRadius.circular(12),
+                          ),
+                          // Text('omooo'),omooo
+                          SizedBox(
+                            height: 200,
+                            // fit: FlexFit.loose,
+                            // flex: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 22.0,
+                                right: 22.0,
                               ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: secondaryColor.withOpacity(0.10),
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                              child: StreamBuilder<QuerySnapshot<Map>>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection("conversation")
+                                      .doc(userM['uid'])
+                                      .collection('currentConversation')
+                                      .where("searchKeywords",
+                                          arrayContains: _searchcontroller.text
+                                              .trim()
+                                              .toLowerCase())
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(
+                                          color: primaryColor,
+                                        ),
+                                      );
+                                    }
+                                    if (snapshot.data == null) {
+                                      return const SizedBox(
+                                        height: 2,
+                                      );
+                                    }
+                                    return ListView.builder(
+                                      itemCount: snapshot.data.docs.length,
+                                      // shrinkWrap: true,
+                                      itemBuilder: (context, index) {
+                                        final data =
+                                            snapshot.data.docs[index].data();
+                                        print('this is the length:  ${snapshot.data.docs.length}');
+                                        return _searchcontroller.text.isNotEmpty
+                                            ? ListTile(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ChatDm(
+                                                        model: UserModel(
+                                                          uid: data['receiver'],
+                                                          name: data[
+                                                              'displayName'],
+                                                          image: data['image'],
+                                                          userName:
+                                                              data['name'],
+                                                          searchKeywords: data[
+                                                              'searchKeywords'],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                leading: Container(
+                                                  width: 46,
+                                                  height: 46,
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: ClipOval(
+                                                    child: CachedNetworkImage(
+                                                      imageUrl: data['image'],
+                                                      placeholder: (context,
+                                                              url) =>
+                                                          Center(
+                                                              child:
+                                                                  CircularProgressIndicator()),
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          Icon(
+                                                        Icons.person,
+                                                        color: secondaryColor,
+                                                      ),
+                                                      filterQuality:
+                                                          FilterQuality.high,
+                                                    ),
+                                                  ),
+                                                ),
+                                                title: Text(
+                                                  data['name'],
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                // subtitle: Text('@${data['username']}'),
+                                              )
+                                            : const SizedBox();
+                                      },
+                                    );
+                                  }),
                             ),
-                            //later check
                           )
-                        : Row(
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
                             children: [
                               Expanded(
                                 child: Text(
@@ -406,169 +491,93 @@ class _ChatTabState extends State<ChatTab> {
                               // ),
                             ],
                           ),
-                    showInput? Padding(
-                      padding: const EdgeInsets.only(
-                        left: 22.0,
-                        right: 22.0,
-                      ),
-                      child: StreamBuilder<QuerySnapshot<Map>>(
-                          stream: FirebaseFirestore.instance
-                              .collection("conversation")
-                              .doc(userM['uid'])
-                              .collection('currentConversation')
-                              .where("searchKeywords",
-                              arrayContains: _searchcontroller.text.trim().toLowerCase())
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData) {
-                              return const Center(
-                                child: CircularProgressIndicator(
-                                  color: primaryColor,
+                          Consumer<ChatNotifier>(
+                            builder: (context, pro, _) => Column(
+                              children: [
+                                // if (remove == 'false')
+                                StreamBuilder(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('groups')
+                                      .snapshots(),
+                                  builder: (context,
+                                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                                    if (snapshot.hasData) {
+                                      if (snapshot.data.docs.isNotEmpty) {
+                                        return ListView.separated(
+                                          padding:
+                                              const EdgeInsets.only(top: 10),
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemCount: snapshot.data.docs.length,
+                                          separatorBuilder: (ctx, i) =>
+                                              const SizedBox(height: 0),
+                                          itemBuilder: (ctx, index) {
+                                            return GroupMessages(
+                                              uid: snapshot.data.docs[index].id,
+                                              index: index,
+                                              docu: snapshot.data.docs,
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        return SizedBox();
+                                      }
+                                    }
+                                    return const SizedBox();
+                                  },
                                 ),
-                              );
-                            }
-                            if (snapshot.data == null) {
-                              return const SizedBox();
-                            }
-                            return ListView.builder(
-                              itemCount: snapshot.data.docs.length,
-                              itemBuilder: (context, index) {
-                                final data = snapshot.data.docs[index].data();
-                                return _searchcontroller.text.isNotEmpty
-                                    ? ListTile(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ChatDm(
-                                          model: UserModel(
-                                            uid: data['receiver'],
-                                            name: data['displayName'],
-                                            image: data['image'],
-                                            userName: data['name'],
-                                            searchKeywords: data['searchKeywords'],
+                                StreamBuilder(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('conversation')
+                                      .doc(userM['uid'] == ''
+                                          ? ' '
+                                          : userM['uid'])
+                                      .collection("currentConversation")
+                                      .orderBy('created', descending: true)
+                                      .snapshots(),
+                                  builder: (context,
+                                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                                    if (snapshot.hasData) {
+                                      if (snapshot.data.docs.isEmpty) {
+                                        return Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 50),
+                                          child: const Center(
+                                            child: Text(
+                                              'No Messages\n Tap on the + icon to start a conversation',
+                                              textAlign: TextAlign.center,
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  leading: Container(
-                                    width: 46,
-                                    height: 46,
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: ClipOval(
-                                      child: CachedNetworkImage(
-                                        imageUrl: data['image'],
-                                        placeholder: (context, url) =>
-                                            Center(child: CircularProgressIndicator()),
-                                        errorWidget: (context, url, error) => Icon(
-                                          Icons.person,
-                                          color: secondaryColor,
-                                        ),
-                                        filterQuality: FilterQuality.high,
-                                      ),
-                                    ),
-                                  ),
-                                  title: Text(
-                                    data['name'],
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  // subtitle: Text('@${data['username']}'),
-                                )
-                                    : const SizedBox();
-                              },
-                            );
-                          }),
-                    ):
-                    Consumer<ChatNotifier>(
-                      builder: (context, pro, _) => Column(
-                        children: [
-                          // if (remove == 'false')
-                          StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('groups')
-                                .snapshots(),
-                            builder: (context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data.docs.isNotEmpty) {
-                                  return ListView.separated(
-                                    padding: const EdgeInsets.only(top: 10),
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: snapshot.data.docs.length,
-                                    separatorBuilder: (ctx, i) =>
-                                        const SizedBox(height: 0),
-                                    itemBuilder: (ctx, index) {
-                                      return GroupMessages(
-                                        uid: snapshot.data.docs[index].id,
-                                        index: index,
-                                        docu: snapshot.data.docs,
+                                        );
+                                      }
+                                      return ListView.separated(
+                                        padding: const EdgeInsets.only(top: 10),
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemCount: snapshot.data.docs.length,
+                                        separatorBuilder: (ctx, i) =>
+                                            const SizedBox(height: 0),
+                                        itemBuilder: (ctx, index) {
+                                          return MyMessages(
+                                            uid: snapshot.data.docs[index].id,
+                                            index: index,
+                                            docu: snapshot.data.docs,
+                                          );
+                                        },
                                       );
-                                    },
-                                  );
-                                } else {
-                                  return SizedBox();
-                                }
-                              }
-                              return const SizedBox();
-                            },
-                          ),
-                          StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('conversation')
-                                .doc(userM['uid'] == '' ? ' ' : userM['uid'])
-                                .collection("currentConversation")
-                                .orderBy('created', descending: true)
-                                .snapshots(),
-                            builder: (context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data.docs.isEmpty) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 50),
-                                    child: const Center(
-                                      child: Text(
-                                        'No Messages\n Tap on the + icon to start a conversation',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  );
-                                }
-                                return ListView.separated(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: snapshot.data.docs.length,
-                                  separatorBuilder: (ctx, i) =>
-                                      const SizedBox(height: 0),
-                                  itemBuilder: (ctx, index) {
-                                    return MyMessages(
-                                      uid: snapshot.data.docs[index].id,
-                                      index: index,
-                                      docu: snapshot.data.docs,
+                                    }
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
                                     );
                                   },
-                                );
-                              }
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            },
-                          ),
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
-                    ),
-
-                    //),
-                  ],
-                ),
               ),
             ),
           ),
@@ -944,8 +953,8 @@ class Group extends StatelessWidget {
       final urlRegExp = RegExp(
           r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
       final urlMatches = urlRegExp.allMatches(text);
-      List<String> urls = urlMatches.map(
-              (urlMatch) => text.substring(urlMatch.start, urlMatch.end))
+      List<String> urls = urlMatches
+          .map((urlMatch) => text.substring(urlMatch.start, urlMatch.end))
           .toList();
       urls.forEach((x) => print(x));
       // final urlRegExp = RegExp(

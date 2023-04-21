@@ -75,7 +75,9 @@ class _SearchSearchState extends State<SearchSearch> {
                                             searchKeywords:
                                                 data['searchKeywords'],
                                           ),
-                                        )));
+                                        ),
+                                ),
+                            );
                           },
                           leading: Container(
                             width: 46,
@@ -113,118 +115,118 @@ class _SearchSearchState extends State<SearchSearch> {
 }
 
 
-
-
-class SearchSearch2 extends StatefulWidget {
-  @override
-  State<SearchSearch2> createState() => _SearchSearch2State();
-}
-
-
-class _SearchSearch2State extends State<SearchSearch2> {
-  final TextEditingController _searchcontroller = TextEditingController();
-  Map userM = Hive.box('beepo').get('userData');
-
-  @override
-  void dispose() {
-    super.dispose();
-    _searchcontroller.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: SocialAppBar(
-        title: SearchBar(
-          controller: _searchcontroller,
-          autofocus: true,
-          onChanged: (value) {
-            setState(() {});
-          },
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          left: 22.0,
-          right: 22.0,
-        ),
-        child: StreamBuilder<QuerySnapshot<Map>>(
-            stream: FirebaseFirestore.instance
-                .collection("conversation")
-                .doc(userM['uid'])
-                .collection('currentConversation')
-                .where("searchKeywords",
-                    arrayContains: _searchcontroller.text.trim().toLowerCase())
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(
-                  child: CircularProgressIndicator(
-                    color: primaryColor,
-                  ),
-                );
-              }
-              if (snapshot.data == null) {
-                return const SizedBox();
-              }
-              return ListView.builder(
-                itemCount: snapshot.data.docs.length,
-                itemBuilder: (context, index) {
-                  final data = snapshot.data.docs[index].data();
-                  return _searchcontroller.text.isNotEmpty
-                      ? ListTile(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ChatDm(
-                                  model: UserModel(
-                                    uid: data['receiver'],
-                                    name: data['displayName'],
-                                    image: data['image'],
-                                    userName: data['name'],
-                                    searchKeywords: data['searchKeywords'],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          leading: Container(
-                            width: 46,
-                            height: 46,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            child: ClipOval(
-                              child: CachedNetworkImage(
-                                imageUrl: data['image'],
-                                placeholder: (context, url) =>
-                                    Center(child: CircularProgressIndicator()),
-                                errorWidget: (context, url, error) => Icon(
-                                  Icons.person,
-                                  color: secondaryColor,
-                                ),
-                                filterQuality: FilterQuality.high,
-                              ),
-                            ),
-                          ),
-                          title: Text(
-                            data['name'],
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          // subtitle: Text('@${data['username']}'),
-                        )
-                      : const SizedBox();
-                },
-              );
-            }),
-      ),
-    );
-  }
-}
+//
+//
+// class SearchSearch2 extends StatefulWidget {
+//   @override
+//   State<SearchSearch2> createState() => _SearchSearch2State();
+// }
+//
+//
+// class _SearchSearch2State extends State<SearchSearch2> {
+//   final TextEditingController _searchcontroller = TextEditingController();
+//   Map userM = Hive.box('beepo').get('userData');
+//
+//   @override
+//   void dispose() {
+//     super.dispose();
+//     _searchcontroller.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: SocialAppBar(
+//         title: SearchBar(
+//           controller: _searchcontroller,
+//           autofocus: true,
+//           onChanged: (value) {
+//             setState(() {});
+//           },
+//         ),
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.only(
+//           left: 22.0,
+//           right: 22.0,
+//         ),
+//         child: StreamBuilder<QuerySnapshot<Map>>(
+//             stream: FirebaseFirestore.instance
+//                 .collection("conversation")
+//                 .doc(userM['uid'])
+//                 .collection('currentConversation')
+//                 .where("searchKeywords",
+//                     arrayContains: _searchcontroller.text.trim().toLowerCase())
+//                 .snapshots(),
+//             builder: (context, snapshot) {
+//               if (!snapshot.hasData) {
+//                 return const Center(
+//                   child: CircularProgressIndicator(
+//                     color: primaryColor,
+//                   ),
+//                 );
+//               }
+//               if (snapshot.data == null) {
+//                 return const SizedBox();
+//               }
+//               return ListView.builder(
+//                 itemCount: snapshot.data.docs.length,
+//                 itemBuilder: (context, index) {
+//                   final data = snapshot.data.docs[index].data();
+//                   return _searchcontroller.text.isNotEmpty
+//                       ? ListTile(
+//                           onTap: () {
+//                             Navigator.push(
+//                               context,
+//                               MaterialPageRoute(
+//                                 builder: (context) => ChatDm(
+//                                   model: UserModel(
+//                                     uid: data['receiver'],
+//                                     name: data['displayName'],
+//                                     image: data['image'],
+//                                     userName: data['name'],
+//                                     searchKeywords: data['searchKeywords'],
+//                                   ),
+//                                 ),
+//                               ),
+//                             );
+//                           },
+//                           leading: Container(
+//                             width: 46,
+//                             height: 46,
+//                             decoration: const BoxDecoration(
+//                               shape: BoxShape.circle,
+//                             ),
+//                             child: ClipOval(
+//                               child: CachedNetworkImage(
+//                                 imageUrl: data['image'],
+//                                 placeholder: (context, url) =>
+//                                     Center(child: CircularProgressIndicator()),
+//                                 errorWidget: (context, url, error) => Icon(
+//                                   Icons.person,
+//                                   color: secondaryColor,
+//                                 ),
+//                                 filterQuality: FilterQuality.high,
+//                               ),
+//                             ),
+//                           ),
+//                           title: Text(
+//                             data['name'],
+//                             style: TextStyle(
+//                               fontSize: 14,
+//                               fontWeight: FontWeight.w600,
+//                             ),
+//                           ),
+//                           // subtitle: Text('@${data['username']}'),
+//                         )
+//                       : const SizedBox();
+//                 },
+//               );
+//             }),
+//       ),
+//     );
+//   }
+// }
 
 class SocialAppBar extends StatelessWidget implements PreferredSizeWidget {
   const SocialAppBar({
@@ -281,7 +283,6 @@ class SearchBar extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: 290,
           height: 32,
           child: TextField(
             cursorColor: Colors.white,
@@ -303,6 +304,79 @@ class SearchBar extends StatelessWidget {
               ),
               errorText: null,
             ),
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class SearchBar2 extends StatefulWidget {
+   SearchBar2({
+    this.ontap,
+    this.autofocus = false,
+    this.readonly = false,
+    this.controller,
+    this.onChanged,
+    this.showInput = false,
+  });
+
+  final VoidCallback ontap;
+  final bool readonly;
+  final bool autofocus;
+   bool showInput;
+
+  final TextEditingController controller;
+  final Function(String) onChanged;
+
+  @override
+  State<SearchBar2> createState() => _SearchBar2State();
+}
+
+class _SearchBar2State extends State<SearchBar2> {
+  final node1 = FocusNode();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 290,
+          height: 32,
+          child: TextField(
+            // textCapitalization: TextCapitalization.sentences,
+            cursorColor: Colors.white,
+            onSubmitted: (value) {
+              setState(() {
+                widget.showInput = !widget.showInput;
+              });
+            },
+            readOnly: widget.readonly,
+            autofocus: widget.autofocus,
+            focusNode: node1,
+            onTap: widget.ontap,
+            onChanged: widget.onChanged,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.fromLTRB(15, 2, 0, 2),
+              hintText: 'Search messages...',
+              hintStyle: TextStyle(
+                  fontSize: 15, fontWeight: FontWeight.w500),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: secondaryColor.withOpacity(0.10),
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: secondaryColor.withOpacity(0.10),
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            //later check
           ),
         )
       ],
