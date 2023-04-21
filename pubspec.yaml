@@ -84,10 +84,11 @@ dependencies:
   flutter_callkit_incoming: ^1.0.3+3
   flutter_local_notifications: ^13.0.0
   stop_watch_timer: ^2.0.0
-  xmtp: ^0.0.1-development.1
   swipe_to: ^1.0.2
   wechat_assets_picker:
   flutter_windowmanager:
+  simple_url_preview:
+
 
 
 

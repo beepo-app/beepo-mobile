@@ -760,6 +760,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                           color: secondaryColor,
                                         ),
                                       ),
+                                      // if(enableMedia == true)
                                       IconButton(
                                         onPressed: () {
                                           context

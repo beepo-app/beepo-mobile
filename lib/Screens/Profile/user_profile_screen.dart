@@ -13,7 +13,7 @@ import 'package:hive/hive.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../Messaging/media_links_docs.dart';
-
+bool enableMedia=false;
 class UserProfile extends StatefulWidget {
   // const UserProfile({Key key}) : super(key: key);
   final UserModel model;
@@ -26,7 +26,7 @@ class UserProfile extends StatefulWidget {
 
 class _UserProfileState extends State<UserProfile> {
   bool enable = false;
-  bool enable2 = true;
+  bool enable2 = false;
   bool enable3 = false;
 
   bool isSecuredMode = false;
@@ -247,7 +247,7 @@ class _UserProfileState extends State<UserProfile> {
                             activeColor: secondaryColor,
                             onChanged: (val) {
                               setState(() {
-                                enable2 = val;
+                                enable2 = !enable2;
                                 isSecuredMode = !isSecuredMode;
                               });
                               if (isSecuredMode) {

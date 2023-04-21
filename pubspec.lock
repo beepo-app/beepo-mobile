@@ -73,6 +73,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.20.1"
+  awesome_notifications:
+    dependency: "direct main"
+    description:
+      name: awesome_notifications
+      sha256: "2b430c75cc879d6cfd52bb6eb2b5c1591ed425347816408cdcbd3f6916bba14c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.4+1"
   boolean_selector:
     dependency: transitive
     description:
@@ -281,22 +289,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.8"
-  eip1559:
-    dependency: transitive
-    description:
-      name: eip1559
-      sha256: de454d6321bd753eb79116e9ec4f8df20895c2e97f9a3839a032f3a728985516
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.6.1"
-  eip55:
-    dependency: transitive
-    description:
-      name: eip55
-      sha256: "213a9b86add87a5216328e8494b0ab836e401210c4d55eb5e521bd39e39169e1"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.2"
   encrypt:
     dependency: "direct main"
     description:
@@ -564,7 +556,8 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_windowmanager
-      url: "https://pub.dartlang.org"
+      sha256: b4d0bc06f6777952b729c0cdb7ce9ad1ecabd8b8b1cb0acb57a36621457dab1b
+      url: "https://pub.dev"
     source: hosted
     version: "0.2.0"
   fluttertoast:
@@ -743,14 +736,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.7.0"
-  json_rpc_2:
-    dependency: transitive
-    description:
-      name: json_rpc_2
-      sha256: "5e469bffa23899edacb7b22787780068d650b106a21c76db3c49218ab7ca447e"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.2"
   just_audio:
     dependency: "direct main"
     description:
@@ -1215,14 +1200,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.27.7"
-  sec:
-    dependency: transitive
-    description:
-      name: sec
-      sha256: "8bbd56df884502192a441b5f5d667265498f2f8728a282beccd9db79e215f379"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
   share_plus:
     dependency: "direct main"
     description:
@@ -1540,22 +1517,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.74"
-  wallet:
-    dependency: transitive
-    description:
-      name: wallet
-      sha256: "569c91c2af13a9e1119c001f9c09218eccf3f383eb8d15ba13a5b558010c1bc0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.12+1"
-  web3dart:
-    dependency: "direct main"
-    description:
-      name: web3dart
-      sha256: "0b96223a6b284e3146e65dc842ded139eca68a85c4ab79c5ba1a73284927d3cd"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.6.1"
   wechat_assets_picker:
     dependency: "direct main"
     description:
