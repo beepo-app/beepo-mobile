@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:iconsax/iconsax.dart';
@@ -27,6 +28,8 @@ class _UserProfileState extends State<UserProfile> {
   bool enable = false;
   bool enable2 = true;
   bool enable3 = false;
+
+  bool isSecuredMode = false;
 
   Map userM = Hive.box('beepo').get('userData');
 
@@ -245,7 +248,15 @@ class _UserProfileState extends State<UserProfile> {
                             onChanged: (val) {
                               setState(() {
                                 enable2 = val;
+                                isSecuredMode = !isSecuredMode;
                               });
+                              if (isSecuredMode) {
+                                FlutterWindowManager.addFlags(
+                                    FlutterWindowManager.FLAG_SECURE);
+                              } else {
+                                FlutterWindowManager.clearFlags(
+                                    FlutterWindowManager.FLAG_SECURE);
+                              }
                             },
                           ),
                         ],

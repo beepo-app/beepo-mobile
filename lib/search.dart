@@ -256,7 +256,7 @@ class SocialAppBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 class SearchBar extends StatelessWidget {
-  const SearchBar({
+  SearchBar({
     this.ontap,
     this.autofocus = false,
     this.readonly = false,
@@ -267,9 +267,10 @@ class SearchBar extends StatelessWidget {
   final VoidCallback ontap;
   final bool readonly;
   final bool autofocus;
+
   final TextEditingController controller;
   final Function(String) onChanged;
-
+  final node1 = FocusNode();
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -284,6 +285,7 @@ class SearchBar extends StatelessWidget {
             style: TextStyle(color: Colors.white),
             readOnly: readonly,
             autofocus: autofocus,
+            focusNode: node1,
             onTap: ontap,
             onChanged: onChanged,
             decoration: customTextFieldDecoration(
