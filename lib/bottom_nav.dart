@@ -34,12 +34,12 @@ class _BottomNavHomeState extends State<BottomNavHome> {
       extendBody: true,
       bottomNavigationBar: Container(
         child: ClipRRect(
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(30.0),
             topRight: Radius.circular(30.0),
           ),
           child: BottomNavigationBar(
-            backgroundColor: Color(0x40a6a6a6),
+            backgroundColor: const Color.fromRGBO(166, 166, 166, 0.25),
             currentIndex: index,
             showSelectedLabels: false,
             showUnselectedLabels: false,

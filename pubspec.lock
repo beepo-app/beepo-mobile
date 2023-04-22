@@ -486,6 +486,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.11.0"
+  flutter_link_preview:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: master
+      resolved-ref: "306a5e2a5495017f0f06d940919846744334d06d"
+      url: "https://github.com/yungzhu/flutter_link_preview.git"
+    source: git
+    version: "1.5.6"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -592,6 +601,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  gbk2utf8:
+    dependency: transitive
+    description:
+      name: gbk2utf8
+      sha256: "83a255e974b970d20538c1661bd5b7ee9120e106fbb10478cffcd515ba480e34"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   get:
     dependency: "direct main"
     description:
@@ -1224,14 +1241,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.0"
-  simple_url_preview:
-    dependency: "direct main"
-    description:
-      name: simple_url_preview
-      sha256: c91c34c9aa80f5d61afa7b731997548c7df97ccd45b5050d6e618a019dda786b
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -1309,14 +1318,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
-  string_validator:
-    dependency: transitive
-    description:
-      name: string_validator
-      sha256: "50dd8ecf91db6a732f4a851eeae81ee12406eedc62d0da72f2d91a04a2d10dd8"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.0"
   swipe_to:
     dependency: "direct main"
     description:

@@ -5,14 +5,14 @@ import 'dart:convert';
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:beepo/mic_anime.dart';
-import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:lottie/lottie.dart';
@@ -357,26 +357,25 @@ class _GroupDmState extends State<GroupDm> {
                                   icon: Icon(Icons.more_vert,
                                       color: Colors.white),
                                   color: Colors.white,
+                                  onSelected: (h) {
+                                    Get.to(() => GroupProfile(
+                                          image: 'assets/group.jpg',
+                                        ));
+                                  },
                                   itemBuilder: (BuildContext context) {
                                     return [
                                       PopupMenuItem(
                                         child: Text("Group info"),
                                         value: '/group info',
-                                        onTap: () {
-                                          Get.to(() => GroupProfile(
-                                                image: 'assets/group.jpg',
-                                              ));
-                                        },
+                                        onTap: () async {},
                                       ),
                                       PopupMenuItem(
                                         child: Text("Leave group"),
                                         value: '/leave group',
                                         onTap: () async {
-                                          await FirebaseFirestore.instance
-                                              .collection('LeaveGroup')
-                                              .doc(userM['uid'])
-                                              .update({'isRemoved': 'true'});
-                                          Navigator.pop(context);
+                                          // await FirebaseFirestore.instance.collection('LeaveGroup').doc(
+                                          //     userM['uid']).update({'isRemoved': 'true'});
+                                          // Navigator.pop(context);
                                         },
                                       ),
                                       PopupMenuItem(
