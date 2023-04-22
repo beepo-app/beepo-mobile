@@ -12,11 +12,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_link_preview/flutter_link_preview.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:linkwell/linkwell.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_url_preview/simple_url_preview.dart';
 
 // import 'Models/story_model/story.dart';
 import 'Models/market_data.dart';
@@ -389,7 +389,8 @@ class _ChatTabState extends State<ChatTab> {
                                       itemBuilder: (context, index) {
                                         final data =
                                             snapshot.data.docs[index].data();
-                                        print('this is the length:  ${snapshot.data.docs.length}');
+                                        print(
+                                            'this is the length:  ${snapshot.data.docs.length}');
                                         return _searchcontroller.text.isNotEmpty
                                             ? ListTile(
                                                 onTap: () {
@@ -1071,28 +1072,81 @@ class Group extends StatelessWidget {
                   if (onSwipedMessage && replyMessage != "")
                     buildReply(replyMessage, replyUsername, replyName),
                   if (convertStringToLink(text) != null)
-                    SimpleUrlPreview(
-                      url: text,
-                      bgColor: Colors.white,
-                      isClosable: true,
-                      previewHeight: 130,
-                      previewContainerPadding: EdgeInsets.all(1),
-                      titleLines: 1,
-                      descriptionLines: 2,
-                      titleStyle: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: txtColor1,
-                      ),
-                      descriptionStyle: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      siteNameStyle: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
+                    FlutterLinkPreview(
+                        url: convertStringToLink(text),
+                        titleStyle: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: txtColor1,
+                        ),
+                        builder: (info) {
+                          if (info == null) return const SizedBox();
+                          if (info is WebImageInfo) {
+                            return CachedNetworkImage(
+                              imageUrl: info.image,
+                              fit: BoxFit.contain,
+                            );
+                          }
+
+                          final WebInfo webInfo = info;
+                          if (!WebAnalyzer.isNotEmpty(webInfo.title)) {
+                            return const SizedBox();
+                          }
+                          return Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: const Color(0xFFF0F1F2),
+                            ),
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    CachedNetworkImage(
+                                      imageUrl: webInfo.icon ?? "",
+                                      imageBuilder: (context, imageProvider) {
+                                        return Image(
+                                          image: imageProvider,
+                                          fit: BoxFit.contain,
+                                          width: 30,
+                                          height: 30,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return const Icon(Icons.link);
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        webInfo.title,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                if (WebAnalyzer.isNotEmpty(
+                                    webInfo.description)) ...[
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    webInfo.description,
+                                    maxLines: 5,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                                if (WebAnalyzer.isNotEmpty(webInfo.image)) ...[
+                                  const SizedBox(height: 8),
+                                  CachedNetworkImage(
+                                    imageUrl: webInfo.image,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ]
+                              ],
+                            ),
+                          );
+                        }),
                   Padding(
                     padding: const EdgeInsets.all(3.0),
                     child: LinkWell(
@@ -1101,15 +1155,20 @@ class Group extends StatelessWidget {
                           ? TextStyle(
                               color: Colors.white,
                               fontSize: 11.5,
+                        // decoration: TextDecoration.underline,
                             )
                           : TextStyle(
                               color: Colors.black,
                               //Colors.black,
                               fontSize: 11.5,
-                            ),
+                          // decoration: TextDecoration.underline,
+
+                      ),
                       linkStyle: TextStyle(
                         color: Colors.blueAccent,
                         fontSize: 11,
+                          decoration: TextDecoration.underline,
+
                       ),
                     ),
                   ),

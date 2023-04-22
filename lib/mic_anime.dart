@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'package:beepo/Screens/Messaging/media_links_docs.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class GroupProfile extends StatefulWidget {
 
 class _GroupProfileState extends State<GroupProfile> {
   var selectedValue = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,7 +151,15 @@ class _GroupProfileState extends State<GroupProfile> {
                         ),
                       ),
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MediaLinksGroup(
+                                        image: 'assets/group.jpg'),
+                                ),
+                            );
+                          },
                           icon: Icon(Icons.arrow_forward_ios_outlined))
                     ],
                   ),

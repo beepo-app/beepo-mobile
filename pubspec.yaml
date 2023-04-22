@@ -85,7 +85,13 @@ dependencies:
   swipe_to: ^1.0.2
   wechat_assets_picker:
   flutter_windowmanager:
+  http: ^0.13.4
+  video_player: ^2.4.10
   flutter_link_preview:
+    git:
+      url: https://github.com/yungzhu/flutter_link_preview.git
+      ref: master
+
 
 
 
@@ -98,8 +104,6 @@ dev_dependencies:
   flutter_native_splash: ^2.1.3+1
   flutter_launcher_icons:
 dependency_overrides:
-  http: ^0.13.4
-  video_player: ^2.4.10
 
 flutter_native_splash:
   background_image: "assets/splash.png"

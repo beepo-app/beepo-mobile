@@ -5,14 +5,14 @@ import 'dart:convert';
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:beepo/mic_anime.dart';
-import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:lottie/lottie.dart';
@@ -48,14 +48,12 @@ class _GroupDmState extends State<GroupDm> {
   List players = [];
   List<String> ids = [];
 
-
   final CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('OneSignal');
 
-   getData() async {
+  getData() async {
     // Get docs from collection reference
-    final QuerySnapshot querySnapshot =
-        await _collectionRef.get();
+    final QuerySnapshot querySnapshot = await _collectionRef.get();
 
     final List<DocumentSnapshot> documents = querySnapshot.docs;
 
@@ -64,7 +62,6 @@ class _GroupDmState extends State<GroupDm> {
       // print(players.first['playerId']);
       // print(element.data().toString());
     }
-
   }
 
   // var isReplying = replyMessage != '';
@@ -140,7 +137,7 @@ class _GroupDmState extends State<GroupDm> {
   void initState() {
     super.initState();
     getData();
-    for(var item in players){
+    for (var item in players) {
       ids.add(item[['playerId']]);
     }
     FirebaseAuth.instance.signInAnonymously();
@@ -359,26 +356,27 @@ class _GroupDmState extends State<GroupDm> {
                                   icon: Icon(Icons.more_vert,
                                       color: Colors.white),
                                   color: Colors.white,
-
+                                  onSelected: (h) {
+                                    Get.to(() => GroupProfile(
+                                          image: 'assets/group.jpg',
+                                        ));
+                                  },
                                   itemBuilder: (BuildContext context) {
                                     return [
                                       PopupMenuItem(
                                         child: Text("Group info"),
                                         value: '/group info',
-                                        onTap: () {
-                                          Get.to(()=>GroupProfile(
-                                            image: 'assets/group.jpg',
-                                          ));
+                                        onTap: ()async {
+
                                         },
                                       ),
                                       PopupMenuItem(
                                         child: Text("Leave group"),
                                         value: '/leave group',
-                                        onTap: () async{
-
-                                          await FirebaseFirestore.instance.collection('LeaveGroup').doc(
-                                              userM['uid']).update({'isRemoved': 'true'});
-                                          Navigator.pop(context);
+                                        onTap: () async {
+                                          // await FirebaseFirestore.instance.collection('LeaveGroup').doc(
+                                          //     userM['uid']).update({'isRemoved': 'true'});
+                                          // Navigator.pop(context);
                                         },
                                       ),
                                       PopupMenuItem(
@@ -902,21 +900,17 @@ class _GroupDmState extends State<GroupDm> {
                                 height: 27,
                               ))
                     : IconButton(
-                        onPressed: ()  async{
-
-
+                        onPressed: () async {
                           context
                               .read<ChatNotifier>()
                               .storeText(messageController.text.trim());
                           messageController.clear();
                           // print(players.first['playerId']);
-                          if(ids.isNotEmpty) {
+                          if (ids.isNotEmpty) {
                             sendNotification(
                               tokenIdList: ids,
                               heading: userM['displayName'],
-                              contents: context
-                                  .read<ChatNotifier>()
-                                  .chatText,
+                              contents: context.read<ChatNotifier>().chatText,
                             );
                           }
                           ChatMethods().storeGroupMessages(
