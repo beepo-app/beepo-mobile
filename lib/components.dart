@@ -597,6 +597,7 @@ class CallTab extends StatefulWidget {
 
 class _CallTabState extends State<CallTab> {
   final TextEditingController _searchController = TextEditingController();
+  Map userM = Hive.box('beepo').get('userData');
 
   @override
   void dispose() {
@@ -640,42 +641,66 @@ class _CallTabState extends State<CallTab> {
               ],
             ),
             const SizedBox(height: 27),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: ClipRRect(
-                borderRadius: BorderRadius.circular(25),
-                child: Image.asset(
-                  'assets/profile2.png',
-                  height: 50,
-                  width: 50,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              title: const Text(
-                "Precious ",
-                style: TextStyle(
-                  color: Color.fromRGBO(0, 0, 0, 1),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              subtitle: const Text(
-                "9:13",
-                style: TextStyle(
-                  color: secondaryColor,
-                  //Color(0xff697077),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                ),
+            SizedBox(
+             height: MediaQuery.of(context).size.height*0.6,
+              child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('calls')
+                      .doc(userM['uid'])
+                      .collection('allCalls')
+                      .snapshots(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if(!snapshot.hasData){
+                      return SizedBox.shrink();
+                    }
+                    return ListView.builder(
+                      shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(25),
+                          child: Image.network(
+                            snapshot.data.docs[index]['image'],
+                            height: 50,
+                            width: 50,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        title: Text(
+                          snapshot.data.docs[index]['name'],
+                          style: TextStyle(
+                            color: Color.fromRGBO(0, 0, 0, 1),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        subtitle: const Text(
+                          " ",
+                          style: TextStyle(
+                            color: secondaryColor,
+                            //Color(0xff697077),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                          ),
 
-                // );
-                // },
-              ),
-              trailing: const Icon(
-                Icons.phone_missed_sharp,
-                color: Colors.red,
-                size: 20,
-              ),
+                          // );
+                          // },
+                        ),
+                        trailing: snapshot.data.docs[index]['callType'] != 'callReceived'? const Icon(
+                          Icons.phone_missed_sharp,
+                          color: Colors.red,
+                          size: 20,
+                        ): const Icon(
+                          Icons.phone_callback,
+                          color: Colors.green,
+                          size: 20,
+                        ),
+                      );
+                    },
+                      itemCount: snapshot.data.docs.length,
+                    );
+                  }),
             ),
           ],
         ),
@@ -734,6 +759,7 @@ class MessageReply extends StatelessWidget {
     }
     return textData;
   }
+
   Widget buildReply(String message, String username, String displayName) =>
       Container(
         decoration: BoxDecoration(
@@ -872,8 +898,7 @@ class MessageReply extends StatelessWidget {
                                     fit: BoxFit.contain,
                                     width: 30,
                                     height: 30,
-                                    errorBuilder:
-                                        (context, error, stackTrace) {
+                                    errorBuilder: (context, error, stackTrace) {
                                       return const Icon(Icons.link);
                                     },
                                   );
@@ -888,8 +913,7 @@ class MessageReply extends StatelessWidget {
                               ),
                             ],
                           ),
-                          if (WebAnalyzer.isNotEmpty(
-                              webInfo.description)) ...[
+                          if (WebAnalyzer.isNotEmpty(webInfo.description)) ...[
                             const SizedBox(height: 8),
                             Text(
                               webInfo.description,
@@ -1262,20 +1286,18 @@ class Group extends StatelessWidget {
                           ? TextStyle(
                               color: Colors.white,
                               fontSize: 11.5,
-                        // decoration: TextDecoration.underline,
+                              // decoration: TextDecoration.underline,
                             )
                           : TextStyle(
                               color: Colors.black,
                               //Colors.black,
                               fontSize: 11.5,
-                          // decoration: TextDecoration.underline,
-
-                      ),
+                              // decoration: TextDecoration.underline,
+                            ),
                       linkStyle: TextStyle(
                         color: Colors.blueAccent,
                         fontSize: 11,
-                          decoration: TextDecoration.underline,
-
+                        decoration: TextDecoration.underline,
                       ),
                     ),
                   ),

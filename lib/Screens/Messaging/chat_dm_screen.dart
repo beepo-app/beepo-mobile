@@ -2,13 +2,12 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:beepo/Models/user_model.dart';
-import 'package:beepo/Utils/styles.dart';
 import 'package:beepo/Screens/Messaging/calls/calls.dart';
 import 'package:beepo/Screens/Messaging/record.dart';
+import 'package:beepo/Utils/styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:encrypt/encrypt.dart' as enc;
@@ -26,17 +25,16 @@ import 'package:lottie/lottie.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:swipe_to/swipe_to.dart';
-
 import 'package:uuid/uuid.dart';
 import 'package:voice_message_package/voice_message_package.dart';
 
 import '../../bottom_nav.dart';
-import 'calls/calll_notify.dart';
-import 'services/chat_methods.dart';
 import '../../components.dart';
 import '../../generate_keywords.dart';
 import '../../provider.dart';
 import '../Profile/user_profile_screen.dart';
+import 'calls/calll_notify.dart';
+import 'services/chat_methods.dart';
 
 const APP_ID = '29454d2c6f01445fbbb6db095adec156';
 
@@ -228,7 +226,6 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-
     super.initState();
     controller = AnimationController(
       vsync: this,
@@ -244,11 +241,10 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
       setState(() {});
     });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if(context.watch<ChatNotifier>().enableScreenShot == true){
+      if (context.watch<ChatNotifier>().enableScreenShot == true) {
         Provider.of<ChatNotifier>(context, listen: false).secureScreen();
       }
     });
-
   }
 
   String replyMessage = '';
@@ -391,16 +387,26 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                             GestureDetector(
                               onTap: () async {
                                 Calls().startCall(
-                                    uid: uuid.v4(),
-                                    name: widget.model.name,
-                                    userName: widget.model.userName,
-                                    hasVideo: true,
-                                    model: widget.model,
-                                    channel: userM['uid']);
+                                  uid: uuid.v4(),
+                                  name: widget.model.name,
+                                  userName: widget.model.userName,
+                                  hasVideo: true,
+                                  model: widget.model,
+                                  channel: userM['uid'],
+                                );
                                 await sendPushMessage(true);
 
                                 checkAndNavigationCallingPage(
                                     true, userM['uid']);
+                                FirebaseFirestore.instance
+                                    .collection('calls')
+                                    .doc(userM['uid'])
+                                    .collection('allCalls')
+                                    .add({
+                                  'name': widget.model.name,
+                                  'image': widget.model.image,
+                                  'callType': 'startCall',
+                                });
                               },
                               child: SizedBox(
                                   height: 23,
@@ -412,15 +418,27 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                             GestureDetector(
                               onTap: () async {
                                 Calls().startCall(
-                                    uid: uuid.v4(),
-                                    name: widget.model.name,
-                                    userName: widget.model.userName,
-                                    hasVideo: false,
-                                    model: widget.model,
-                                    channel: userM['uid'],);
+                                  uid: uuid.v4(),
+                                  name: widget.model.name,
+                                  userName: widget.model.userName,
+                                  hasVideo: false,
+                                  model: widget.model,
+                                  channel: userM['uid'],
+                                );
                                 await sendPushMessage(false);
                                 checkAndNavigationCallingPage(
-                                    false, userM['uid'],);
+                                  false,
+                                  userM['uid'],
+                                );
+                                FirebaseFirestore.instance
+                                    .collection('calls')
+                                    .doc(userM['uid'])
+                                    .collection('allCalls')
+                                    .add({
+                                  'name': widget.model.name,
+                                  'image': widget.model.image,
+                                  'callType': 'startCall',
+                                });
                               },
                               child: Icon(
                                 Icons.call,
@@ -501,12 +519,12 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                               snapshot.data.docs[index]
                                                   ["sender"]) {
                                             replyToMessage(
-                                                encrypter.decrypt64(
-                                                    snapshot.data.docs[index]
-                                                        ["text"],
-                                                    iv: enc.IV.fromLength(16)),
-                                                widget.model.userName,
-                                                widget.model.name,
+                                              encrypter.decrypt64(
+                                                  snapshot.data.docs[index]
+                                                      ["text"],
+                                                  iv: enc.IV.fromLength(16)),
+                                              widget.model.userName,
+                                              widget.model.name,
                                             );
                                           }
 
@@ -739,24 +757,28 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                           color: secondaryColor,
                                         ),
                                       ),
-                                      if(context.read<ChatNotifier>().enableMedia == true)
-                                      IconButton(
-                                        onPressed: () {
-                                          context
+                                      if (context
                                               .read<ChatNotifier>()
-                                              .pickUploadImageChat(
-                                                  widget.model.uid, context,
-                                          );
-                                        },
-                                        constraints: const BoxConstraints(
-                                          maxWidth: 30,
+                                              .enableMedia ==
+                                          true)
+                                        IconButton(
+                                          onPressed: () {
+                                            context
+                                                .read<ChatNotifier>()
+                                                .pickUploadImageChat(
+                                                  widget.model.uid,
+                                                  context,
+                                                );
+                                          },
+                                          constraints: const BoxConstraints(
+                                            maxWidth: 30,
+                                          ),
+                                          icon: Icon(
+                                            Iconsax.gallery,
+                                            size: 20,
+                                            color: secondaryColor,
+                                          ),
                                         ),
-                                        icon: Icon(
-                                          Iconsax.gallery,
-                                          size: 20,
-                                          color: secondaryColor,
-                                        ),
-                                      ),
                                       SizedBox(width: 8),
                                     ],
                                   ),
