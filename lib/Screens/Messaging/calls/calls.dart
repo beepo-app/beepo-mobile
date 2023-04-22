@@ -530,6 +530,8 @@ class _VideoCallState extends State<VideoCall>
                 const SizedBox(
                   height: 53,
                 ),
+                const Text('Calling...', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20,),),
+                const SizedBox(height: 20,),
                 RawMaterialButton(
                   onPressed: () {
                     Calls().endCall(

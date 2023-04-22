@@ -53,17 +53,17 @@ class Calls {
           break;
         case Event.ACTION_CALL_ACCEPT:
           () {
-            note.Get.to(VideoCall(
-              name: model,
-              isVideo: hasVideo,
-              channelName: channel,
-              role: ClientRole.Broadcaster,
-              // time: time,
-            ));
-            stopWatchTimer.rawTime.listen((event) {
-              time = event;
-              print(event);
-            });
+          //   note.Get.to(VideoCall(
+          //     name: model,
+          //     isVideo: hasVideo,
+          //     channelName: channel,
+          //     role: ClientRole.Broadcaster,
+          //     // time: time,
+          //   ));
+          //   stopWatchTimer.rawTime.listen((event) {
+          //     time = event;
+          //     print(event);
+          //   });
           };
 
           // TODO: accepted an incoming call
@@ -80,8 +80,10 @@ class Calls {
           // TODO: ended an incoming/outgoing call
           break;
 
-        case Event.ACTION_CALL_TIMEOUT:
+        case Event.ACTION_CALL_TIMEOUT:(){
           showMissedCall(uid: uid, name: name);
+          note.Get.back();
+        };
           // TODO: missed an incoming call
           break;
         case Event.ACTION_CALL_CALLBACK:
