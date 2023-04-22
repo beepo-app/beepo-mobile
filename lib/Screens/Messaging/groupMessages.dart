@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
+import '../../provider.dart';
 import 'group_screen.dart';
 
 class GroupMessages extends StatefulWidget {
@@ -40,6 +42,9 @@ class _GroupMessagesState extends State<GroupMessages> {
 
   @override
   void initState() {
+    // if(context.watch<ChatNotifier>().enableScreenShot == true){
+    //   context.watch<ChatNotifier>().secureScreen();
+    // }
     // TODO: implement initState
     super.initState();
   }

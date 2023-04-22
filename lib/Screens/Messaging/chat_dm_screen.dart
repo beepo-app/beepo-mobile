@@ -228,6 +228,8 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
+
+    super.initState();
     controller = AnimationController(
       vsync: this,
       duration: Duration(microseconds: 100000),
@@ -241,35 +243,12 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
     messageController.addListener(() {
       setState(() {});
     });
-    //
-    // FlutterIncomingCall.onEvent.listen((event) {
-    //   setState(() {
-    //     _lastEvent = event;
-    //   });
-    //   if (event is CallEvent) {
-    //     setState(() {
-    //       _lastCallEvent = event;
-    //     });
-    //   } else if (event is HoldEvent) {
-    //     setState(() {
-    //       _lastHoldEvent = event;
-    //     });
-    //   } else if (event is MuteEvent) {
-    //     setState(() {
-    //       _lastMuteEvent = event;
-    //     });
-    //   } else if (event is DmtfEvent) {
-    //     setState(() {
-    //       _lastDmtfEvent = event;
-    //     });
-    //   } else if (event is AudioSessionEvent) {
-    //     setState(() {
-    //       _lastAudioSessionEvent = event;
-    //     });
-    //   }
-    // });
-    // initFirebase();
-    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if(context.watch<ChatNotifier>().enableScreenShot == true){
+        Provider.of<ChatNotifier>(context, listen: false).secureScreen();
+      }
+    });
+
   }
 
   String replyMessage = '';
@@ -760,13 +739,14 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                           color: secondaryColor,
                                         ),
                                       ),
-                                      // if(enableMedia == true)
+                                      if(context.read<ChatNotifier>().enableMedia == true)
                                       IconButton(
                                         onPressed: () {
                                           context
                                               .read<ChatNotifier>()
                                               .pickUploadImageChat(
-                                                  widget.model.uid, context);
+                                                  widget.model.uid, context,
+                                          );
                                         },
                                         constraints: const BoxConstraints(
                                           maxWidth: 30,
@@ -868,8 +848,6 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                             isReplying = false;
                             replyMessage = '';
                           });
-                          // EncryptData.encryptFernet(context.read<ChatNotifier>().chatText);
-                          // OneSignal.shared.
                         },
                         icon: const Icon(
                           Icons.send,

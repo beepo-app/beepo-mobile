@@ -10,10 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../Models/user_model.dart';
 import '../../../Utils/styles.dart';
+import '../../../provider.dart';
 import 'calll_notify.dart';
 
 List<Widget> callLog = [];
@@ -88,6 +90,11 @@ class _VideoCallState extends State<VideoCall>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if(context.watch<ChatNotifier>().enableScreenShot == true){
+        Provider.of<ChatNotifier>(context, listen: false).secureScreen();
+      }
+    });
     initialize();
     _controller = AnimationController(vsync: this);
 

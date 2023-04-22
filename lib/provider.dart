@@ -11,6 +11,7 @@ import 'package:encrypt/encrypt_io.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,7 +25,7 @@ import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'Utils/functions.dart';
 
 class ChatNotifier extends ChangeNotifier {
-  List<String> _users = [];
+  final List<String> _users = [];
 
   List<String> get chatUsers => _users;
   String chatText = "";
@@ -40,6 +41,23 @@ class ChatNotifier extends ChangeNotifier {
 
   // String decrypted;
   Encrypted encrypted;
+
+bool enableScreenShot = false;
+  bool enableMedia = false;
+
+  Future<void> secureScreen() async {
+    await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+
+  }
+  screenshot(){
+    enableScreenShot = !enableScreenShot;
+    notifyListeners();
+  }
+
+  enable(){
+    enableMedia = !enableMedia;
+    notifyListeners();
+  }
 
   Future<String> encrypt(String text) async {
     var helper = RsaKeyHelper();
