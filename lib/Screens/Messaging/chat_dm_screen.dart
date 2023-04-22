@@ -32,6 +32,7 @@ import 'package:voice_message_package/voice_message_package.dart';
 
 import '../../bottom_nav.dart';
 import 'calls/calll_notify.dart';
+import 'custom_voice_recorder_widget.dart';
 import 'services/chat_methods.dart';
 import '../../components.dart';
 import '../../generate_keywords.dart';
@@ -433,15 +434,18 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                             GestureDetector(
                               onTap: () async {
                                 Calls().startCall(
-                                    uid: uuid.v4(),
-                                    name: widget.model.name,
-                                    userName: widget.model.userName,
-                                    hasVideo: false,
-                                    model: widget.model,
-                                    channel: userM['uid'],);
+                                  uid: uuid.v4(),
+                                  name: widget.model.name,
+                                  userName: widget.model.userName,
+                                  hasVideo: false,
+                                  model: widget.model,
+                                  channel: userM['uid'],
+                                );
                                 await sendPushMessage(false);
                                 checkAndNavigationCallingPage(
-                                    false, userM['uid'],);
+                                  false,
+                                  userM['uid'],
+                                );
                               },
                               child: Icon(
                                 Icons.call,
@@ -522,12 +526,12 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                               snapshot.data.docs[index]
                                                   ["sender"]) {
                                             replyToMessage(
-                                                encrypter.decrypt64(
-                                                    snapshot.data.docs[index]
-                                                        ["text"],
-                                                    iv: enc.IV.fromLength(16)),
-                                                widget.model.userName,
-                                                widget.model.name,
+                                              encrypter.decrypt64(
+                                                  snapshot.data.docs[index]
+                                                      ["text"],
+                                                  iv: enc.IV.fromLength(16)),
+                                              widget.model.userName,
+                                              widget.model.name,
                                             );
                                           }
 
@@ -676,126 +680,92 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                     children: <Widget>[
                       if (isReplying == true)
                         buildReply(replyMessage, uName, dName, isReplying),
-                      context.watch<ChatNotifier>().isRecording
-                          ? Container(
-                              margin: EdgeInsets.only(bottom: 10),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.only(bottom: 10, left: 10),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Center(
-                                      child: Lottie.asset(
-                                          'assets/lottie/recording.json',
-                                          height: 40,
-                                          width: 27,
-                                          fit: BoxFit.fitHeight),
-                                    ),
-                                    Expanded(
-                                      child: Lottie.asset(
-                                        'assets/lottie/Linear_determinate.json',
-                                        height: double.infinity,
-                                        width: double.infinity,
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                  ],
+                      TextField(
+                        style: TextStyle(
+                          color: Color(0xff697077),
+                          fontSize: 15,
+                        ),
+                        cursorColor: Colors.black,
+                        cursorWidth: 1,
+                        textCapitalization: TextCapitalization.sentences,
+                        focusNode: focusNode,
+                        controller: messageController,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(1, 2, 1, 2),
+                          fillColor: Color(0xFFE6E9EE),
+                          hintText: 'Type a message',
+                          isDense: false,
+                          hintStyle: TextStyle(
+                            color: Color(0xff697077),
+                            fontSize: 15,
+                          ),
+                          prefixIcon: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isTyping = !isTyping;
+                              });
+                            },
+                            child: IconButton(
+                                onPressed: () {
+                                  context
+                                      .read<ChatNotifier>()
+                                      .cameraUploadImageChat(widget.model.uid);
+                                },
+                                constraints: BoxConstraints(
+                                  maxWidth: 30,
                                 ),
-                              ),
-                              height: 40,
-                              // width: 20,
-                            )
-                          : TextField(
-                              style: TextStyle(
-                                color: Color(0xff697077),
-                                fontSize: 15,
-                              ),
-                              textCapitalization: TextCapitalization.sentences,
-                              focusNode: focusNode,
-                              controller: messageController,
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.fromLTRB(1, 2, 1, 2),
-                                fillColor: Color(0xFFE6E9EE),
-                                hintText: 'Type a message',
-                                isDense: false,
-                                hintStyle: TextStyle(
-                                  color: Color(0xff697077),
-                                  fontSize: 15,
-                                ),
-                                prefixIcon: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      isTyping = !isTyping;
-                                    });
-                                  },
-                                  child: IconButton(
-                                      onPressed: () {
-                                        context
-                                            .read<ChatNotifier>()
-                                            .cameraUploadImageChat(
-                                                widget.model.uid);
-                                      },
-                                      constraints: BoxConstraints(
-                                        maxWidth: 30,
-                                      ),
-                                      icon: SvgPicture.asset(
-                                          'assets/camera.svg')),
-                                ),
-                                suffixIcon: FittedBox(
-                                  child: Row(
-                                    children: [
-                                      IconButton(
-                                        onPressed: () {},
-                                        constraints: const BoxConstraints(
-                                          maxWidth: 30,
-                                        ),
-                                        icon: Icon(
-                                          Iconsax.dollar_circle,
-                                          size: 21,
-                                          color: secondaryColor,
-                                        ),
-                                      ),
-                                      // if(enableMedia == true)
-                                      IconButton(
-                                        onPressed: () {
-                                          context
-                                              .read<ChatNotifier>()
-                                              .pickUploadImageChat(
-                                                  widget.model.uid, context);
-                                        },
-                                        constraints: const BoxConstraints(
-                                          maxWidth: 30,
-                                        ),
-                                        icon: Icon(
-                                          Iconsax.gallery,
-                                          size: 20,
-                                          color: secondaryColor,
-                                        ),
-                                      ),
-                                      SizedBox(width: 8),
-                                    ],
+                                icon: SvgPicture.asset('assets/camera.svg')),
+                          ),
+                          suffixIcon: FittedBox(
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {},
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 30,
+                                  ),
+                                  icon: Icon(
+                                    Iconsax.dollar_circle,
+                                    size: 21,
+                                    color: secondaryColor,
                                   ),
                                 ),
-                                filled: true,
-                                enabledBorder: OutlineInputBorder(
-                                  // borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide.none,
+                                // if(enableMedia == true)
+                                IconButton(
+                                  onPressed: () {
+                                    context
+                                        .read<ChatNotifier>()
+                                        .pickUploadImageChat(
+                                            widget.model.uid, context);
+                                  },
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 30,
+                                  ),
+                                  icon: Icon(
+                                    Iconsax.gallery,
+                                    size: 20,
+                                    color: secondaryColor,
+                                  ),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  // borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
-                              // expands: true,
-                              keyboardType: TextInputType.multiline,
-                              minLines: 1,
-                              maxLines: 5,
+                                SizedBox(width: 8),
+                              ],
                             ),
+                          ),
+                          filled: true,
+                          enabledBorder: OutlineInputBorder(
+                            // borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            // borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        // expands: true,
+                        keyboardType: TextInputType.multiline,
+                        minLines: 1,
+                        maxLines: 5,
+                      ),
                     ],
                   ),
                 ),
@@ -809,10 +779,17 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                       )
                     : SizedBox(),
                 messageController.text.isEmpty
-                    ? RecordButton(
-                        controller: controller,
-                        model: widget.model,
-                      )
+                    ? IconButton(
+                        onPressed: () => showModalBottomSheet(
+                            context: context,
+                            builder: (ctx) => CustomVoiceRecorderWidget(
+                                receiverId: widget.model.uid,
+                                isGroupChat: false)),
+                        icon: SvgPicture.asset(
+                          'assets/microphone.svg',
+                          width: 27,
+                          height: 27,
+                        ))
                     : IconButton(
                         onPressed: () async {
                           context

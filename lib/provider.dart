@@ -93,7 +93,11 @@ class ChatNotifier extends ChangeNotifier {
       image = await AssetPicker.pickAssets(
         context,
         pickerConfig: AssetPickerConfig(
-            maxAssets: 1, requestType: RequestType.all, selectedAssets: [], themeColor: primaryColor,),
+          maxAssets: 1,
+          requestType: RequestType.all,
+          selectedAssets: [],
+          themeColor: primaryColor,
+        ),
       );
 
       ref = FirebaseStorage.instance.ref().child('image.png');
@@ -118,9 +122,7 @@ class ChatNotifier extends ChangeNotifier {
   }
 
   sendPhotoMsgGroup(String photoMsg) async {
-
     if (photoMsg.isNotEmpty) {
-
       var ref = FirebaseFirestore.instance
           .collection('groupMessages')
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
@@ -139,9 +141,7 @@ class ChatNotifier extends ChangeNotifier {
         // });
       });
 
-      var ref2 = FirebaseFirestore.instance
-          .collection("groups")
-          .doc('beepo');
+      var ref2 = FirebaseFirestore.instance.collection("groups").doc('beepo');
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         transaction.set(ref2, {
           "sender": userM['uid'],
@@ -155,7 +155,6 @@ class ChatNotifier extends ChangeNotifier {
         notifyListeners();
         // });
       });
-
 
       scrollController.animateTo(0.0,
           duration: Duration(milliseconds: 100), curve: Curves.bounceInOut);
@@ -323,7 +322,6 @@ class ChatNotifier extends ChangeNotifier {
     }
   }
 
-
   cameraUploadImageChat(String id) async {
     Reference reh = FirebaseStorage.instance.ref();
 
@@ -456,7 +454,7 @@ class ChatNotifier extends ChangeNotifier {
       isSending = true;
       notifyListeners();
       // });
-      await uploadAudio(receiverId);
+      await uploadAudio(receiverId, '');
 
       // setState(() {
       // isPlayingMsg = false;
@@ -633,11 +631,11 @@ class ChatNotifier extends ChangeNotifier {
     }
   }
 
-  uploadAudio(String id) {
+  uploadAudio(String id, String path) {
     final Reference firebaseStorageRef = FirebaseStorage.instance.ref().child(
         'profilepics/audio${DateTime.now().millisecondsSinceEpoch.toString()}}.jpg');
 
-    UploadTask task = firebaseStorageRef.putFile(File(recordFilePath));
+    UploadTask task = firebaseStorageRef.putFile(File(path));
     task.then((value) async {
       print('##############done#########');
       var audioURL = await value.ref.getDownloadURL();
@@ -647,10 +645,4 @@ class ChatNotifier extends ChangeNotifier {
       print(e);
     });
   }
-
-
-
-
-
-
 }

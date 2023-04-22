@@ -25,6 +25,7 @@ import '../../../../bottom_nav.dart';
 import '../../../../components.dart';
 import '../../../../provider.dart';
 import '../../generate_keywords.dart';
+import 'custom_voice_recorder_widget.dart';
 import 'services/chat_methods.dart';
 
 class GroupDm extends StatefulWidget {
@@ -48,14 +49,12 @@ class _GroupDmState extends State<GroupDm> {
   List players = [];
   List<String> ids = [];
 
-
   final CollectionReference _collectionRef =
       FirebaseFirestore.instance.collection('OneSignal');
 
-   getData() async {
+  getData() async {
     // Get docs from collection reference
-    final QuerySnapshot querySnapshot =
-        await _collectionRef.get();
+    final QuerySnapshot querySnapshot = await _collectionRef.get();
 
     final List<DocumentSnapshot> documents = querySnapshot.docs;
 
@@ -64,7 +63,6 @@ class _GroupDmState extends State<GroupDm> {
       // print(players.first['playerId']);
       // print(element.data().toString());
     }
-
   }
 
   // var isReplying = replyMessage != '';
@@ -140,7 +138,7 @@ class _GroupDmState extends State<GroupDm> {
   void initState() {
     super.initState();
     getData();
-    for(var item in players){
+    for (var item in players) {
       ids.add(item[['playerId']]);
     }
     FirebaseAuth.instance.signInAnonymously();
@@ -359,25 +357,25 @@ class _GroupDmState extends State<GroupDm> {
                                   icon: Icon(Icons.more_vert,
                                       color: Colors.white),
                                   color: Colors.white,
-
                                   itemBuilder: (BuildContext context) {
                                     return [
                                       PopupMenuItem(
                                         child: Text("Group info"),
                                         value: '/group info',
                                         onTap: () {
-                                          Get.to(()=>GroupProfile(
-                                            image: 'assets/group.jpg',
-                                          ));
+                                          Get.to(() => GroupProfile(
+                                                image: 'assets/group.jpg',
+                                              ));
                                         },
                                       ),
                                       PopupMenuItem(
                                         child: Text("Leave group"),
                                         value: '/leave group',
-                                        onTap: () async{
-
-                                          await FirebaseFirestore.instance.collection('LeaveGroup').doc(
-                                              userM['uid']).update({'isRemoved': 'true'});
+                                        onTap: () async {
+                                          await FirebaseFirestore.instance
+                                              .collection('LeaveGroup')
+                                              .doc(userM['uid'])
+                                              .update({'isRemoved': 'true'});
                                           Navigator.pop(context);
                                         },
                                       ),
@@ -737,9 +735,6 @@ class _GroupDmState extends State<GroupDm> {
             ),
           ),
           bottomNavigationBar: Container(
-            width: double.infinity,
-            color: Colors.white,
-            //Color(0xffECE5DD),
             margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
@@ -749,119 +744,85 @@ class _GroupDmState extends State<GroupDm> {
                     children: [
                       if (isReplying == true)
                         buildReply(replyMessage, uName, dName, isReplying),
-                      context.watch<ChatNotifier>().isRecording
-                          ? Container(
-                              margin: EdgeInsets.only(bottom: 10),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.only(bottom: 10, left: 10),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Center(
-                                      child: Lottie.asset(
-                                          'assets/lottie/recording.json',
-                                          height: 40,
-                                          width: 27,
-                                          fit: BoxFit.fitHeight),
-                                    ),
-                                    Expanded(
-                                      child: Lottie.asset(
-                                        'assets/lottie/Linear_determinate.json',
-                                        height: double.infinity,
-                                        width: double.infinity,
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                  ],
+                      TextField(
+                        textCapitalization: TextCapitalization.sentences,
+                        maxLines: null,
+                        cursorColor: Colors.black,
+                        cursorWidth: 1,
+                        minLines: 1,
+                        style: TextStyle(
+                          fontSize: 15,
+                        ),
+                        controller: messageController,
+                        focusNode: focusNode,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(1, 0, 1, 0),
+                          fillColor: Color(0xFFE6E9EE),
+                          hintText: 'Message',
+                          isDense: false,
+                          hintStyle:
+                              TextStyle(color: Color(0xff697077), fontSize: 15),
+                          prefixIcon: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isTyping = !isTyping;
+                              });
+                            },
+                            child: IconButton(
+                                onPressed: () {
+                                  context
+                                      .read<ChatNotifier>()
+                                      .cameraUploadImageGroup();
+                                },
+                                constraints: BoxConstraints(
+                                  maxWidth: 30,
                                 ),
-                              ),
-                              height: 40,
-                              // width: 20,
-                            )
-                          : TextField(
-                              textCapitalization: TextCapitalization.sentences,
-                              maxLines: null,
-                              minLines: 1,
-                              style: TextStyle(
-                                color: Color(0xff697077),
-                                fontSize: 15,
-                              ),
-                              controller: messageController,
-                              focusNode: focusNode,
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.fromLTRB(1, 0, 1, 0),
-                                fillColor: Color(0xFFE6E9EE),
-                                hintText: 'Message',
-                                isDense: false,
-                                hintStyle: TextStyle(
-                                    color: Color(0xff697077), fontSize: 15),
-                                prefixIcon: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      isTyping = !isTyping;
-                                    });
+                                icon: SvgPicture.asset('assets/camera.svg')),
+                          ),
+                          suffixIcon: FittedBox(
+                            child: Row(
+                              children: [
+                                // IconButton(
+                                //   onPressed: () {},
+                                //   constraints: const BoxConstraints(
+                                //     maxWidth: 30,
+                                //   ),
+                                //   icon: Icon(
+                                //     Iconsax.dollar_circle,
+                                //     size: 21,
+                                //     color: secondaryColor,
+                                //   ),
+                                // ),
+                                IconButton(
+                                  onPressed: () {
+                                    context
+                                        .read<ChatNotifier>()
+                                        .pickUploadImageGroup(context);
                                   },
-                                  child: IconButton(
-                                      onPressed: () {
-                                        context
-                                            .read<ChatNotifier>()
-                                            .cameraUploadImageGroup();
-                                      },
-                                      constraints: BoxConstraints(
-                                        maxWidth: 30,
-                                      ),
-                                      icon: SvgPicture.asset(
-                                          'assets/camera.svg')),
-                                ),
-                                suffixIcon: FittedBox(
-                                  child: Row(
-                                    children: [
-                                      // IconButton(
-                                      //   onPressed: () {},
-                                      //   constraints: const BoxConstraints(
-                                      //     maxWidth: 30,
-                                      //   ),
-                                      //   icon: Icon(
-                                      //     Iconsax.dollar_circle,
-                                      //     size: 21,
-                                      //     color: secondaryColor,
-                                      //   ),
-                                      // ),
-                                      IconButton(
-                                        onPressed: () {
-                                          context
-                                              .read<ChatNotifier>()
-                                              .pickUploadImageGroup(context);
-                                        },
-                                        constraints: const BoxConstraints(
-                                          maxWidth: 30,
-                                        ),
-                                        icon: Icon(
-                                          Iconsax.gallery,
-                                          size: 20,
-                                          color: secondaryColor,
-                                        ),
-                                      ),
-                                      SizedBox(width: 15),
-                                    ],
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 30,
+                                  ),
+                                  icon: Icon(
+                                    Iconsax.gallery,
+                                    size: 20,
+                                    color: secondaryColor,
                                   ),
                                 ),
-                                filled: true,
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
+                                SizedBox(width: 15),
+                              ],
                             ),
+                          ),
+                          filled: true,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -876,47 +837,54 @@ class _GroupDmState extends State<GroupDm> {
                       )
                     : SizedBox(),
                 messageController.text.isEmpty
-                    ? GestureDetector(
-                        onLongPress: () {
-                          context.read<ChatNotifier>().startRecord();
-                          setState(() {
-                            context.read<ChatNotifier>().isRecording = true;
-                            showToast('Recording!');
-                          });
-                        },
-                        onLongPressEnd: (hey) {
-                          // context
-                          //     .read<ChatNotifier>()
-                          //     .stopRecord(widget.model.uid);
-                          setState(() {
-                            context.read<ChatNotifier>().isRecording = false;
-                            showToast('Sent!');
-                          });
-                          context.read<ChatNotifier>().durationCalc();
-                        },
-                        child: context.watch<ChatNotifier>().isRecording
-                            ? SizedBox()
-                            : SvgPicture.asset(
-                                'assets/microphone.svg',
-                                width: 27,
-                                height: 27,
-                              ))
+                    ? IconButton(
+                        onPressed: () => showModalBottomSheet(
+                            context: context,
+                            builder: (ctx) => CustomVoiceRecorderWidget(
+                                receiverId: '', isGroupChat: true)),
+                        icon: SvgPicture.asset(
+                          'assets/microphone.svg',
+                          width: 27,
+                          height: 27,
+                        ))
+
+                    // GestureDetector(
+                    //     onLongPress: () {
+                    //       context.read<ChatNotifier>().startRecord();
+                    //       setState(() {
+                    //         context.read<ChatNotifier>().isRecording = true;
+                    //         showToast('Recording!');
+                    //       });
+                    //     },
+                    //     onLongPressEnd: (hey) {
+                    //       // context
+                    //       //     .read<ChatNotifier>()
+                    //       //     .stopRecord(widget.model.uid);
+                    //       setState(() {
+                    //         context.read<ChatNotifier>().isRecording = false;
+                    //         showToast('Sent!');
+                    //       });
+                    //       context.read<ChatNotifier>().durationCalc();
+                    //     },
+                    //     child: context.watch<ChatNotifier>().isRecording
+                    //         ? SizedBox()
+                    //         : SvgPicture.asset(
+                    //             'assets/microphone.svg',
+                    //             width: 27,
+                    //             height: 27,
+                    //           ))
                     : IconButton(
-                        onPressed: ()  async{
-
-
+                        onPressed: () async {
                           context
                               .read<ChatNotifier>()
                               .storeText(messageController.text.trim());
                           messageController.clear();
                           // print(players.first['playerId']);
-                          if(ids.isNotEmpty) {
+                          if (ids.isNotEmpty) {
                             sendNotification(
                               tokenIdList: ids,
                               heading: userM['displayName'],
-                              contents: context
-                                  .read<ChatNotifier>()
-                                  .chatText,
+                              contents: context.read<ChatNotifier>().chatText,
                             );
                           }
                           ChatMethods().storeGroupMessages(
