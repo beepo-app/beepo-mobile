@@ -647,7 +647,7 @@ class _CallTabState extends State<CallTab> {
                   stream: FirebaseFirestore.instance
                       .collection('calls')
                       .doc(userM['uid'])
-                      .collection('allCalls').orderBy('created')
+                      .collection('allCalls').orderBy('created', descending: true,)
                       .snapshots(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if(!snapshot.hasData){
@@ -678,7 +678,7 @@ class _CallTabState extends State<CallTab> {
                           ),
                         ),
                         subtitle: Text(
-                          '${time.toDate().hour} : ${time.toDate().hour}',
+                          '${time.toDate().hour} : ${time.toDate().minute}',
                           style: TextStyle(
                             color: secondaryColor,
                             //Color(0xff697077),

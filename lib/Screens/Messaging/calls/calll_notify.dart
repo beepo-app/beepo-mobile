@@ -211,13 +211,6 @@ class Calls {
           break;
         case Event.ACTION_CALL_START:
           () {
-            note.Get.to(VideoCall(
-              name: model,
-              isVideo: hasVideo,
-              channelName: channel,
-              role: ClientRole.Broadcaster,
-              // time: time,
-            ));
             FirebaseFirestore.instance
                 .collection('calls')
                 .doc(userM['uid'])
@@ -228,6 +221,14 @@ class Calls {
               'callType': 'callReceived',
               'created': Timestamp.now(),
             });
+            note.Get.to(VideoCall(
+              name: model,
+              isVideo: hasVideo,
+              channelName: channel,
+              role: ClientRole.Broadcaster,
+              // time: time,
+            ));
+
           };
           // TODO: started an outgoing call
           // TODO: show screen calling in Flutter
