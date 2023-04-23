@@ -614,49 +614,51 @@ class _CallTabState extends State<CallTab> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    "Messages",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 19,
-                    ),
-                  ),
-                ),
-                Icon(
-                  Icons.search,
-                  color: Color(0xff697077),
-                  size: 20,
-                ),
-                SizedBox(width: 20),
-                Icon(
-                  Icons.more_vert_outlined,
-                  color: Color(0xff697077),
-                  size: 18,
-                ),
-              ],
-            ),
+            // const SizedBox(height: 20),
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       child: Text(
+            //         "Messages",
+            //         style: TextStyle(
+            //           color: Colors.black,
+            //           fontWeight: FontWeight.w600,
+            //           fontSize: 19,
+            //         ),
+            //       ),
+            //     ),
+            //     Icon(
+            //       Icons.search,
+            //       color: Color(0xff697077),
+            //       size: 20,
+            //     ),
+            //     SizedBox(width: 20),
+            //     Icon(
+            //       Icons.more_vert_outlined,
+            //       color: Color(0xff697077),
+            //       size: 18,
+            //     ),
+            //   ],
+            // ),
             const SizedBox(height: 27),
             SizedBox(
-             height: MediaQuery.of(context).size.height*0.6,
+             height: MediaQuery.of(context).size.height,
               child: StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('calls')
                       .doc(userM['uid'])
-                      .collection('allCalls')
+                      .collection('allCalls').orderBy('created')
                       .snapshots(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if(!snapshot.hasData){
                       return SizedBox.shrink();
                     }
+
                     return ListView.builder(
                       shrinkWrap: true,
                         itemBuilder: (context, index) {
-                      return ListTile(
+                          Timestamp time = snapshot.data.docs[index]['created'];
+                          return ListTile(
                         contentPadding: EdgeInsets.zero,
                         leading: ClipRRect(
                           borderRadius: BorderRadius.circular(25),
@@ -675,8 +677,8 @@ class _CallTabState extends State<CallTab> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        subtitle: const Text(
-                          " ",
+                        subtitle: Text(
+                          '${time.toDate().hour} : ${time.toDate().hour}',
                           style: TextStyle(
                             color: secondaryColor,
                             //Color(0xff697077),
@@ -687,7 +689,7 @@ class _CallTabState extends State<CallTab> {
                           // );
                           // },
                         ),
-                        trailing: snapshot.data.docs[index]['callType'] != 'callReceived'? const Icon(
+                        trailing: snapshot.data.docs[index]['callType'] == 'callReceived'? const Icon(
                           Icons.phone_missed_sharp,
                           color: Colors.red,
                           size: 20,

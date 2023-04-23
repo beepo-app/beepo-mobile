@@ -406,6 +406,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                   'name': widget.model.name,
                                   'image': widget.model.image,
                                   'callType': 'startCall',
+                                  'created': Timestamp.now(),
                                 });
                               },
                               child: SizedBox(
@@ -438,6 +439,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                   'name': widget.model.name,
                                   'image': widget.model.image,
                                   'callType': 'startCall',
+                                  'created': Timestamp.now(),
                                 });
                               },
                               child: Icon(

@@ -90,6 +90,7 @@ class Calls {
               'name': name,
               'image': model.image,
               'callType': 'startCall',
+              'created': Timestamp.now(),
             });
           };
           // TODO: ended an incoming/outgoing call
@@ -195,6 +196,16 @@ class Calls {
         case Event.ACTION_CALL_INCOMING:
           () {
             print('$name Call incoming');
+            FirebaseFirestore.instance
+                .collection('calls')
+                .doc(userM['uid'])
+                .collection('allCalls')
+                .add({
+              'name': name,
+              'image': model.image,
+              'callType': 'callReceived',
+              'created': Timestamp.now(),
+            });
           };
           // TODO: received an incoming call
           break;
@@ -215,6 +226,7 @@ class Calls {
               'name': name,
               'image': model.image,
               'callType': 'callReceived',
+              'created': Timestamp.now(),
             });
           };
           // TODO: started an outgoing call
@@ -243,6 +255,7 @@ class Calls {
               'name': name,
               'image': model.image,
               'callType': 'callReceived',
+              'created': Timestamp.now(),
             });
           };
 

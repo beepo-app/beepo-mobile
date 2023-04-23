@@ -445,7 +445,7 @@ class WalletIcon extends StatelessWidget {
                 children: [
                   Transform.rotate(
                     angle: angle,
-                    child: Icon(icon, size: 30, color: Colors.white),
+                    child: Icon(icon, size: MediaQuery.of(context).size.width *0.05, color: Colors.white),
                   ),
                   // const SizedBox(height: 7),
                   Text(
