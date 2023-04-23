@@ -614,33 +614,32 @@ class _CallTabState extends State<CallTab> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            // const SizedBox(height: 20),
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       child: Text(
-            //         "Messages",
-            //         style: TextStyle(
-            //           color: Colors.black,
-            //           fontWeight: FontWeight.w600,
-            //           fontSize: 19,
-            //         ),
-            //       ),
-            //     ),
-            //     Icon(
-            //       Icons.search,
-            //       color: Color(0xff697077),
-            //       size: 20,
-            //     ),
-            //     SizedBox(width: 20),
-            //     Icon(
-            //       Icons.more_vert_outlined,
-            //       color: Color(0xff697077),
-            //       size: 18,
-            //     ),
-            //   ],
-            // ),
-            const SizedBox(height: 27),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    "Call History",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 19,
+                    ),
+                  ),
+                ),
+                // Icon(
+                //   Icons.search,
+                //   color: Color(0xff697077),
+                //   size: 20,
+                // ),
+                // SizedBox(width: 20),
+                // Icon(
+                //   Icons.more_vert_outlined,
+                //   color: Color(0xff697077),
+                //   size: 18,
+                // ),
+              ],
+            ),
             SizedBox(
              height: MediaQuery.of(context).size.height,
               child: StreamBuilder(
