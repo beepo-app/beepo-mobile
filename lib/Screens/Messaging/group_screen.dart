@@ -21,6 +21,7 @@ import 'package:lottie/lottie.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:swipe_to/swipe_to.dart';
+import 'package:voice_message_package/voice_message_package.dart';
 
 import '../../../../Widgets/toasts.dart';
 import '../../../../bottom_nav.dart';
@@ -140,6 +141,11 @@ class _GroupDmState extends State<GroupDm> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if(context.watch<ChatNotifier>().enableScreenShot == true){
+        Provider.of<ChatNotifier>(context, listen: false).secureScreen();
+      }
+    });
     getData();
     for (var item in players) {
       ids.add(item[['playerId']]);
@@ -453,6 +459,7 @@ class _GroupDmState extends State<GroupDm> {
                                         userName: snapshot.data.docs[index]
                                             ["userName"],
                                       ),
+<<<<<<< HEAD
                                       sameUser: snapshot.data.docs[index]
                                               ["sender"] ==
                                           snapshot.data.docs[index]["sender"],
@@ -550,6 +557,242 @@ class _GroupDmState extends State<GroupDm> {
                                                           ? true
                                                           : false,
                                                       fit: BoxFit.fitHeight),
+=======
+                                      SizedBox(height: 3),
+                                      StreamBuilder(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('users')
+                                              .snapshots(),
+                                          builder: (context,
+                                              AsyncSnapshot<QuerySnapshot>
+                                                  snapshot) {
+                                            if (snapshot.hasData) {
+                                              return Text(
+                                                '${snapshot.data.docs.length} members',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w100,
+                                                ),
+                                              );
+                                            }
+                                            return SizedBox();
+                                          }),
+                                    ],
+                                  ),
+                                ),
+                                Spacer(),
+                                // Icon(
+                                //   Icons.more_vert_outlined,
+                                //   color: Colors.white,
+                                //   size: 23,
+                                // ),
+                                // SizedBox(width: 8),
+                                PopupMenuButton(
+                                  icon: Icon(Icons.more_vert,
+                                      color: Colors.white),
+                                  color: Colors.white,
+                                  onSelected: (h) {
+                                    Get.to(() => GroupProfile(
+                                          image: 'assets/group.jpg',
+                                        ));
+                                  },
+                                  itemBuilder: (BuildContext context) {
+                                    return [
+                                      PopupMenuItem(
+                                        child: Text("Group info"),
+                                        value: '/group info',
+                                        onTap: () async {},
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Leave group"),
+                                        value: '/leave group',
+                                        onTap: () async {
+                                          // await FirebaseFirestore.instance.collection('LeaveGroup').doc(
+                                          //     userM['uid']).update({'isRemoved': 'true'});
+                                          // Navigator.pop(context);
+                                        },
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Mute"),
+                                        value: '/notificaton',
+                                        onTap: () {},
+                                      )
+                                    ];
+                                  },
+                                ),
+                                SizedBox(width: 8),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                    ),
+                    color: Colors.white,
+                    child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('groupMessages')
+                            .orderBy("created", descending: true)
+                            .snapshots(),
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasData) {
+                            return ListView.builder(
+                              reverse: true,
+                              controller:
+                                  context.read<ChatNotifier>().scrollController,
+                              itemCount: snapshot.data.docs.length,
+                              itemBuilder: (context, index) {
+                                Timestamp time =
+                                    snapshot.data.docs[index]['created'];
+                                var day = time.toDate().day.toString();
+                                var month = time.toDate().month.toString();
+                                var year =
+                                    time.toDate().toString().substring(2);
+                                var date = day + '-' + month + '-' + year;
+                                var hour = time.toDate().hour;
+                                var min = time.toDate().minute;
+
+                                var ampm;
+                                if (hour > 12) {
+                                  hour = hour % 12;
+                                  ampm = 'pm';
+                                } else if (hour == 12) {
+                                  ampm = 'pm';
+                                } else if (hour == 0) {
+                                  hour = 12;
+                                  ampm = 'am';
+                                } else {
+                                  ampm = 'am';
+                                }
+
+                                return Column(
+                                  children: [
+                                    if (snapshot.data.docs[index]["type"] ==
+                                        'message')
+                                      SwipeTo(
+                                        onRightSwipe: () {
+                                          rightSwiped = true;
+                                          swiped = true;
+                                          if (userM['uid'] !=
+                                              snapshot.data.docs[index]
+                                                  ["sender"]) {
+                                            replyToMessage(
+                                              snapshot.data.docs[index]["text"],
+                                              snapshot.data.docs[index]
+                                                  ["userName"],
+                                              snapshot.data.docs[index]
+                                                  ["displayName"],
+                                            );
+                                          }
+
+                                          focusNode.requestFocus();
+                                        },
+                                        onLeftSwipe: () {
+                                          leftSwiped = true;
+                                          swiped = true;
+                                          if (userM['uid'] ==
+                                              snapshot.data.docs[index]
+                                                  ["sender"]) {
+                                            replyToMessage(
+                                              snapshot.data.docs[index]["text"],
+                                              '',
+                                              userM['displayName'],
+                                            );
+                                          }
+
+                                          focusNode.requestFocus();
+                                        },
+                                        child: Group(
+                                          isMe: userM['uid'] ==
+                                              snapshot.data.docs[index]
+                                                  ["sender"],
+                                          text: snapshot.data.docs[index]
+                                              ["text"],
+                                          time: snapshot.data.docs[index]
+                                              ["created"],
+                                          user: UserModel(
+                                            uid: snapshot.data.docs[index]
+                                                ["sender"],
+                                            name: snapshot.data.docs[index]
+                                                ["displayName"],
+                                            image: snapshot.data.docs[index]
+                                                ["image"],
+                                            userName: snapshot.data.docs[index]
+                                                ["userName"],
+                                          ),
+                                          sameUser: snapshot.data.docs[index]
+                                                      ["sender"] !=
+                                                  snapshot
+                                                      .data.docs.last["sender"]
+                                              ? (snapshot.data.docs[index + 1]
+                                                      ["sender"] ==
+                                                  snapshot.data.docs[index]
+                                                      ["sender"])
+                                              : false,
+                                          onSwipedMessage: snapshot
+                                              .data.docs[index]["swiped"],
+                                          replyMessage: snapshot
+                                              .data.docs[index]["replyMessage"],
+                                          replyName: snapshot.data.docs[index]
+                                              ["replyName"],
+                                          replyUsername: snapshot
+                                              .data.docs[index]["replyUser"],
+                                        ),
+                                      )
+                                    else if (snapshot.data.docs[index]
+                                    ["type"] ==
+                                        'audio')
+                                      Align(
+                                        alignment: (snapshot.data.docs[index]
+                                        ['sender'] ==
+                                            userM['uid'])
+                                            ? Alignment.centerRight
+                                            : Alignment.centerLeft,
+                                        child: VoiceMessage(
+                                          audioSrc: snapshot.data.docs[index]
+                                          ['content'],
+                                          me: snapshot.data.docs[index]
+                                          ['sender'] ==
+                                              userM['uid'],
+                                          meBgColor: secondaryColor,
+                                          contactBgColor: Color(0xffc4c4c4),
+                                          contactPlayIconColor: Colors.black,
+                                          contactFgColor: Colors.white,
+                                        ),
+                                      )
+                                    else
+                                      Align(
+                                        alignment: (snapshot.data.docs[index]
+                                                    ['sender'] ==
+                                                userM['uid'])
+                                            ? Alignment.centerRight
+                                            : Alignment.centerLeft,
+                                        child: SizedBox(
+                                          width: 150,
+                                          height: 150,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (_) {
+                                                    return FullScreenImage(
+                                                      imageUrl: snapshot
+                                                              .data.docs[index]
+                                                          ["content"],
+                                                      tag: "image",
+                                                    );
+                                                  },
+>>>>>>> a90d73eafc94b507ef8dd4f581ad8a4c2ec4b082
                                                 ),
                                               ],
                                             ),
@@ -782,6 +1025,7 @@ class _GroupDmState extends State<GroupDm> {
                             ),
                           ),
                   ),
+<<<<<<< HEAD
                   SizedBox(
                     width: 10,
                   ),
@@ -820,6 +1064,69 @@ class _GroupDmState extends State<GroupDm> {
                               image: userM['profilePictureUrl'],
                               displayName: userM['displayName'],
                               userName: userM['username'],
+=======
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                context.watch<ChatNotifier>().isRecording
+                    ? SizedBox(
+                        // child:
+                        height: 5,
+                        width: 40,
+                      )
+                    : SizedBox(),
+                messageController.text.isEmpty
+                    ? IconButton(
+                        onPressed: () => showModalBottomSheet(
+                            context: context,
+                            builder: (ctx) => CustomVoiceRecorderWidget(
+                                receiverId: '', isGroupChat: true)),
+                        icon: SvgPicture.asset(
+                          'assets/microphone.svg',
+                          width: 27,
+                          height: 27,
+                        ),
+                )
+
+                    // GestureDetector(
+                    //     onLongPress: () {
+                    //       context.read<ChatNotifier>().startRecord();
+                    //       setState(() {
+                    //         context.read<ChatNotifier>().isRecording = true;
+                    //         showToast('Recording!');
+                    //       });
+                    //     },
+                    //     onLongPressEnd: (hey) {
+                    //       // context
+                    //       //     .read<ChatNotifier>()
+                    //       //     .stopRecord(widget.model.uid);
+                    //       setState(() {
+                    //         context.read<ChatNotifier>().isRecording = false;
+                    //         showToast('Sent!');
+                    //       });
+                    //       context.read<ChatNotifier>().durationCalc();
+                    //     },
+                    //     child: context.watch<ChatNotifier>().isRecording
+                    //         ? SizedBox()
+                    //         : SvgPicture.asset(
+                    //             'assets/microphone.svg',
+                    //             width: 27,
+                    //             height: 27,
+                    //           ))
+                    : IconButton(
+                        onPressed: () async {
+                          context
+                              .read<ChatNotifier>()
+                              .storeText(messageController.text.trim());
+                          messageController.clear();
+                          // print(players.first['playerId']);
+                          if (ids.isNotEmpty) {
+                            sendNotification(
+                              tokenIdList: ids,
+                              heading: userM['displayName'],
+                              contents: context.read<ChatNotifier>().chatText,
+>>>>>>> a90d73eafc94b507ef8dd4f581ad8a4c2ec4b082
                             );
                             context.read<ChatNotifier>().clearText();
                           },

@@ -597,6 +597,7 @@ class CallTab extends StatefulWidget {
 
 class _CallTabState extends State<CallTab> {
   final TextEditingController _searchController = TextEditingController();
+  Map userM = Hive.box('beepo').get('userData');
 
   @override
   void dispose() {
@@ -618,7 +619,7 @@ class _CallTabState extends State<CallTab> {
               children: [
                 Expanded(
                   child: Text(
-                    "Messages",
+                    "Call History",
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.w600,
@@ -626,56 +627,81 @@ class _CallTabState extends State<CallTab> {
                     ),
                   ),
                 ),
-                Icon(
-                  Icons.search,
-                  color: Color(0xff697077),
-                  size: 20,
-                ),
-                SizedBox(width: 20),
-                Icon(
-                  Icons.more_vert_outlined,
-                  color: Color(0xff697077),
-                  size: 18,
-                ),
+                // Icon(
+                //   Icons.search,
+                //   color: Color(0xff697077),
+                //   size: 20,
+                // ),
+                // SizedBox(width: 20),
+                // Icon(
+                //   Icons.more_vert_outlined,
+                //   color: Color(0xff697077),
+                //   size: 18,
+                // ),
               ],
             ),
-            const SizedBox(height: 27),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: ClipRRect(
-                borderRadius: BorderRadius.circular(25),
-                child: Image.asset(
-                  'assets/profile2.png',
-                  height: 50,
-                  width: 50,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              title: const Text(
-                "Precious ",
-                style: TextStyle(
-                  color: Color.fromRGBO(0, 0, 0, 1),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              subtitle: const Text(
-                "9:13",
-                style: TextStyle(
-                  color: secondaryColor,
-                  //Color(0xff697077),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                ),
+            SizedBox(
+             height: MediaQuery.of(context).size.height,
+              child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('calls')
+                      .doc(userM['uid'])
+                      .collection('allCalls').orderBy('created', descending: true,)
+                      .snapshots(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if(!snapshot.hasData){
+                      return SizedBox.shrink();
+                    }
 
-                // );
-                // },
-              ),
-              trailing: const Icon(
-                Icons.phone_missed_sharp,
-                color: Colors.red,
-                size: 20,
-              ),
+                    return ListView.builder(
+                      shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          Timestamp time = snapshot.data.docs[index]['created'];
+                          return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(25),
+                          child: Image.network(
+                            snapshot.data.docs[index]['image'],
+                            height: 50,
+                            width: 50,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        title: Text(
+                          snapshot.data.docs[index]['name'],
+                          style: TextStyle(
+                            color: Color.fromRGBO(0, 0, 0, 1),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        subtitle: Text(
+                          '${time.toDate().hour} : ${time.toDate().minute}',
+                          style: TextStyle(
+                            color: secondaryColor,
+                            //Color(0xff697077),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                          ),
+
+                          // );
+                          // },
+                        ),
+                        trailing: snapshot.data.docs[index]['callType'] == 'callReceived'? const Icon(
+                          Icons.phone_missed_sharp,
+                          color: Colors.red,
+                          size: 20,
+                        ): const Icon(
+                          Icons.phone_callback,
+                          color: Colors.green,
+                          size: 20,
+                        ),
+                      );
+                    },
+                      itemCount: snapshot.data.docs.length,
+                    );
+                  }),
             ),
           ],
         ),
@@ -702,6 +728,38 @@ class MessageReply extends StatelessWidget {
     this.replyName,
     this.replyUsername,
   });
+
+  String convertStringToLink(String text) {
+    String textData = text;
+    final urlRegExp = RegExp(
+        r"((https?:www\.)|(http?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
+    final urlMatches = urlRegExp.allMatches(text);
+    List<String> urls = urlMatches
+        .map((urlMatch) => text.substring(urlMatch.start, urlMatch.end))
+        .toList();
+    urls.forEach((x) => print(x));
+    // final urlRegExp = RegExp(
+    //     r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
+    // final urlMatches = urlRegExp.allMatches(textData);
+    // List<String> urls = urlMatches
+    //     .map((urlMatch) => textData.substring(urlMatch.start, urlMatch.end))
+    //     .toList();
+    // List linksString = [];
+    // for (var linkText in urls) {
+    //   linksString.add(linkText);
+    // }
+    //
+    // // if (linksString.isNotEmpty) {
+    // //   for (var linkTextData in linksString) {
+    // //     textData =
+    // //         textData.replaceAll(linkTextData, 'https://' + linkTextData);
+    // //   }
+    // // }
+    if (text.isEmpty) {
+      return null;
+    }
+    return textData;
+  }
 
   Widget buildReply(String message, String username, String displayName) =>
       Container(
@@ -799,8 +857,82 @@ class MessageReply extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (onSwipedMessage)
+            if (onSwipedMessage && replyMessage != "")
               buildReply(replyMessage, replyUsername, replyName),
+            if (convertStringToLink(text) != null)
+              FlutterLinkPreview(
+                  url: convertStringToLink(text),
+                  titleStyle: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: txtColor1,
+                  ),
+                  builder: (info) {
+                    if (info == null) return const SizedBox();
+                    if (info is WebImageInfo) {
+                      return CachedNetworkImage(
+                        imageUrl: info.image,
+                        fit: BoxFit.contain,
+                      );
+                    }
+
+                    final WebInfo webInfo = info;
+                    if (!WebAnalyzer.isNotEmpty(webInfo.title)) {
+                      return const SizedBox();
+                    }
+                    return Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color(0xFFF0F1F2),
+                      ),
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              CachedNetworkImage(
+                                imageUrl: webInfo.icon ?? "",
+                                imageBuilder: (context, imageProvider) {
+                                  return Image(
+                                    image: imageProvider,
+                                    fit: BoxFit.contain,
+                                    width: 30,
+                                    height: 30,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Icon(Icons.link);
+                                    },
+                                  );
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  webInfo.title,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (WebAnalyzer.isNotEmpty(webInfo.description)) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              webInfo.description,
+                              maxLines: 5,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                          if (WebAnalyzer.isNotEmpty(webInfo.image)) ...[
+                            const SizedBox(height: 8),
+                            CachedNetworkImage(
+                              imageUrl: webInfo.image,
+                              fit: BoxFit.contain,
+                            ),
+                          ]
+                        ],
+                      ),
+                    );
+                  }),
             LinkWell(
               text,
               style: isMe
@@ -1155,20 +1287,18 @@ class Group extends StatelessWidget {
                           ? TextStyle(
                               color: Colors.white,
                               fontSize: 11.5,
-                        // decoration: TextDecoration.underline,
+                              // decoration: TextDecoration.underline,
                             )
                           : TextStyle(
                               color: Colors.black,
                               //Colors.black,
                               fontSize: 11.5,
-                          // decoration: TextDecoration.underline,
-
-                      ),
+                              // decoration: TextDecoration.underline,
+                            ),
                       linkStyle: TextStyle(
                         color: Colors.blueAccent,
                         fontSize: 11,
-                          decoration: TextDecoration.underline,
-
+                        decoration: TextDecoration.underline,
                       ),
                     ),
                   ),

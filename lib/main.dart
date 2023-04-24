@@ -276,6 +276,16 @@ class _MyAppState extends State<MyApp> {
       print(
         'Message title: ${message.notification?.title}, body: ${message.notification?.body}, data: ${message.data}',
       );
+      FirebaseFirestore.instance
+          .collection('calls')
+          .doc(userM['uid'])
+          .collection('allCalls')
+          .add({
+        'name': message.data['name'],
+        'image': message.data['image'],
+        'callType': 'callReceived',
+        'created': Timestamp.now(),
+      });
       // _currentUuid = uuid.v4();
       Calls().receiveIncomingCall(
         uid: uuid.v4(),

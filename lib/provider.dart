@@ -11,6 +11,7 @@ import 'package:encrypt/encrypt_io.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,7 +25,7 @@ import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'Utils/functions.dart';
 
 class ChatNotifier extends ChangeNotifier {
-  List<String> _users = [];
+  final List<String> _users = [];
 
   List<String> get chatUsers => _users;
   String chatText = "";
@@ -40,6 +41,23 @@ class ChatNotifier extends ChangeNotifier {
 
   // String decrypted;
   Encrypted encrypted;
+
+bool enableScreenShot = false;
+  bool enableMedia = false;
+
+  Future<void> secureScreen() async {
+    await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+
+  }
+  screenshot(){
+    enableScreenShot = !enableScreenShot;
+    notifyListeners();
+  }
+
+  enable(){
+    enableMedia = !enableMedia;
+    notifyListeners();
+  }
 
   Future<String> encrypt(String text) async {
     var helper = RsaKeyHelper();
@@ -644,5 +662,71 @@ class ChatNotifier extends ChangeNotifier {
     }).catchError((e) {
       print(e);
     });
+  }
+
+
+  uploadAudioGroup(String path) {
+    final Reference firebaseStorageRef = FirebaseStorage.instance.ref().child(
+        'profilepics/audio/group/${DateTime.now().millisecondsSinceEpoch.toString()}}.jpg');
+
+    UploadTask task = firebaseStorageRef.putFile(File(path));
+    task.then((value) async {
+      print('##############done#########');
+      var audioURL = await value.ref.getDownloadURL();
+      String strVal = audioURL.toString();
+      await sendAudioMsgGroup(strVal);
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+  sendAudioMsgGroup(String audioMsg) async {
+    if (audioMsg.isNotEmpty) {
+      var ref = FirebaseFirestore.instance
+          .collection('groupMessages')
+          .doc(DateTime.now().millisecondsSinceEpoch.toString());
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        transaction.set(ref, {
+          "sender": userM['uid'],
+          "created": Timestamp.now(),
+          "content": audioMsg,
+          "duration": dure.inSeconds > 60
+              ? '${dure.inMinutes}:${dure.inSeconds - dure.inMinutes * 60}'
+              : '${dure.inSeconds.toString()}s',
+          "type": 'audio'
+        });
+      }).then((value) {
+        // setState(() {
+        isSending = false;
+        notifyListeners();
+        // });
+      });
+
+      var ref2 = FirebaseFirestore.instance
+          .collection("groups")
+          .doc('beepo');
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        transaction.set(ref2, {
+          "sender": userM['uid'],
+          "created": Timestamp.now(),
+          "content": audioMsg,
+          "duration": dure.inSeconds > 60
+              ? '${dure.inMinutes}:${dure.inSeconds - dure.inMinutes * 60}'
+              : '${dure.inSeconds.toString()}s',
+          "type": 'audio'
+        });
+      }).then((value) {
+        // setState(() {
+        isSending = false;
+        notifyListeners();
+        // });
+      });
+
+
+      scrollController.animateTo(0.0,
+          duration: Duration(milliseconds: 100), curve: Curves.bounceInOut);
+    } else {
+      print("Hello");
+    }
   }
 }

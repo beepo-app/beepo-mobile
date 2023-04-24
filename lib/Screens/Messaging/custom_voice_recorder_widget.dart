@@ -61,7 +61,6 @@ class _CustomVoiceRecorderWidgetState extends State<CustomVoiceRecorderWidget> {
     initialiseController();
     onPlayerStateChanged();
     onCurrentDuration();
-
     super.initState();
   }
 
@@ -211,6 +210,9 @@ class _CustomVoiceRecorderWidgetState extends State<CustomVoiceRecorderWidget> {
                 Navigator.of(context).pop();
                 if (widget.isGroupChat) {
                   //
+                  context
+                      .read<ChatNotifier>()
+                      .uploadAudioGroup(path);
                 } else {
                   context
                       .read<ChatNotifier>()

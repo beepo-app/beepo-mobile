@@ -9,6 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:linkwell/linkwell.dart';
+import 'package:provider/provider.dart';
+
+import '../../provider.dart';
 
 class MediaLinks extends StatefulWidget {
   // const UserProfile({Key key}) : super(key: key);
@@ -31,6 +34,11 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
   @override
   void initState() {
 
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if(context.watch<ChatNotifier>().enableScreenShot == true){
+        Provider.of<ChatNotifier>(context, listen: false).secureScreen();
+      }
+    });
     super.initState();
     tabController = TabController(length: 3, vsync: this);
   }
@@ -391,7 +399,11 @@ class _MediaLinksGroupState extends State<MediaLinksGroup> with TickerProviderSt
 
   @override
   void initState() {
-
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if(context.watch<ChatNotifier>().enableScreenShot == true){
+        Provider.of<ChatNotifier>(context, listen: false).secureScreen();
+      }
+    });
     super.initState();
     tabController = TabController(length: 3, vsync: this);
   }
