@@ -674,7 +674,7 @@ bool enableScreenShot = false;
       print('##############done#########');
       var audioURL = await value.ref.getDownloadURL();
       String strVal = audioURL.toString();
-      await sendAudioMsg(strVal);
+      await sendAudioMsgGroup(strVal);
     }).catchError((e) {
       print(e);
     });
@@ -704,7 +704,7 @@ bool enableScreenShot = false;
 
       var ref2 = FirebaseFirestore.instance
           .collection("groups")
-          .doc(userM['uid']);
+          .doc('beepo');
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         transaction.set(ref2, {
           "sender": userM['uid'],
