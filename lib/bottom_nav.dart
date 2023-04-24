@@ -38,7 +38,7 @@ class _BottomNavHomeState extends State<BottomNavHome> {
           topRight: Radius.circular(30.0),
         ),
         child: BottomNavigationBar(
-          backgroundColor: const Color.fromRGBO(166, 166, 166, 1),
+          backgroundColor: const Color(0xffc4c4c4),
           currentIndex: index,
           showSelectedLabels: false,
           showUnselectedLabels: false,
