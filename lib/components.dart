@@ -641,64 +641,71 @@ class _CallTabState extends State<CallTab> {
               ],
             ),
             SizedBox(
-             height: MediaQuery.of(context).size.height,
+              height: MediaQuery.of(context).size.height,
               child: StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('calls')
                       .doc(userM['uid'])
-                      .collection('allCalls').orderBy('created', descending: true,)
+                      .collection('allCalls')
+                      .orderBy(
+                        'created',
+                        descending: true,
+                      )
                       .snapshots(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if(!snapshot.hasData){
+                    if (!snapshot.hasData) {
                       return SizedBox.shrink();
                     }
 
                     return ListView.builder(
                       shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          Timestamp time = snapshot.data.docs[index]['created'];
-                          return ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(25),
-                          child: Image.network(
-                            snapshot.data.docs[index]['image'],
-                            height: 50,
-                            width: 50,
-                            fit: BoxFit.cover,
+                      itemBuilder: (context, index) {
+                        Timestamp time = snapshot.data.docs[index]['created'];
+                        return ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(25),
+                            child: Image.network(
+                              snapshot.data.docs[index]['image'],
+                              height: 50,
+                              width: 50,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                        title: Text(
-                          snapshot.data.docs[index]['name'],
-                          style: TextStyle(
-                            color: Color.fromRGBO(0, 0, 0, 1),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                          title: Text(
+                            snapshot.data.docs[index]['name'],
+                            style: TextStyle(
+                              color: Color.fromRGBO(0, 0, 0, 1),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                        subtitle: Text(
-                          '${time.toDate().hour} : ${time.toDate().minute}',
-                          style: TextStyle(
-                            color: secondaryColor,
-                            //Color(0xff697077),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          subtitle: Text(
+                            '${time.toDate().hour} : ${time.toDate().minute}',
+                            style: TextStyle(
+                              color: secondaryColor,
+                              //Color(0xff697077),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                            ),
 
-                          // );
-                          // },
-                        ),
-                        trailing: snapshot.data.docs[index]['callType'] == 'callReceived'? const Icon(
-                          Icons.phone_missed_sharp,
-                          color: Colors.red,
-                          size: 20,
-                        ): const Icon(
-                          Icons.phone_callback,
-                          color: Colors.green,
-                          size: 20,
-                        ),
-                      );
-                    },
+                            // );
+                            // },
+                          ),
+                          trailing: snapshot.data.docs[index]['callType'] ==
+                                  'callReceived'
+                              ? const Icon(
+                                  Icons.phone_missed_sharp,
+                                  color: Colors.red,
+                                  size: 20,
+                                )
+                              : const Icon(
+                                  Icons.phone_callback,
+                                  color: Colors.green,
+                                  size: 20,
+                                ),
+                        );
+                      },
                       itemCount: snapshot.data.docs.length,
                     );
                   }),
@@ -1413,7 +1420,7 @@ class WalletListTile extends StatelessWidget {
         ],
         color: const Color(0xfffffbfb),
       ),
-      margin: const EdgeInsets.symmetric(horizontal: 5),
+      margin: const EdgeInsets.symmetric(horizontal: 8),
       child: ListTile(
         onTap: () => Get.to(WalletToken(
           wallet: wallet,
