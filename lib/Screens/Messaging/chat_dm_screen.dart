@@ -2,13 +2,12 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:beepo/Models/user_model.dart';
-import 'package:beepo/Utils/styles.dart';
 import 'package:beepo/Screens/Messaging/calls/calls.dart';
 import 'package:beepo/Screens/Messaging/record.dart';
+import 'package:beepo/Utils/styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:encrypt/encrypt.dart' as enc;
@@ -26,18 +25,16 @@ import 'package:lottie/lottie.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:swipe_to/swipe_to.dart';
-
 import 'package:uuid/uuid.dart';
 import 'package:voice_message_package/voice_message_package.dart';
 
 import '../../bottom_nav.dart';
-import 'calls/calll_notify.dart';
-import 'custom_voice_recorder_widget.dart';
-import 'services/chat_methods.dart';
 import '../../components.dart';
 import '../../generate_keywords.dart';
 import '../../provider.dart';
 import '../Profile/user_profile_screen.dart';
+import 'calls/calll_notify.dart';
+import 'services/chat_methods.dart';
 
 const APP_ID = '29454d2c6f01445fbbb6db095adec156';
 
@@ -229,6 +226,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
+    super.initState();
     controller = AnimationController(
       vsync: this,
       duration: Duration(microseconds: 100000),
@@ -242,35 +240,11 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
     messageController.addListener(() {
       setState(() {});
     });
-    //
-    // FlutterIncomingCall.onEvent.listen((event) {
-    //   setState(() {
-    //     _lastEvent = event;
-    //   });
-    //   if (event is CallEvent) {
-    //     setState(() {
-    //       _lastCallEvent = event;
-    //     });
-    //   } else if (event is HoldEvent) {
-    //     setState(() {
-    //       _lastHoldEvent = event;
-    //     });
-    //   } else if (event is MuteEvent) {
-    //     setState(() {
-    //       _lastMuteEvent = event;
-    //     });
-    //   } else if (event is DmtfEvent) {
-    //     setState(() {
-    //       _lastDmtfEvent = event;
-    //     });
-    //   } else if (event is AudioSessionEvent) {
-    //     setState(() {
-    //       _lastAudioSessionEvent = event;
-    //     });
-    //   }
-    // });
-    // initFirebase();
-    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (context.watch<ChatNotifier>().enableScreenShot == true) {
+        Provider.of<ChatNotifier>(context, listen: false).secureScreen();
+      }
+    });
   }
 
   String replyMessage = '';
@@ -413,16 +387,27 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                             GestureDetector(
                               onTap: () async {
                                 Calls().startCall(
-                                    uid: uuid.v4(),
-                                    name: widget.model.name,
-                                    userName: widget.model.userName,
-                                    hasVideo: true,
-                                    model: widget.model,
-                                    channel: userM['uid']);
+                                  uid: uuid.v4(),
+                                  name: widget.model.name,
+                                  userName: widget.model.userName,
+                                  hasVideo: true,
+                                  model: widget.model,
+                                  channel: userM['uid'],
+                                );
                                 await sendPushMessage(true);
 
                                 checkAndNavigationCallingPage(
                                     true, userM['uid']);
+                                FirebaseFirestore.instance
+                                    .collection('calls')
+                                    .doc(userM['uid'])
+                                    .collection('allCalls')
+                                    .add({
+                                  'name': widget.model.name,
+                                  'image': widget.model.image,
+                                  'callType': 'startCall',
+                                  'created': Timestamp.now(),
+                                });
                               },
                               child: SizedBox(
                                   height: 23,
@@ -446,6 +431,16 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                   false,
                                   userM['uid'],
                                 );
+                                FirebaseFirestore.instance
+                                    .collection('calls')
+                                    .doc(userM['uid'])
+                                    .collection('allCalls')
+                                    .add({
+                                  'name': widget.model.name,
+                                  'image': widget.model.image,
+                                  'callType': 'startCall',
+                                  'created': Timestamp.now(),
+                                });
                               },
                               child: Icon(
                                 Icons.call,
@@ -680,92 +675,131 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                     children: <Widget>[
                       if (isReplying == true)
                         buildReply(replyMessage, uName, dName, isReplying),
-                      TextField(
-                        style: TextStyle(
-                          color: Color(0xff697077),
-                          fontSize: 15,
-                        ),
-                        cursorColor: Colors.black,
-                        cursorWidth: 1,
-                        textCapitalization: TextCapitalization.sentences,
-                        focusNode: focusNode,
-                        controller: messageController,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.fromLTRB(1, 2, 1, 2),
-                          fillColor: Color(0xFFE6E9EE),
-                          hintText: 'Type a message',
-                          isDense: false,
-                          hintStyle: TextStyle(
-                            color: Color(0xff697077),
-                            fontSize: 15,
-                          ),
-                          prefixIcon: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                isTyping = !isTyping;
-                              });
-                            },
-                            child: IconButton(
-                                onPressed: () {
-                                  context
-                                      .read<ChatNotifier>()
-                                      .cameraUploadImageChat(widget.model.uid);
-                                },
-                                constraints: BoxConstraints(
-                                  maxWidth: 30,
+                      context.watch<ChatNotifier>().isRecording
+                          ? Container(
+                              margin: EdgeInsets.only(bottom: 10),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(bottom: 10, left: 10),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Center(
+                                      child: Lottie.asset(
+                                          'assets/lottie/recording.json',
+                                          height: 40,
+                                          width: 27,
+                                          fit: BoxFit.fitHeight),
+                                    ),
+                                    Expanded(
+                                      child: Lottie.asset(
+                                        'assets/lottie/Linear_determinate.json',
+                                        height: double.infinity,
+                                        width: double.infinity,
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                icon: SvgPicture.asset('assets/camera.svg')),
-                          ),
-                          suffixIcon: FittedBox(
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  onPressed: () {},
-                                  constraints: const BoxConstraints(
-                                    maxWidth: 30,
-                                  ),
-                                  icon: Icon(
-                                    Iconsax.dollar_circle,
-                                    size: 21,
-                                    color: secondaryColor,
-                                  ),
+                              ),
+                              height: 40,
+                              // width: 20,
+                            )
+                          : TextField(
+                              style: TextStyle(
+                                color: Color(0xff697077),
+                                fontSize: 15,
+                              ),
+                              textCapitalization: TextCapitalization.sentences,
+                              focusNode: focusNode,
+                              controller: messageController,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.fromLTRB(1, 2, 1, 2),
+                                fillColor: Color(0xFFE6E9EE),
+                                hintText: 'Type a message',
+                                isDense: false,
+                                hintStyle: TextStyle(
+                                  color: Color(0xff697077),
+                                  fontSize: 15,
                                 ),
-                                // if(enableMedia == true)
-                                IconButton(
-                                  onPressed: () {
-                                    context
-                                        .read<ChatNotifier>()
-                                        .pickUploadImageChat(
-                                            widget.model.uid, context);
+                                prefixIcon: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      isTyping = !isTyping;
+                                    });
                                   },
-                                  constraints: const BoxConstraints(
-                                    maxWidth: 30,
-                                  ),
-                                  icon: Icon(
-                                    Iconsax.gallery,
-                                    size: 20,
-                                    color: secondaryColor,
+                                  child: IconButton(
+                                      onPressed: () {
+                                        context
+                                            .read<ChatNotifier>()
+                                            .cameraUploadImageChat(
+                                                widget.model.uid);
+                                      },
+                                      constraints: BoxConstraints(
+                                        maxWidth: 30,
+                                      ),
+                                      icon: SvgPicture.asset(
+                                          'assets/camera.svg')),
+                                ),
+                                suffixIcon: FittedBox(
+                                  child: Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed: () {},
+                                        constraints: const BoxConstraints(
+                                          maxWidth: 30,
+                                        ),
+                                        icon: Icon(
+                                          Iconsax.dollar_circle,
+                                          size: 21,
+                                          color: secondaryColor,
+                                        ),
+                                      ),
+                                      if (context
+                                              .read<ChatNotifier>()
+                                              .enableMedia ==
+                                          true)
+                                        IconButton(
+                                          onPressed: () {
+                                            context
+                                                .read<ChatNotifier>()
+                                                .pickUploadImageChat(
+                                                  widget.model.uid,
+                                                  context,
+                                                );
+                                          },
+                                          constraints: const BoxConstraints(
+                                            maxWidth: 30,
+                                          ),
+                                          icon: Icon(
+                                            Iconsax.gallery,
+                                            size: 20,
+                                            color: secondaryColor,
+                                          ),
+                                        ),
+                                      SizedBox(width: 8),
+                                    ],
                                   ),
                                 ),
-                                SizedBox(width: 8),
-                              ],
+                                filled: true,
+                                enabledBorder: OutlineInputBorder(
+                                  // borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  // borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide.none,
+                                ),
+                              ),
+                              // expands: true,
+                              keyboardType: TextInputType.multiline,
+                              minLines: 1,
+                              maxLines: 5,
                             ),
-                          ),
-                          filled: true,
-                          enabledBorder: OutlineInputBorder(
-                            // borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            // borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                        // expands: true,
-                        keyboardType: TextInputType.multiline,
-                        minLines: 1,
-                        maxLines: 5,
-                      ),
                     ],
                   ),
                 ),
@@ -779,17 +813,10 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                       )
                     : SizedBox(),
                 messageController.text.isEmpty
-                    ? IconButton(
-                        onPressed: () => showModalBottomSheet(
-                            context: context,
-                            builder: (ctx) => CustomVoiceRecorderWidget(
-                                receiverId: widget.model.uid,
-                                isGroupChat: false)),
-                        icon: SvgPicture.asset(
-                          'assets/microphone.svg',
-                          width: 27,
-                          height: 27,
-                        ))
+                    ? RecordButton(
+                        controller: controller,
+                        model: widget.model,
+                      )
                     : IconButton(
                         onPressed: () async {
                           context
@@ -845,8 +872,6 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                             isReplying = false;
                             replyMessage = '';
                           });
-                          // EncryptData.encryptFernet(context.read<ChatNotifier>().chatText);
-                          // OneSignal.shared.
                         },
                         icon: const Icon(
                           Icons.send,

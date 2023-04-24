@@ -436,8 +436,8 @@ class WalletIcon extends StatelessWidget {
           child: GestureDetector(
             onTap: onTap,
             child: Container(
-              width: 100.0,
-              height: 100.0,
+              width: MediaQuery.of(context).size.width *0.13,
+              height: MediaQuery.of(context).size.height *0.09,
               // alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(vertical: 20,),
               color: secondaryColor,
@@ -445,7 +445,7 @@ class WalletIcon extends StatelessWidget {
                 children: [
                   Transform.rotate(
                     angle: angle,
-                    child: Icon(icon, size: 30, color: Colors.white),
+                    child: Icon(icon, size: MediaQuery.of(context).size.width *0.05, color: Colors.white),
                   ),
                   // const SizedBox(height: 7),
                   Text(

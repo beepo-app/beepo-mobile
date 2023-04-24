@@ -137,6 +137,11 @@ class _GroupDmState extends State<GroupDm> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if(context.watch<ChatNotifier>().enableScreenShot == true){
+        Provider.of<ChatNotifier>(context, listen: false).secureScreen();
+      }
+    });
     getData();
     for (var item in players) {
       ids.add(item[['playerId']]);
