@@ -17,10 +17,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart' as navy;
+import 'package:grouped_list/grouped_list.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:lottie/lottie.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
@@ -302,561 +304,556 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
     return KeyboardDismisser(
       gestures: const [GestureType.onPanUpdateDownDirection],
       child: Scaffold(
-        body: Scaffold(
-          backgroundColor: Colors.white,
-          //const Color(0xffECE5DD),
-          body: Container(
-            color: Colors.white,
-            //const Color(0xffECE5DD),
-            child: Column(
-              children: [
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Container(
-                    padding: const EdgeInsets.only(left: 5, right: 13),
-                    height: 110,
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Color(0xff0e014c),
+        body: Column(
+          children: [
+            Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                padding: const EdgeInsets.only(left: 5, right: 13),
+                height: 110,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Color(0xff0e014c),
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 50,
                     ),
-                    child: Column(
+                    Row(
                       children: [
-                        SizedBox(
-                          height: 50,
+                        IconButton(
+                          icon: Icon(
+                            Icons.arrow_back_outlined,
+                            size: 28,
+                            color: Colors.white,
+                          ),
+                          onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BottomNavHome())),
                         ),
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                Icons.arrow_back_outlined,
-                                size: 28,
-                                color: Colors.white,
+                        SizedBox(width: 5),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => UserProfile(
+                                          model: UserModel(
+                                              uid: widget.model.uid,
+                                              name: widget.model.name,
+                                              userName: widget.model.userName,
+                                              image: widget.model.image,
+                                              searchKeywords:
+                                                  widget.model.searchKeywords),
+                                        )));
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(19),
+                            child: SizedBox(
+                              height: 35,
+                              width: 35,
+                              child: CachedNetworkImage(
+                                height: 35,
+                                width: 35,
+                                imageUrl: widget.model.image,
+                                placeholder: (context, url) =>
+                                    Center(child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) => Icon(
+                                  Icons.person,
+                                  color: secondaryColor,
+                                ),
+                                filterQuality: FilterQuality.high,
                               ),
-                              onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => BottomNavHome())),
                             ),
-                            SizedBox(width: 5),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => UserProfile(
-                                              model: UserModel(
-                                                  uid: widget.model.uid,
-                                                  name: widget.model.name,
-                                                  userName:
-                                                      widget.model.userName,
-                                                  image: widget.model.image,
-                                                  searchKeywords: widget
-                                                      .model.searchKeywords),
-                                            )));
-                              },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(19),
-                                child: SizedBox(
-                                  height: 35,
-                                  width: 35,
-                                  child: CachedNetworkImage(
-                                    height: 35,
-                                    width: 35,
-                                    imageUrl: widget.model.image,
-                                    placeholder: (context, url) => Center(
-                                        child: CircularProgressIndicator()),
-                                    errorWidget: (context, url, error) => Icon(
-                                      Icons.person,
-                                      color: secondaryColor,
+                          ),
+                        ),
+                        SizedBox(width: 6),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => UserProfile(
+                                          model: UserModel(
+                                              uid: widget.model.uid,
+                                              name: widget.model.name,
+                                              userName: widget.model.userName,
+                                              image: widget.model.image,
+                                              searchKeywords:
+                                                  widget.model.searchKeywords),
+                                        )));
+                          },
+                          child: Text(
+                            widget.model.name,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 6),
+                        Container(
+                          width: 5,
+                          height: 5,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xff08aa48),
+                          ),
+                        ),
+                        Spacer(),
+                        GestureDetector(
+                          onTap: () async {
+                            Calls().startCall(
+                                uid: uuid.v4(),
+                                name: widget.model.name,
+                                userName: widget.model.userName,
+                                hasVideo: true,
+                                model: widget.model,
+                                channel: userM['uid']);
+                            await sendPushMessage(true);
+
+                            checkAndNavigationCallingPage(true, userM['uid']);
+                          },
+                          child: SizedBox(
+                              height: 23,
+                              width: 23,
+                              child: SvgPicture.asset('assets/video_call.svg')),
+                        ),
+                        SizedBox(width: 17),
+                        GestureDetector(
+                          onTap: () async {
+                            Calls().startCall(
+                                uid: uuid.v4(),
+                                name: widget.model.name,
+                                userName: widget.model.userName,
+                                hasVideo: false,
+                                model: widget.model,
+                                channel: userM['uid']);
+                            await sendPushMessage(false);
+                            checkAndNavigationCallingPage(false, userM['uid']);
+                          },
+                          child: Icon(
+                            Icons.call,
+                            size: 23,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(width: 16),
+                        Icon(
+                          Icons.more_vert_outlined,
+                          color: Colors.white,
+                          size: 23,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                ),
+                color: Colors.white,
+                //Color(0xffECE5DD),
+                child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('messages')
+                        .doc(userM['uid'])
+                        .collection("userMessages")
+                        .doc(widget.model.uid)
+                        .collection("messageList")
+                        .orderBy("created", descending: true)
+                        .snapshots(),
+                    builder: (context,
+                        AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                            snapshot) {
+                      if (snapshot.hasData) {
+                        return GroupedListView(
+                          controller:
+                              context.read<ChatNotifier>().scrollController,
+                          reverse: true,
+                          elements: snapshot.data.docs,
+                          groupBy: (element) {
+                            final date =
+                                element['created'].toDate() as DateTime;
+
+                            return DateFormat.yMMMd().format(date);
+                          },
+                          floatingHeader: true,
+                          useStickyGroupSeparators: true,
+                          groupHeaderBuilder: (element) {
+                            final date =
+                                element['created'].toDate() as DateTime;
+                            return SizedBox(
+                              height: 50,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Container(
+                                  width: 100,
+                                  decoration: BoxDecoration(
+                                      color: secondaryColor.withOpacity(0.8),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(10.0))),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      DateFormat.yMMMd().format(date),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 9.5,
+                                          fontWeight: FontWeight.w700),
+                                      textAlign: TextAlign.center,
                                     ),
-                                    filterQuality: FilterQuality.high,
                                   ),
                                 ),
                               ),
-                            ),
-                            SizedBox(width: 6),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => UserProfile(
-                                              model: UserModel(
-                                                  uid: widget.model.uid,
-                                                  name: widget.model.name,
-                                                  userName:
-                                                      widget.model.userName,
-                                                  image: widget.model.image,
-                                                  searchKeywords: widget
-                                                      .model.searchKeywords),
-                                            )));
-                              },
-                              child: Text(
-                                widget.model.name,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 6),
-                            Container(
-                              width: 5,
-                              height: 5,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color(0xff08aa48),
-                              ),
-                            ),
-                            Spacer(),
-                            GestureDetector(
-                              onTap: () async {
-                                Calls().startCall(
-                                    uid: uuid.v4(),
-                                    name: widget.model.name,
-                                    userName: widget.model.userName,
-                                    hasVideo: true,
-                                    model: widget.model,
-                                    channel: userM['uid']);
-                                await sendPushMessage(true);
+                            );
+                          },
+                          indexedItemBuilder: (ctx, documentSnapshot, index) {
+                            Timestamp time =
+                                snapshot.data.docs[index]['created'];
+                            // var day = time.toDate().day.toString();
+                            // var month = time.toDate().month.toString();
+                            // var year =
+                            //     time.toDate().toString().substring(2);
+                            // var date = day + '-' + month + '-' + year;
+                            var hour = time.toDate().hour;
+                            // var min = time.toDate().minute;
+                            final encrypter =
+                                enc.Encrypter(enc.AES(enc.Key.fromLength(32)));
 
-                                checkAndNavigationCallingPage(
-                                    true, userM['uid']);
+                            var ampm;
+                            if (hour > 12) {
+                              hour = hour % 12;
+                              ampm = 'pm';
+                            } else if (hour == 12) {
+                              ampm = 'pm';
+                            } else if (hour == 0) {
+                              hour = 12;
+                              ampm = 'am';
+                            } else {
+                              ampm = 'am';
+                            }
+                            return Column(
+                              children: [
+                                if (snapshot.data.docs[index]["type"] ==
+                                    'message')
+                                  SwipeTo(
+                                    onRightSwipe: () {
+                                      rightSwiped = true;
+                                      swiped = true;
+                                      if (userM['uid'] !=
+                                          snapshot.data.docs[index]["sender"]) {
+                                        replyToMessage(
+                                            encrypter.decrypt64(
+                                                snapshot.data.docs[index]
+                                                    ["text"],
+                                                iv: enc.IV.fromLength(16)),
+                                            widget.model.userName,
+                                            widget.model.name);
+                                      }
+
+                                      focusNode.requestFocus();
+                                    },
+                                    onLeftSwipe: () {
+                                      leftSwiped = true;
+                                      swiped = true;
+                                      if (userM['uid'] ==
+                                          snapshot.data.docs[index]["sender"]) {
+                                        replyToMessage(
+                                          encrypter.decrypt64(
+                                              snapshot.data.docs[index]["text"],
+                                              iv: enc.IV.fromLength(16)),
+                                          '',
+                                          userM['displayName'],
+                                        );
+                                      }
+
+                                      focusNode.requestFocus();
+                                    },
+                                    child: MessageReply(
+                                      isMe: userM['uid'] ==
+                                          snapshot.data.docs[index]["sender"],
+                                      // displayname: widget.model.name,
+                                      text: encrypter.decrypt64(
+                                        snapshot.data.docs[index]["text"],
+                                        iv: enc.IV.fromLength(16),
+                                      ),
+                                      time: snapshot.data.docs[index]
+                                          ["created"],
+                                      onSwipedMessage: snapshot.data.docs[index]
+                                          ["swiped"],
+                                      replyUsername: snapshot.data.docs[index]
+                                          ["replyUser"],
+                                      replyName: snapshot.data.docs[index]
+                                          ["replyName"],
+                                      replyMessage: snapshot.data.docs[index]
+                                          ["replyMessage"],
+                                    ),
+                                  )
+                                else if (snapshot.data.docs[index]["type"] ==
+                                    'audio')
+                                  Align(
+                                    alignment: (snapshot.data.docs[index]
+                                                ['sender'] ==
+                                            userM['uid'])
+                                        ? Alignment.centerRight
+                                        : Alignment.centerLeft,
+                                    child: VoiceMessage(
+                                      audioSrc: snapshot.data.docs[index]
+                                          ['content'],
+                                      me: snapshot.data.docs[index]['sender'] ==
+                                          userM['uid'],
+                                      meBgColor: secondaryColor,
+                                      contactBgColor: Color(0xffc4c4c4),
+                                      contactPlayIconColor: Colors.black,
+                                      contactFgColor: Colors.white,
+                                    ),
+                                  )
+                                else
+                                  Align(
+                                    alignment: (snapshot.data.docs[index]
+                                                ['sender'] ==
+                                            userM['uid'])
+                                        ? Alignment.centerRight
+                                        : Alignment.centerLeft,
+                                    child: SizedBox(
+                                      width: 150,
+                                      height: 150,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(builder: (_) {
+                                            return FullScreenImage(
+                                              imageUrl: snapshot
+                                                  .data.docs[index]["content"],
+                                              tag: "image",
+                                            );
+                                          }));
+                                        },
+                                        child: ClipRRect(
+                                          child: Hero(
+                                            tag: 'image$index',
+                                            child: CachedNetworkImage(
+                                              fit: BoxFit.cover,
+                                              imageUrl: snapshot
+                                                  .data.docs[index]["content"],
+                                              placeholder: (context, url) => Center(
+                                                  child:
+                                                      CircularProgressIndicator()),
+                                              errorWidget:
+                                                  (context, url, error) => Icon(
+                                                Icons.person,
+                                                color: secondaryColor,
+                                              ),
+                                              filterQuality: FilterQuality.high,
+                                            ),
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                SizedBox(
+                                  height: 7,
+                                )
+                              ],
+                            );
+                          },
+                        );
+                      }
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: primaryColor,
+                        ),
+                      );
+                    }),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              color: Colors.white,
+              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        if (isReplying == true)
+                          buildReply(replyMessage, uName, dName, isReplying),
+                        TextField(
+                          style: TextStyle(fontSize: 16),
+                          focusNode: focusNode,
+                          controller: messageController,
+                          decoration: InputDecoration(
+                            fillColor: Color(0xFFE6E9EE),
+                            hintText: 'Type a message',
+                            isDense: false,
+                            hintStyle: TextStyle(
+                                color: Color(0xff697077), fontSize: 15),
+                            prefixIcon: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isTyping = !isTyping;
+                                });
                               },
-                              child: SizedBox(
-                                  height: 23,
-                                  width: 23,
-                                  child: SvgPicture.asset(
-                                      'assets/video_call.svg')),
+                              child: IconButton(
+                                  onPressed: () {
+                                    context
+                                        .read<ChatNotifier>()
+                                        .cameraUploadImageChat(
+                                            widget.model.uid);
+                                  },
+                                  constraints: BoxConstraints(
+                                    maxWidth: 30,
+                                  ),
+                                  icon: SvgPicture.asset('assets/camera.svg')),
                             ),
-                            SizedBox(width: 17),
-                            GestureDetector(
-                              onTap: () async {
-                                Calls().startCall(
-                                  uid: uuid.v4(),
-                                  name: widget.model.name,
-                                  userName: widget.model.userName,
-                                  hasVideo: false,
-                                  model: widget.model,
-                                  channel: userM['uid'],
-                                );
-                                await sendPushMessage(false);
-                                checkAndNavigationCallingPage(
-                                  false,
-                                  userM['uid'],
-                                );
-                              },
-                              child: Icon(
-                                Icons.call,
-                                size: 23,
-                                color: Colors.white,
+                            suffixIcon: FittedBox(
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Iconsax.dollar_circle,
+                                      size: 21,
+                                      color: secondaryColor,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      context
+                                          .read<ChatNotifier>()
+                                          .pickUploadImageChat(
+                                              widget.model.uid, context);
+                                    },
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 30,
+                                    ),
+                                    icon: Icon(
+                                      Iconsax.gallery,
+                                      size: 20,
+                                      color: secondaryColor,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                ],
                               ),
                             ),
-                            SizedBox(width: 16),
-                            Icon(
-                              Icons.more_vert_outlined,
-                              color: Colors.white,
-                              size: 23,
+                            filled: true,
+                            enabledBorder: OutlineInputBorder(
+                              // borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
                             ),
-                          ],
+                            focusedBorder: OutlineInputBorder(
+                              // borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                          // expands: true,
+                          keyboardType: TextInputType.multiline,
+                          minLines: 1,
+                          maxLines: 5,
                         ),
                       ],
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.only(
-                      left: 20,
-                      right: 20,
-                    ),
-                    color: Colors.white,
-                    //Color(0xffECE5DD),
-                    child: StreamBuilder(
-                        stream: FirebaseFirestore.instance
-                            .collection('messages')
-                            .doc(userM['uid'])
-                            .collection("userMessages")
-                            .doc(widget.model.uid)
-                            .collection("messageList")
-                            .orderBy("created", descending: true)
-                            .snapshots(),
-                        builder: (context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
-                            return ListView.builder(
-                              reverse: true,
-                              controller:
-                                  context.read<ChatNotifier>().scrollController,
-                              itemCount: snapshot.data.docs.length,
-                              itemBuilder: (context, index) {
-                                Timestamp time =
-                                    snapshot.data.docs[index]['created'];
-                                // var day = time.toDate().day.toString();
-                                // var month = time.toDate().month.toString();
-                                // var year =
-                                //     time.toDate().toString().substring(2);
-                                // var date = day + '-' + month + '-' + year;
-                                var hour = time.toDate().hour;
-                                // var min = time.toDate().minute;
-                                final encrypter = enc.Encrypter(
-                                    enc.AES(enc.Key.fromLength(32)));
+                  messageController.text.isEmpty
+                      ? IconButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                                shape: const OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(20),
+                                        topRight: Radius.circular(20))),
+                                context: context,
+                                builder: (ctx) => CustomVoiceRecorderWidget(
+                                      isGroupChat: false,
+                                      receiverId: widget.model.uid,
+                                    ));
+                          },
+                          icon: SvgPicture.asset(
+                            'assets/microphone.svg',
+                            width: 27,
+                            height: 27,
+                          ))
+                      : IconButton(
+                          onPressed: () async {
+                            context
+                                .read<ChatNotifier>()
+                                .storeText(messageController.text.trim());
+                            messageController.clear();
 
-                                var ampm;
-                                if (hour > 12) {
-                                  hour = hour % 12;
-                                  ampm = 'pm';
-                                } else if (hour == 12) {
-                                  ampm = 'pm';
-                                } else if (hour == 0) {
-                                  hour = 12;
-                                  ampm = 'am';
-                                } else {
-                                  ampm = 'am';
-                                }
-                                return Column(
-                                  children: [
-                                    if (snapshot.data.docs[index]["type"] ==
-                                        'message')
-                                      SwipeTo(
-                                        onRightSwipe: () {
-                                          rightSwiped = true;
-                                          swiped = true;
-                                          if (userM['uid'] !=
-                                              snapshot.data.docs[index]
-                                                  ["sender"]) {
-                                            replyToMessage(
-                                              encrypter.decrypt64(
-                                                  snapshot.data.docs[index]
-                                                      ["text"],
-                                                  iv: enc.IV.fromLength(16)),
-                                              widget.model.userName,
-                                              widget.model.name,
-                                            );
-                                          }
-
-                                          focusNode.requestFocus();
-                                        },
-                                        onLeftSwipe: () {
-                                          leftSwiped = true;
-                                          swiped = true;
-                                          if (userM['uid'] ==
-                                              snapshot.data.docs[index]
-                                                  ["sender"]) {
-                                            replyToMessage(
-                                              encrypter.decrypt64(
-                                                  snapshot.data.docs[index]
-                                                      ["text"],
-                                                  iv: enc.IV.fromLength(16)),
-                                              '',
-                                              userM['displayName'],
-                                            );
-                                          }
-
-                                          focusNode.requestFocus();
-                                        },
-                                        child: MessageReply(
-                                          isMe: userM['uid'] ==
-                                              snapshot.data.docs[index]
-                                                  ["sender"],
-                                          // displayname: widget.model.name,
-                                          text: encrypter.decrypt64(
-                                            snapshot.data.docs[index]["text"],
-                                            iv: enc.IV.fromLength(16),
-                                          ),
-                                          time: snapshot.data.docs[index]
-                                              ["created"],
-                                          onSwipedMessage: snapshot
-                                              .data.docs[index]["swiped"],
-                                          replyUsername: snapshot
-                                              .data.docs[index]["replyUser"],
-                                          replyName: snapshot.data.docs[index]
-                                              ["replyName"],
-                                          replyMessage: snapshot
-                                              .data.docs[index]["replyMessage"],
-                                        ),
-                                      )
-                                    else if (snapshot.data.docs[index]
-                                            ["type"] ==
-                                        'audio')
-                                      Align(
-                                        alignment: (snapshot.data.docs[index]
-                                                    ['sender'] ==
-                                                userM['uid'])
-                                            ? Alignment.centerRight
-                                            : Alignment.centerLeft,
-                                        child: VoiceMessage(
-                                          audioSrc: snapshot.data.docs[index]
-                                              ['content'],
-                                          me: snapshot.data.docs[index]
-                                                  ['sender'] ==
-                                              userM['uid'],
-                                          meBgColor: secondaryColor,
-                                          contactBgColor: Color(0xffc4c4c4),
-                                          contactPlayIconColor: Colors.black,
-                                          contactFgColor: Colors.white,
-                                        ),
-                                      )
-                                    else
-                                      Align(
-                                        alignment: (snapshot.data.docs[index]
-                                                    ['sender'] ==
-                                                userM['uid'])
-                                            ? Alignment.centerRight
-                                            : Alignment.centerLeft,
-                                        child: SizedBox(
-                                          width: 150,
-                                          height: 150,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(context,
-                                                  MaterialPageRoute(
-                                                      builder: (_) {
-                                                return FullScreenImage(
-                                                  imageUrl: snapshot.data
-                                                      .docs[index]["content"],
-                                                  tag: "image",
-                                                );
-                                              }));
-                                            },
-                                            child: ClipRRect(
-                                              child: Hero(
-                                                tag: 'image$index',
-                                                child: CachedNetworkImage(
-                                                  fit: BoxFit.cover,
-                                                  imageUrl: snapshot.data
-                                                      .docs[index]["content"],
-                                                  placeholder: (context, url) =>
-                                                      Center(
-                                                          child:
-                                                              CircularProgressIndicator()),
-                                                  errorWidget:
-                                                      (context, url, error) =>
-                                                          Icon(
-                                                    Icons.person,
-                                                    color: secondaryColor,
-                                                  ),
-                                                  filterQuality:
-                                                      FilterQuality.high,
-                                                ),
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    SizedBox(
-                                      height: 7,
-                                    )
-                                  ],
-                                );
-                              },
+                            ChatMethods().storeMessages(
+                              context: context,
+                              text: context.read<ChatNotifier>().chatText,
+                              userID: userM['uid'],
+                              receiverID: widget.model.uid,
+                              searchKeywords:
+                                  createKeywords(widget.model.userName),
+                              img: widget.model.image,
+                              displayName: widget.model.name,
+                              userName: widget.model.userName,
+                              key: enc.Key.fromLength(32),
+                              iv: enc.IV.fromLength(16),
+                              swiped: swiped,
+                              replyMessage: replyMessage,
+                              replyName: dName,
+                              replyUsername: uName,
                             );
-                          }
-                          return Center(
-                            child: CircularProgressIndicator(
-                              color: primaryColor,
-                            ),
-                          );
-                        }),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-              color: Color(0xFFE6E9EE),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            //Color(0xffECE5DD),
-            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      if (isReplying == true)
-                        buildReply(replyMessage, uName, dName, isReplying),
-                      TextField(
-                        style: TextStyle(
-                          color: Color(0xff697077),
-                          fontSize: 15,
-                        ),
-                        cursorColor: Colors.black,
-                        cursorWidth: 1,
-                        textCapitalization: TextCapitalization.sentences,
-                        focusNode: focusNode,
-                        controller: messageController,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.fromLTRB(1, 2, 1, 2),
-                          fillColor: Color(0xFFE6E9EE),
-                          hintText: 'Type a message',
-                          isDense: false,
-                          hintStyle: TextStyle(
-                            color: Color(0xff697077),
-                            fontSize: 15,
-                          ),
-                          prefixIcon: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                isTyping = !isTyping;
-                              });
-                            },
-                            child: IconButton(
-                                onPressed: () {
-                                  context
-                                      .read<ChatNotifier>()
-                                      .cameraUploadImageChat(widget.model.uid);
-                                },
-                                constraints: BoxConstraints(
-                                  maxWidth: 30,
-                                ),
-                                icon: SvgPicture.asset('assets/camera.svg')),
-                          ),
-                          suffixIcon: FittedBox(
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  onPressed: () {},
-                                  constraints: const BoxConstraints(
-                                    maxWidth: 30,
-                                  ),
-                                  icon: Icon(
-                                    Iconsax.dollar_circle,
-                                    size: 21,
-                                    color: secondaryColor,
-                                  ),
-                                ),
-                                // if(enableMedia == true)
-                                IconButton(
-                                  onPressed: () {
-                                    context
-                                        .read<ChatNotifier>()
-                                        .pickUploadImageChat(
-                                            widget.model.uid, context);
-                                  },
-                                  constraints: const BoxConstraints(
-                                    maxWidth: 30,
-                                  ),
-                                  icon: Icon(
-                                    Iconsax.gallery,
-                                    size: 20,
-                                    color: secondaryColor,
-                                  ),
-                                ),
-                                SizedBox(width: 8),
-                              ],
-                            ),
-                          ),
-                          filled: true,
-                          enabledBorder: OutlineInputBorder(
-                            // borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            // borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                        // expands: true,
-                        keyboardType: TextInputType.multiline,
-                        minLines: 1,
-                        maxLines: 5,
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: 2,
-                ),
-                context.watch<ChatNotifier>().isRecording
-                    ? SizedBox(
-                        height: 5,
-                        width: 40,
-                      )
-                    : SizedBox(),
-                messageController.text.isEmpty
-                    ? IconButton(
-                        onPressed: () => showModalBottomSheet(
-                            context: context,
-                            builder: (ctx) => CustomVoiceRecorderWidget(
-                                receiverId: widget.model.uid,
-                                isGroupChat: false)),
-                        icon: SvgPicture.asset(
-                          'assets/microphone.svg',
-                          width: 27,
-                          height: 27,
-                        ))
-                    : IconButton(
-                        onPressed: () async {
-                          context
-                              .read<ChatNotifier>()
-                              .storeText(messageController.text.trim());
-                          messageController.clear();
+                            sendNotification(
+                              tokenIdList: [player],
+                              heading: userM['displayName'],
+                              contents: context.read<ChatNotifier>().chatText,
+                            );
+                            // // var status = await OneSignal.shared.getDeviceState();
+                            // //
+                            // // var playerId = status.userId;
+                            // await OneSignal.shared
+                            //     .postNotification(OSCreateNotification(
+                            //   playerIds: [player],
+                            //   content: context.read<ChatNotifier>().chatText,
+                            //   heading: 'Beepo',
+                            //   subtitle: userM['displayName'],
+                            //   sendAfter: DateTime.now(),
+                            //   buttons: [
+                            //     OSActionButton(text: "test1", id: "id1"),
+                            //     OSActionButton(text: "test2", id: "id2"),
+                            //   ],
+                            //   androidSound:
+                            //       'assets/mixkit-interface-hint-notification-911.wav',
+                            //   androidSmallIcon: 'assets/beepo_img.png',
+                            //
+                            // )
+                            // );
+                            context.read<ChatNotifier>().clearText();
 
-                          ChatMethods().storeMessages(
-                            context: context,
-                            text: context.read<ChatNotifier>().chatText,
-                            userID: userM['uid'],
-                            receiverID: widget.model.uid,
-                            searchKeywords:
-                                createKeywords(widget.model.userName),
-                            img: widget.model.image,
-                            displayName: widget.model.name,
-                            userName: widget.model.userName,
-                            key: enc.Key.fromLength(32),
-                            iv: enc.IV.fromLength(16),
-                            swiped: swiped,
-                            replyMessage: replyMessage,
-                            replyName: dName,
-                            replyUsername: uName,
-                          );
-                          sendNotification(
-                            tokenIdList: [player],
-                            heading: userM['displayName'],
-                            contents: context.read<ChatNotifier>().chatText,
-                          );
-                          // // var status = await OneSignal.shared.getDeviceState();
-                          // //
-                          // // var playerId = status.userId;
-                          // await OneSignal.shared
-                          //     .postNotification(OSCreateNotification(
-                          //   playerIds: [player],
-                          //   content: context.read<ChatNotifier>().chatText,
-                          //   heading: 'Beepo',
-                          //   subtitle: userM['displayName'],
-                          //   sendAfter: DateTime.now(),
-                          //   buttons: [
-                          //     OSActionButton(text: "test1", id: "id1"),
-                          //     OSActionButton(text: "test2", id: "id2"),
-                          //   ],
-                          //   androidSound:
-                          //       'assets/mixkit-interface-hint-notification-911.wav',
-                          //   androidSmallIcon: 'assets/beepo_img.png',
-                          //
-                          // )
-                          // );
-                          context.read<ChatNotifier>().clearText();
-
-                          setState(() {
-                            isReplying = false;
-                            replyMessage = '';
-                          });
-                          // EncryptData.encryptFernet(context.read<ChatNotifier>().chatText);
-                          // OneSignal.shared.
-                        },
-                        icon: const Icon(
-                          Icons.send,
-                          color: secondaryColor,
-                          size: 35,
+                            setState(() {
+                              isReplying = false;
+                              replyMessage = '';
+                            });
+                            // EncryptData.encryptFernet(context.read<ChatNotifier>().chatText);
+                            // OneSignal.shared.
+                          },
+                          icon: const Icon(
+                            Icons.send,
+                            color: secondaryColor,
+                          ),
                         ),
-                      ),
-              ],
+                  const SizedBox(width: 10)
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
