@@ -850,7 +850,8 @@ class _GroupDmState extends State<GroupDm> {
                           'assets/microphone.svg',
                           width: 27,
                           height: 27,
-                        ))
+                        ),
+                )
 
                     // GestureDetector(
                     //     onLongPress: () {

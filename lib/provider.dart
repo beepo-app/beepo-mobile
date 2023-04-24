@@ -663,4 +663,70 @@ bool enableScreenShot = false;
       print(e);
     });
   }
+
+
+  uploadAudioGroup(String path) {
+    final Reference firebaseStorageRef = FirebaseStorage.instance.ref().child(
+        'profilepics/audio/group/${DateTime.now().millisecondsSinceEpoch.toString()}}.jpg');
+
+    UploadTask task = firebaseStorageRef.putFile(File(path));
+    task.then((value) async {
+      print('##############done#########');
+      var audioURL = await value.ref.getDownloadURL();
+      String strVal = audioURL.toString();
+      await sendAudioMsg(strVal);
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+  sendAudioMsgGroup(String audioMsg) async {
+    if (audioMsg.isNotEmpty) {
+      var ref = FirebaseFirestore.instance
+          .collection('groupMessages')
+          .doc(DateTime.now().millisecondsSinceEpoch.toString());
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        transaction.set(ref, {
+          "sender": userM['uid'],
+          "created": Timestamp.now(),
+          "content": audioMsg,
+          "duration": dure.inSeconds > 60
+              ? '${dure.inMinutes}:${dure.inSeconds - dure.inMinutes * 60}'
+              : '${dure.inSeconds.toString()}s',
+          "type": 'audio'
+        });
+      }).then((value) {
+        // setState(() {
+        isSending = false;
+        notifyListeners();
+        // });
+      });
+
+      var ref2 = FirebaseFirestore.instance
+          .collection("groups")
+          .doc(userM['uid']);
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        transaction.set(ref2, {
+          "sender": userM['uid'],
+          "created": Timestamp.now(),
+          "content": audioMsg,
+          "duration": dure.inSeconds > 60
+              ? '${dure.inMinutes}:${dure.inSeconds - dure.inMinutes * 60}'
+              : '${dure.inSeconds.toString()}s',
+          "type": 'audio'
+        });
+      }).then((value) {
+        // setState(() {
+        isSending = false;
+        notifyListeners();
+        // });
+      });
+
+
+      scrollController.animateTo(0.0,
+          duration: Duration(milliseconds: 100), curve: Curves.bounceInOut);
+    } else {
+      print("Hello");
+    }
+  }
 }
