@@ -11,9 +11,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:grouped_list/grouped_list.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:lottie/lottie.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
@@ -408,6 +410,7 @@ class _GroupDmState extends State<GroupDm> {
                       right: 20,
                     ),
                     color: Colors.white,
+                    constraints: BoxConstraints.tightFor(width: MediaQuery.of(context).size.width-50),
                     child: StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('groupMessages')
@@ -416,12 +419,43 @@ class _GroupDmState extends State<GroupDm> {
                         builder:
                             (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (snapshot.hasData) {
-                            return ListView.builder(
+                            return GroupedListView(
                               reverse: true,
+                              order: GroupedListOrder.DESC,
                               controller:
                                   context.read<ChatNotifier>().scrollController,
-                              itemCount: snapshot.data.docs.length,
-                              itemBuilder: (context, index) {
+                              elements: snapshot.data.docs,
+                              floatingHeader: true,
+                              useStickyGroupSeparators: true,
+                              groupHeaderBuilder: (element) {
+                                final date =
+                                element['created'].toDate() as DateTime;
+                                return SizedBox(
+                                  height: 50,
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                      width: 100,
+                                      decoration: BoxDecoration(
+                                          color: secondaryColor.withOpacity(0.8),
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10.0))),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          DateFormat.yMMMd().format(date),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 9.5,
+                                              fontWeight: FontWeight.w700),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              indexedItemBuilder: (context, d, index) {
                                 Timestamp time =
                                     snapshot.data.docs[index]['created'];
                                 var day = time.toDate().day.toString();
@@ -607,6 +641,12 @@ class _GroupDmState extends State<GroupDm> {
                                   ],
                                 );
                               },
+                              groupBy: (QueryDocumentSnapshot<Object> element) {
+                              final date =
+                              element['created'].toDate() as DateTime;
+
+                              return DateFormat.yMMMd().format(date);
+                            },
                             );
                           }
                           return Center(
