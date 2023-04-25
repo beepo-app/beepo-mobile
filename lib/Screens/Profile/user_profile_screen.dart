@@ -258,7 +258,7 @@ class _UserProfileState extends State<UserProfile> {
                             value: context.watch<ChatNotifier>().enableScreenShot,
                             activeColor: secondaryColor,
                             onChanged: (val) {
-                              context.read<ChatNotifier>().screenshot();
+                              // context.read<ChatNotifier>().screenshot();
 
                             },
                           ),
