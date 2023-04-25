@@ -87,6 +87,7 @@ dependencies:
   swipe_to: ^1.0.2
   wechat_assets_picker:
   flutter_windowmanager:
+  grouped_list: ^5.1.2
   http: ^0.13.4
   video_player: ^2.4.10
   flutter_link_preview:
