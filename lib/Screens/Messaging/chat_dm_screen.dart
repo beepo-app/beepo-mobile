@@ -482,10 +482,11 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                         builder: (context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData) {
                             return GroupedListView(
-                              reverse: false,
+                              reverse: true,
                               controller:
                                   context.read<ChatNotifier>().scrollController,
                               elements: snapshot.data.docs,
+                              order: GroupedListOrder.DESC,
                               floatingHeader: true,
                               useStickyGroupSeparators: true,
                               groupHeaderBuilder: (element) {
