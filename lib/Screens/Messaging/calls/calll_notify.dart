@@ -5,17 +5,23 @@ import 'dart:async';
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Screens/Messaging/calls/calls.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming/entities/android_params.dart';
 import 'package:flutter_callkit_incoming/entities/call_event.dart';
 import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
 import 'package:flutter_callkit_incoming/entities/ios_params.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:get/get.dart' as note;
+import 'package:hive/hive.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
+
+import '../../../Utils/styles.dart';
 
 class Calls {
   final stopWatchTimer = StopWatchTimer(mode: StopWatchMode.countUp);
   int time = 0;
+  Map userM = Hive.box('beepo').get('userData');
 
   startCall({
     String uid,
@@ -31,7 +37,7 @@ class Calls {
       nameCaller: name,
       handle: userName,
       type: 1,
-      extra: <String, dynamic>{'userId': '1a2b3c4d'},
+      extra: <String, dynamic>{'userId': uid},
       ios: IOSParams(handleType: 'generic'),
     );
     await FlutterCallkitIncoming.startCall(params);
@@ -50,35 +56,51 @@ class Calls {
           break;
         case Event.ACTION_CALL_ACCEPT:
           () {
-            note.Get.to(VideoCall(
-              name: model,
-              isVideo: hasVideo,
-              channelName: channel,
-              role: ClientRole.Broadcaster,
-              // time: time,
-            ));
-            stopWatchTimer.rawTime.listen((event) {
-              time = event;
-              print(event);
-            });
+            //   note.Get.to(VideoCall(
+            //     name: model,
+            //     isVideo: hasVideo,
+            //     channelName: channel,
+            //     role: ClientRole.Broadcaster,
+            //     // time: time,
+            //   ));
+            //   stopWatchTimer.rawTime.listen((event) {
+            //     time = event;
+            //     print(event);
+            //   });
           };
 
           // TODO: accepted an incoming call
           // TODO: show screen calling in Flutter
           break;
-        case Event.ACTION_CALL_DECLINE:
+        case Event.ACTION_CALL_DECLINE:(){
           endCall(uid);
           showMissedCall(uid: uid, name: name);
+
+        };
           // TODO: declined an incoming call
           break;
         case Event.ACTION_CALL_ENDED:
-          stopWatchTimer.onStopTimer();
-
+          () {
+            stopWatchTimer.onStopTimer();
+            FirebaseFirestore.instance
+                .collection('calls')
+                .doc(userM['uid'])
+                .collection('allCalls')
+                .add({
+              'name': name,
+              'image': model.image,
+              'callType': 'startCall',
+              'created': Timestamp.now(),
+            });
+          };
           // TODO: ended an incoming/outgoing call
           break;
 
         case Event.ACTION_CALL_TIMEOUT:
-          showMissedCall(uid: uid, name: name);
+          () {
+            showMissedCall(uid: uid, name: name);
+            note.Get.back();
+          };
           // TODO: missed an incoming call
           break;
         case Event.ACTION_CALL_CALLBACK:
@@ -136,19 +158,20 @@ class Calls {
       textMissedCall: 'Missed call',
       // textCallback: 'Call back',
       duration: 30000,
-      extra: <String, dynamic>{'userId': '1a2b3c4d'},
-      headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
+      extra: <String, dynamic>{'userId': uid},
+      // headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
       android: const AndroidParams(
-          isCustomNotification: true,
-          isShowLogo: true,
-          isShowCallback: true,
-          isShowMissedCallNotification: true,
-          ringtonePath: 'default',
-          backgroundColor: '#FF9C34',
-          backgroundUrl: 'https://beepoapp.net/images/landing/01.png',
-          actionColor: '#4CAF50',
-          incomingCallNotificationChannelName: "Incoming Call",
-          missedCallNotificationChannelName: "Missed Call"),
+        isCustomNotification: true,
+        isShowLogo: true,
+        isShowCallback: true,
+        isShowMissedCallNotification: true,
+        ringtonePath: 'default',
+        backgroundColor: '#FF9C34',
+        backgroundUrl: 'https://beepoapp.net/images/landing/01.png',
+        actionColor: '#4CAF50',
+        incomingCallNotificationChannelName: "Incoming Call",
+        missedCallNotificationChannelName: "Missed Call",
+      ),
       ios: IOSParams(
         iconName: 'CallKitLogo',
         handleType: 'generic',
@@ -173,11 +196,31 @@ class Calls {
         case Event.ACTION_CALL_INCOMING:
           () {
             print('$name Call incoming');
+            FirebaseFirestore.instance
+                .collection('calls')
+                .doc(userM['uid'])
+                .collection('allCalls')
+                .add({
+              'name': name,
+              'image': model.image,
+              'callType': 'callReceived',
+              'created': Timestamp.now(),
+            });
           };
           // TODO: received an incoming call
           break;
         case Event.ACTION_CALL_START:
           () {
+            FirebaseFirestore.instance
+                .collection('calls')
+                .doc(userM['uid'])
+                .collection('allCalls')
+                .add({
+              'name': name,
+              'image': model.image,
+              'callType': 'callReceived',
+              'created': Timestamp.now(),
+            });
             note.Get.to(VideoCall(
               name: model,
               isVideo: hasVideo,
@@ -185,31 +228,53 @@ class Calls {
               role: ClientRole.Broadcaster,
               // time: time,
             ));
+
           };
           // TODO: started an outgoing call
           // TODO: show screen calling in Flutter
           break;
         case Event.ACTION_CALL_ACCEPT:
-
-            note.Get.to(VideoCall(
-              name: model,
-              isVideo: hasVideo,
-              channelName: channel,
-              role: ClientRole.Broadcaster,
-              // time: time,
-            ));
+          note.Get.to(VideoCall(
+            name: model,
+            isVideo: hasVideo,
+            channelName: channel,
+            role: ClientRole.Broadcaster,
+            // time: time,
+          ));
           //   stopWatchTimer.onStartTimer();
           // };
           // TODO: accepted an incoming call
           // TODO: show screen calling in Flutter
           break;
         case Event.ACTION_CALL_DECLINE:
+          () {
+            FirebaseFirestore.instance
+                .collection('calls')
+                .doc(userM['uid'])
+                .collection('allCalls')
+                .add({
+              'name': name,
+              'image': model.image,
+              'callType': 'callReceived',
+              'created': Timestamp.now(),
+            });
+          };
+
           // showMissedCall(uid: uid, name: name);
           // TODO: declined an incoming call
           break;
-        case Event.ACTION_CALL_ENDED:
-           note.Get.back();
-
+        case Event.ACTION_CALL_ENDED:() {
+          note.Get.back();
+          FirebaseFirestore.instance
+              .collection('calls')
+              .doc(userM['uid'])
+              .collection('allCalls')
+              .add({
+            'name': name,
+            'image': model.image,
+            'callType': 'callReceived',
+          });
+        };
           // TODO: ended an incoming/outgoing call
           break;
 

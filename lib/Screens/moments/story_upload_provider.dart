@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:video_thumbnail/video_thumbnail.dart' as video;
 import 'package:image/image.dart' as img;
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import '../../Models/story_model/storyModel.dart';
@@ -92,11 +92,10 @@ class StoryUploadProvider extends ChangeNotifier {
 
   Future<Either<Failure, Success>> getCaption(String text) {
     _caption = text;
-    // return _caption;
   }
 
   //TODO: Request permission to access media and camera
-  Future<Either<Failure, Success>> pickImageGallery(BuildContext context) async {
+  Future<Either<Failure, Success>> pickMediaGallery(BuildContext context) async {
     try {
       _setStoryUploadStatus(StoryUploadStatus.gettingReady);
       //TODO: Add permission check
@@ -104,14 +103,17 @@ class StoryUploadProvider extends ChangeNotifier {
         context,
         pickerConfig: const AssetPickerConfig(
           maxAssets: 1,
-          requestType: RequestType.image,
+          requestType: RequestType.all,
         ),
       );
       // await _imagePicker.pickImage(source: ImageSource.gallery);
       if (result != null) {
         _selectFile(await result.first.file);
         if (_file != null) {
-          _setMediaType("image");
+          result.first.type ==  AssetType.image?
+          _setMediaType("image") :
+          result.first.type ==  AssetType.video? _setMediaType('video') : _setMediaType("audio");
+
           final story = StoryModel(
             mediaType: _mediaType,
             uid: userM['uid'],
@@ -303,9 +305,10 @@ class StoryUploadProvider extends ChangeNotifier {
 
   Future<Either<Failure, Success>> getVideoThumbnail() async {
     try {
-      final thumbImage = await VideoThumbnail.thumbnailData(
+      final thumbImage = await video.VideoThumbnail.thumbnailData(
         video: _file.path,
         maxWidth: 128,
+        imageFormat: video.ImageFormat.JPEG,
         // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
         quality: 25,
       );

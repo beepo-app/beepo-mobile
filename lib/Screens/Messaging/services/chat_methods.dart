@@ -111,6 +111,10 @@ class ChatMethods {
     String userName,
     String image,
     String displayName,
+    bool swiped,
+    String replyMessage,
+    String replyName,
+    String replyUsername,
   }) async {
     try {
       await FirebaseFirestore.instance.collection("groups").doc('beepo').set({
@@ -122,6 +126,10 @@ class ChatMethods {
         'created': Timestamp.now(),
         'searchKeywords': searchKeywords,
         'type': 'message',
+        'swiped': swiped,
+        'replyMessage' : replyMessage,
+        'replyName': replyName,
+        'replyUser' : replyUsername,
       });
 
       await FirebaseFirestore.instance.collection('groupMessages').add({
@@ -132,6 +140,10 @@ class ChatMethods {
         'image': image,
         'userName': userName,
         'displayName': displayName,
+        'swiped': swiped,
+        'replyMessage' : replyMessage,
+        'replyName': replyName,
+        'replyUser' : replyUsername,
       });
     } catch (e) {
       displaySnack(context, "Please check your internet connection");

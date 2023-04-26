@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../provider.dart';
 
 class FlowShader extends StatefulWidget {
   const FlowShader({
@@ -35,6 +38,11 @@ class _FlowShaderState extends State<FlowShader>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if(context.watch<ChatNotifier>().enableScreenShot == true){
+        Provider.of<ChatNotifier>(context, listen: false).secureScreen();
+      }
+    });
     controller = AnimationController(
       vsync: this,
       duration: widget.duration,

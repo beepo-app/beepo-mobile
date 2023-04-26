@@ -2,7 +2,6 @@
 
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
-import 'package:beepo/transfer_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -16,10 +15,10 @@ import 'package:uuid/uuid.dart';
 import 'Models/user_model.dart';
 import 'Screens/Auth/lock_screen.dart';
 import 'Screens/Auth/onboarding.dart';
+import 'Screens/Messaging/calls/calll_notify.dart';
 import 'Screens/moments/story_download_provider.dart';
 import 'Screens/moments/story_upload_provider.dart';
 import 'bottom_nav.dart';
-import 'Screens/Messaging/calls/calll_notify.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -141,8 +140,6 @@ class _MyAppState extends State<MyApp> {
     OneSignal.shared.setRequiresUserPrivacyConsent(true);
     OneSignal.shared.consentGranted(true);
 
-    // NOTE: Replace with your own app ID from https://www.onesignal.com
-
     await OneSignal.shared.setAppId('8f26effe-fda3-4034-a262-be12f4c5c47e');
     _handleGetDeviceState();
 
@@ -156,7 +153,6 @@ class _MyAppState extends State<MyApp> {
     OneSignal.shared
         .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
       print('NOTIFICATION OPENED HANDLER CALLED WITH: $result');
-      // Get.to(ChatDm());
       setState(() {
         _debugLabelString =
             "Opened notification: \n${result.notification.jsonRepresentation().replaceAll("\\n", "\n")}";
@@ -234,6 +230,7 @@ class _MyAppState extends State<MyApp> {
   var uuid = Uuid();
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
   Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
     await Firebase.initializeApp();
@@ -277,23 +274,37 @@ class _MyAppState extends State<MyApp> {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print(
-          'Message title: ${message.notification?.title}, body: ${message.notification?.body}, data: ${message.data}');
+        'Message title: ${message.notification?.title}, body: ${message.notification?.body}, data: ${message.data}',
+      );
+      FirebaseFirestore.instance
+          .collection('calls')
+          .doc(userM['uid'])
+          .collection('allCalls')
+          .add({
+        'name': message.data['name'],
+        'image': message.data['image'],
+        'callType': 'callReceived',
+        'created': Timestamp.now(),
+      });
       // _currentUuid = uuid.v4();
       Calls().receiveIncomingCall(
-          uid: uuid.v4(),
+        uid: uuid.v4(),
+        name: message.data['name'],
+        model: UserModel(
           name: message.data['name'],
-          model: UserModel(
-            name: message.data['name'],
-            uid: message.data['uid'],
-            userName: message.data['userName'],
-            image: message.data['image'],
-          ),
-          hasVideo: message.data['hasVideo'] == 'true' ? true : false,
+          uid: message.data['uid'],
           userName: message.data['userName'],
           image: message.data['image'],
-          channel: message.data['channelName']);
+        ),
+        hasVideo: message.data['hasVideo'] == 'true' ? true : false,
+        userName: message.data['userName'],
+        image: message.data['image'],
+        channel: message.data['channelName'],
+      );
+    }, onDone: (){
+      Calls().endCall(uuid.v4());
     });
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
   @override

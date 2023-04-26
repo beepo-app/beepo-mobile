@@ -61,10 +61,10 @@ packages:
     dependency: "direct main"
     description:
       name: audio_waveforms
-      sha256: c07be4f7ab271a846b27b5d0e388c96d37b794dea6c9dc6fce21886f359fc2e7
+      sha256: f2f81e256c5c03b64e2861e0323a77e1b6790c256c73393b671214c9846260fc
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.4"
   audioplayers:
     dependency: "direct main"
     description:
@@ -73,6 +73,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.20.1"
+  avatar_glow:
+    dependency: "direct main"
+    description:
+      name: avatar_glow
+      sha256: "3627f6f97d1f10d3c1996ae108d3488eabaf68c0cf0c3eac7e7c746a3812881d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   awesome_notifications:
     dependency: "direct main"
     description:
@@ -221,10 +229,10 @@ packages:
     dependency: "direct main"
     description:
       name: convert
-      sha256: "1be13198012c1d5bc042dc40ad1d7f16cbd522350984c0c1abf471d6d7e305c6"
+      sha256: "0f08b14755d163f6e2134cb58222dd25ea2a2ee8a195e53983d57c075324d592"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.0"
+    version: "3.1.1"
   country_picker:
     dependency: "direct main"
     description:
@@ -289,14 +297,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.8"
-  eip55:
-    dependency: transitive
-    description:
-      name: eip55
-      sha256: "213a9b86add87a5216328e8494b0ab836e401210c4d55eb5e521bd39e39169e1"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.2"
   encrypt:
     dependency: "direct main"
     description:
@@ -486,6 +486,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.11.0"
+  flutter_link_preview:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: master
+      resolved-ref: "306a5e2a5495017f0f06d940919846744334d06d"
+      url: "https://github.com/yungzhu/flutter_link_preview.git"
+    source: git
+    version: "1.5.6"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -560,6 +569,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_windowmanager:
+    dependency: "direct main"
+    description:
+      name: flutter_windowmanager
+      sha256: b4d0bc06f6777952b729c0cdb7ce9ad1ecabd8b8b1cb0acb57a36621457dab1b
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.0"
   fluttertoast:
     dependency: "direct main"
     description:
@@ -584,6 +601,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  gbk2utf8:
+    dependency: transitive
+    description:
+      name: gbk2utf8
+      sha256: "83a255e974b970d20538c1661bd5b7ee9120e106fbb10478cffcd515ba480e34"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   get:
     dependency: "direct main"
     description:
@@ -592,22 +617,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.6.1"
-  googleapis_auth:
-    dependency: transitive
+  grouped_list:
+    dependency: "direct main"
     description:
-      name: googleapis_auth
-      sha256: "127b1bbd32170ab8312f503bd57f1d654d8e4039ddfbc63c027d3f7ade0eff74"
+      name: grouped_list
+      sha256: fef106470186081c32636aa055492eee7fc7fe8bf0921a48d31ded24821af19f
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.1"
-  grpc:
-    dependency: transitive
-    description:
-      name: grpc
-      sha256: a73c16e4f6a4a819be892bb2c73cc1d0b00e36095f69b0738cc91a733e3d27ba
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.0"
+    version: "5.1.2"
   hawk_fab_menu:
     dependency: "direct main"
     description:
@@ -648,14 +665,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.13.5"
-  http2:
-    dependency: transitive
-    description:
-      name: http2
-      sha256: "58805ebc6513eed3b98ee0a455a8357e61d187bf2e0fdc1e53120770f78de258"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.1"
   http_client_helper:
     dependency: transitive
     description:
@@ -760,14 +769,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.7.0"
-  json_rpc_2:
-    dependency: transitive
-    description:
-      name: json_rpc_2
-      sha256: "5e469bffa23899edacb7b22787780068d650b106a21c76db3c49218ab7ca447e"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.2"
   just_audio:
     dependency: "direct main"
     description:
@@ -1112,14 +1113,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.4"
-  protobuf:
-    dependency: transitive
-    description:
-      name: protobuf
-      sha256: "01dd9bd0fa02548bf2ceee13545d4a0ec6046459d847b6b061d8a27237108a08"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
   provider:
     dependency: "direct main"
     description:
@@ -1541,14 +1534,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.74"
-  web3dart:
-    dependency: transitive
-    description:
-      name: web3dart
-      sha256: d40d3b2173b982e2b94c9e9589539b8556e9d0a44d3d79cd97d1f2ab2c35d7fe
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.4.1"
   wechat_assets_picker:
     dependency: "direct main"
     description:
@@ -1581,22 +1566,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.0"
-  xmtp:
-    dependency: "direct main"
-    description:
-      name: xmtp
-      sha256: "55a933cabf034bade07f742723926c8b9860398d9fbbaef1148f99e57e9eb211"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.1-development.1"
-  xmtp_proto:
-    dependency: transitive
-    description:
-      name: xmtp_proto
-      sha256: "455517589b7d6b8ed892aa6d2ab958d53869fe545fdd10f95edd88c4e5e96d40"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.1-development"
   yaml:
     dependency: transitive
     description:
@@ -1606,5 +1575,5 @@ packages:
     source: hosted
     version: "3.1.1"
 sdks:
-  dart: ">=2.18.4 <3.0.0"
+  dart: ">=2.18.0 <3.0.0"
   flutter: ">=3.3.0"
