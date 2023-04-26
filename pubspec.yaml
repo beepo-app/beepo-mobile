@@ -26,7 +26,7 @@ dependencies:
   cached_network_image: ^3.2.0
   image_picker: 0.8.4+4
   image_cropper: ^2.0.3
-  local_auth: ^2.1.0
+  local_auth: ^2.1.6
   path_provider: any
   avatar_glow: ^2.0.2
   #audio_recorder: any
