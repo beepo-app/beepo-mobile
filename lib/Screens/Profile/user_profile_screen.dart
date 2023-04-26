@@ -3,16 +3,18 @@
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
 import 'package:beepo/Utils/styles.dart';
+import 'package:beepo/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 
 import '../Messaging/media_links_docs.dart';
-
 class UserProfile extends StatefulWidget {
   // const UserProfile({Key key}) : super(key: key);
   final UserModel model;
@@ -25,10 +27,23 @@ class UserProfile extends StatefulWidget {
 
 class _UserProfileState extends State<UserProfile> {
   bool enable = false;
-  bool enable2 = true;
-  bool enable3 = false;
+  bool enable2 = false;
+  // bool enable3 = false;
+
+  bool isSecuredMode = false;
 
   Map userM = Hive.box('beepo').get('userData');
+
+  @override
+  void initState() {
+
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if(context.watch<ChatNotifier>().enableScreenShot == true){
+        Provider.of<ChatNotifier>(context, listen: false).secureScreen();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -240,12 +255,11 @@ class _UserProfileState extends State<UserProfile> {
                             ),
                           ),
                           Switch(
-                            value: enable2,
+                            value: context.watch<ChatNotifier>().enableScreenShot,
                             activeColor: secondaryColor,
                             onChanged: (val) {
-                              setState(() {
-                                enable2 = val;
-                              });
+                              // context.read<ChatNotifier>().screenshot();
+
                             },
                           ),
                         ],
@@ -262,12 +276,10 @@ class _UserProfileState extends State<UserProfile> {
                             ),
                           ),
                           Switch(
-                            value: enable3,
+                            value: context.watch<ChatNotifier>().enableMedia,
                             activeColor: secondaryColor,
                             onChanged: (value) {
-                              setState(() {
-                                enable3 = value;
-                              });
+                              context.read<ChatNotifier>().enable();
                             },
                           ),
                         ],

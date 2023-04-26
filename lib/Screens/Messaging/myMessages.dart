@@ -45,11 +45,6 @@ class _MyMessagesState extends State<MyMessages> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    // getProfileData();
-    // setState(() {
-    //
-    // });
     super.initState();
   }
 

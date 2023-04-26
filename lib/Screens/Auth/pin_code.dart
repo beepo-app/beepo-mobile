@@ -98,7 +98,7 @@ class _PinCodeState extends State<PinCode> {
               ),
             ),
             const Spacer(),
-            FilledButton(
+            FilledButtons(
               text: 'Continue',
               onPressed: () {
                 if (otp.text.length == 4) {

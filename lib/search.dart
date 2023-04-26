@@ -75,7 +75,9 @@ class _SearchSearchState extends State<SearchSearch> {
                                             searchKeywords:
                                                 data['searchKeywords'],
                                           ),
-                                        )));
+                                        ),
+                                ),
+                            );
                           },
                           leading: Container(
                             width: 46,
@@ -112,115 +114,119 @@ class _SearchSearchState extends State<SearchSearch> {
   }
 }
 
-class SearchSearch2 extends StatefulWidget {
-  @override
-  State<SearchSearch2> createState() => _SearchSearch2State();
-}
 
-class _SearchSearch2State extends State<SearchSearch2> {
-  final TextEditingController _searchcontroller = TextEditingController();
-  Map userM = Hive.box('beepo').get('userData');
-
-  @override
-  void dispose() {
-    super.dispose();
-    _searchcontroller.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: SocialAppBar(
-        title: SearchBar(
-          controller: _searchcontroller,
-          autofocus: true,
-          onChanged: (value) {
-            setState(() {});
-          },
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          left: 22.0,
-          right: 22.0,
-        ),
-        child: StreamBuilder<QuerySnapshot<Map>>(
-            stream: FirebaseFirestore.instance
-                .collection("conversation")
-                .doc(userM['uid'])
-                .collection('currentConversation')
-                .where("searchKeywords",
-                    arrayContains: _searchcontroller.text.trim().toLowerCase())
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(
-                  child: CircularProgressIndicator(
-                    color: primaryColor,
-                  ),
-                );
-              }
-              if (snapshot.data == null) {
-                return const SizedBox();
-              }
-              return ListView.builder(
-                itemCount: snapshot.data.docs.length,
-                itemBuilder: (context, index) {
-                  final data = snapshot.data.docs[index].data();
-                  return _searchcontroller.text.isNotEmpty
-                      ? ListTile(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ChatDm(
-                                  model: UserModel(
-                                    uid: data['receiver'],
-                                    name: data['displayName'],
-                                    image: data['image'],
-                                    userName: data['name'],
-                                    searchKeywords: data['searchKeywords'],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          leading: Container(
-                            width: 46,
-                            height: 46,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            child: ClipOval(
-                              child: CachedNetworkImage(
-                                imageUrl: data['image'],
-                                placeholder: (context, url) =>
-                                    Center(child: CircularProgressIndicator()),
-                                errorWidget: (context, url, error) => Icon(
-                                  Icons.person,
-                                  color: secondaryColor,
-                                ),
-                                filterQuality: FilterQuality.high,
-                              ),
-                            ),
-                          ),
-                          title: Text(
-                            data['name'],
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          // subtitle: Text('@${data['username']}'),
-                        )
-                      : const SizedBox();
-                },
-              );
-            }),
-      ),
-    );
-  }
-}
+//
+//
+// class SearchSearch2 extends StatefulWidget {
+//   @override
+//   State<SearchSearch2> createState() => _SearchSearch2State();
+// }
+//
+//
+// class _SearchSearch2State extends State<SearchSearch2> {
+//   final TextEditingController _searchcontroller = TextEditingController();
+//   Map userM = Hive.box('beepo').get('userData');
+//
+//   @override
+//   void dispose() {
+//     super.dispose();
+//     _searchcontroller.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: SocialAppBar(
+//         title: SearchBar(
+//           controller: _searchcontroller,
+//           autofocus: true,
+//           onChanged: (value) {
+//             setState(() {});
+//           },
+//         ),
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.only(
+//           left: 22.0,
+//           right: 22.0,
+//         ),
+//         child: StreamBuilder<QuerySnapshot<Map>>(
+//             stream: FirebaseFirestore.instance
+//                 .collection("conversation")
+//                 .doc(userM['uid'])
+//                 .collection('currentConversation')
+//                 .where("searchKeywords",
+//                     arrayContains: _searchcontroller.text.trim().toLowerCase())
+//                 .snapshots(),
+//             builder: (context, snapshot) {
+//               if (!snapshot.hasData) {
+//                 return const Center(
+//                   child: CircularProgressIndicator(
+//                     color: primaryColor,
+//                   ),
+//                 );
+//               }
+//               if (snapshot.data == null) {
+//                 return const SizedBox();
+//               }
+//               return ListView.builder(
+//                 itemCount: snapshot.data.docs.length,
+//                 itemBuilder: (context, index) {
+//                   final data = snapshot.data.docs[index].data();
+//                   return _searchcontroller.text.isNotEmpty
+//                       ? ListTile(
+//                           onTap: () {
+//                             Navigator.push(
+//                               context,
+//                               MaterialPageRoute(
+//                                 builder: (context) => ChatDm(
+//                                   model: UserModel(
+//                                     uid: data['receiver'],
+//                                     name: data['displayName'],
+//                                     image: data['image'],
+//                                     userName: data['name'],
+//                                     searchKeywords: data['searchKeywords'],
+//                                   ),
+//                                 ),
+//                               ),
+//                             );
+//                           },
+//                           leading: Container(
+//                             width: 46,
+//                             height: 46,
+//                             decoration: const BoxDecoration(
+//                               shape: BoxShape.circle,
+//                             ),
+//                             child: ClipOval(
+//                               child: CachedNetworkImage(
+//                                 imageUrl: data['image'],
+//                                 placeholder: (context, url) =>
+//                                     Center(child: CircularProgressIndicator()),
+//                                 errorWidget: (context, url, error) => Icon(
+//                                   Icons.person,
+//                                   color: secondaryColor,
+//                                 ),
+//                                 filterQuality: FilterQuality.high,
+//                               ),
+//                             ),
+//                           ),
+//                           title: Text(
+//                             data['name'],
+//                             style: TextStyle(
+//                               fontSize: 14,
+//                               fontWeight: FontWeight.w600,
+//                             ),
+//                           ),
+//                           // subtitle: Text('@${data['username']}'),
+//                         )
+//                       : const SizedBox();
+//                 },
+//               );
+//             }),
+//       ),
+//     );
+//   }
+// }
 
 class SocialAppBar extends StatelessWidget implements PreferredSizeWidget {
   const SocialAppBar({
@@ -235,8 +241,14 @@ class SocialAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       elevation: 0,
-      backgroundColor: primaryColor,
+      backgroundColor: secondaryColor,
       title: title,
+      toolbarHeight: 150,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+        bottomLeft: Radius.circular(20),
+        bottomRight: Radius.circular(20),
+      )),
       leading: leading
           ? IconButton(
               onPressed: () => Navigator.pop(context),
@@ -250,7 +262,7 @@ class SocialAppBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 class SearchBar extends StatelessWidget {
-  const SearchBar({
+  SearchBar({
     this.ontap,
     this.autofocus = false,
     this.readonly = false,
@@ -261,28 +273,35 @@ class SearchBar extends StatelessWidget {
   final VoidCallback ontap;
   final bool readonly;
   final bool autofocus;
+
   final TextEditingController controller;
   final Function(String) onChanged;
-
+  final node1 = FocusNode();
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: 271,
           height: 32,
           child: TextField(
+            cursorColor: Colors.white,
             controller: controller,
+            style: TextStyle(color: Colors.white),
             readOnly: readonly,
             autofocus: autofocus,
+            focusNode: node1,
             onTap: ontap,
             onChanged: onChanged,
             decoration: customTextFieldDecoration(
               context: context,
               hint: 'search',
               suffixICon: null,
-              prefixIcon: const Icon(Icons.search_rounded),
+              prefixIcon: const Icon(
+                Icons.search_rounded,
+                size: 23,
+                color: Colors.white,
+              ),
               errorText: null,
             ),
           ),
@@ -292,18 +311,95 @@ class SearchBar extends StatelessWidget {
   }
 }
 
-customTextFieldDecoration(
-        {@required BuildContext context,
-        @required String hint,
-        Widget suffixICon,
-        Widget prefixIcon,
-        String errorText}) =>
+class SearchBar2 extends StatefulWidget {
+   SearchBar2({
+    this.ontap,
+    this.autofocus = false,
+    this.readonly = false,
+    this.controller,
+    this.onChanged,
+    this.showInput = false,
+  });
+
+  final VoidCallback ontap;
+  final bool readonly;
+  final bool autofocus;
+   bool showInput;
+
+  final TextEditingController controller;
+  final Function(String) onChanged;
+
+  @override
+  State<SearchBar2> createState() => _SearchBar2State();
+}
+
+class _SearchBar2State extends State<SearchBar2> {
+  final node1 = FocusNode();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 290,
+          height: 32,
+          child: TextField(
+            // textCapitalization: TextCapitalization.sentences,
+            cursorColor: Colors.white,
+            onSubmitted: (value) {
+              setState(() {
+                widget.showInput = !widget.showInput;
+              });
+            },
+            readOnly: widget.readonly,
+            autofocus: widget.autofocus,
+            focusNode: node1,
+            onTap: widget.ontap,
+            onChanged: widget.onChanged,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.fromLTRB(15, 2, 0, 2),
+              hintText: 'Search messages...',
+              hintStyle: TextStyle(
+                  fontSize: 15, fontWeight: FontWeight.w500),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: secondaryColor.withOpacity(0.10),
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: secondaryColor.withOpacity(0.10),
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            //later check
+          ),
+        )
+      ],
+    );
+  }
+}
+
+customTextFieldDecoration({
+  @required BuildContext context,
+  @required String hint,
+  Widget suffixICon,
+  Widget prefixIcon,
+  String errorText,
+  bool outline = false,
+}) =>
     InputDecoration(
       hintText: hint,
       hintStyle: TextStyle(
-          fontSize: 14,
-          fontStyle: FontStyle.italic,
-          fontWeight: FontWeight.w400),
+        fontSize: 15,
+        fontStyle: FontStyle.italic,
+        fontWeight: FontWeight.w400,
+        color: Colors.white,
+      ),
       suffixIcon: suffixICon,
       prefixIcon: prefixIcon,
       errorText: errorText,
@@ -311,14 +407,18 @@ customTextFieldDecoration(
       border: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(32.0)),
       ),
-      enabledBorder: OutlineInputBorder(
-        borderSide:
-            BorderSide(color: Theme.of(context).primaryColorLight, width: 1.0),
-        borderRadius: const BorderRadius.all(Radius.circular(32.0)),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderSide:
-            BorderSide(color: Theme.of(context).primaryColor, width: 1.5),
-        borderRadius: const BorderRadius.all(Radius.circular(32.0)),
-      ),
+      enabledBorder: outline
+          ? OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).primaryColorLight, width: 1.0),
+              borderRadius: const BorderRadius.all(Radius.circular(32.0)),
+            )
+          : InputBorder.none,
+      focusedBorder: outline
+          ? OutlineInputBorder(
+              borderSide:
+                  BorderSide(color: Theme.of(context).primaryColor, width: 1.5),
+              borderRadius: const BorderRadius.all(Radius.circular(32.0)),
+            )
+          : InputBorder.none,
     );

@@ -117,7 +117,7 @@ class _CreateAccountState extends State<CreateAccount> {
               controller: displayName,
             ),
             const Spacer(),
-            FilledButton(
+            FilledButtons(
               text: 'Next',
               color: Color(0xffFF9C34),
               onPressed: () async {

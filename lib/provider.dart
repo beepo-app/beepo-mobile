@@ -4,12 +4,14 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:beepo/Models/user_model.dart';
+import 'package:beepo/Utils/styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:encrypt/encrypt_io.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,7 +25,7 @@ import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'Utils/functions.dart';
 
 class ChatNotifier extends ChangeNotifier {
-  List<String> _users = [];
+  final List<String> _users = [];
 
   List<String> get chatUsers => _users;
   String chatText = "";
@@ -40,10 +42,23 @@ class ChatNotifier extends ChangeNotifier {
   // String decrypted;
   Encrypted encrypted;
 
-  //  preload(BuildContext context, String path) {
-  //   final configuration = createLocalImageConfiguration(context);
-  //   return NetworkImage(path).resolve(configuration);
-  // }
+bool enableScreenShot = false;
+  bool enableMedia = false;
+
+  Future<void> secureScreen() async {
+    await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+
+  }
+  screenshot(){
+    enableScreenShot = !enableScreenShot;
+    notifyListeners();
+  }
+
+  enable(){
+    enableMedia = !enableMedia;
+    notifyListeners();
+  }
+
   Future<String> encrypt(String text) async {
     var helper = RsaKeyHelper();
 
@@ -88,37 +103,8 @@ class ChatNotifier extends ChangeNotifier {
     // notifyListeners();
   }
 
-  pickUploadImage() async {
-    final image = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 512,
-        maxHeight: 512,
-        imageQuality: 75);
-    ref = FirebaseStorage.instance.ref().child(image.path);
-    notifyListeners();
-
-    if (image != null) {
-      ImageUtil().cropProfileImage(image as File).then((value) {
-        if (value != null) {
-          // setState(() {
-          selectedImage = value;
-          notifyListeners();
-          // });
-        }
-      });
-
-      await ref.putFile(File(image.path));
-      ref.getDownloadURL().then((value) {
-        print(value);
-        imageUrl = value;
-        notifyListeners();
-      });
-    }
-  }
-
-  pickUploadImageChat(String id, BuildContext context) async {
-
-
+  //Group Methods
+  pickUploadImageGroup(BuildContext context) async {
     List<AssetEntity> image;
     // Reference reg = FirebaseStorage.instance.ref();
     try {
@@ -127,10 +113,114 @@ class ChatNotifier extends ChangeNotifier {
         pickerConfig: AssetPickerConfig(
           maxAssets: 1,
           requestType: RequestType.all,
-          selectedAssets: [
-
-          ]
+          selectedAssets: [],
+          themeColor: primaryColor,
         ),
+      );
+
+      ref = FirebaseStorage.instance.ref().child('image.png');
+      notifyListeners();
+
+      if (image != null) {
+        File file = await image.first.file;
+
+        await ref.putFile(file);
+        ref.getDownloadURL().then((value) {
+          print(value);
+          photoUrl = value;
+          notifyListeners();
+          sendPhotoMsgGroup(photoUrl);
+        });
+      }
+    } on PlatformException catch (e) {
+      print(e.message);
+    }
+
+// }
+  }
+
+  sendPhotoMsgGroup(String photoMsg) async {
+    if (photoMsg.isNotEmpty) {
+      var ref = FirebaseFirestore.instance
+          .collection('groupMessages')
+          .doc(DateTime.now().millisecondsSinceEpoch.toString());
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        transaction.set(ref, {
+          "sender": userM['uid'],
+          "created": Timestamp.now(),
+          "content": photoMsg,
+          // "duration": dure.inSeconds.toString(),
+          "type": 'photo'
+        });
+      }).then((value) {
+        // setState(() {
+        isSending = false;
+        notifyListeners();
+        // });
+      });
+
+      var ref2 = FirebaseFirestore.instance.collection("groups").doc('beepo');
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        transaction.set(ref2, {
+          "sender": userM['uid'],
+          "created": Timestamp.now(),
+          "content": photoMsg,
+          "type": 'photo'
+        });
+      }).then((value) {
+        // setState(() {
+        isSending = false;
+        notifyListeners();
+        // });
+      });
+
+      scrollController.animateTo(0.0,
+          duration: Duration(milliseconds: 100), curve: Curves.bounceInOut);
+    } else {
+      print("Photo is empty");
+    }
+  }
+
+  cameraUploadImageGroup() async {
+    final image = await ImagePicker().pickImage(
+        source: ImageSource.camera,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 75);
+    ref = FirebaseStorage.instance.ref().child(image.path);
+    notifyListeners();
+
+    if (image != null) {
+      File file = File(image.path);
+      await ImageUtil().cropProfileImage(file).then((value) {
+        if (value != null) {
+          // setState(() {
+          selectedImageForChat = value;
+          notifyListeners();
+          // });
+        }
+      });
+    }
+
+    await ref.putFile(File(image.path));
+    ref.getDownloadURL().then((value) {
+      print(value);
+      imageUrl = value;
+      notifyListeners();
+
+      sendPhotoMsgGroup(imageUrl);
+    });
+  }
+
+  //Chat Methods
+  pickUploadImageChat(String id, BuildContext context) async {
+    List<AssetEntity> image;
+    // Reference reg = FirebaseStorage.instance.ref();
+    try {
+      image = await AssetPicker.pickAssets(
+        context,
+        pickerConfig: AssetPickerConfig(
+            maxAssets: 1, requestType: RequestType.all, selectedAssets: []),
       );
 
       ref = FirebaseStorage.instance.ref().child('image.png');
@@ -164,7 +254,7 @@ class ChatNotifier extends ChangeNotifier {
           .collection('messageList')
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-        await transaction.set(ref, {
+        transaction.set(ref, {
           "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
@@ -187,7 +277,7 @@ class ChatNotifier extends ChangeNotifier {
           .collection('messageList')
           .doc(DateTime.now().millisecondsSinceEpoch.toString());
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-        await transaction.set(ref1, {
+        transaction.set(ref1, {
           "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
@@ -208,7 +298,7 @@ class ChatNotifier extends ChangeNotifier {
           .collection("currentConversation")
           .doc(receiverId);
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-        await transaction.set(ref2, {
+        transaction.set(ref2, {
           "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
@@ -229,7 +319,7 @@ class ChatNotifier extends ChangeNotifier {
           .collection("currentConversation")
           .doc(userM['uid']);
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-        await transaction.set(ref3, {
+        transaction.set(ref3, {
           "sender": userM['uid'],
           "receiver": receiverId,
           "created": Timestamp.now(),
@@ -248,33 +338,6 @@ class ChatNotifier extends ChangeNotifier {
     } else {
       print("Hello");
     }
-  }
-
-  cameraUploadImage() async {
-    final image = await ImagePicker().pickImage(
-        source: ImageSource.camera,
-        maxWidth: 512,
-        maxHeight: 512,
-        imageQuality: 75);
-    ref = FirebaseStorage.instance.ref().child(image.path);
-    notifyListeners();
-
-    if (image != null) {
-      ImageUtil().cropProfileImage(image as File).then((value) {
-        if (value != null) {
-          // setState(() {
-          selectedImage = value;
-          notifyListeners();
-          // });
-        }
-      });
-    }
-    await ref.putFile(File(image.path));
-    ref.getDownloadURL().then((value) {
-      print(value);
-      imageUrl = value;
-      notifyListeners();
-    });
   }
 
   cameraUploadImageChat(String id) async {
@@ -409,7 +472,7 @@ class ChatNotifier extends ChangeNotifier {
       isSending = true;
       notifyListeners();
       // });
-      await uploadAudio(receiverId);
+      await uploadAudio(receiverId, '');
 
       // setState(() {
       // isPlayingMsg = false;
@@ -586,11 +649,11 @@ class ChatNotifier extends ChangeNotifier {
     }
   }
 
-  uploadAudio(String id) {
+  uploadAudio(String id, String path) {
     final Reference firebaseStorageRef = FirebaseStorage.instance.ref().child(
         'profilepics/audio${DateTime.now().millisecondsSinceEpoch.toString()}}.jpg');
 
-    UploadTask task = firebaseStorageRef.putFile(File(recordFilePath));
+    UploadTask task = firebaseStorageRef.putFile(File(path));
     task.then((value) async {
       print('##############done#########');
       var audioURL = await value.ref.getDownloadURL();
@@ -599,5 +662,71 @@ class ChatNotifier extends ChangeNotifier {
     }).catchError((e) {
       print(e);
     });
+  }
+
+
+  uploadAudioGroup(String path) {
+    final Reference firebaseStorageRef = FirebaseStorage.instance.ref().child(
+        'profilepics/audio/group/${DateTime.now().millisecondsSinceEpoch.toString()}}.jpg');
+
+    UploadTask task = firebaseStorageRef.putFile(File(path));
+    task.then((value) async {
+      print('##############done#########');
+      var audioURL = await value.ref.getDownloadURL();
+      String strVal = audioURL.toString();
+      await sendAudioMsgGroup(strVal);
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+  sendAudioMsgGroup(String audioMsg) async {
+    if (audioMsg.isNotEmpty) {
+      var ref = FirebaseFirestore.instance
+          .collection('groupMessages')
+          .doc(DateTime.now().millisecondsSinceEpoch.toString());
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        transaction.set(ref, {
+          "sender": userM['uid'],
+          "created": Timestamp.now(),
+          "content": audioMsg,
+          "duration": dure.inSeconds > 60
+              ? '${dure.inMinutes}:${dure.inSeconds - dure.inMinutes * 60}'
+              : '${dure.inSeconds.toString()}s',
+          "type": 'audio'
+        });
+      }).then((value) {
+        // setState(() {
+        isSending = false;
+        notifyListeners();
+        // });
+      });
+
+      var ref2 = FirebaseFirestore.instance
+          .collection("groups")
+          .doc('beepo');
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        transaction.set(ref2, {
+          "sender": userM['uid'],
+          "created": Timestamp.now(),
+          "content": audioMsg,
+          "duration": dure.inSeconds > 60
+              ? '${dure.inMinutes}:${dure.inSeconds - dure.inMinutes * 60}'
+              : '${dure.inSeconds.toString()}s',
+          "type": 'audio'
+        });
+      }).then((value) {
+        // setState(() {
+        isSending = false;
+        notifyListeners();
+        // });
+      });
+
+
+      scrollController.animateTo(0.0,
+          duration: Duration(milliseconds: 100), curve: Curves.bounceInOut);
+    } else {
+      print("Hello");
+    }
   }
 }

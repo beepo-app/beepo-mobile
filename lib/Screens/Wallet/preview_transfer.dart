@@ -19,7 +19,8 @@ class SendToken2 extends StatefulWidget {
   final Wallet wallet;
   final double amount;
   final String address;
-  const SendToken2({Key key, this.wallet, this.amount, this.address}) : super(key: key);
+  const SendToken2({Key key, this.wallet, this.amount, this.address})
+      : super(key: key);
 
   @override
   State<SendToken2> createState() => _SendToken2State();
@@ -31,7 +32,8 @@ class _SendToken2State extends State<SendToken2> {
     return Scaffold(
       appBar: appBar('Confirm Transaction'),
       body: FutureBuilder<String>(
-        future: TransactionService().estimateGasFee(widget.wallet.chainId.toString()),
+        future: TransactionService()
+            .estimateGasFee(widget.wallet.chainId.toString()),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: const CircularProgressIndicator());
@@ -87,7 +89,7 @@ class _SendToken2State extends State<SendToken2> {
                   ),
                 ),
                 const Spacer(),
-                FilledButton(
+                FilledButtons(
                   color: secondaryColor,
                   text: "Approve",
                   onPressed: () async {
@@ -150,11 +152,13 @@ class _SendToken2State extends State<SendToken2> {
                                       Get.back();
                                       loadingDialog('Sending Token...');
 
-                                      bool result = await TransactionService().sendToken(
+                                      bool result =
+                                          await TransactionService().sendToken(
                                         address: widget.address,
                                         amount: widget.amount.toString(),
                                         gasFee: gasFee,
-                                        networkId: widget.wallet.chainId.toString(),
+                                        networkId:
+                                            widget.wallet.chainId.toString(),
                                       );
                                       Get.back();
                                       if (result) {
@@ -179,7 +183,8 @@ class _SendToken2State extends State<SendToken2> {
                                       return;
                                     } else {
                                       controller.text = controller.text
-                                          .substring(0, controller.text.length - 1);
+                                          .substring(
+                                              0, controller.text.length - 1);
                                       return;
                                     }
                                   } else {

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:io';
 
 import 'package:beepo/Widgets/commons.dart';
@@ -17,7 +19,8 @@ class VerifyCode extends StatefulWidget {
   final String name;
   final bool isSignUp;
   final String seedPhrase;
-  const VerifyCode({Key key, this.image, this.name, this.isSignUp, this.seedPhrase})
+  const VerifyCode(
+      {Key key, this.image, this.name, this.isSignUp, this.seedPhrase})
       : super(key: key);
 
   @override
@@ -88,7 +91,7 @@ class _VerifyCodeState extends State<VerifyCode> {
               ),
             ),
             const Spacer(),
-            FilledButton(
+            FilledButtons(
               text: 'Continue',
               onPressed: () async {
                 String pin = Hive.box('beepo').get('PIN');

@@ -302,8 +302,8 @@ class AuthService {
       );
 
       var data = json.decode(response.body);
-     Map me = await getUser();
-     final search = createKeywords(username);
+      Map me = await getUser();
+      final search = createKeywords(username);
       await FirebaseFirestore.instance
           .collection('users')
           .doc(me['uid'])

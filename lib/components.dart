@@ -7,10 +7,12 @@ import 'package:beepo/Screens/moments/story_download_provider.dart';
 import 'package:beepo/Screens/moments/story_view.dart';
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
+import 'package:beepo/search.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_link_preview/flutter_link_preview.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:linkwell/linkwell.dart';
@@ -22,6 +24,7 @@ import 'Models/story_model/storyModel.dart';
 import 'Models/user_model.dart';
 import 'Models/wallet.dart';
 import 'Screens/Browser/browser_page.dart';
+import 'Screens/Messaging/chat_dm_screen.dart';
 import 'Screens/Messaging/groupMessages.dart';
 import 'Screens/Messaging/myMessages.dart';
 import 'Screens/Wallet/token_screen.dart';
@@ -29,12 +32,12 @@ import 'Screens/moments/add_story.dart';
 import 'Screens/moments/bubble_stories.dart';
 import 'Utils/styles.dart';
 
-class FilledButton extends StatelessWidget {
+class FilledButtons extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final Color color;
 
-  FilledButton({@required this.text, this.color, @required this.onPressed});
+  FilledButtons({@required this.text, this.color, @required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -132,8 +135,16 @@ class _ChatTabState extends State<ChatTab> {
   Stream<List<StoryModel>> currentUserStories;
   Stream<List<StoryModel>> friendsStories;
 
-  // Stream<List<UserModel>> currentUserFollowingStories;
   Stream<List<DocumentSnapshot>> currentUserFollowing;
+
+  Box box1 = Hive.box('beepo');
+
+  setLeave() async {
+    await FirebaseFirestore.instance
+        .collection('LeaveGroup')
+        .doc(userM['uid'])
+        .set({'isRemoved': 'false'});
+  }
 
   Map userM = Hive.box('beepo').get('userData');
 
@@ -148,32 +159,43 @@ class _ChatTabState extends State<ChatTab> {
     // Get a specific camera from the list of available cameras.
     firstCamera = cameras[0];
     secondCamera = cameras[1];
-    print(
-        'number of cameras: ${cameras.length} ${firstCamera.lensDirection.name}');
-// cameras.take(2);
   }
+
+  final TextEditingController _searchcontroller = TextEditingController();
+
+  String remove;
 
   @override
   void initState() {
-    // TODO: implement initState
-    // context.read<ChatNotifier>().getUsers();
     currentUserStories =
         context.read<StoryDownloadProvider>().getCurrentUserStories();
-    // currentUserFollowingStories =
-    //     context.read<StoryDownloadProvider>().getFollowingUsersStories();
-    // friendsStories = context.read<StoryDownloadProvider>().getFriendStories();
-    // currentUserFollowing =
-    //     context.read<StoryDownloadProvider>().getUsers();
     gethg();
     super.initState();
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _searchcontroller.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final tem = FirebaseFirestore.instance
+        .collection('LeaveGroup')
+        .doc(userM['uid'])
+        .get();
+
+    tem.then((value) =>
+            // setState(() {
+            remove = value.data()['isRemoved'].toString()
+        // print(remove);
+        );
+    // }));
+
     return Column(
       children: [
         Row(
-          // scrollDirection: Axis.horizontal,
           children: [
             const SizedBox(width: 20),
             GestureDetector(
@@ -248,16 +270,10 @@ class _ChatTabState extends State<ChatTab> {
                             );
 
                             return CurrentUserStoryBubble(user: user);
-                          } catch (e) {
-                            print(e);
-                          }
+                          } catch (e) {}
                         }
-                        if (!snapshot.hasData) {
-                          print("i can't get data");
-                        }
-                        if (snapshot.hasError) {
-                          print(snapshot.error);
-                        }
+                        if (!snapshot.hasData) {}
+                        if (snapshot.hasError) {}
                         return Center(
                           child: CircularProgressIndicator(
                             color: primaryColor,
@@ -283,8 +299,6 @@ class _ChatTabState extends State<ChatTab> {
                             scrollDirection: Axis.horizontal,
                             itemCount: snapshot.data.docs.length,
                             itemBuilder: (context, index) {
-                              print(snapshot.data.docs.length);
-
                               return BubbleStories(
                                 uid: snapshot.data.docs[index].id,
                                 index: index,
@@ -323,26 +337,129 @@ class _ChatTabState extends State<ChatTab> {
                 padding: const EdgeInsets.all(
                   10.0,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    showInput
-                        ? TextField(
-                            onSubmitted: (value) {
-                              setState(() {
-                                showInput = !showInput;
-                              });
+                child: showInput
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SearchBar2(
+                            controller: _searchcontroller,
+                            autofocus: true,
+                            showInput: showInput,
+                            onChanged: (value) {
+                              setState(() {});
                             },
-                            decoration: InputDecoration(
-                              hintText: 'Search messages...',
-                              hintStyle: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w500),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
+                          ),
+                          // Text('omooo'),omooo
+                          SizedBox(
+                            height: 200,
+                            // fit: FlexFit.loose,
+                            // flex: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 22.0,
+                                right: 22.0,
                               ),
+                              child: StreamBuilder<QuerySnapshot<Map>>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection("conversation")
+                                      .doc(userM['uid'])
+                                      .collection('currentConversation')
+                                      .where("searchKeywords",
+                                          arrayContains: _searchcontroller.text
+                                              .trim()
+                                              .toLowerCase())
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(
+                                          color: primaryColor,
+                                        ),
+                                      );
+                                    }
+                                    if (snapshot.data == null) {
+                                      return const SizedBox(
+                                        height: 2,
+                                      );
+                                    }
+                                    return ListView.builder(
+                                      itemCount: snapshot.data.docs.length,
+                                      // shrinkWrap: true,
+                                      itemBuilder: (context, index) {
+                                        final data =
+                                            snapshot.data.docs[index].data();
+                                        print(
+                                            'this is the length:  ${snapshot.data.docs.length}');
+                                        return _searchcontroller.text.isNotEmpty
+                                            ? ListTile(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ChatDm(
+                                                        model: UserModel(
+                                                          uid: data['receiver'],
+                                                          name: data[
+                                                              'displayName'],
+                                                          image: data['image'],
+                                                          userName:
+                                                              data['name'],
+                                                          searchKeywords: data[
+                                                              'searchKeywords'],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                leading: Container(
+                                                  width: 46,
+                                                  height: 46,
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: ClipOval(
+                                                    child: CachedNetworkImage(
+                                                      imageUrl: data['image'],
+                                                      placeholder: (context,
+                                                              url) =>
+                                                          Center(
+                                                              child:
+                                                                  CircularProgressIndicator()),
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          Icon(
+                                                        Icons.person,
+                                                        color: secondaryColor,
+                                                      ),
+                                                      filterQuality:
+                                                          FilterQuality.high,
+                                                    ),
+                                                  ),
+                                                ),
+                                                title: Text(
+                                                  data['name'],
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                // subtitle: Text('@${data['username']}'),
+                                              )
+                                            : const SizedBox();
+                                      },
+                                    );
+                                  }),
                             ),
                           )
-                        : Row(
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
                             children: [
                               Expanded(
                                 child: Text(
@@ -375,89 +492,93 @@ class _ChatTabState extends State<ChatTab> {
                               // ),
                             ],
                           ),
-                    Consumer<ChatNotifier>(
-                      builder: (context, pro, _) => Column(
-                        children: [
-                          StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('groups')
-                                .snapshots(),
-                            builder: (context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data.docs.isNotEmpty) {
-                                  return ListView.separated(
-                                    padding: const EdgeInsets.only(top: 10),
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: snapshot.data.docs.length,
-                                    separatorBuilder: (ctx, i) =>
-                                        const SizedBox(height: 0),
-                                    itemBuilder: (ctx, index) {
-                                      return GroupMessages(
-                                        uid: snapshot.data.docs[index].id,
-                                        index: index,
-                                        docu: snapshot.data.docs,
+                          Consumer<ChatNotifier>(
+                            builder: (context, pro, _) => Column(
+                              children: [
+                                // if (remove == 'false')
+                                StreamBuilder(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('groups')
+                                      .snapshots(),
+                                  builder: (context,
+                                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                                    if (snapshot.hasData) {
+                                      if (snapshot.data.docs.isNotEmpty) {
+                                        return ListView.separated(
+                                          padding:
+                                              const EdgeInsets.only(top: 10),
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemCount: snapshot.data.docs.length,
+                                          separatorBuilder: (ctx, i) =>
+                                              const SizedBox(height: 0),
+                                          itemBuilder: (ctx, index) {
+                                            return GroupMessages(
+                                              uid: snapshot.data.docs[index].id,
+                                              index: index,
+                                              docu: snapshot.data.docs,
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        return SizedBox();
+                                      }
+                                    }
+                                    return const SizedBox();
+                                  },
+                                ),
+                                StreamBuilder(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('conversation')
+                                      .doc(userM['uid'] == ''
+                                          ? ' '
+                                          : userM['uid'])
+                                      .collection("currentConversation")
+                                      .orderBy('created', descending: true)
+                                      .snapshots(),
+                                  builder: (context,
+                                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                                    if (snapshot.hasData) {
+                                      if (snapshot.data.docs.isEmpty) {
+                                        return Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 50),
+                                          child: const Center(
+                                            child: Text(
+                                              'No Messages\n Tap on the + icon to start a conversation',
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return ListView.separated(
+                                        padding: const EdgeInsets.only(top: 10),
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemCount: snapshot.data.docs.length,
+                                        separatorBuilder: (ctx, i) =>
+                                            const SizedBox(height: 0),
+                                        itemBuilder: (ctx, index) {
+                                          return MyMessages(
+                                            uid: snapshot.data.docs[index].id,
+                                            index: index,
+                                            docu: snapshot.data.docs,
+                                          );
+                                        },
                                       );
-                                    },
-                                  );
-                                } else {
-                                  return SizedBox();
-                                }
-                              }
-                              return const SizedBox();
-                            },
-                          ),
-                          StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('conversation')
-                                .doc(userM['uid'] == '' ? ' ' : userM['uid'])
-                                .collection("currentConversation")
-                                .orderBy('created', descending: true)
-                                .snapshots(),
-                            builder: (context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data.docs.isEmpty) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 50),
-                                    child: const Center(
-                                      child: Text(
-                                        'No Messages\n Tap on the + icon to start a conversation',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  );
-                                }
-                                return ListView.separated(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: snapshot.data.docs.length,
-                                  separatorBuilder: (ctx, i) =>
-                                      const SizedBox(height: 0),
-                                  itemBuilder: (ctx, index) {
-                                    return MyMessages(
-                                      uid: snapshot.data.docs[index].id,
-                                      index: index,
-                                      docu: snapshot.data.docs,
+                                    }
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
                                     );
                                   },
-                                );
-                              }
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            },
-                          ),
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
-                    ),
-
-                    //),
-                  ],
-                ),
               ),
             ),
           ),
@@ -476,6 +597,7 @@ class CallTab extends StatefulWidget {
 
 class _CallTabState extends State<CallTab> {
   final TextEditingController _searchController = TextEditingController();
+  Map userM = Hive.box('beepo').get('userData');
 
   @override
   void dispose() {
@@ -497,7 +619,7 @@ class _CallTabState extends State<CallTab> {
               children: [
                 Expanded(
                   child: Text(
-                    "Messages",
+                    "Call History",
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.w600,
@@ -505,56 +627,88 @@ class _CallTabState extends State<CallTab> {
                     ),
                   ),
                 ),
-                Icon(
-                  Icons.search,
-                  color: Color(0xff697077),
-                  size: 20,
-                ),
-                SizedBox(width: 20),
-                Icon(
-                  Icons.more_vert_outlined,
-                  color: Color(0xff697077),
-                  size: 18,
-                ),
+                // Icon(
+                //   Icons.search,
+                //   color: Color(0xff697077),
+                //   size: 20,
+                // ),
+                // SizedBox(width: 20),
+                // Icon(
+                //   Icons.more_vert_outlined,
+                //   color: Color(0xff697077),
+                //   size: 18,
+                // ),
               ],
             ),
-            const SizedBox(height: 27),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: ClipRRect(
-                borderRadius: BorderRadius.circular(25),
-                child: Image.asset(
-                  'assets/profile2.png',
-                  height: 50,
-                  width: 50,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              title: const Text(
-                "Precious ",
-                style: TextStyle(
-                  color: Color.fromRGBO(0, 0, 0, 1),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              subtitle: const Text(
-                "9:13",
-                style: TextStyle(
-                  color: secondaryColor,
-                  //Color(0xff697077),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('calls')
+                      .doc(userM['uid'])
+                      .collection('allCalls')
+                      .orderBy(
+                        'created',
+                        descending: true,
+                      )
+                      .snapshots(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (!snapshot.hasData) {
+                      return SizedBox.shrink();
+                    }
 
-                // );
-                // },
-              ),
-              trailing: const Icon(
-                Icons.phone_missed_sharp,
-                color: Colors.red,
-                size: 20,
-              ),
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        Timestamp time = snapshot.data.docs[index]['created'];
+                        return ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(25),
+                            child: Image.network(
+                              snapshot.data.docs[index]['image'],
+                              height: 50,
+                              width: 50,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          title: Text(
+                            snapshot.data.docs[index]['name'],
+                            style: TextStyle(
+                              color: Color.fromRGBO(0, 0, 0, 1),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          subtitle: Text(
+                            '${time.toDate().hour} : ${time.toDate().minute}',
+                            style: TextStyle(
+                              color: secondaryColor,
+                              //Color(0xff697077),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                            ),
+
+                            // );
+                            // },
+                          ),
+                          trailing: snapshot.data.docs[index]['callType'] ==
+                                  'callReceived'
+                              ? const Icon(
+                                  Icons.phone_missed_sharp,
+                                  color: Colors.red,
+                                  size: 20,
+                                )
+                              : const Icon(
+                                  Icons.phone_callback,
+                                  color: Colors.green,
+                                  size: 20,
+                                ),
+                        );
+                      },
+                      itemCount: snapshot.data.docs.length,
+                    );
+                  }),
             ),
           ],
         ),
@@ -581,6 +735,38 @@ class MessageReply extends StatelessWidget {
     this.replyName,
     this.replyUsername,
   });
+
+  String convertStringToLink(String text) {
+    String textData = text;
+    final urlRegExp = RegExp(
+        r"((https?:www\.)|(http?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
+    final urlMatches = urlRegExp.allMatches(text);
+    List<String> urls = urlMatches
+        .map((urlMatch) => text.substring(urlMatch.start, urlMatch.end))
+        .toList();
+    urls.forEach((x) => print(x));
+    // final urlRegExp = RegExp(
+    //     r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
+    // final urlMatches = urlRegExp.allMatches(textData);
+    // List<String> urls = urlMatches
+    //     .map((urlMatch) => textData.substring(urlMatch.start, urlMatch.end))
+    //     .toList();
+    // List linksString = [];
+    // for (var linkText in urls) {
+    //   linksString.add(linkText);
+    // }
+    //
+    // // if (linksString.isNotEmpty) {
+    // //   for (var linkTextData in linksString) {
+    // //     textData =
+    // //         textData.replaceAll(linkTextData, 'https://' + linkTextData);
+    // //   }
+    // // }
+    if (text.isEmpty) {
+      return null;
+    }
+    return textData;
+  }
 
   Widget buildReply(String message, String username, String displayName) =>
       Container(
@@ -678,8 +864,82 @@ class MessageReply extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (onSwipedMessage)
+            if (onSwipedMessage && replyMessage != "")
               buildReply(replyMessage, replyUsername, replyName),
+            if (convertStringToLink(text) != null)
+              FlutterLinkPreview(
+                  url: convertStringToLink(text),
+                  titleStyle: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: txtColor1,
+                  ),
+                  builder: (info) {
+                    if (info == null) return const SizedBox();
+                    if (info is WebImageInfo) {
+                      return CachedNetworkImage(
+                        imageUrl: info.image,
+                        fit: BoxFit.contain,
+                      );
+                    }
+
+                    final WebInfo webInfo = info;
+                    if (!WebAnalyzer.isNotEmpty(webInfo.title)) {
+                      return const SizedBox();
+                    }
+                    return Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color(0xFFF0F1F2),
+                      ),
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              CachedNetworkImage(
+                                imageUrl: webInfo.icon ?? "",
+                                imageBuilder: (context, imageProvider) {
+                                  return Image(
+                                    image: imageProvider,
+                                    fit: BoxFit.contain,
+                                    width: 30,
+                                    height: 30,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Icon(Icons.link);
+                                    },
+                                  );
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  webInfo.title,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (WebAnalyzer.isNotEmpty(webInfo.description)) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              webInfo.description,
+                              maxLines: 5,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                          if (WebAnalyzer.isNotEmpty(webInfo.image)) ...[
+                            const SizedBox(height: 8),
+                            CachedNetworkImage(
+                              imageUrl: webInfo.image,
+                              fit: BoxFit.contain,
+                            ),
+                          ]
+                        ],
+                      ),
+                    );
+                  }),
             LinkWell(
               text,
               style: isMe
@@ -744,6 +1004,10 @@ class Group extends StatelessWidget {
   final Timestamp time;
   final UserModel user;
   final bool sameUser;
+  final bool onSwipedMessage;
+  final String replyMessage;
+  final String replyName;
+  final String replyUsername;
 
   const Group({
     Key key,
@@ -752,6 +1016,10 @@ class Group extends StatelessWidget {
     @required this.time,
     this.user,
     @required this.sameUser,
+    @required this.onSwipedMessage,
+    @required this.replyMessage,
+    @required this.replyName,
+    @required this.replyUsername,
   }) : super(key: key);
 
   @override
@@ -775,6 +1043,83 @@ class Group extends StatelessWidget {
     } else {
       ampm = 'am';
     }
+    Widget buildReply(String message, String username, String displayName) =>
+        Container(
+          decoration: BoxDecoration(
+            color: isMe
+                ? Color(0xffffffff).withOpacity(0.3)
+                : Color(0xff697077).withOpacity(0.2),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          padding: EdgeInsets.only(
+            left: 14,
+            right: 10,
+            top: 5,
+            bottom: 5,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    displayName,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Text(
+                message,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                ),
+              )
+            ],
+          ),
+        );
+
+    String convertStringToLink(String text) {
+      String textData = text;
+      final urlRegExp = RegExp(
+          r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
+      final urlMatches = urlRegExp.allMatches(text);
+      List<String> urls = urlMatches
+          .map((urlMatch) => text.substring(urlMatch.start, urlMatch.end))
+          .toList();
+      urls.forEach((x) => print(x));
+      // final urlRegExp = RegExp(
+      //     r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
+      // final urlMatches = urlRegExp.allMatches(textData);
+      // List<String> urls = urlMatches
+      //     .map((urlMatch) => textData.substring(urlMatch.start, urlMatch.end))
+      //     .toList();
+      // List linksString = [];
+      // for (var linkText in urls) {
+      //   linksString.add(linkText);
+      // }
+      //
+      // // if (linksString.isNotEmpty) {
+      // //   for (var linkTextData in linksString) {
+      // //     textData =
+      // //         textData.replaceAll(linkTextData, 'https://' + linkTextData);
+      // //   }
+      // // }
+      if (text.isEmpty) {
+        return null;
+      }
+      return textData;
+    }
+
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Row(
@@ -800,10 +1145,8 @@ class Group extends StatelessWidget {
                   },
                   child: CircleAvatar(
                     radius: 20,
-                    backgroundImage: CachedNetworkImageProvider(user.image ==
-                            null
-                        ? 'https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg'
-                        : user.image),
+                    backgroundImage: CachedNetworkImageProvider(user.image ??
+                        'https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg'),
                   ),
                 ),
               ),
@@ -865,34 +1208,107 @@ class Group extends StatelessWidget {
                         ],
                       ),
                   SizedBox(height: 2),
-                  RichText(
-                    text: TextSpan(
-                      text: text,
+                  if (onSwipedMessage && replyMessage != "")
+                    buildReply(replyMessage, replyUsername, replyName),
+                  if (convertStringToLink(text) != null)
+                    FlutterLinkPreview(
+                        url: convertStringToLink(text),
+                        titleStyle: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: txtColor1,
+                        ),
+                        builder: (info) {
+                          if (info == null) return const SizedBox();
+                          if (info is WebImageInfo) {
+                            return CachedNetworkImage(
+                              imageUrl: info.image,
+                              fit: BoxFit.contain,
+                            );
+                          }
+
+                          final WebInfo webInfo = info;
+                          if (!WebAnalyzer.isNotEmpty(webInfo.title)) {
+                            return const SizedBox();
+                          }
+                          return Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: const Color(0xFFF0F1F2),
+                            ),
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    CachedNetworkImage(
+                                      imageUrl: webInfo.icon ?? "",
+                                      imageBuilder: (context, imageProvider) {
+                                        return Image(
+                                          image: imageProvider,
+                                          fit: BoxFit.contain,
+                                          width: 30,
+                                          height: 30,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return const Icon(Icons.link);
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        webInfo.title,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                if (WebAnalyzer.isNotEmpty(
+                                    webInfo.description)) ...[
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    webInfo.description,
+                                    maxLines: 5,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                                if (WebAnalyzer.isNotEmpty(webInfo.image)) ...[
+                                  const SizedBox(height: 8),
+                                  CachedNetworkImage(
+                                    imageUrl: webInfo.image,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ]
+                              ],
+                            ),
+                          );
+                        }),
+                  Padding(
+                    padding: const EdgeInsets.all(3.0),
+                    child: LinkWell(
+                      text,
                       style: isMe
                           ? TextStyle(
                               color: Colors.white,
                               fontSize: 11.5,
+                              // decoration: TextDecoration.underline,
                             )
                           : TextStyle(
                               color: Colors.black,
                               //Colors.black,
                               fontSize: 11.5,
+                              // decoration: TextDecoration.underline,
                             ),
+                      linkStyle: TextStyle(
+                        color: Colors.blueAccent,
+                        fontSize: 11,
+                        decoration: TextDecoration.underline,
+                      ),
                     ),
                   ),
-                  // Text(
-                  //   text,
-                  //   style: isMe
-                  //       ? TextStyle(
-                  //           color: Colors.white,
-                  //           fontSize: 11.5,
-                  //         )
-                  //       : TextStyle(
-                  //           color: Colors.black,
-                  //           //Colors.black,
-                  //           fontSize: 11.5,
-                  //         ),
-                  // ),
                   SizedBox(height: 5),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -1004,7 +1420,7 @@ class WalletListTile extends StatelessWidget {
         ],
         color: const Color(0xfffffbfb),
       ),
-      margin: const EdgeInsets.symmetric(horizontal: 5),
+      margin: const EdgeInsets.symmetric(horizontal: 8),
       child: ListTile(
         onTap: () => Get.to(WalletToken(
           wallet: wallet,
@@ -1036,7 +1452,7 @@ class WalletListTile extends StatelessWidget {
             ),
             const SizedBox(width: 5),
             Text(
-             fiatSymbol  +fiatValue,
+              fiatSymbol + fiatValue,
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 14,
