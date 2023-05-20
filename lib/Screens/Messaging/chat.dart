@@ -7,7 +7,7 @@ import 'package:iconsax/iconsax.dart';
 
 import '../../Utils/styles.dart';
 import '../../components.dart';
-import '../../search.dart';
+import 'chats/search.dart';
 
 class ChatScreen extends StatefulWidget {
   // ChatScreen({Key key}) : super(key: key);
@@ -31,7 +31,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ontap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SearchSearch(),
+                    builder: (context) => SearchUsersScreen(),
                   )),
               icon: const Icon(Icons.add),
               color: txtColor1,

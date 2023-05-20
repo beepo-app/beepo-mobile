@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors
 
+import 'dart:developer';
+
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
 import 'package:beepo/Utils/styles.dart';
@@ -7,13 +9,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
+import 'package:xmtp/xmtp.dart';
 
-class SearchSearch extends StatefulWidget {
+import '../../../Service/xmtp.dart';
+import 'chat_screen.dart';
+
+class SearchUsersScreen extends StatefulWidget {
   @override
-  State<SearchSearch> createState() => _SearchSearchState();
+  State<SearchUsersScreen> createState() => _SearchUsersScreenState();
 }
 
-class _SearchSearchState extends State<SearchSearch> {
+class _SearchUsersScreenState extends State<SearchUsersScreen> {
   final TextEditingController _searchcontroller = TextEditingController();
 
   @override
@@ -62,22 +69,42 @@ class _SearchSearchState extends State<SearchSearch> {
                   final data = snapshot.data.docs[index].data();
                   return _searchcontroller.text.isNotEmpty
                       ? ListTile(
-                          onTap: () {
+                          onTap: () async {
+                            Conversation convo = await context
+                                .read<XMTPProvider>()
+                                .newConversation(
+                                  data['hdWalletAddress'],
+                                  metadata: {
+                                    'name': data['name'],
+                                    'image': data['image'],
+                                    'userName': data['userName'],
+                                    'uid': data['uid'],
+                                  },
+                                );
+
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ChatDm(
-                                          model: UserModel(
-                                            uid: data['uid'],
-                                            name: data['name'],
-                                            image: data['image'],
-                                            userName: data['userName'],
-                                            searchKeywords:
-                                                data['searchKeywords'],
-                                          ),
-                                        ),
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DmScreen(
+                                  conversation: convo,
                                 ),
+                              ),
                             );
+
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => ChatDmXmtp(
+                            //       model: UserModel(
+                            //         uid: data['uid'],
+                            //         name: data['name'],
+                            //         image: data['image'],
+                            //         userName: data['userName'],
+                            //         searchKeywords: data['searchKeywords'],
+                            //       ),
+                            //     ),
+                            //   ),
+                            // );
                           },
                           leading: Container(
                             width: 46,
@@ -113,7 +140,6 @@ class _SearchSearchState extends State<SearchSearch> {
     );
   }
 }
-
 
 //
 //
@@ -279,40 +305,35 @@ class SearchBar extends StatelessWidget {
   final node1 = FocusNode();
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          height: 32,
-          child: TextField(
-            cursorColor: Colors.white,
-            controller: controller,
-            style: TextStyle(color: Colors.white),
-            readOnly: readonly,
-            autofocus: autofocus,
-            focusNode: node1,
-            onTap: ontap,
-            onChanged: onChanged,
-            decoration: customTextFieldDecoration(
-              context: context,
-              hint: 'search',
-              suffixICon: null,
-              prefixIcon: const Icon(
-                Icons.search_rounded,
-                size: 23,
-                color: Colors.white,
-              ),
-              errorText: null,
-            ),
+    return SizedBox(
+      height: 32,
+      child: TextField(
+        cursorColor: Colors.white,
+        controller: controller,
+        style: TextStyle(color: Colors.white),
+        readOnly: readonly,
+        autofocus: autofocus,
+        focusNode: node1,
+        onTap: ontap,
+        onChanged: onChanged,
+        decoration: customTextFieldDecoration(
+          context: context,
+          hint: 'search',
+          suffixICon: null,
+          prefixIcon: const Icon(
+            Icons.search_rounded,
+            size: 23,
+            color: Colors.white,
           ),
-        )
-      ],
+          errorText: null,
+        ),
+      ),
     );
   }
 }
 
 class SearchBar2 extends StatefulWidget {
-   SearchBar2({
+  SearchBar2({
     this.ontap,
     this.autofocus = false,
     this.readonly = false,
@@ -324,7 +345,7 @@ class SearchBar2 extends StatefulWidget {
   final VoidCallback ontap;
   final bool readonly;
   final bool autofocus;
-   bool showInput;
+  bool showInput;
 
   final TextEditingController controller;
   final Function(String) onChanged;
@@ -361,8 +382,7 @@ class _SearchBar2State extends State<SearchBar2> {
               border: InputBorder.none,
               contentPadding: EdgeInsets.fromLTRB(15, 2, 0, 2),
               hintText: 'Search messages...',
-              hintStyle: TextStyle(
-                  fontSize: 15, fontWeight: FontWeight.w500),
+              hintStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: secondaryColor.withOpacity(0.10),

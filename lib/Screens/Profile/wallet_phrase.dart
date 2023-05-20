@@ -28,6 +28,8 @@ class _WalletPhraseScreenState extends State<WalletPhraseScreen> {
 
             String walletPhrase = snapshot.data;
 
+            print(walletPhrase);
+
             List words = walletPhrase.split(' ');
 
             return SingleChildScrollView(

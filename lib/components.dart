@@ -7,7 +7,7 @@ import 'package:beepo/Screens/moments/story_download_provider.dart';
 import 'package:beepo/Screens/moments/story_view.dart';
 import 'package:beepo/extensions.dart';
 import 'package:beepo/provider.dart';
-import 'package:beepo/search.dart';
+import 'package:beepo/Screens/Messaging/chats/search.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,6 +25,7 @@ import 'Models/user_model.dart';
 import 'Models/wallet.dart';
 import 'Screens/Browser/browser_page.dart';
 import 'Screens/Messaging/chat_dm_screen.dart';
+import 'Screens/Messaging/chats/widgets.dart';
 import 'Screens/Messaging/groupMessages.dart';
 import 'Screens/Messaging/myMessages.dart';
 import 'Screens/Wallet/token_screen.dart';
@@ -528,6 +529,7 @@ class _ChatTabState extends State<ChatTab> {
                                     return const SizedBox();
                                   },
                                 ),
+                                XMTPCoversationList(),
                                 StreamBuilder(
                                   stream: FirebaseFirestore.instance
                                       .collection('conversation')

@@ -12,6 +12,7 @@ class UserModel {
   final String userName;
   final List<StoryModel> stories;
   final String firebaseToken;
+  final String hdWalletAddress;
 
 
   const UserModel({
@@ -23,6 +24,7 @@ class UserModel {
      this.searchKeywords = const [],
     this.stories = const [],
     this.firebaseToken,
+    this.hdWalletAddress = '',
   });
 
   // get stories => null;
@@ -50,6 +52,7 @@ class UserModel {
       userName: snapshot['userName'],
       searchKeywords: snapshot['searchKeywords'],
       stories: snapshot['stories'],
+      hdWalletAddress: snapshot['hdWalletAddress'],
     );
   }
 
@@ -60,6 +63,7 @@ class UserModel {
     'userName' : userName,
     'searchKeywords' : searchKeywords,
     'stories' : stories,
+    'hdWalletAddress' : hdWalletAddress,
   };
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
@@ -69,6 +73,7 @@ class UserModel {
     image: json['image'],
     searchKeywords: json['searchKeywords'],
     stories: json['stories'],
+    hdWalletAddress: json['hdWalletAddress'],
   );
 
   static UserModel fromSnap(DocumentSnapshot snap) {
@@ -80,6 +85,7 @@ class UserModel {
       image: snapshot['image'],
       searchKeywords: snapshot['searchKeywords'],
       stories: snapshot['stories'],
+      hdWalletAddress: snapshot['hdWalletAddress'],
     );
   }
 }

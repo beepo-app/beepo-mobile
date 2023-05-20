@@ -85,6 +85,7 @@ class AuthService {
           name: displayName,
           image: imageUrl,
           userName: data['user']['username'],
+          hdWalletAddress: data['user']['hdWalletAddress'],
         );
         await FirebaseFirestore.instance
             .collection('users')
@@ -246,7 +247,8 @@ class AuthService {
   //Retrieve Passphrase
   Future<String> retrievePassphrase() async {
     try {
-      String encryptedPin = await EncryptionService().encrypt('1234');
+      String encryptedPin = await EncryptionService().encrypt(userPin);
+      log(box.get('PIN'));
       print(AuthService().accessToken);
       final response = await http.post(
         Uri.parse('$baseUrl/wallet/recover-seedphrase'),
@@ -266,9 +268,10 @@ class AuthService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map result = jsonDecode(response.body);
 
-        String dd = await EncryptionService()
-            .getSeedPhrase(seedPhrase: result['seedPhrase']);
-        return dd;
+        String phrase = await EncryptionService().getSeedPhrase(
+          seedPhrase: result['seedPhrase'],
+        );
+        return phrase;
       } else {
         print(response.body);
         return "";

@@ -18,6 +18,7 @@ import 'Screens/Auth/onboarding.dart';
 import 'Screens/Messaging/calls/calll_notify.dart';
 import 'Screens/moments/story_download_provider.dart';
 import 'Screens/moments/story_upload_provider.dart';
+import 'Service/xmtp.dart';
 import 'bottom_nav.dart';
 
 void main() async {
@@ -301,7 +302,7 @@ class _MyAppState extends State<MyApp> {
         image: message.data['image'],
         channel: message.data['channelName'],
       );
-    }, onDone: (){
+    }, onDone: () {
       Calls().endCall(uuid.v4());
     });
     // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -327,6 +328,9 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider<StoryDownloadProvider>(
           create: (_) => StoryDownloadProvider.initialize(),
+        ),
+        ChangeNotifierProvider<XMTPProvider>(
+          create: (_) => XMTPProvider(),
         ),
       ],
       builder: (context, _) => GetMaterialApp(
