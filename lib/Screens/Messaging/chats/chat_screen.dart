@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:grouped_list/grouped_list.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +10,7 @@ import 'package:xmtp/xmtp.dart';
 
 import '../../../Service/xmtp.dart';
 import '../../../Utils/styles.dart';
+import 'widgets.dart';
 
 class DmScreen extends StatefulWidget {
   final Conversation conversation;
@@ -29,9 +33,21 @@ class _DmScreenState extends State<DmScreen> {
 
   @override
   Widget build(BuildContext context) {
+    log(widget.conversation.metadata.toString());
+    print(widget.conversation.peer.hex);
+    print(widget.conversation.me.hex);
+    print(widget.conversation.conversationId);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.conversation.peer.hex),
+        backgroundColor: secondaryColor,
+        elevation: 0,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(20),
+          ),
+        ),
       ),
       body: FutureBuilder<List<DecodedMessage>>(
         future: getMessages,
@@ -55,19 +71,48 @@ class _DmScreenState extends State<DmScreen> {
               return Column(
                 children: [
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: messages.length,
-                      shrinkWrap: true,
-                      reverse: true,
-                      itemBuilder: (context, index) {
-                        DecodedMessage message = messages[index];
-                        bool isMe = message.sender != widget.conversation.peer;
-                        return ListTile(
-                          title: Text(message.content),
-                          subtitle: Text(
-                              DateFormat.yMd().add_jm().format(message.sentAt)),
+                    child: GroupedListView(
+                      elements: messages.reversed.toList(),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      groupBy: (DecodedMessage element) {
+                        return DateFormat('yMMMMd').format(element.sentAt);
+                      },
+                      physics: const AlwaysScrollableScrollPhysics(
+                          parent: BouncingScrollPhysics()),
+                      groupSeparatorBuilder: (String groupByValue) {
+                        return SizedBox(
+                          height: 40,
+                          child: Align(
+                            child: Container(
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(7),
+                                color: secondaryColor,
+                              ),
+                              child: Text(
+                                groupByValue,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
                         );
                       },
+                      floatingHeader: true,
+                      reverse: true,
+                      useStickyGroupSeparators: true,
+                      itemBuilder: (context, DecodedMessage element) {
+                        bool isMe = element.sender != widget.conversation.peer;
+                        return ChatMessageWidget(
+                          message: element,
+                          isMe: isMe,
+                        );
+                      },
+                      separator: const SizedBox(height: 10),
+                      order: GroupedListOrder.DESC,
                     ),
                   ),
                   ChatControlsWidget(convo: widget.conversation),

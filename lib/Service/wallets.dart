@@ -22,11 +22,14 @@ class WalletsService {
         },
       );
 
-      if (response.statusCode == 200) {
         var data = json.decode(response.body);
+        print(data);
+      if (response.statusCode == 200) {
         List<Wallet> wallets = walletFromJson(response.body);
         return wallets;
-      } else {}
+      } else {
+        return [];
+      }
     } catch (e) {
       print(e);
 
@@ -37,6 +40,7 @@ class WalletsService {
 
   Future<List> getERCWalletBalances(String address) async {
     try {
+      print(address);
       final response = await http.post(
         Uri.parse('$baseUrl/getallbalance'),
         headers: {
@@ -63,6 +67,8 @@ class WalletsService {
 
   Future<CoinBalance> getWalletBalance(String networkId, String address) async {
     try {
+      log(networkId);
+      log(address);
       final response = await http.post(
         Uri.parse('$baseUrl/addressbalance'),
         headers: {
@@ -71,6 +77,9 @@ class WalletsService {
         },
         body: jsonEncode({"networkId": networkId, "address": address}),
       );
+
+      print(response.body);
+      log(response.statusCode.toString());
 
       if (response.statusCode == 200) {
         var data = json.decode(response.body);

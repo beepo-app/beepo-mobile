@@ -33,6 +33,7 @@ class _WalletScreenState extends State<WalletScreen> {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
+          backgroundColor: Colors.white,
           body: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               SliverAppBar(
@@ -174,6 +175,8 @@ class _WalletScreenState extends State<WalletScreen> {
 
                     //Calculate total balance
                     double totalBalance = 0;
+
+                    // log('eth' + ercBalances.toString());
 
                     //add erc balances
                     try {

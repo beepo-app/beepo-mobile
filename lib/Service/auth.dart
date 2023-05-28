@@ -46,11 +46,14 @@ class AuthService {
       //Encrypt PIN
       String encryptedPin = await EncryptionService().encrypt(pin);
 
+      print('waiting for image upload');
+
       // Upload image and get image url
       String imageUrl = "";
       if (img != null) {
         imageUrl = await MediaService.uploadProfilePicture(img);
       }
+      print('image upload');
 
       //If image was selected, add to the body of the request
 
@@ -171,6 +174,7 @@ class AuthService {
       );
 
       print(response.body);
+      print(response.statusCode);
 
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
@@ -178,9 +182,11 @@ class AuthService {
         Hive.box(kAppName).put('serverPublicKey', data['serverPublicKey']);
         return data;
       } else {
+        print(response.body);
         return null;
       }
     } catch (e) {
+      print(e);
       showToast(e.toString());
       return null;
     }

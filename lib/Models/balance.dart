@@ -21,10 +21,12 @@ class CoinBalance {
   String address;
 
   factory CoinBalance.fromJson(Map<String, dynamic> json) => CoinBalance(
-        balance: json["balance"],
+        balance: num.parse(json["balance"].toString()),
         symbol: json["symbol"],
         status: json["status"],
-        prices: List<Price>.from(json["prices"].map((x) => Price.fromJson(x))),
+        prices: json["prices"] == null
+            ? []
+            : List<Price>.from(json["prices"].map((x) => Price.fromJson(x))),
         address: json["address"],
       );
 

@@ -20,6 +20,7 @@ class XMTPProvider extends ChangeNotifier {
   }
 
   String juliAddress = '0x79079ac2e60435859e5f66b6ba32fd6d7f0131e2';
+  String juli = "0x570889340d42e0017DeAecf2Df626Bc175A8BBbb";
   final String _conversationId = 'chat';
   final Box _box = Hive.box(kAppName);
 
@@ -142,7 +143,8 @@ class XMTPProvider extends ChangeNotifier {
   }
 
   //create new conversation
-  Future<xmtp.Conversation> newConversation(String address,{Map<String,String> metadata}) async {
+  Future<xmtp.Conversation> newConversation(String address,
+      {Map<String, String> metadata}) async {
     try {
       var convo = await client.newConversation(
         address,
@@ -151,7 +153,7 @@ class XMTPProvider extends ChangeNotifier {
       );
       return convo;
     } catch (e) {
-      print(e);
+      dev.log(e.toString());
       return null;
     }
   }

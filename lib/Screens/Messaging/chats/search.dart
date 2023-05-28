@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 
+import 'package:beepo/Constants/app_constants.dart';
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
 import 'package:beepo/Utils/styles.dart';
@@ -70,17 +71,36 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                   return _searchcontroller.text.isNotEmpty
                       ? ListTile(
                           onTap: () async {
+                            print(data);
+                            //Map users data
+                            Map usersData = {
+                              'uid': data['uid'],
+                              'name': data['name'],
+                              'image': data['image'] ?? '',
+                              'userName': data['userName'],
+                            };
+
+                            Map myData = Hive.box(kAppName).get('userData');
+
+                            print(usersData);
+                            print(myData);
+
+                            //combine users data and my data to a string
                             Conversation convo = await context
                                 .read<XMTPProvider>()
                                 .newConversation(
-                                  data['hdWalletAddress'],
-                                  metadata: {
-                                    'name': data['name'],
-                                    'image': data['image'],
-                                    'userName': data['userName'],
-                                    'uid': data['uid'],
-                                  },
-                                );
+                              // data['hdWalletAddress'],
+                              "0xf0b1866a4bf374a32a60f88e35f72ada8a1e36ff",
+                              metadata: {
+                                'usersData': 'usersData',
+                                'myData': 'myData',
+                              },
+                            );
+
+                            if (convo == null) {
+                              log('Conversation is null');
+                              return;
+                            }
 
                             Navigator.push(
                               context,
