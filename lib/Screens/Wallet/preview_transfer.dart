@@ -13,7 +13,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../../Models/wallet.dart';
 import '../../Utils/styles.dart';
-import '../../components.dart';
+import '../../Widgets/components.dart';
 
 class SendToken2 extends StatefulWidget {
   final Wallet wallet;

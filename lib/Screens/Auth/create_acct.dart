@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../Utils/functions.dart';
-import '../../components.dart';
+import '../../Widgets/components.dart';
 import 'pin_code.dart';
 
 class CreateAccount extends StatefulWidget {

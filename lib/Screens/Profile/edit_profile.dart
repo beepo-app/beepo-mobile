@@ -8,7 +8,7 @@ import 'package:beepo/Utils/functions.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:beepo/Widgets/commons.dart';
 import 'package:beepo/Widgets/textfields.dart';
-import 'package:beepo/components.dart';
+import 'package:beepo/Widgets/components.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

@@ -4,7 +4,7 @@ import 'dart:convert';
 
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/styles.dart';
-import 'package:beepo/mic_anime.dart';
+import 'package:beepo/Screens/Messaging/mic_anime.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,7 +25,7 @@ import 'package:voice_message_package/voice_message_package.dart';
 
 import '../../../../Widgets/toasts.dart';
 import '../../../../bottom_nav.dart';
-import '../../../../components.dart';
+import '../../Widgets/components.dart';
 import '../../Providers/provider.dart';
 import '../../Utils/functions.dart';
 import 'custom_voice_recorder_widget.dart';
@@ -141,7 +141,7 @@ class _GroupDmState extends State<GroupDm> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if(context.watch<ChatNotifier>().enableScreenShot == true){
+      if (context.watch<ChatNotifier>().enableScreenShot == true) {
         Provider.of<ChatNotifier>(context, listen: false).secureScreen();
       }
     });
@@ -410,7 +410,8 @@ class _GroupDmState extends State<GroupDm> {
                       right: 20,
                     ),
                     color: Colors.white,
-                    constraints: BoxConstraints.tightFor(width: MediaQuery.of(context).size.width-50),
+                    constraints: BoxConstraints.tightFor(
+                        width: MediaQuery.of(context).size.width - 50),
                     child: StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('groupMessages')
@@ -429,7 +430,7 @@ class _GroupDmState extends State<GroupDm> {
                               useStickyGroupSeparators: true,
                               groupHeaderBuilder: (element) {
                                 final date =
-                                element['created'].toDate() as DateTime;
+                                    element['created'].toDate() as DateTime;
                                 return SizedBox(
                                   height: 50,
                                   child: Align(
@@ -437,7 +438,8 @@ class _GroupDmState extends State<GroupDm> {
                                     child: Container(
                                       width: 100,
                                       decoration: BoxDecoration(
-                                          color: secondaryColor.withOpacity(0.8),
+                                          color:
+                                              secondaryColor.withOpacity(0.8),
                                           borderRadius: const BorderRadius.all(
                                               Radius.circular(10.0))),
                                       child: Padding(
@@ -554,19 +556,19 @@ class _GroupDmState extends State<GroupDm> {
                                         ),
                                       )
                                     else if (snapshot.data.docs[index]
-                                    ["type"] ==
+                                            ["type"] ==
                                         'audio')
                                       Align(
                                         alignment: (snapshot.data.docs[index]
-                                        ['sender'] ==
-                                            userM['uid'])
+                                                    ['sender'] ==
+                                                userM['uid'])
                                             ? Alignment.centerRight
                                             : Alignment.centerLeft,
                                         child: VoiceMessage(
                                           audioSrc: snapshot.data.docs[index]
-                                          ['content'],
+                                              ['content'],
                                           me: snapshot.data.docs[index]
-                                          ['sender'] ==
+                                                  ['sender'] ==
                                               userM['uid'],
                                           meBgColor: secondaryColor,
                                           contactBgColor: Color(0xffc4c4c4),
@@ -642,11 +644,11 @@ class _GroupDmState extends State<GroupDm> {
                                 );
                               },
                               groupBy: (QueryDocumentSnapshot<Object> element) {
-                              final date =
-                              element['created'].toDate() as DateTime;
+                                final date =
+                                    element['created'].toDate() as DateTime;
 
-                              return DateFormat.yMMMd().format(date);
-                            },
+                                return DateFormat.yMMMd().format(date);
+                              },
                             );
                           }
                           return Center(
@@ -773,7 +775,7 @@ class _GroupDmState extends State<GroupDm> {
                           width: 27,
                           height: 27,
                         ),
-                )
+                      )
 
                     // GestureDetector(
                     //     onLongPress: () {

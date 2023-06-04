@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'Utils/styles.dart';
+import '../../Utils/styles.dart';
 
 class GroupProfile extends StatefulWidget {
   final String image;
@@ -153,11 +153,11 @@ class _GroupProfileState extends State<GroupProfile> {
                       IconButton(
                           onPressed: () {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MediaLinksGroup(
-                                        image: 'assets/group.jpg'),
-                                ),
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    MediaLinksGroup(image: 'assets/group.jpg'),
+                              ),
                             );
                           },
                           icon: Icon(Icons.arrow_forward_ios_outlined))

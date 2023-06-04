@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:beepo/Widgets/commons.dart';
-import 'package:beepo/components.dart';
+import 'package:beepo/Widgets/components.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';

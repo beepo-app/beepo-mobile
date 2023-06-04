@@ -3,7 +3,7 @@ import 'package:beepo/Widgets/toasts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../components.dart';
+import '../../Widgets/components.dart';
 
 class Login extends StatelessWidget {
   const Login({Key key}) : super(key: key);

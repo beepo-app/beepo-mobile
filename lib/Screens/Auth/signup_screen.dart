@@ -3,7 +3,7 @@ import 'package:beepo/Screens/Auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../components.dart';
+import '../../Widgets/components.dart';
 
 class SignUp extends StatelessWidget {
   const SignUp({Key key}) : super(key: key);

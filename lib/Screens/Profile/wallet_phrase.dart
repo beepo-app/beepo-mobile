@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../Utils/styles.dart';
-import '../../components.dart';
+import '../../Widgets/components.dart';
 
 class WalletPhraseScreen extends StatefulWidget {
   const WalletPhraseScreen({Key key}) : super(key: key);

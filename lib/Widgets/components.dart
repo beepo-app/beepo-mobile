@@ -19,19 +19,19 @@ import 'package:linkwell/linkwell.dart';
 import 'package:provider/provider.dart';
 
 // import 'Models/story_model/story.dart';
-import 'Models/market_data.dart';
-import 'Models/story_model/storyModel.dart';
-import 'Models/user_model.dart';
-import 'Models/wallet.dart';
-import 'Screens/Browser/browser_page.dart';
-import 'Screens/Messaging/chat_dm_screen.dart';
-import 'Screens/Messaging/chats/widgets.dart';
-import 'Screens/Messaging/groupMessages.dart';
-import 'Screens/Messaging/myMessages.dart';
-import 'Screens/Wallet/token_screen.dart';
-import 'Screens/moments/add_story.dart';
-import 'Screens/moments/bubble_stories.dart';
-import 'Utils/styles.dart';
+import '../Models/market_data.dart';
+import '../Models/story_model/storyModel.dart';
+import '../Models/user_model.dart';
+import '../Models/wallet.dart';
+import '../Screens/Browser/browser_page.dart';
+import '../Screens/Messaging/chat_dm_screen.dart';
+import '../Screens/Messaging/chats/widgets.dart';
+import '../Screens/Messaging/groupMessages.dart';
+import '../Screens/Messaging/myMessages.dart';
+import '../Screens/Wallet/token_screen.dart';
+import '../Screens/moments/add_story.dart';
+import '../Screens/moments/bubble_stories.dart';
+import '../Utils/styles.dart';
 
 class FilledButtons extends StatelessWidget {
   final String text;

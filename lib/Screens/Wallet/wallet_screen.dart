@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 
 import '../../Models/wallet.dart';
 import '../../Utils/styles.dart';
-import '../../components.dart';
+import '../../Widgets/components.dart';
 import '../requestToken.dart';
 import 'send_global.dart';
 

@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:beepo/Utils/styles.dart';
 import 'package:beepo/Widgets/toasts.dart';
-import 'package:beepo/components.dart';
+import 'package:beepo/Widgets/components.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';

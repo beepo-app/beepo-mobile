@@ -6,7 +6,7 @@ import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../Utils/styles.dart';
-import '../../components.dart';
+import '../../Widgets/components.dart';
 import 'chats/search.dart';
 
 class ChatScreen extends StatefulWidget {

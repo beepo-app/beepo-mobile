@@ -8,7 +8,7 @@ import '../../Models/balance.dart';
 import '../../Models/market_data.dart';
 import '../../Models/wallet.dart';
 import '../../Utils/styles.dart';
-import '../../components.dart';
+import '../../Widgets/components.dart';
 import 'send_token.dart';
 
 class SendGlobal extends StatefulWidget {
@@ -21,12 +21,13 @@ class SendGlobal extends StatefulWidget {
   final bool isSending;
   SendGlobal(
       {Key key,
-        this.wallets,
-        this.coinMarketDataList,
-        this.btcBalance,
-        this.ercBalances,
-        this.selectedCurrencySymbol,
-        this.selectedCurrency,this.isSending = true})
+      this.wallets,
+      this.coinMarketDataList,
+      this.btcBalance,
+      this.ercBalances,
+      this.selectedCurrencySymbol,
+      this.selectedCurrency,
+      this.isSending = true})
       : super(key: key);
 
   @override
@@ -106,7 +107,7 @@ class _SendGlobalState extends State<SendGlobal> {
                     if (value.trim().isNotEmpty) {
                       wallets = widget.wallets
                           .where((element) =>
-                          element.name.toLowerCase().contains(value))
+                              element.name.toLowerCase().contains(value))
                           .toList();
                     } else {
                       wallets = widget.wallets;

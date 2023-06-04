@@ -32,7 +32,7 @@ import 'package:voice_message_package/voice_message_package.dart';
 
 import '../../Utils/functions.dart';
 import '../../bottom_nav.dart';
-import '../../components.dart';
+import '../../Widgets/components.dart';
 import '../../Providers/provider.dart';
 import '../Profile/user_profile_screen.dart';
 import 'calls/calll_notify.dart';
