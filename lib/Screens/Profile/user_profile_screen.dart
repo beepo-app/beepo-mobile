@@ -8,7 +8,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:iconsax/iconsax.dart';
@@ -20,7 +19,7 @@ class UserProfile extends StatefulWidget {
   // const UserProfile({Key key}) : super(key: key);
   final UserModel model;
 
-  UserProfile({@required this.model});
+  const UserProfile({Key key, @required this.model}) : super(key: key);
 
   @override
   State<UserProfile> createState() => _UserProfileState();

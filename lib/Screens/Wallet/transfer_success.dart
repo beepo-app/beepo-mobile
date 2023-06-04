@@ -10,7 +10,7 @@ class TransferSuccess extends StatefulWidget {
   final String address;
   final String amount;
   final String ticker;
-  const TransferSuccess(this.address, this.amount, this.ticker);
+  const TransferSuccess(this.address, this.amount, this.ticker, {Key key}) : super(key: key);
 
   @override
   State<TransferSuccess> createState() => _TransferSuccessState();

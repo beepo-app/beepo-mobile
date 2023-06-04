@@ -70,7 +70,7 @@ class _LockScreenState extends State<LockScreen> {
                 controller: otp,
                 onCompleted: (v) {
                   if (v == AuthService().userPin) {
-                    Get.offAll(BottomNavHome());
+                    Get.offAll(const BottomNavHome());
                   } else {
                     showToast('Invalid PIN');
                   }
@@ -92,7 +92,7 @@ class _LockScreenState extends State<LockScreen> {
                 LocalAuthentication().authenticate(localizedReason: ' ').then(
                   (val) {
                     if (val) {
-                      Get.offAll(BottomNavHome());
+                      Get.offAll(const BottomNavHome());
                     } else {
                       showToast('Authentication failed');
                     }

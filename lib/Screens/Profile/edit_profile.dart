@@ -19,7 +19,7 @@ import '../../Widgets/toasts.dart';
 class EditProfile extends StatefulWidget {
   final Map data;
 
-  const EditProfile(this.data);
+  const EditProfile(this.data, {Key key}) : super(key: key);
 
   @override
   State<EditProfile> createState() => _EditProfileState();

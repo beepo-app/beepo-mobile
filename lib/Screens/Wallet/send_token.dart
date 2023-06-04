@@ -14,7 +14,7 @@ import 'preview_transfer.dart';
 class SendToken extends StatefulWidget {
   final Wallet wallet;
   final String balance;
-  SendToken({Key key, this.wallet, this.balance}) : super(key: key);
+  const SendToken({Key key, this.wallet, this.balance}) : super(key: key);
 
   @override
   State<SendToken> createState() => _SendTokenState();

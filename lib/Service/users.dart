@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 
 import '../Constants/network.dart';
-import 'auth.dart';
 import 'package:http/http.dart' as http;
 
 class UsersService {

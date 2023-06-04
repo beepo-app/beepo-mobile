@@ -6,7 +6,6 @@ import 'dart:convert';
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Screens/Messaging/calls/calls.dart';
-import 'package:beepo/Screens/Messaging/record.dart';
 import 'package:beepo/Utils/styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,7 +22,6 @@ import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
-import 'package:lottie/lottie.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:swipe_to/swipe_to.dart';
@@ -42,7 +40,7 @@ import 'services/chat_methods.dart';
 class ChatDm extends StatefulWidget {
   final UserModel model;
 
-  const ChatDm({this.model});
+  const ChatDm({Key key, this.model}) : super(key: key);
 
   @override
   State<ChatDm> createState() => _ChatDmState();
@@ -501,7 +499,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                             final encrypter =
                                 enc.Encrypter(enc.AES(enc.Key.fromLength(32)));
 
-                            var ampm;
+                            String ampm;
                             if (hour > 12) {
                               hour = hour % 12;
                               ampm = 'pm';

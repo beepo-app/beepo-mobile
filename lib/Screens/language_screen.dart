@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import '../Utils/styles.dart';
 
 class Language extends StatefulWidget {
-  Language({Key key}) : super(key: key);
+  const Language({Key key}) : super(key: key);
 
   @override
   State<Language> createState() => _LanguageState();
@@ -70,7 +70,7 @@ class _LanguageState extends State<Language> {
                     ),
                     SizedBox(height: 30),
                     Row(
-                      children: [
+                      children: const [
                         Expanded(
                           child: Text(
                             "English",

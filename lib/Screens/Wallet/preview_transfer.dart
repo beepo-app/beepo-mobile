@@ -36,7 +36,7 @@ class _SendToken2State extends State<SendToken2> {
             .estimateGasFee(widget.wallet.chainId.toString()),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(child: const CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           String gasFee = snapshot.data;
@@ -48,7 +48,7 @@ class _SendToken2State extends State<SendToken2> {
                 const Text(
                   "You are sending",
                   style: TextStyle(
-                    color: const Color(0x7f0e014c),
+                    color: Color(0x7f0e014c),
                     fontSize: 14,
                   ),
                 ),
@@ -66,7 +66,7 @@ class _SendToken2State extends State<SendToken2> {
                 const Text(
                   "to the following wallet",
                   style: TextStyle(
-                    color: const Color(0x7f0e014c),
+                    color: Color(0x7f0e014c),
                     fontSize: 14,
                   ),
                 ),
@@ -126,7 +126,7 @@ class _SendToken2State extends State<SendToken2> {
                                     fontSize: 18,
                                   )),
                               const SizedBox(height: 30),
-                              Container(
+                              SizedBox(
                                 width: 100,
                                 child: PinCodeTextField(
                                   appContext: context,

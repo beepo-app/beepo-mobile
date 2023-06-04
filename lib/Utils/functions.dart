@@ -87,7 +87,7 @@ class ImageUtil {
                   return null;
                 }
               },
-              child: Text('Select from Camera'),
+              child: const Text('Select from Camera'),
             ),
             CupertinoActionSheetAction(
               onPressed: () async {
@@ -105,12 +105,12 @@ class ImageUtil {
                   return null;
                 }
               },
-              child: Text('Select from Gallery'),
+              child: const Text('Select from Gallery'),
             ),
           ],
           cancelButton: CupertinoActionSheetAction(
             onPressed: () => Get.back(),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
         ),
       ));

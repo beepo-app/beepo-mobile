@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:beepo/Models/balance.dart';
 import 'package:beepo/Models/market_data.dart';
@@ -12,11 +11,9 @@ import 'package:get/get.dart';
 import '../../Models/wallet.dart';
 import '../../Utils/styles.dart';
 import '../../Widgets/components.dart';
-import '../requestToken.dart';
-import 'send_global.dart';
 
 class WalletScreen extends StatefulWidget {
-  WalletScreen({Key key}) : super(key: key);
+  const WalletScreen({Key key}) : super(key: key);
 
   @override
   State<WalletScreen> createState() => _WalletScreenState();

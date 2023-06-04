@@ -84,7 +84,7 @@ class TransactionDetails extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ReusableTransferText(
+                  const ReusableTransferText(
                     text: "Date",
                     size: 15,
                     fontWeight: FontWeight.bold,
@@ -157,7 +157,7 @@ class TransactionDetails extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0,
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   Expanded(
                     child: ReusableTransferText(
                       text: isSent ? transaction.to : transaction.from,
@@ -184,7 +184,7 @@ class TransactionDetails extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0,
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Expanded(
                     child: ReusableTransferText(
                       text: "${transaction.gasfee} $walletTicker",

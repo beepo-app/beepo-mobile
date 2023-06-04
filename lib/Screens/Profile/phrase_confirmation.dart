@@ -11,7 +11,7 @@ import 'package:lottie/lottie.dart';
 import '../../Widgets/components.dart';
 
 class PhraseConfirmation extends StatefulWidget {
-  const PhraseConfirmation();
+  const PhraseConfirmation({Key key}) : super(key: key);
 
   @override
   State<PhraseConfirmation> createState() => _PhraseConfirmationState();

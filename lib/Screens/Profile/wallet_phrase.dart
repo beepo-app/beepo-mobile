@@ -89,8 +89,8 @@ class _WalletPhraseScreenState extends State<WalletPhraseScreen> {
                       ),
                       alignment: Alignment.center,
                       child: Column(
-                        children: [
-                          const Text(
+                        children: const [
+                          Text(
                             "Do not share this phrase with anyone, as it will grant them access to your account.",
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -99,12 +99,12 @@ class _WalletPhraseScreenState extends State<WalletPhraseScreen> {
                               fontWeight: FontWeight.w900,
                             ),
                           ),
-                          const SizedBox(height: 15),
-                          const Text(
+                          SizedBox(height: 15),
+                          Text(
                             "Write Down your Seed Phrase in a Secured Place, \nThe Beepo Team will Never ask for it",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: const Color(0xff680e00),
+                              color: Color(0xff680e00),
                               fontSize: 13,
                             ),
                           ),

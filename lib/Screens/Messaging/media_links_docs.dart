@@ -17,7 +17,7 @@ class MediaLinks extends StatefulWidget {
   // const UserProfile({Key key}) : super(key: key);
   final UserModel model;
 
-  MediaLinks({@required this.model});
+  const MediaLinks({Key key, @required this.model}) : super(key: key);
 
   @override
   State<MediaLinks> createState() => _MediaLinksState();

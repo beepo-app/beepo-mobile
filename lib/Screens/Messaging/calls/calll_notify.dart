@@ -6,7 +6,6 @@ import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Screens/Messaging/calls/calls.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming/entities/android_params.dart';
 import 'package:flutter_callkit_incoming/entities/call_event.dart';
 import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
@@ -16,7 +15,6 @@ import 'package:get/get.dart' as note;
 import 'package:hive/hive.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
-import '../../../Utils/styles.dart';
 
 class Calls {
   final stopWatchTimer = StopWatchTimer(mode: StopWatchMode.countUp);

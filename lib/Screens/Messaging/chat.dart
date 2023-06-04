@@ -10,6 +10,8 @@ import '../../Widgets/components.dart';
 import 'chats/search.dart';
 
 class ChatScreen extends StatefulWidget {
+  const ChatScreen({Key key}) : super(key: key);
+
   // ChatScreen({Key key}) : super(key: key);
 
   @override
@@ -67,9 +69,9 @@ class _ChatScreenState extends State<ChatScreen> {
                   width: double.infinity,
                   color: txtColor1,
                   child: Column(
-                    children: [
-                      const SizedBox(height: 50),
-                      const TabBar(
+                    children: const [
+                      SizedBox(height: 50),
+                      TabBar(
                         indicatorColor: Colors.white,
                         tabs: [
                           Tab(
@@ -82,8 +84,8 @@ class _ChatScreenState extends State<ChatScreen> {
                               ),
                             ),
                           ),
-                          const Tab(
-                            child: const Text(
+                          Tab(
+                            child: Text(
                               "Calls",
                               style: TextStyle(
                                 color: Colors.white,
@@ -94,7 +96,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10),
                       Expanded(
                         child: TabBarView(
                           children: [

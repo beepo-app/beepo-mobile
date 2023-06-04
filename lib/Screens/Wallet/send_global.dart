@@ -8,8 +8,6 @@ import '../../Models/balance.dart';
 import '../../Models/market_data.dart';
 import '../../Models/wallet.dart';
 import '../../Utils/styles.dart';
-import '../../Widgets/components.dart';
-import 'send_token.dart';
 
 class SendGlobal extends StatefulWidget {
   final List<Wallet> wallets;
@@ -19,7 +17,7 @@ class SendGlobal extends StatefulWidget {
   final String selectedCurrencySymbol;
   final String selectedCurrency;
   final bool isSending;
-  SendGlobal(
+  const SendGlobal(
       {Key key,
       this.wallets,
       this.coinMarketDataList,

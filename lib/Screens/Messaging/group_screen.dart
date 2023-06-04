@@ -17,13 +17,11 @@ import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
-import 'package:lottie/lottie.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:swipe_to/swipe_to.dart';
 import 'package:voice_message_package/voice_message_package.dart';
 
-import '../../../../Widgets/toasts.dart';
 import '../../../../bottom_nav.dart';
 import '../../Widgets/components.dart';
 import '../../Providers/provider.dart';
@@ -468,7 +466,7 @@ class _GroupDmState extends State<GroupDm> {
                                 var hour = time.toDate().hour;
                                 var min = time.toDate().minute;
 
-                                var ampm;
+                                String ampm;
                                 if (hour > 12) {
                                   hour = hour % 12;
                                   ampm = 'pm';

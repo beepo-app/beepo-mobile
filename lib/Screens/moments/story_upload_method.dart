@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Utils/extensions.dart';
 import 'package:beepo/response.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

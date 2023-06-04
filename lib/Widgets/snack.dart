@@ -1,13 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:beepo/Models/user_model.dart';
-import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
-import 'package:beepo/Utils/styles.dart';
-import 'package:beepo/Providers/provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 void displaySnack(BuildContext context, String text) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(

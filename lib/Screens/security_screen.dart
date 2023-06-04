@@ -1,5 +1,4 @@
 import 'package:beepo/Screens/Profile/phrase_confirmation.dart';
-import 'package:beepo/Screens/Profile/wallet_phrase.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -132,11 +131,11 @@ class _SecurityState extends State<Security> {
                             .then((val) {
                           if (val) {
                             // Get.to(WalletPhraseScreen());
-                            Get.to(PhraseConfirmation());
+                            Get.to(const PhraseConfirmation());
                           }
                         });
                       },
-                      child: Text('Wallet Phrase'),
+                      child: const Text('Wallet Phrase'),
                     ),
                   ],
                 ),

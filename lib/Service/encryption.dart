@@ -7,7 +7,6 @@ import 'package:hive/hive.dart';
 
 import 'package:rsa_encrypt/rsa_encrypt.dart';
 import 'package:encrypt/encrypt.dart' as encrypter;
-import 'dart:developer' as dev;
 
 class EncryptionService {
   Box box = Hive.box('beepo');

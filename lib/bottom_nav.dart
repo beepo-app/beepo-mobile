@@ -21,10 +21,10 @@ class _BottomNavHomeState extends State<BottomNavHome> {
 
   int index = 0;
   List body = [
-    ChatScreen(),
-    WalletScreen(),
-    Browser(),
-    Profile(),
+    const ChatScreen(),
+    const WalletScreen(),
+    const Browser(),
+    const Profile(),
   ];
 
   @override

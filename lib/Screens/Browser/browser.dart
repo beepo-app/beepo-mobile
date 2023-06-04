@@ -131,7 +131,7 @@ class _BrowserState extends State<Browser> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
+                                  children: const [
                                     BrowserContainer(
                                       image: 'assets/mobius.png',
                                       title: 'mobius',
@@ -154,7 +154,7 @@ class _BrowserState extends State<Browser> {
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
-                                  children: [
+                                  children: const [
                                     BrowserContainer3(
                                       image: 'assets/pancake.png',
                                       title: 'pancakeswap',

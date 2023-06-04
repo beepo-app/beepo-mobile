@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as rtc_local_view;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as rtc_remote_view;
-import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:hive/hive.dart';

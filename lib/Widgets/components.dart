@@ -38,7 +38,7 @@ class FilledButtons extends StatelessWidget {
   final VoidCallback onPressed;
   final Color color;
 
-  FilledButtons({@required this.text, this.color, @required this.onPressed});
+  const FilledButtons({Key key, @required this.text, this.color, @required this.onPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -77,11 +77,11 @@ class OutlnButton extends StatelessWidget {
 
   // final Color color;
 
-  OutlnButton({
+  const OutlnButton({Key key, 
     @required this.text,
     // required this.color,
     @required this.onPressed,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -123,6 +123,8 @@ class OutlnButton extends StatelessWidget {
 List<UserModel> userss = [];
 
 class ChatTab extends StatefulWidget {
+  const ChatTab({Key key}) : super(key: key);
+
   // ChatTab({Key key}) : super(key: key);
 
   @override
@@ -591,6 +593,8 @@ class _ChatTabState extends State<ChatTab> {
 }
 
 class CallTab extends StatefulWidget {
+  const CallTab({Key key}) : super(key: key);
+
   // CallTab({Key key}) : super(key: key);
 
   @override
@@ -728,7 +732,7 @@ class MessageReply extends StatelessWidget {
   final String replyName;
   final String replyUsername;
 
-  const MessageReply({
+  const MessageReply({Key key, 
     @required this.isMe,
     @required this.text,
     @required this.time,
@@ -736,7 +740,7 @@ class MessageReply extends StatelessWidget {
     this.replyMessage,
     this.replyName,
     this.replyUsername,
-  });
+  }) : super(key: key);
 
   String convertStringToLink(String text) {
     String textData = text;
@@ -746,7 +750,9 @@ class MessageReply extends StatelessWidget {
     List<String> urls = urlMatches
         .map((urlMatch) => text.substring(urlMatch.start, urlMatch.end))
         .toList();
-    urls.forEach((x) => print(x));
+    for (var x in urls) {
+      print(x);
+    }
     // final urlRegExp = RegExp(
     //     r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
     // final urlMatches = urlRegExp.allMatches(textData);
@@ -832,7 +838,7 @@ class MessageReply extends StatelessWidget {
     var hour = time.toDate().hour;
     var min = time.toDate().minute;
 
-    var ampm;
+    String ampm;
     if (hour > 12) {
       hour = hour % 12;
       ampm = 'pm';
@@ -1033,7 +1039,7 @@ class Group extends StatelessWidget {
     var hour = time.toDate().hour;
     var min = time.toDate().minute;
 
-    var ampm;
+    String ampm;
     if (hour > 12) {
       hour = hour % 12;
       ampm = 'pm';
@@ -1098,7 +1104,9 @@ class Group extends StatelessWidget {
       List<String> urls = urlMatches
           .map((urlMatch) => text.substring(urlMatch.start, urlMatch.end))
           .toList();
-      urls.forEach((x) => print(x));
+      for (var x in urls) {
+        print(x);
+      }
       // final urlRegExp = RegExp(
       //     r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
       // final urlMatches = urlRegExp.allMatches(textData);
@@ -1393,7 +1401,7 @@ class WalletListTile extends StatelessWidget {
   final CoinMarketData coinMarketData;
   final String fiatValue;
 
-  WalletListTile({
+  const WalletListTile({Key key, 
     @required this.image,
     @required this.title,
     @required this.subtext,
@@ -1402,7 +1410,7 @@ class WalletListTile extends StatelessWidget {
     this.wallet,
     this.fiatValue,
     this.fiatSymbol,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1507,7 +1515,7 @@ class BrowserContainer extends StatelessWidget {
   final String image;
   final String title;
 
-  BrowserContainer({this.image, this.title});
+  const BrowserContainer({Key key, this.image, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1553,7 +1561,7 @@ class BrowserContainer2 extends StatelessWidget {
   final String image;
   final String title;
 
-  BrowserContainer2({this.image, this.title});
+  const BrowserContainer2({Key key, this.image, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1571,7 +1579,7 @@ class BrowserContainer2 extends StatelessWidget {
                 const BoxShadow(
                   color: Color(0x3f000000),
                   blurRadius: 8,
-                  offset: const Offset(0, 2),
+                  offset: Offset(0, 2),
                 ),
               ],
               image: DecorationImage(
@@ -1585,7 +1593,7 @@ class BrowserContainer2 extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            color: const Color(0xff0e014c),
+            color: Color(0xff0e014c),
             fontSize: 11,
           ),
         ),
@@ -1598,7 +1606,7 @@ class BrowserContainer3 extends StatelessWidget {
   final String image;
   final String title;
 
-  BrowserContainer3({this.image, this.title});
+  const BrowserContainer3({Key key, this.image, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1615,9 +1623,9 @@ class BrowserContainer3 extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 const BoxShadow(
-                  color: const Color(0x3f000000),
+                  color: Color(0x3f000000),
                   blurRadius: 8,
-                  offset: const Offset(0, 2),
+                  offset: Offset(0, 2),
                 ),
               ],
             ),
@@ -1633,7 +1641,7 @@ class BrowserContainer3 extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            color: const Color(0xff0e014c),
+            color: Color(0xff0e014c),
             fontSize: 11,
           ),
         ),
@@ -1646,7 +1654,7 @@ class BrowserContainer4 extends StatelessWidget {
   final String image;
   final String title;
 
-  BrowserContainer4({this.image, this.title});
+  const BrowserContainer4({Key key, this.image, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1691,6 +1699,8 @@ class BrowserContainer4 extends StatelessWidget {
 }
 
 class ContainerButton extends StatelessWidget {
+  const ContainerButton({Key key}) : super(key: key);
+
   // const ContainerButton({Key key}) : super(key: key);
 
   @override
@@ -1701,9 +1711,9 @@ class ContainerButton extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: [
           const BoxShadow(
-            color: const Color(0x0c000234),
+            color: Color(0x0c000234),
             blurRadius: 12,
-            offset: const Offset(0, 4),
+            offset: Offset(0, 4),
           ),
         ],
         borderRadius: BorderRadius.circular(10),
