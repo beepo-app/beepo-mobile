@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:beepo/Models/user_model.dart';
-import 'package:beepo/extensions.dart';
+import 'package:beepo/Utils/extensions.dart';
 import 'package:beepo/response.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
@@ -61,7 +61,7 @@ class StoryUploadMethod {
               .toJson();
           await storiesCollection.doc(userM['uid']).set(storyData);
           await usersWithStoriesCollection.add(storyData);
-              // .toJson());
+          // .toJson());
           return right(const Success());
         },
       );

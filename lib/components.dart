@@ -5,8 +5,8 @@ import 'package:beepo/Screens/moments/story_download_provider.dart';
 
 // import 'package:beepo/story_screen.dart';
 import 'package:beepo/Screens/moments/story_view.dart';
-import 'package:beepo/extensions.dart';
-import 'package:beepo/provider.dart';
+import 'package:beepo/Utils/extensions.dart';
+import 'package:beepo/Providers/provider.dart';
 import 'package:beepo/Screens/Messaging/chats/search.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';

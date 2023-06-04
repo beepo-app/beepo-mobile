@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:beepo/constants.dart';
-import 'package:beepo/sizing.dart';
+import 'package:beepo/Utils/sizing.dart';
 
 const kwelcomeTextStyle = TextStyle(
   fontSize: 20,

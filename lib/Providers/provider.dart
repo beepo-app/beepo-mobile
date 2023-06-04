@@ -22,7 +22,7 @@ import 'package:record_mp3/record_mp3.dart';
 import 'package:rsa_encrypt/rsa_encrypt.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
-import 'Utils/functions.dart';
+import '../Utils/functions.dart';
 
 class ChatNotifier extends ChangeNotifier {
   final List<String> _users = [];
@@ -42,19 +42,19 @@ class ChatNotifier extends ChangeNotifier {
   // String decrypted;
   Encrypted encrypted;
 
-bool enableScreenShot = false;
+  bool enableScreenShot = false;
   bool enableMedia = false;
 
   Future<void> secureScreen() async {
     await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
-
   }
-  screenshot(){
+
+  screenshot() {
     enableScreenShot = !enableScreenShot;
     notifyListeners();
   }
 
-  enable(){
+  enable() {
     enableMedia = !enableMedia;
     notifyListeners();
   }
@@ -664,7 +664,6 @@ bool enableScreenShot = false;
     });
   }
 
-
   uploadAudioGroup(String path) {
     final Reference firebaseStorageRef = FirebaseStorage.instance.ref().child(
         'profilepics/audio/group/${DateTime.now().millisecondsSinceEpoch.toString()}}.jpg');
@@ -702,9 +701,7 @@ bool enableScreenShot = false;
         // });
       });
 
-      var ref2 = FirebaseFirestore.instance
-          .collection("groups")
-          .doc('beepo');
+      var ref2 = FirebaseFirestore.instance.collection("groups").doc('beepo');
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         transaction.set(ref2, {
           "sender": userM['uid'],
@@ -721,7 +718,6 @@ bool enableScreenShot = false;
         notifyListeners();
         // });
       });
-
 
       scrollController.animateTo(0.0,
           duration: Duration(milliseconds: 100), curve: Curves.bounceInOut);

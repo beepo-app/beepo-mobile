@@ -76,7 +76,9 @@ class _CreateAccountState extends State<CreateAccount> {
                   bottom: 10,
                   child: GestureDetector(
                     onTap: () {
-                      ImageUtil().pickProfileImage(context: context).then((value) {
+                      ImageUtil()
+                          .pickProfileImage(context: context)
+                          .then((value) {
                         if (value != null) {
                           setState(() {
                             selectedImage = value;
@@ -121,58 +123,10 @@ class _CreateAccountState extends State<CreateAccount> {
               text: 'Next',
               color: Color(0xffFF9C34),
               onPressed: () async {
-                if (displayName.text.trim().isEmpty || selectedImage == null) {
-                  showToast('Please enter a display name and picture');
+                if (displayName.text.trim().isEmpty) {
+                  showToast('Please enter a display name');
                   return;
                 } else {
-                  // Get.to(
-                  //   Material(
-                  //     child: Container(
-                  //       width: double.infinity,
-                  //       height: double.infinity,
-                  //       color: Colors.white,
-                  //       child: Padding(
-                  //         padding: const EdgeInsets.all(20),
-                  //         child: Center(
-                  //           child: Column(
-                  //             mainAxisSize: MainAxisSize.min,
-                  //             children: [
-                  //               Padding(
-                  //                 padding: const EdgeInsets.all(8.0),
-                  //                 child: Lottie.asset(
-                  //                   'assets/lottie/lottie_1.json',
-                  //                   height: 150,
-                  //                   width: 150,
-                  //                 ),
-                  //               ),
-                  //               Text(
-                  //                 'Creating account...',
-                  //                 style: Get.textTheme.headline6,
-                  //               ),
-                  //               const SizedBox(height: 10),
-                  //             ],
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  //   fullscreenDialog: true,
-                  // );
-
-                  // String imageUrl = "https://steveii.png";
-                  // if (selectedImage != null) {
-                  //   imageUrl = await MediaService.uploadProfilePicture(selectedImage);
-                  // }
-
-                  // bool result = await AuthService().createUser(
-                  //   displayName.text.trim(),
-                  //   imageUrl,
-                  // );
-
-                  // Get.back();
-                  // if (result) {
-                  //   showToast('Account created successfully');
-                  // }
                   Get.to(PinCode(
                     image: selectedImage,
                     name: displayName.text.trim(),

@@ -19,15 +19,8 @@ class XMTPProvider extends ChangeNotifier {
     getClient();
   }
 
-  String juliAddress = '0x79079ac2e60435859e5f66b6ba32fd6d7f0131e2';
-  String juli = "0x570889340d42e0017DeAecf2Df626Bc175A8BBbb";
   final String _conversationId = 'chat';
   final Box _box = Hive.box(kAppName);
-
-  String get userHdWalletAddress {
-    Map userM = _box.get('userData');
-    return userM['hdWalletAddress'];
-  }
 
   xmtp.Client client;
 
@@ -101,11 +94,7 @@ class XMTPProvider extends ChangeNotifier {
 
   //list conversations stream
   Stream<xmtp.DecodedMessage> streamMessages({xmtp.Conversation convo}) {
-    try {
-      return client.streamMessages(convo);
-    } catch (e) {
-      print(e);
-    }
+    return client.streamMessages(convo);
   }
 
   //send message

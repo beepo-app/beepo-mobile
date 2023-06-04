@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_this, avoid_print
 
-import 'package:beepo/extensions.dart';
-import 'package:beepo/provider.dart';
+import 'package:beepo/Utils/extensions.dart';
+import 'package:beepo/Providers/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';

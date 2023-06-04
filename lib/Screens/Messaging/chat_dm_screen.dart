@@ -30,16 +30,14 @@ import 'package:swipe_to/swipe_to.dart';
 import 'package:uuid/uuid.dart';
 import 'package:voice_message_package/voice_message_package.dart';
 
+import '../../Utils/functions.dart';
 import '../../bottom_nav.dart';
 import '../../components.dart';
-import '../../generate_keywords.dart';
-import '../../provider.dart';
+import '../../Providers/provider.dart';
 import '../Profile/user_profile_screen.dart';
 import 'calls/calll_notify.dart';
 import 'custom_voice_recorder_widget.dart';
 import 'services/chat_methods.dart';
-
-const APP_ID = '29454d2c6f01445fbbb6db095adec156';
 
 class ChatDm extends StatefulWidget {
   final UserModel model;

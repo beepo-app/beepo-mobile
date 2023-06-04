@@ -11,7 +11,7 @@ import 'package:hive/hive.dart';
 import 'package:linkwell/linkwell.dart';
 import 'package:provider/provider.dart';
 
-import '../../provider.dart';
+import '../../Providers/provider.dart';
 
 class MediaLinks extends StatefulWidget {
   // const UserProfile({Key key}) : super(key: key);
@@ -33,9 +33,8 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
 
   @override
   void initState() {
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if(context.watch<ChatNotifier>().enableScreenShot == true){
+      if (context.watch<ChatNotifier>().enableScreenShot == true) {
         Provider.of<ChatNotifier>(context, listen: false).secureScreen();
       }
     });
@@ -322,8 +321,8 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
                             .collection('messageList')
                             .where('type', isEqualTo: 'message')
                             .snapshots(),
-                        builder: (context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (snapshot.hasData) {
                             return ListView.builder(
                                 itemCount: snapshot.data.docs.length,
@@ -346,9 +345,16 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
                                       // width: 50,
                                       height: 50,
                                       // width: MediaQuery.of(context).size.width * 0.5,
-                                      decoration: BoxDecoration(color: primaryColor, borderRadius: BorderRadius.circular(15)),
+                                      decoration: BoxDecoration(
+                                          color: primaryColor,
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
                                       margin: EdgeInsets.only(top: 10),
-                                      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.5),
+                                      constraints: BoxConstraints(
+                                          maxWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.5),
                                       alignment: Alignment.center,
                                       child: LinkWell(
                                           snapshot.data.docs[index]['text'],
@@ -378,7 +384,6 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
   }
 }
 
-
 class MediaLinksGroup extends StatefulWidget {
   // const UserProfile({Key key}) : super(key: key);
   final String image;
@@ -389,7 +394,8 @@ class MediaLinksGroup extends StatefulWidget {
   State<MediaLinksGroup> createState() => _MediaLinksGroupState();
 }
 
-class _MediaLinksGroupState extends State<MediaLinksGroup> with TickerProviderStateMixin {
+class _MediaLinksGroupState extends State<MediaLinksGroup>
+    with TickerProviderStateMixin {
   bool enable = false;
   bool enable2 = true;
   bool enable3 = false;
@@ -400,7 +406,7 @@ class _MediaLinksGroupState extends State<MediaLinksGroup> with TickerProviderSt
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if(context.watch<ChatNotifier>().enableScreenShot == true){
+      if (context.watch<ChatNotifier>().enableScreenShot == true) {
         Provider.of<ChatNotifier>(context, listen: false).secureScreen();
       }
     });
@@ -440,7 +446,7 @@ class _MediaLinksGroupState extends State<MediaLinksGroup> with TickerProviderSt
         child: Column(
           children: [
             Container(
-              height: MediaQuery.of(context).size.height*0.34,
+              height: MediaQuery.of(context).size.height * 0.34,
               width: double.infinity,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
@@ -462,10 +468,8 @@ class _MediaLinksGroupState extends State<MediaLinksGroup> with TickerProviderSt
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(60),
-                      child: Hero(
-                        tag: 'imagex',
-                        child: Image.asset(widget.image)
-                      ),
+                      child:
+                          Hero(tag: 'imagex', child: Image.asset(widget.image)),
                     ),
                   ),
                   SizedBox(height: 12),
@@ -579,12 +583,12 @@ class _MediaLinksGroupState extends State<MediaLinksGroup> with TickerProviderSt
                                         onTap: () {
                                           Navigator.push(context,
                                               MaterialPageRoute(builder: (_) {
-                                                return FullScreenImage(
-                                                  imageUrl: snapshot
-                                                      .data.docs[index]['content'],
-                                                  tag: "images$index",
-                                                );
-                                              }));
+                                            return FullScreenImage(
+                                              imageUrl: snapshot
+                                                  .data.docs[index]['content'],
+                                              tag: "images$index",
+                                            );
+                                          }));
                                         },
                                         child: ClipRRect(
                                           child: Hero(
@@ -596,7 +600,7 @@ class _MediaLinksGroupState extends State<MediaLinksGroup> with TickerProviderSt
                                             ),
                                           ),
                                           borderRadius:
-                                          BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                         ),
                                       ),
                                     );
@@ -632,16 +636,16 @@ class _MediaLinksGroupState extends State<MediaLinksGroup> with TickerProviderSt
                                         decoration: BoxDecoration(
                                           // color: Colors.grey,
                                           borderRadius:
-                                          BorderRadius.circular(15),
+                                              BorderRadius.circular(15),
                                         ),
                                         child: ClipRRect(
                                           child: CachedNetworkImage(
                                             imageUrl: snapshot.data.docs[index]
-                                            ['content'],
+                                                ['content'],
                                             fit: BoxFit.fill,
                                           ),
                                           borderRadius:
-                                          BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                         ),
                                       ),
                                     );
@@ -663,40 +667,48 @@ class _MediaLinksGroupState extends State<MediaLinksGroup> with TickerProviderSt
                             .collection('groupMessages')
                             .where('type', isEqualTo: 'message')
                             .snapshots(),
-                        builder: (context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (snapshot.hasData) {
                             return ListView.builder(
                                 itemCount: snapshot.data.docs.length,
                                 itemBuilder: (context, index) {
                                   if (snapshot.data.docs[index]['text']
-                                      .toString()
-                                      .split('?')
-                                      .first
-                                      .split('.')
-                                      .last ==
-                                      'com' ||
+                                              .toString()
+                                              .split('?')
+                                              .first
+                                              .split('.')
+                                              .last ==
+                                          'com' ||
                                       snapshot.data.docs[index]['text']
-                                          .toString()
-                                          .split('?')
-                                          .first
-                                          .split('.')
-                                          .last ==
+                                              .toString()
+                                              .split('?')
+                                              .first
+                                              .split('.')
+                                              .last ==
                                           'net/') {
                                     return Container(
                                       // width: 50,
                                       height: 50,
                                       // width: MediaQuery.of(context).size.width * 0.5,
-                                      decoration: BoxDecoration(color: secondaryColor, borderRadius: BorderRadius.circular(15)),
+                                      decoration: BoxDecoration(
+                                          color: secondaryColor,
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
                                       margin: EdgeInsets.only(top: 10),
-                                      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.5),
+                                      constraints: BoxConstraints(
+                                          maxWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.5),
                                       alignment: Alignment.center,
                                       child: LinkWell(
                                           snapshot.data.docs[index]['text'],
                                           linkStyle: TextStyle(
                                             fontFamily: 'Roboto',
                                             color: Colors.white,
-                                            decoration: TextDecoration.underline,
+                                            decoration:
+                                                TextDecoration.underline,
                                             fontSize: 11,
                                           )),
                                     );

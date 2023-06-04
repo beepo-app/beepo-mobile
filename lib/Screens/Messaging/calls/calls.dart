@@ -13,12 +13,14 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../Constants/app_constants.dart';
 import '../../../Models/user_model.dart';
 import '../../../Utils/styles.dart';
-import '../../../provider.dart';
+import '../../../Providers/provider.dart';
 import 'calll_notify.dart';
 
 List<Widget> callLog = [];
+
 class VideoCall extends StatefulWidget {
   final String channelName;
   final ClientRole role;
@@ -44,7 +46,6 @@ class _VideoCallState extends State<VideoCall>
   bool muted = false;
   bool viewPanel = false;
   RtcEngine _engine;
-
 
   AnimationController _controller;
 
@@ -91,7 +92,7 @@ class _VideoCallState extends State<VideoCall>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if(context.watch<ChatNotifier>().enableScreenShot == true){
+      if (context.watch<ChatNotifier>().enableScreenShot == true) {
         Provider.of<ChatNotifier>(context, listen: false).secureScreen();
       }
     });
@@ -537,15 +538,22 @@ class _VideoCallState extends State<VideoCall>
                 const SizedBox(
                   height: 53,
                 ),
-                const Text('Calling...', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20,),),
-                const SizedBox(height: 20,),
+                const Text(
+                  'Calling...',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 20,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
                 RawMaterialButton(
                   onPressed: () {
                     Calls().endCall(
                       const Uuid().v4(),
                     );
                     setState(() {
-
                       callLog.add(ListTile(
                         contentPadding: EdgeInsets.zero,
                         leading: ClipRRect(

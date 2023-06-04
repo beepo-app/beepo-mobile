@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 
 import '../Constants/network.dart';
 import '../Models/user_model.dart';
-import '../generate_keywords.dart';
+import '../Utils/functions.dart';
 import 'media.dart';
 
 class AuthService {
@@ -46,15 +46,11 @@ class AuthService {
       //Encrypt PIN
       String encryptedPin = await EncryptionService().encrypt(pin);
 
-      print('waiting for image upload');
-
       // Upload image and get image url
       String imageUrl = "";
       if (img != null) {
         imageUrl = await MediaService.uploadProfilePicture(img);
       }
-      print('image upload');
-
       //If image was selected, add to the body of the request
 
       var body = {'displayName': displayName, "encrypted_pin": encryptedPin};
@@ -88,7 +84,8 @@ class AuthService {
           name: displayName,
           image: imageUrl,
           userName: data['user']['username'],
-          hdWalletAddress: data['user']['hdWalletAddress'],
+          hdWalletAddress: data['hdWalletAddress'],
+          bitcoinWalletAddress: data['bitcoinWalletAddress'],
         );
         await FirebaseFirestore.instance
             .collection('users')
@@ -110,6 +107,7 @@ class AuthService {
   //Get User
   Future<Map> getUser() async {
     try {
+      log(AuthService().accessToken);
       final response = await http.post(
         Uri.parse('$baseUrl/users/authenticated'),
         headers: {
@@ -254,7 +252,6 @@ class AuthService {
   Future<String> retrievePassphrase() async {
     try {
       String encryptedPin = await EncryptionService().encrypt(userPin);
-      log(box.get('PIN'));
       print(AuthService().accessToken);
       final response = await http.post(
         Uri.parse('$baseUrl/wallet/recover-seedphrase'),

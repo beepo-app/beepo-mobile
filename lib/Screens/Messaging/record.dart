@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:beepo/Utils/styles.dart';
-import 'package:beepo/provider.dart';
+import 'package:beepo/Providers/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -191,7 +191,6 @@ class _RecordButtonState extends State<RecordButton> {
               context.read<ChatNotifier>().stopRecord(widget.model.uid);
               context.read<ChatNotifier>().durationCalc();
 
-
               setState(() {
                 isLocked = false;
               });
@@ -254,17 +253,14 @@ class _RecordButtonState extends State<RecordButton> {
             Timer(const Duration(milliseconds: 1440), () async {
               widget.controller.reverse();
               debugPrint("Cancelled recording");
-              context
-                  .read<ChatNotifier>()
-                  .cancelRecord();
+              context.read<ChatNotifier>().cancelRecord();
               // var filePath = await record.stop();
               // debugPrint(filePath);
               // File(filePath).delete();
               // debugPrint("Deleted $filePath");
               showLottie = false;
             });
-          } else
-          if (checkIsLocked(details.localPosition)) {
+          } else if (checkIsLocked(details.localPosition)) {
             widget.controller.reverse();
 
             // Vibrate.feedback(FeedbackType.heavy);

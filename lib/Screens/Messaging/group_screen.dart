@@ -26,8 +26,8 @@ import 'package:voice_message_package/voice_message_package.dart';
 import '../../../../Widgets/toasts.dart';
 import '../../../../bottom_nav.dart';
 import '../../../../components.dart';
-import '../../../../provider.dart';
-import '../../generate_keywords.dart';
+import '../../Providers/provider.dart';
+import '../../Utils/functions.dart';
 import 'custom_voice_recorder_widget.dart';
 import 'services/chat_methods.dart';
 

@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:beepo/Screens/moments/story_settings_modal.dart';
 import 'package:beepo/Screens/moments/story_upload_provider.dart';
-import 'package:beepo/text_styles.dart';
+import 'package:beepo/Constants/text_styles.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -67,7 +67,6 @@ class _AddStoryState extends State<AddStory> {
 
   @override
   void initState() {
-
     super.initState();
     controlle = CameraController(
       // Get a specific camera from the list of available cameras.
@@ -77,7 +76,6 @@ class _AddStoryState extends State<AddStory> {
     );
     initializeControllerFuture = controlle.initialize();
     selected = widget.camera1;
-
   }
 
   @override
@@ -100,29 +98,27 @@ class _AddStoryState extends State<AddStory> {
                     height: MediaQuery.of(context).size.height,
                     alignment: Alignment.topCenter,
                     decoration: BoxDecoration(
+                      // If the selected media is an image, show the selected image,
+                      // else it is a video, show the video thumbnail.
+                      // If no media is selected, decoration image will be null.
 
-
-                        // If the selected media is an image, show the selected image,
-                        // else it is a video, show the video thumbnail.
-                        // If no media is selected, decoration image will be null.
-
-                        // If image is selected (file is not null)
-                        image: (selectedFile != null &&
-                                selectedMediaType == "image")
-                            ? DecorationImage(
-                                image: FileImage(File(selectedFile.path)),
-                                fit: BoxFit.contain,
-                              )
-                            // If video is selected (file is not null)
-                            : (selectedFile != null &&
-                                    selectedMediaType == "video" &&
-                                    videoThumbnail != null)
-                                ? DecorationImage(
-                                    image: MemoryImage(videoThumbnail),
-                                    fit: BoxFit.contain,
-                                  )
-                                : null,
-                        color: Colors.black,
+                      // If image is selected (file is not null)
+                      image:
+                          (selectedFile != null && selectedMediaType == "image")
+                              ? DecorationImage(
+                                  image: FileImage(File(selectedFile.path)),
+                                  fit: BoxFit.contain,
+                                )
+                              // If video is selected (file is not null)
+                              : (selectedFile != null &&
+                                      selectedMediaType == "video" &&
+                                      videoThumbnail != null)
+                                  ? DecorationImage(
+                                      image: MemoryImage(videoThumbnail),
+                                      fit: BoxFit.contain,
+                                    )
+                                  : null,
+                      color: Colors.black,
                     ),
                     child: (selectedFile != null)
                         ? const SizedBox.shrink()
@@ -149,22 +145,22 @@ class _AddStoryState extends State<AddStory> {
                     //         style: context.textTheme.headline5,
                     //       ),
                   ),
-                    // The upload button is only visible when the user has selected a file
-                    Align(
-                      alignment: Alignment.topLeft,
-                      //TODO: Detect when the user navigates away from the screen without pressing the close button
-                      // and call reset() on the provider
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          context.read<StoryUploadProvider>().reset();
-                        },
-                        icon: const Icon(
-                          Icons.close,
-                          color: Colors.white,
-                        ),
+                  // The upload button is only visible when the user has selected a file
+                  Align(
+                    alignment: Alignment.topLeft,
+                    //TODO: Detect when the user navigates away from the screen without pressing the close button
+                    // and call reset() on the provider
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        context.read<StoryUploadProvider>().reset();
+                      },
+                      icon: const Icon(
+                        Icons.close,
+                        color: Colors.white,
                       ),
                     ),
+                  ),
                   Align(
                     alignment: Alignment.topRight,
                     child: IconButton(

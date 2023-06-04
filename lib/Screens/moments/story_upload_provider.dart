@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:beepo/extensions.dart';
+import 'package:beepo/Utils/extensions.dart';
 import 'package:beepo/response.dart';
 import 'package:beepo/Screens/moments/story_upload_method.dart';
 import 'package:camera/camera.dart';
@@ -95,11 +95,12 @@ class StoryUploadProvider extends ChangeNotifier {
   }
 
   //TODO: Request permission to access media and camera
-  Future<Either<Failure, Success>> pickMediaGallery(BuildContext context) async {
+  Future<Either<Failure, Success>> pickMediaGallery(
+      BuildContext context) async {
     try {
       _setStoryUploadStatus(StoryUploadStatus.gettingReady);
       //TODO: Add permission check
-      List<AssetEntity>  result =  await AssetPicker.pickAssets(
+      List<AssetEntity> result = await AssetPicker.pickAssets(
         context,
         pickerConfig: const AssetPickerConfig(
           maxAssets: 1,
@@ -110,9 +111,11 @@ class StoryUploadProvider extends ChangeNotifier {
       if (result != null) {
         _selectFile(await result.first.file);
         if (_file != null) {
-          result.first.type ==  AssetType.image?
-          _setMediaType("image") :
-          result.first.type ==  AssetType.video? _setMediaType('video') : _setMediaType("audio");
+          result.first.type == AssetType.image
+              ? _setMediaType("image")
+              : result.first.type == AssetType.video
+                  ? _setMediaType('video')
+                  : _setMediaType("audio");
 
           final story = StoryModel(
             mediaType: _mediaType,
@@ -161,7 +164,6 @@ class StoryUploadProvider extends ChangeNotifier {
   }
 
   Future<Either<Failure, Success>> pickImageCamera1() async {
-
     try {
       // await initializeControllerFuture;
       _setStoryUploadStatus(StoryUploadStatus.gettingReady);
