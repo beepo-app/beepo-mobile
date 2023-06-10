@@ -1,6 +1,8 @@
+import 'dart:developer';
 import 'dart:typed_data';
 import 'package:beepo/Constants/app_constants.dart';
 import 'package:beepo/Service/auth.dart';
+import 'package:beepo/Widgets/toasts.dart';
 import 'package:convert/convert.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -31,13 +33,14 @@ class XMTPProvider extends ChangeNotifier {
         client = await initClientFromKey();
         notifyListeners();
         // return client;
+        print('from key client');
       } else {
         client = await initClient();
         notifyListeners();
         // return client;
+        print('new client');
       }
     }
-    print('object');
     // return client;
   }
 
@@ -46,30 +49,36 @@ class XMTPProvider extends ChangeNotifier {
     try {
       // Generate the seed from the seed phrase
       String phrase = await AuthService().retrievePassphrase();
-      final seed = bip39.mnemonicToSeed(phrase);
-      final root = bip32.BIP32.fromSeed(seed);
+      log("phrase $phrase");
 
-      final firstChild = root.derivePath("m/44'/60'/0'/0/0");
-      final privateKeyHex = hex.encode(firstChild.privateKey);
+      if (phrase.isNotEmpty) {
+        final seed = bip39.mnemonicToSeed(phrase);
+        final root = bip32.BIP32.fromSeed(seed);
 
-      EthPrivateKey credentials =
-          EthPrivateKey.fromHex(privateKeyHex); //web3dart
-      var address = credentials.address; //web3dart
+        final firstChild = root.derivePath("m/44'/60'/0'/0/0");
+        final privateKeyHex = hex.encode(firstChild.privateKey);
 
-      print(address.hex);
-      print(address.hexEip55);
+        EthPrivateKey credentials =
+            EthPrivateKey.fromHex(privateKeyHex); //web3dart
+        var address = credentials.address; //web3dart
 
-      var api = xmtp.Api.create();
-      var client =
-          await xmtp.Client.createFromWallet(api, credentials.asSigner());
+        print(address.hex);
+        print(address.hexEip55);
 
-      Uint8List key = client.keys.writeToBuffer();
+        var api = xmtp.Api.create();
+        var client =
+            await xmtp.Client.createFromWallet(api, credentials.asSigner());
 
-      Hive.box(kAppName).put('xmpt_key', key);
+        Uint8List key = client.keys.writeToBuffer();
 
-      print(client.address);
-      notifyListeners();
-      return client;
+        Hive.box(kAppName).put('xmpt_key', key);
+
+        print(client.address);
+        notifyListeners();
+        return client;
+      } else {
+        return null;
+      }
     } catch (e) {
       print(e);
       return null;
@@ -139,6 +148,7 @@ class XMTPProvider extends ChangeNotifier {
       );
       return convo;
     } catch (e) {
+      showToast('User is not on XMTP network');
       dev.log(e.toString());
       return null;
     }

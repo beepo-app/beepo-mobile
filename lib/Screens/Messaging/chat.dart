@@ -57,58 +57,49 @@ class _ChatScreenState extends State<ChatScreen> {
               labelBackgroundColor: txtColor1,
             ),
           ],
-          body: FutureBuilder(
-              future: EncryptionService().decryptSeedPhrase(),
-              builder: (context, AsyncSnapshot snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                print(snapshot.data);
-                return Container(
-                  width: double.infinity,
-                  color: txtColor1,
-                  child: Column(
-                    children: const [
-                      SizedBox(height: 50),
-                      TabBar(
-                        indicatorColor: Colors.white,
-                        tabs: [
-                          Tab(
-                            child: Text(
-                              "Chats",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                          Tab(
-                            child: Text(
-                              "Calls",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Expanded(
-                        child: TabBarView(
-                          children: [
-                            ChatTab(),
-                            CallTab(),
-                          ],
+          body: Container(
+            width: double.infinity,
+            color: txtColor1,
+            child: Column(
+              children: const [
+                SizedBox(height: 50),
+                TabBar(
+                  indicatorColor: Colors.white,
+                  tabs: [
+                    Tab(
+                      child: Text(
+                        "Chats",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
+                    ),
+                    Tab(
+                      child: Text(
+                        "Calls",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      ChatTab(),
+                      CallTab(),
                     ],
                   ),
-                );
-              }),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -4,10 +4,12 @@ import 'dart:io';
 
 import 'package:beepo/Constants/app_constants.dart';
 import 'package:beepo/Service/encryption.dart';
+import 'package:beepo/Service/xmtp.dart';
 import 'package:beepo/Widgets/toasts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 import '../Constants/network.dart';
 import '../Models/user_model.dart';
@@ -69,14 +71,14 @@ class AuthService {
         body: json.encode(body),
       );
 
-      log(response.body);
+      print(response.body);
       if (response.statusCode == 201 || response.statusCode == 200) {
         var data = json.decode(response.body);
 
-        box.put('seedphrase', data['encrypted_seedphrase']);
-        box.put('accessToken', data['access_token']);
-        box.put('isLogged', true);
-        box.put('userData', data['user']);
+        await box.put('seedphrase', data['encrypted_seedphrase']);
+        await box.put('accessToken', data['access_token']);
+        await box.put('isLogged', true);
+        await box.put('userData', data['user']);
 
         UserModel user = UserModel(
           uid: data['user']['uid'],
@@ -87,6 +89,7 @@ class AuthService {
           hdWalletAddress: data['hdWalletAddress'],
           bitcoinWalletAddress: data['bitcoinWalletAddress'],
         );
+
         await FirebaseFirestore.instance
             .collection('users')
             .doc(data['user']['uid'])
@@ -176,8 +179,8 @@ class AuthService {
 
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
-        Hive.box(kAppName).put('contextId', data['contextId']);
-        Hive.box(kAppName).put('serverPublicKey', data['serverPublicKey']);
+        box.put('contextId', data['contextId']);
+        box.put('serverPublicKey', data['serverPublicKey']);
         return data;
       } else {
         print(response.body);
@@ -249,16 +252,23 @@ class AuthService {
   }
 
   //Retrieve Passphrase
-  Future<String> retrievePassphrase() async {
+  Future<String> retrievePassphrase({String pin}) async {
     try {
-      String encryptedPin = await EncryptionService().encrypt(userPin);
-      print(AuthService().accessToken);
+      String encryptedPin;
+      print('pin: $pin');
+      print('seedphrase: ${box.get('seedphrase')}');
+      print('accessToken: ${box.get('accessToken')}');
+      if (pin != null) {
+        encryptedPin = pin;
+      } else {
+        encryptedPin = await EncryptionService().encrypt(userPin);
+      }
       final response = await http.post(
         Uri.parse('$baseUrl/wallet/recover-seedphrase'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          Headers.bearer: AuthService().accessToken,
+          Headers.bearer: box.get('accessToken'),
         },
         body: jsonEncode({
           'encrypted_pin': encryptedPin,
@@ -266,7 +276,9 @@ class AuthService {
         }),
       );
 
-      log(response.body);
+      print(response.statusCode);
+
+      print(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map result = jsonDecode(response.body);
@@ -276,10 +288,11 @@ class AuthService {
         );
         return phrase;
       } else {
-        print(response.body);
+        print("error retrieving phrase" + response.body);
         return "";
       }
     } catch (e) {
+      print("error retrieving phrase" + e.toString());
       return "";
     }
   }
@@ -318,6 +331,8 @@ class AuthService {
                   userName: username,
                   image: imgUrl,
                   searchKeywords: search,
+                  hdWalletAddress: data['hdWalletAddress'],
+                  bitcoinWalletAddress: data['bitcoinWalletAddress'],
                   uid: me['uid'])
               .toJson());
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -331,4 +346,42 @@ class AuthService {
       return false;
     }
   }
+
+  //get user from by address
+  // Future<UserModel> getUserByAddress(String address) async {
+  //   try {
+  //     var request = http.Request(
+  //       'GET',
+  //       Uri.parse('${baseUrl}users/detail'),
+  //     );
+  //     request.body = json.encode(
+  //         {"searchQuery": "0xFbBB4bc46c5f32D0013711E60222Ad41e4AB5AB5"});
+  //     request.headers.addAll({'Content-Type': 'application/json'});
+
+  //     http.StreamedResponse response = await request.send();
+
+  //     if (response.statusCode == 200) {
+  //       var data = await response.stream.bytesToString();
+
+  //       print(data);
+  //       var result = jsonDecode(data);
+  //       return UserModel(
+  //         name: result['displayName'],
+  //         userName: result['username'],
+  //         image: result['profilePictureUrl'],
+  //         uid: result['uid'],
+  //         hdWalletAddress: result['hdWalletAddress'],
+  //         bitcoinWalletAddress: result['bitcoinWalletAddress'],
+  //       );
+  //     } else {
+  //       print(await response.stream.bytesToString());
+
+  //       print(response.statusCode);
+  //       print(response.reasonPhrase);
+  //     }
+  //   } catch (e) {
+  //     showToast(e.toString());
+  //     return null;
+  //   }
+  // }
 }

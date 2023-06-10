@@ -39,58 +39,58 @@ class EncryptionService {
     }
   }
 
-  Future<bool> decryptSeedPhrase({String seedPhrase}) async {
-    try {
-      String decryptedSecretPhrase;
-      var helper = RsaKeyHelper();
+//   Future<bool> decryptSeedPhrase({String seedPhrase}) async {
+//     try {
+//       String decryptedSecretPhrase;
+//       var helper = RsaKeyHelper();
 
-      String serverPublicKey = box.get('serverPublicKey');
+//       String serverPublicKey = box.get('serverPublicKey');
 
-      String privateKey = box.get('privateKey');
+//       String privateKey = box.get('privateKey');
 
-      print(privateKey);
+//       print(privateKey);
 
-      // print(serverPublicKey);
+//       // print(serverPublicKey);
 
-      final encrypterer = encrypter.Encrypter(
-        encrypter.RSA(
-          publicKey: helper.parsePublicKeyFromPem(serverPublicKey),
-          privateKey: helper.parsePrivateKeyFromPem(privateKey),
-          encoding: encrypter.RSAEncoding.PKCS1,
-        ),
-      );
+//       final encrypterer = encrypter.Encrypter(
+//         encrypter.RSA(
+//           publicKey: helper.parsePublicKeyFromPem(serverPublicKey),
+//           privateKey: helper.parsePrivateKeyFromPem(privateKey),
+//           encoding: encrypter.RSAEncoding.PKCS1,
+//         ),
+//       );
 
-      decryptedSecretPhrase = seedPhrase ?? encrypterer.decrypt16(box.get('seedphrase'));
+//       decryptedSecretPhrase = seedPhrase ?? encrypterer.decrypt16(box.get('seedphrase'));
 
-      var hash256Bytes = await const DartSha256().hash(decryptedSecretPhrase.codeUnits);
+//       var hash256Bytes = await const DartSha256().hash(decryptedSecretPhrase.codeUnits);
 
-      var hash512Bytes = await const DartSha512().hash(decryptedSecretPhrase.codeUnits);
+//       var hash512Bytes = await const DartSha512().hash(decryptedSecretPhrase.codeUnits);
 
-      String hash256 = hex.encode(hash256Bytes.bytes);
-      String hash512 = hex.encode(hash512Bytes.bytes);
+//       String hash256 = hex.encode(hash256Bytes.bytes);
+//       String hash512 = hex.encode(hash512Bytes.bytes);
 
-      //Encrypt hash256
-      var encryptedHash256 = encrypterer.encrypt(hash256);
-      var encryptedHash512 = encrypterer.encrypt(hash512);
+//       //Encrypt hash256
+//       var encryptedHash256 = encrypterer.encrypt(hash256);
+//       var encryptedHash512 = encrypterer.encrypt(hash512);
 
-      // String accessToken = await AuthService().login(
-      //   encryptedHash256.base16,
-      //   encryptedHash512.base16,
-      // );
+//       // String accessToken = await AuthService().login(
+//       //   encryptedHash256.base16,
+//       //   encryptedHash512.base16,
+//       // );
 
-      //Access token must be decrypted and re-encrypted with the server public key
-      // var encryptedAccessToken = encrypterer.encrypt(encrypterer.decrypt16(accessToken));
-//
-      // box.put('EAT', encryptedAccessToken.base16);
+//       //Access token must be decrypted and re-encrypted with the server public key
+//       // var encryptedAccessToken = encrypterer.encrypt(encrypterer.decrypt16(accessToken));
+// //
+//       // box.put('EAT', encryptedAccessToken.base16);
 
-      // dev.log(encryptedAccessToken.base16);
+//       // dev.log(encryptedAccessToken.base16);
 
-      return true;
-    } catch (e) {
-      print(e);
-      return false;
-    }
-  }
+//       return true;
+//     } catch (e) {
+//       print(e);
+//       return false;
+//     }
+//   }
 
   Future<String> getSeedPhrase({String seedPhrase}) async {
     try {

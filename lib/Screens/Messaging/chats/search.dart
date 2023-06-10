@@ -11,6 +11,7 @@ import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:xmtp/xmtp.dart';
 
+import '../../../Models/user_model.dart';
 import '../../../Service/xmtp.dart';
 import 'chat_screen.dart';
 
@@ -65,35 +66,16 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
               return ListView.builder(
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
-                  final data = snapshot.data.docs[index].data();
+                  final user =
+                      UserModel.fromJson(snapshot.data.docs[index].data());
                   return _searchcontroller.text.isNotEmpty
                       ? ListTile(
                           onTap: () async {
-                            print(data);
-                            //Map users data
-                            Map usersData = {
-                              'uid': data['uid'],
-                              'name': data['name'],
-                              'image': data['image'] ?? '',
-                              'userName': data['userName'],
-                            };
-
-                            Map myData = Hive.box(kAppName).get('userData');
-
-                            print(usersData);
-                            print(myData);
-
+                            print(user.hdWalletAddress);
                             //combine users data and my data to a string
-                            Conversation convo = await context
+                            final convo = await context
                                 .read<XMTPProvider>()
-                                .newConversation(
-                              // data['hdWalletAddress'],
-                              "0xf0b1866a4bf374a32a60f88e35f72ada8a1e36ff",
-                              metadata: {
-                                'usersData': 'usersData',
-                                'myData': 'myData',
-                              },
-                            );
+                                .newConversation(user.hdWalletAddress);
 
                             if (convo == null) {
                               log('Conversation is null');
@@ -132,7 +114,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                             ),
                             child: ClipOval(
                               child: CachedNetworkImage(
-                                imageUrl: data['image'],
+                                imageUrl: user.image,
                                 placeholder: (context, url) =>
                                     Center(child: CircularProgressIndicator()),
                                 filterQuality: FilterQuality.high,
@@ -144,11 +126,11 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                             ),
                           ),
                           title: Text(
-                            data['userName'],
+                            user.name,
                             style: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.w600),
                           ),
-                          // subtitle: Text('@${data['username']}'),
+                          subtitle: Text('@' + user.userName),
                         )
                       : const SizedBox();
                 },

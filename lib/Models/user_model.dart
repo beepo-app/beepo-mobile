@@ -76,7 +76,9 @@ class UserModel {
         userName: json['userName'],
         image: json['image'],
         searchKeywords: json['searchKeywords'],
-        stories: json['stories'],
+        stories: (json['stories'] as List)
+            .map((e) => StoryModel.fromJson(e))
+            .toList(),
         hdWalletAddress: json['hdWalletAddress'],
       );
 
