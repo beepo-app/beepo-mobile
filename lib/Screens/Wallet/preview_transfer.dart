@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:beepo/Constants/app_constants.dart';
 import 'package:beepo/Screens/Wallet/transfer_success.dart';
+import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Service/transactions.dart';
 import 'package:beepo/Widgets/commons.dart';
 import 'package:beepo/Widgets/pin_code.dart';
@@ -10,31 +12,43 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:provider/provider.dart';
+import 'package:xmtp/xmtp.dart';
 
 import '../../Models/wallet.dart';
+import '../../Service/xmtp.dart';
 import '../../Utils/styles.dart';
 import '../../Widgets/components.dart';
 
-class SendToken2 extends StatefulWidget {
+class ConfirmTransfer extends StatefulWidget {
   final Wallet wallet;
   final double amount;
   final String address;
-  const SendToken2({Key key, this.wallet, this.amount, this.address})
-      : super(key: key);
+  final Conversation convo;
+  const ConfirmTransfer({
+    Key key,
+    this.wallet,
+    this.amount,
+    this.address,
+    this.convo,
+  }) : super(key: key);
 
   @override
-  State<SendToken2> createState() => _SendToken2State();
+  State<ConfirmTransfer> createState() => _ConfirmTransferState();
 }
 
-class _SendToken2State extends State<SendToken2> {
+class _ConfirmTransferState extends State<ConfirmTransfer> {
   @override
   Widget build(BuildContext context) {
+    print(widget.wallet.chainId.toString());
     return Scaffold(
       appBar: appBar('Confirm Transaction'),
       body: FutureBuilder<String>(
-        future: TransactionService()
-            .estimateGasFee(widget.wallet.chainId.toString()),
-        builder: (context, snapshot) {
+        future: TransactionService().estimateGasFee(
+            widget.wallet.ticker == "BITCOIN"
+                ? 'bitcoin'
+                : widget.wallet.chainId.toString()),
+        builder: (c, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -93,8 +107,6 @@ class _SendToken2State extends State<SendToken2> {
                   color: secondaryColor,
                   text: "Approve",
                   onPressed: () async {
-                    log(Hive.box(kAppName).get('PIN').toString());
-
                     TextEditingController controller = TextEditingController();
                     Get.bottomSheet(
                       BottomSheet(
@@ -106,7 +118,7 @@ class _SendToken2State extends State<SendToken2> {
                             topRight: Radius.circular(15),
                           ),
                         ),
-                        builder: (context) => Container(
+                        builder: (ctx) => Container(
                           height: Get.height * 0.6,
                           width: double.infinity,
                           decoration: const BoxDecoration(
@@ -133,7 +145,6 @@ class _SendToken2State extends State<SendToken2> {
                                   length: 4,
                                   onChanged: (val) {},
                                   controller: controller,
-                                  // enabled: false,
                                   readOnly: true,
                                   obscuringCharacter: '*',
                                   obscureText: true,
@@ -146,7 +157,7 @@ class _SendToken2State extends State<SendToken2> {
                                   ),
                                   onCompleted: (value) async {
                                     //confirm pin
-                                    String pin = Hive.box(kAppName).get('PIN');
+                                    String pin = AuthService().userPin;
 
                                     if (pin == value) {
                                       Get.back();
@@ -162,12 +173,37 @@ class _SendToken2State extends State<SendToken2> {
                                       );
                                       Get.back();
                                       if (result) {
-                                        Get.off(
-                                          TransferSuccess(
+                                        if (widget.convo != null) {
+                                          //send message
+                                          var trxDetails = {
+                                            'value': widget.amount.toString(),
+                                            'token': widget.wallet.ticker,
+                                            'address': widget.address,
+                                            'type': 'transfer',
+                                          };
+
+                                          context
+                                              .read<XMTPProvider>()
+                                              .sendMessage(
+                                                convo: widget.convo,
+                                                content: jsonEncode(trxDetails),
+                                              );
+                                          Get.to(
+                                            TransferSuccess(
                                               widget.address,
                                               widget.amount.toString(),
-                                              widget.wallet.ticker),
-                                        );
+                                              widget.wallet.ticker,
+                                            ),
+                                          );
+                                        } else {
+                                          Get.off(
+                                            TransferSuccess(
+                                              widget.address,
+                                              widget.amount.toString(),
+                                              widget.wallet.ticker,
+                                            ),
+                                          );
+                                        }
                                         return;
                                       }
                                     } else {

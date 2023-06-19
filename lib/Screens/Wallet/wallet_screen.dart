@@ -1,4 +1,3 @@
-
 import 'package:beepo/Models/balance.dart';
 import 'package:beepo/Models/market_data.dart';
 import 'package:beepo/Screens/Wallet/send_global.dart';
@@ -399,9 +398,6 @@ class WalletList extends StatelessWidget {
         }
 
         return WalletListTile(
-          image: wallet.logoUrl,
-          title: wallet.displayName,
-          subtext: wallet.ticker,
           amount: balance ?? 'N/A',
           wallet: wallet,
           coinMarketData: coinMarketData,

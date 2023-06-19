@@ -178,7 +178,7 @@ class _SendTokenState extends State<SendToken> {
                     showToast('Please enter a valid address');
                   } else {
                     Get.to(
-                      SendToken2(
+                      ConfirmTransfer(
                         wallet: widget.wallet,
                         amount: double.parse(amount.text),
                         address: address.text,

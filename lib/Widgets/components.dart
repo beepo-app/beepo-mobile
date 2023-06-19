@@ -192,9 +192,11 @@ class _ChatTabState extends State<ChatTab> {
         .doc(userM['uid'])
         .get();
 
-    tem.then((value) =>
-            // setState(() {
-            remove = value.data()['isRemoved'].toString()
+    tem.then((value) {
+      if (value.data() != null) {
+        remove = value.data()['isRemoved'].toString();
+      }
+    }
         // print(remove);
         );
     // }));
@@ -1402,9 +1404,6 @@ class CurrentUserStoryBubble extends StatelessWidget {
 }
 
 class WalletListTile extends StatelessWidget {
-  final String image;
-  final String title;
-  final String subtext;
   final String amount;
   final Wallet wallet;
   final String fiatSymbol;
@@ -1413,9 +1412,6 @@ class WalletListTile extends StatelessWidget {
 
   const WalletListTile({
     Key key,
-    @required this.image,
-    @required this.title,
-    @required this.subtext,
     @required this.amount,
     this.coinMarketData,
     this.wallet,
@@ -1453,7 +1449,7 @@ class WalletListTile extends StatelessWidget {
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(17),
           child: CachedNetworkImage(
-            imageUrl: image,
+            imageUrl: wallet.logoUrl,
             height: 34,
             width: 34,
             fit: BoxFit.cover,
@@ -1463,7 +1459,7 @@ class WalletListTile extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                title,
+                wallet.displayName,
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 14,

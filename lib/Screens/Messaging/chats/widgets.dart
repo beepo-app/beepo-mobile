@@ -2,8 +2,10 @@ import 'package:beepo/Service/users.dart';
 import 'package:beepo/Service/xmtp.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:xmtp/xmtp.dart';
 
 import '../../../Models/user_model.dart';
@@ -158,6 +160,66 @@ class ChatMessageWidget extends StatelessWidget {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class TransferPreview extends StatelessWidget {
+  final Map transfer;
+  final bool isMe;
+  const TransferPreview({Key key, this.transfer, this.isMe}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+      child: GestureDetector(
+        onTap: () {
+          launchUrl(Uri.parse(transfer['url']));
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.grey.withOpacity(.3),
+          ),
+          constraints: BoxConstraints(
+            maxWidth: Get.width * .4, // Get.width * .4
+          ),
+          width: Get.width * .4,
+          height: 100,
+          padding: EdgeInsets.all(10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    isMe ? Icons.arrow_upward : Icons.arrow_downward,
+                    size: 20,
+                    color: isMe ? Colors.red : Colors.green,
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    'You ${isMe ? 'sent' : 'received'}',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              Text(
+                '${transfer['value']} BNB',
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                  color: secondaryColor,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
