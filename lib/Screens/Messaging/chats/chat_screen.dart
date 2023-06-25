@@ -503,68 +503,72 @@ class _ChatControlsWidgetState extends State<ChatControlsWidget> {
               ],
             ),
           ),
-          messageController.text.isEmpty
-              ? IconButton(
-                  onPressed: () {
-                    // showModalBottomSheet(
-                    //     shape: const OutlineInputBorder(
-                    //         borderSide: BorderSide.none,
-                    //         borderRadius: BorderRadius.only(
-                    //             topLeft: Radius.circular(20),
-                    //             topRight: Radius.circular(20))),
-                    //     context: context,
-                    //     builder: (ctx) => CustomVoiceRecorderWidget(
-                    //           isGroupChat: false,
-                    //           receiverId: widget.model.uid,
-                    //         ));
-                  },
-                  icon: SvgPicture.asset(
-                    'assets/microphone.svg',
-                    width: 27,
-                    height: 27,
-                  ))
-              : IconButton(
-                  onPressed: () async {
-                    context.read<XMTPProvider>().sendMessage(
-                          convo: widget.convo,
-                          content: messageController.text,
-                        );
-                    messageController.clear();
+          // messageController.text.isEmpty
+          //     ? IconButton(
+          //         onPressed: () {
+          //           // showModalBottomSheet(
+          //           //     shape: const OutlineInputBorder(
+          //           //         borderSide: BorderSide.none,
+          //           //         borderRadius: BorderRadius.only(
+          //           //             topLeft: Radius.circular(20),
+          //           //             topRight: Radius.circular(20))),
+          //           //     context: context,
+          //           //     builder: (ctx) => CustomVoiceRecorderWidget(
+          //           //           isGroupChat: false,
+          //           //           receiverId: widget.model.uid,
+          //           //         ));
+          //         },
+          //         icon: SvgPicture.asset(
+          //           'assets/microphone.svg',
+          //           width: 27,
+          //           height: 27,
+          //         ))
+          //     :
+          IconButton(
+            onPressed: () async {
+              if (messageController.text.isEmpty) {
+                return;
+              }
+              context.read<XMTPProvider>().sendMessage(
+                    convo: widget.convo,
+                    content: messageController.text,
+                  );
+              messageController.clear();
 
-                    // // var status = await OneSignal.shared.getDeviceState();
-                    // //
-                    // // var playerId = status.userId;
-                    // await OneSignal.shared
-                    //     .postNotification(OSCreateNotification(
-                    //   playerIds: [player],
-                    //   content: context.read<ChatNotifier>().chatText,
-                    //   heading: 'Beepo',
-                    //   subtitle: userM['displayName'],
-                    //   sendAfter: DateTime.now(),
-                    //   buttons: [
-                    //     OSActionButton(text: "test1", id: "id1"),
-                    //     OSActionButton(text: "test2", id: "id2"),
-                    //   ],
-                    //   androidSound:
-                    //       'assets/mixkit-interface-hint-notification-911.wav',
-                    //   androidSmallIcon: 'assets/beepo_img.png',
-                    //
-                    // )
-                    // );
-                    // context.read<ChatNotifier>().clearText();
+              // // var status = await OneSignal.shared.getDeviceState();
+              // //
+              // // var playerId = status.userId;
+              // await OneSignal.shared
+              //     .postNotification(OSCreateNotification(
+              //   playerIds: [player],
+              //   content: context.read<ChatNotifier>().chatText,
+              //   heading: 'Beepo',
+              //   subtitle: userM['displayName'],
+              //   sendAfter: DateTime.now(),
+              //   buttons: [
+              //     OSActionButton(text: "test1", id: "id1"),
+              //     OSActionButton(text: "test2", id: "id2"),
+              //   ],
+              //   androidSound:
+              //       'assets/mixkit-interface-hint-notification-911.wav',
+              //   androidSmallIcon: 'assets/beepo_img.png',
+              //
+              // )
+              // );
+              // context.read<ChatNotifier>().clearText();
 
-                    // setState(() {
-                    //   isReplying = false;
-                    //   replyMessage = '';
-                    // });
-                    // EncryptData.encryptFernet(context.read<ChatNotifier>().chatText);
-                    // OneSignal.shared.
-                  },
-                  icon: const Icon(
-                    Icons.send,
-                    color: secondaryColor,
-                  ),
-                ),
+              // setState(() {
+              //   isReplying = false;
+              //   replyMessage = '';
+              // });
+              // EncryptData.encryptFernet(context.read<ChatNotifier>().chatText);
+              // OneSignal.shared.
+            },
+            icon: const Icon(
+              Icons.send,
+              color: secondaryColor,
+            ),
+          ),
           const SizedBox(width: 10)
         ],
       ),
