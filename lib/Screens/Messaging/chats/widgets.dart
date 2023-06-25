@@ -10,6 +10,7 @@ import 'package:xmtp/xmtp.dart';
 
 import '../../../Models/user_model.dart';
 import '../../../Utils/styles.dart';
+import 'chat_address.dart';
 import 'chat_screen.dart';
 
 class XMTPCoversationList extends StatelessWidget {
@@ -57,11 +58,41 @@ class ChatListItem extends StatelessWidget {
     return FutureBuilder<UserModel>(
       future: UsersService().getUserByAddress(convo.peer.hexEip55),
       builder: (ctx, user) {
-        if (user.hasError) {
-          return Text('data');
-        }
-        if (!user.hasData) {
+        if (!user.hasData && !user.hasError) {
           return LinearProgressIndicator();
+        }
+
+        //  if (user.hasError) {
+        //     r eturn Text(user.error);
+        //   }
+
+        print(user.hasError);
+        if (user.hasError && user.error.toString() == 'No user found') {
+          return ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: CircleAvatar(
+              backgroundColor: Colors.grey,
+              child: Text(
+                convo.peer.hexEip55.substring(0, 2),
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            title: Text(
+              convo.peer.hexEip55,
+              style: TextStyle(fontSize: 12),
+            ),
+            // subtitle: Text(convo.peer.hex),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DmScreenAddress(
+                    conversation: convo,
+                  ),
+                ),
+              );
+            },
+          );
         }
 
         return ListTile(

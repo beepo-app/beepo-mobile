@@ -22,8 +22,8 @@ class WalletsService {
         },
       );
 
-        var data = json.decode(response.body);
-        print(data);
+      var data = json.decode(response.body);
+      print(data);
       if (response.statusCode == 200) {
         List<Wallet> wallets = walletFromJson(response.body);
         return wallets;
@@ -53,7 +53,7 @@ class WalletsService {
       // print(response.body);
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
-        // log(response.body);
+        log(response.body);
 
         return data['balances'];
       } else {

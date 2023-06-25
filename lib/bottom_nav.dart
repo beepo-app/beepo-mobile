@@ -14,11 +14,6 @@ class BottomNavHome extends StatefulWidget {
 }
 
 class _BottomNavHomeState extends State<BottomNavHome> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   int index = 0;
   List body = [
     const ChatScreen(),

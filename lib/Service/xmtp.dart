@@ -154,4 +154,13 @@ class XMTPProvider extends ChangeNotifier {
       return null;
     }
   }
+
+  //check if can chat
+  Future<bool> checkAddress(String address) async {
+    try {
+      return await client.canMessage(address);
+    } catch (e) {
+      return false;
+    }
+  }
 }

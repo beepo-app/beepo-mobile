@@ -2,11 +2,13 @@
 
 import 'package:beepo/Service/encryption.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../Utils/styles.dart';
 import '../../Widgets/components.dart';
+import 'chats/check_address.dart';
 import 'chats/search.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -30,11 +32,35 @@ class _ChatScreenState extends State<ChatScreen> {
           items: [
             HawkFabMenuItem(
               label: 'New Chat',
-              ontap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SearchUsersScreen(),
-                  )),
+              ontap: () {
+                Get.dialog(Dialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(25),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FilledButtons(
+                          text: 'Search username on Beepo',
+                          onPressed: () => Get.to(SearchUsersScreen()),
+                        ),
+                        SizedBox(height: 30),
+                        FilledButtons(
+                          text: 'Chat with an ETH address',
+                          onPressed: () => Get.to(CheckAddress()),
+                        ),
+                      ],
+                    ),
+                  ),
+                ));
+                // return Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (context) => SearchUsersScreen(),
+                //     ));
+              },
               icon: const Icon(Icons.add),
               color: txtColor1,
               labelColor: Colors.white,

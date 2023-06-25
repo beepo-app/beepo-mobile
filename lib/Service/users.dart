@@ -79,11 +79,12 @@ class UsersService {
         print(response.statusCode);
         print(response.reasonPhrase);
         // return ;
-        throw Exception('No user found');
+        return Future.error('No user found');
       }
     } catch (e) {
       // return ;
-      throw Exception('No user found');
+      // throw Exception('No user found');
+      return Future.error('No user found');
     }
   }
 
