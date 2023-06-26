@@ -48,7 +48,8 @@ class _ChatScreenState extends State<ChatScreen> {
                         const SizedBox(height: 30),
                         FilledButtons(
                           text: 'Chat with an ETH address',
-                          onPressed: () => Get.off(const CheckAddress()),
+                          onPressed: () => Get.off(const CheckAddress())
+                              .then((value) => setState(() {})),
                         ),
                       ],
                     ),

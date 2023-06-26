@@ -30,30 +30,35 @@ class XMTPCoversationList extends StatelessWidget {
         List<Conversation> conversations = snapshot.data;
 
         return FutureBuilder<List<DecodedMessage>>(
-            future: context
-                .watch<XMTPProvider>()
-                .mostRecentMessage(convo: conversations),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              List<DecodedMessage> messages = snapshot.data;
-              return ListView.builder(
-                itemCount: conversations.length,
-                shrinkWrap: true,
-                padding: EdgeInsets.zero,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  Conversation convo = conversations[index];
-                  return ChatListItem(
-                    convo: convo,
-                    message: messages.isEmpty ? null : messages[index],
-                  );
-                },
+          future: context
+              .watch<XMTPProvider>()
+              .mostRecentMessage(convo: conversations),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(
+                child: CircularProgressIndicator(),
               );
-            });
+            }
+            List<DecodedMessage> messages = snapshot.data;
+
+            return ListView.builder(
+              itemCount: conversations.length,
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                Conversation convo = conversations[index];
+
+                DecodedMessage message;
+
+                if (index < messages.length) {
+                  message = messages[index];
+                }
+                return ChatListItem(convo: convo, message: message);
+              },
+            );
+          },
+        );
       },
     );
   }
