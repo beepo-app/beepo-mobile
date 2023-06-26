@@ -43,12 +43,12 @@ class _ChatScreenState extends State<ChatScreen> {
                       children: [
                         FilledButtons(
                           text: 'Search username on Beepo',
-                          onPressed: () => Get.to(SearchUsersScreen()),
+                          onPressed: () => Get.off(SearchUsersScreen()),
                         ),
                         const SizedBox(height: 30),
                         FilledButtons(
                           text: 'Chat with an ETH address',
-                          onPressed: () => Get.to(const CheckAddress()),
+                          onPressed: () => Get.off(const CheckAddress()),
                         ),
                       ],
                     ),

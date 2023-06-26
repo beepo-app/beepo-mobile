@@ -167,9 +167,7 @@ class XMTPProvider extends ChangeNotifier {
       {List<xmtp.Conversation> convo}) async {
     try {
       var msg = await client.listBatchMessages(convo, limit: 1);
-      // if (msg.isNotEmpty) {
-      //   return msg.first;
-      // }
+
       return msg;
     } catch (e) {
       print(e);

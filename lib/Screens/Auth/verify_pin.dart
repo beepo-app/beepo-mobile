@@ -110,11 +110,11 @@ class _VerifyCodeState extends State<VerifyCode> {
                       pin,
                     );
 
-                    // Get.back();
-                    // if (result) {
-                    //   showToast('Account created successfully');
-                    //   Get.offAll(BottomNavHome());
-                    // }
+                    Get.back();
+                    if (result) {
+                      showToast('Account created successfully');
+                      Get.offAll(BottomNavHome());
+                    }
                   } else {
                     //Login with seedphrase
                     Get.to(

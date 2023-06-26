@@ -49,7 +49,7 @@ class XMTPCoversationList extends StatelessWidget {
                   Conversation convo = conversations[index];
                   return ChatListItem(
                     convo: convo,
-                    message: messages[index],
+                    message: messages.isEmpty ? null : messages[index],
                   );
                 },
               );
@@ -79,34 +79,100 @@ class ChatListItem extends StatelessWidget {
           return const LinearProgressIndicator();
         }
 
-        if (user.hasError && user.error.toString() == 'No user found') {
-          return ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: CircleAvatar(
-              backgroundColor: Colors.grey,
-              child: Text(
-                convo.peer.hexEip55.substring(0, 2),
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
-            title: Text(
-              convo.peer.hexEip55,
-              style: const TextStyle(fontSize: 12),
-            ),
-            subtitle: Row(
-              children: [
-                Expanded(child: Text(message.content)),
-                const SizedBox(width: 8),
-                Text(
-                  DateFormat("jm").format(message.sentAt),
-                  style: const TextStyle(
-                    fontSize: 10,
-                    color: Colors.grey,
+        bool noBeepoAcct =
+            user.hasError && user.error.toString() == 'No user found';
+
+        // if (user.hasError && user.error.toString() == 'No user found') {
+        //   return ListTile(
+        //     contentPadding: EdgeInsets.zero,
+        //     leading: CircleAvatar(
+        //       backgroundColor: Colors.grey,
+        //       child: Text(
+        //         convo.peer.hexEip55.substring(0, 2),
+        //         style: const TextStyle(color: Colors.white),
+        //       ),
+        //     ),
+        //     title: Text(
+        //       convo.peer.hexEip55,
+        //       style: const TextStyle(fontSize: 12),
+        //     ),
+        //     subtitle: Row(
+        //       children: [
+        //         Expanded(child: Text(message.content)),
+        //         const SizedBox(width: 8),
+        //         Text(
+        //           DateFormat("jm").format(message.sentAt),
+        //           style: const TextStyle(
+        //             fontSize: 10,
+        //             color: Colors.grey,
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //     onTap: () {
+        //       Navigator.push(
+        //         context,
+        //         MaterialPageRoute(
+        //           builder: (context) => DmScreenAddress(
+        //             conversation: convo,
+        //           ),
+        //         ),
+        //       );
+        //     },
+        //   );
+        // }
+
+        return ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: noBeepoAcct
+              ? CircleAvatar(
+                  backgroundColor: Colors.grey,
+                  child: Text(
+                    convo.peer.hexEip55.substring(0, 2),
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                )
+              : SizedBox(
+                  height: 40,
+                  width: 40,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(25),
+                    child: CachedNetworkImage(
+                      imageUrl: user.data.image,
+                      height: 40,
+                      width: 40,
+                      placeholder: (context, url) => const Center(
+                          child: CircularProgressIndicator(
+                        color: secondaryColor,
+                      )),
+                      errorWidget: (context, url, error) => const Icon(
+                        Icons.person,
+                        color: secondaryColor,
+                      ),
+                    ),
                   ),
                 ),
-              ],
-            ),
-            onTap: () {
+          title: Text(
+            noBeepoAcct ? convo.peer.hexEip55 : user.data.name,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          ),
+          subtitle: message == null
+              ? SizedBox()
+              : Row(
+                  children: [
+                    Expanded(child: Text(message.content)),
+                    const SizedBox(width: 8),
+                    Text(
+                      DateFormat("jm").format(message.sentAt),
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+          onTap: () {
+            if (noBeepoAcct) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -115,43 +181,16 @@ class ChatListItem extends StatelessWidget {
                   ),
                 ),
               );
-            },
-          );
-        }
-
-        return ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: SizedBox(
-            height: 40,
-            width: 40,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(25),
-              child: CachedNetworkImage(
-                imageUrl: user.data.image,
-                height: 40,
-                width: 40,
-                placeholder: (context, url) => const Center(
-                    child: CircularProgressIndicator(
-                  color: secondaryColor,
-                )),
-                errorWidget: (context, url, error) => const Icon(
-                  Icons.person,
-                  color: secondaryColor,
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DmScreen(
+                    conversation: convo,
+                  ),
                 ),
-              ),
-            ),
-          ),
-          title: Text(user.data.name),
-          // subtitle: Text(convo.peer.hex),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DmScreen(
-                  conversation: convo,
-                ),
-              ),
-            );
+              );
+            }
           },
         );
       },
@@ -260,7 +299,8 @@ class TransferPreview extends StatelessWidget {
                   const SizedBox(width: 5),
                   Text(
                     'You ${isMe ? 'sent' : 'received'}',
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ],
               ),

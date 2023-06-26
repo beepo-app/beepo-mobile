@@ -51,7 +51,7 @@ class _CheckAddressState extends State<CheckAddress> {
                         );
 
                 if (convo != null) {
-                  Get.to(DmScreenAddress(
+                  Get.off(DmScreenAddress(
                     conversation: convo,
                   ));
                 }
