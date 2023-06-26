@@ -66,7 +66,7 @@ class XMTPProvider extends ChangeNotifier {
         print(address.hex);
         print(address.hexEip55);
 
-        var api = xmtp.Api.create();
+        var api = xmtp.Api.create(host: 'production.xmtp.network');
         var client =
             await xmtp.Client.createFromWallet(api, credentials.asSigner());
 

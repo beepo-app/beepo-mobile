@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Widgets/commons.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +30,7 @@ class _WalletPhraseScreenState extends State<WalletPhraseScreen> {
 
             String walletPhrase = snapshot.data;
 
-            print(walletPhrase);
+            log(walletPhrase);
 
             List words = walletPhrase.split(' ');
 
