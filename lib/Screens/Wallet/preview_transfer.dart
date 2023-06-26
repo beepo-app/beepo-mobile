@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:developer';
 
-import 'package:beepo/Constants/app_constants.dart';
 import 'package:beepo/Screens/Wallet/transfer_success.dart';
 import 'package:beepo/Service/auth.dart';
 import 'package:beepo/Service/transactions.dart';
@@ -10,7 +8,6 @@ import 'package:beepo/Widgets/pin_code.dart';
 import 'package:beepo/Widgets/toasts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 import 'package:xmtp/xmtp.dart';

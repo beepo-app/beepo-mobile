@@ -2,14 +2,11 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:beepo/Constants/app_constants.dart';
 import 'package:beepo/Service/encryption.dart';
-import 'package:beepo/Service/xmtp.dart';
 import 'package:beepo/Widgets/toasts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 
 import '../Constants/network.dart';
 import '../Models/user_model.dart';

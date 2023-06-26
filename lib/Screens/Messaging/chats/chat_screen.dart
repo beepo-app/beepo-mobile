@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:beepo/Service/users.dart';
 import 'package:beepo/Utils/extensions.dart';
@@ -15,7 +14,6 @@ import 'package:xmtp/xmtp.dart';
 
 import '../../../Models/user_model.dart';
 import '../../../Models/wallet.dart';
-import '../../../Service/auth.dart';
 import '../../../Service/wallets.dart';
 import '../../../Service/xmtp.dart';
 import '../../../Utils/styles.dart';
@@ -87,7 +85,7 @@ class _DmScreenState extends State<DmScreen> {
                           imageUrl: user.image,
                           errorWidget: (context, url, error) => Container(
                             color: Colors.white,
-                            child: Icon(
+                            child: const Icon(
                               Icons.person,
                               color: secondaryColor,
                             ),
@@ -97,22 +95,22 @@ class _DmScreenState extends State<DmScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         user.name,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         "@" + user.userName,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
                         ),
@@ -266,15 +264,15 @@ class _ChatControlsWidgetState extends State<ChatControlsWidget> {
             children: [
               Text(
                 "Send ${wallet.ticker}",
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
                 controller: amount,
                 keyboardType: TextInputType.number,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Color(0xff0d004c),
                   fontSize: 18,
                 ),
@@ -282,19 +280,19 @@ class _ChatControlsWidgetState extends State<ChatControlsWidget> {
                   isDense: true,
                   hintText: "Amount",
                   suffixText: wallet.ticker ?? " ",
-                  border: OutlineInputBorder(
+                  border: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                       borderSide: BorderSide(
                         color: Colors.grey,
                         width: 1,
                       )),
-                  focusedBorder: OutlineInputBorder(
+                  focusedBorder: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                     borderSide: BorderSide(width: 1, color: Colors.grey),
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               FilledButtons(
                 color: secondaryColor,
                 text: "Continue",
@@ -390,15 +388,15 @@ class _ChatControlsWidgetState extends State<ChatControlsWidget> {
                                           padding: const EdgeInsets.all(10),
                                           child: Column(
                                             children: [
-                                              SizedBox(height: 10),
+                                              const SizedBox(height: 10),
                                               Text(
                                                 "Send Token to ${widget.user.name}",
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                               ),
-                                              SizedBox(height: 10),
+                                              const SizedBox(height: 10),
                                               Expanded(
                                                 child: ListView.builder(
                                                   shrinkWrap: true,
@@ -414,7 +412,7 @@ class _ChatControlsWidgetState extends State<ChatControlsWidget> {
                                                             BorderRadius
                                                                 .circular(15),
                                                         color:
-                                                            Color(0xFFE2E2E2),
+                                                            const Color(0xFFE2E2E2),
                                                       ),
                                                       margin: const EdgeInsets
                                                           .symmetric(

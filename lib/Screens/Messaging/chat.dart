@@ -1,6 +1,5 @@
 // ignore_for_file: unnecessary_const
 
-import 'package:beepo/Service/encryption.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
@@ -46,10 +45,10 @@ class _ChatScreenState extends State<ChatScreen> {
                           text: 'Search username on Beepo',
                           onPressed: () => Get.to(SearchUsersScreen()),
                         ),
-                        SizedBox(height: 30),
+                        const SizedBox(height: 30),
                         FilledButtons(
                           text: 'Chat with an ETH address',
-                          onPressed: () => Get.to(CheckAddress()),
+                          onPressed: () => Get.to(const CheckAddress()),
                         ),
                       ],
                     ),

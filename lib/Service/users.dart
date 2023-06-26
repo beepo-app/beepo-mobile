@@ -7,7 +7,6 @@ import '../Constants/network.dart';
 import 'package:http/http.dart' as http;
 
 import '../Models/user_model.dart';
-import '../Widgets/toasts.dart';
 
 class UsersService {
   //get user details with username

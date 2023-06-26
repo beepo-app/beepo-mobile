@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
 import 'package:beepo/Constants/app_constants.dart';
@@ -92,7 +91,7 @@ class XMTPProvider extends ChangeNotifier {
 
     var privateKey = xmtp.PrivateKeyBundle.fromBuffer(key);
 
-    var api = xmtp.Api.create();
+    var api = xmtp.Api.create(host: 'production.xmtp.network');
     var client = await xmtp.Client.createFromKeys(api, privateKey);
 
     print(client.address);
@@ -161,6 +160,20 @@ class XMTPProvider extends ChangeNotifier {
       return await client.canMessage(address);
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<List<xmtp.DecodedMessage>> mostRecentMessage(
+      {List<xmtp.Conversation> convo}) async {
+    try {
+      var msg = await client.listBatchMessages(convo, limit: 1);
+      // if (msg.isNotEmpty) {
+      //   return msg.first;
+      // }
+      return msg;
+    } catch (e) {
+      print(e);
+      return null;
     }
   }
 }

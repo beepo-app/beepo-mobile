@@ -4,13 +4,12 @@ import 'package:beepo/Widgets/components.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:xmtp/xmtp.dart';
 
 import '../../../Widgets/toasts.dart';
 import 'chat_address.dart';
 
 class CheckAddress extends StatefulWidget {
-  CheckAddress({Key key}) : super(key: key);
+  const CheckAddress({Key key}) : super(key: key);
 
   @override
   State<CheckAddress> createState() => _CheckAddressState();

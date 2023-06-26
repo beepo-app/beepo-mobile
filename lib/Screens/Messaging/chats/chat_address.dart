@@ -1,28 +1,21 @@
 import 'dart:convert';
-import 'dart:developer';
 
-import 'package:beepo/Service/users.dart';
 import 'package:beepo/Utils/extensions.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:grouped_list/grouped_list.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:xmtp/xmtp.dart';
 
 import '../../../Models/user_model.dart';
 import '../../../Models/wallet.dart';
-import '../../../Service/auth.dart';
-import '../../../Service/wallets.dart';
 import '../../../Service/xmtp.dart';
 import '../../../Utils/styles.dart';
 import '../../../Widgets/commons.dart';
 import '../../../Widgets/components.dart';
 import '../../../Widgets/toasts.dart';
-import '../../Profile/user_profile_screen.dart';
 import '../../Wallet/preview_transfer.dart';
 import 'widgets.dart';
 
@@ -188,15 +181,15 @@ class _ChatControlsWidgetState extends State<ChatControlsWidget> {
             children: [
               Text(
                 "Send ${wallet.ticker}",
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
                 controller: amount,
                 keyboardType: TextInputType.number,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Color(0xff0d004c),
                   fontSize: 18,
                 ),
@@ -204,19 +197,19 @@ class _ChatControlsWidgetState extends State<ChatControlsWidget> {
                   isDense: true,
                   hintText: "Amount",
                   suffixText: wallet.ticker ?? " ",
-                  border: OutlineInputBorder(
+                  border: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                       borderSide: BorderSide(
                         color: Colors.grey,
                         width: 1,
                       )),
-                  focusedBorder: OutlineInputBorder(
+                  focusedBorder: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                     borderSide: BorderSide(width: 1, color: Colors.grey),
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               FilledButtons(
                 color: secondaryColor,
                 text: "Continue",

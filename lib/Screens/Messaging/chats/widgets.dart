@@ -29,16 +29,31 @@ class XMTPCoversationList extends StatelessWidget {
 
         List<Conversation> conversations = snapshot.data;
 
-        return ListView.builder(
-          itemCount: conversations.length,
-          shrinkWrap: true,
-          padding: EdgeInsets.zero,
-          physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            Conversation convo = conversations[index];
-            return ChatListItem(convo: convo);
-          },
-        );
+        return FutureBuilder<List<DecodedMessage>>(
+            future: context
+                .watch<XMTPProvider>()
+                .mostRecentMessage(convo: conversations),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              List<DecodedMessage> messages = snapshot.data;
+              return ListView.builder(
+                itemCount: conversations.length,
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  Conversation convo = conversations[index];
+                  return ChatListItem(
+                    convo: convo,
+                    message: messages[index],
+                  );
+                },
+              );
+            });
       },
     );
   }
@@ -48,9 +63,11 @@ class ChatListItem extends StatelessWidget {
   const ChatListItem({
     Key key,
     @required this.convo,
+    @required this.message,
   }) : super(key: key);
 
   final Conversation convo;
+  final DecodedMessage message;
 
   @override
   Widget build(BuildContext context) {
@@ -59,14 +76,9 @@ class ChatListItem extends StatelessWidget {
       future: UsersService().getUserByAddress(convo.peer.hexEip55),
       builder: (ctx, user) {
         if (!user.hasData && !user.hasError) {
-          return LinearProgressIndicator();
+          return const LinearProgressIndicator();
         }
 
-        //  if (user.hasError) {
-        //     r eturn Text(user.error);
-        //   }
-
-        print(user.hasError);
         if (user.hasError && user.error.toString() == 'No user found') {
           return ListTile(
             contentPadding: EdgeInsets.zero,
@@ -74,14 +86,26 @@ class ChatListItem extends StatelessWidget {
               backgroundColor: Colors.grey,
               child: Text(
                 convo.peer.hexEip55.substring(0, 2),
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
             ),
             title: Text(
               convo.peer.hexEip55,
-              style: TextStyle(fontSize: 12),
+              style: const TextStyle(fontSize: 12),
             ),
-            // subtitle: Text(convo.peer.hex),
+            subtitle: Row(
+              children: [
+                Expanded(child: Text(message.content)),
+                const SizedBox(width: 8),
+                Text(
+                  DateFormat("jm").format(message.sentAt),
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
             onTap: () {
               Navigator.push(
                 context,
@@ -106,11 +130,11 @@ class ChatListItem extends StatelessWidget {
                 imageUrl: user.data.image,
                 height: 40,
                 width: 40,
-                placeholder: (context, url) => Center(
+                placeholder: (context, url) => const Center(
                     child: CircularProgressIndicator(
                   color: secondaryColor,
                 )),
-                errorWidget: (context, url, error) => Icon(
+                errorWidget: (context, url, error) => const Icon(
                   Icons.person,
                   color: secondaryColor,
                 ),
@@ -220,7 +244,7 @@ class TransferPreview extends StatelessWidget {
           ),
           width: Get.width * .4,
           height: 100,
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -233,17 +257,17 @@ class TransferPreview extends StatelessWidget {
                     size: 20,
                     color: isMe ? Colors.red : Colors.green,
                   ),
-                  SizedBox(width: 5),
+                  const SizedBox(width: 5),
                   Text(
                     'You ${isMe ? 'sent' : 'received'}',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 '${transfer['value']} BNB',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
                   color: secondaryColor,
