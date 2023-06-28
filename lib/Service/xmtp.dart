@@ -22,9 +22,17 @@ class XMTPProvider extends ChangeNotifier {
   final Box _box = Hive.box(kAppName);
 
   xmtp.Client client;
+  List<xmtp.Conversation> _conversations = [];
+  bool _isLoadingConversations = false;
+
+  // Getter for conversations
+  List<xmtp.Conversation> get conversations => _conversations;
+
+  // Getter for isLoadingConversations
+  bool get isLoadingConversations => _isLoadingConversations;
 
   //get client and notify listeners
-  void getClient() async {
+  Future<xmtp.Client> getClient() async {
     var key = _box.get('xmpt_key');
     bool isLoggedIn = _box.get('isLogged', defaultValue: false);
 
@@ -41,7 +49,7 @@ class XMTPProvider extends ChangeNotifier {
         print('new client');
       }
     }
-    // return client;
+    return client;
   }
 
   //get privatekey
@@ -58,12 +66,7 @@ class XMTPProvider extends ChangeNotifier {
         final firstChild = root.derivePath("m/44'/60'/0'/0/0");
         final privateKeyHex = hex.encode(firstChild.privateKey);
 
-        EthPrivateKey credentials =
-            EthPrivateKey.fromHex(privateKeyHex); //web3dart
-        var address = credentials.address; //web3dart
-
-        print(address.hex);
-        print(address.hexEip55);
+        EthPrivateKey credentials = EthPrivateKey.fromHex(privateKeyHex);
 
         var api = xmtp.Api.create(host: 'production.xmtp.network');
         var client =
@@ -72,9 +75,7 @@ class XMTPProvider extends ChangeNotifier {
         Uint8List key = client.keys.writeToBuffer();
 
         Hive.box(kAppName).put('xmpt_key', key);
-
-        print(client.address);
-        notifyListeners();
+        // notifyListeners();
         return client;
       } else {
         return null;
@@ -109,19 +110,32 @@ class XMTPProvider extends ChangeNotifier {
       await client.sendMessage(convo, content);
 
       print('msg sent');
+      notifyListeners();
     } catch (e) {
       print(e);
     }
   }
 
+  // Method to fetch conversations
+  Future<void> fetchConversations() async {
+    _isLoadingConversations = true;
+    notifyListeners();
+
+    _conversations = await listConversations();
+
+    _isLoadingConversations = false;
+    notifyListeners();
+  }
+
   //list conversations
   Future<List<xmtp.Conversation>> listConversations() async {
     try {
+      client ??= await getClient();
       var convos = await client.listConversations();
       return convos;
     } catch (e) {
       print(e);
-      return null;
+      return [];
     }
   }
 
@@ -146,6 +160,7 @@ class XMTPProvider extends ChangeNotifier {
         conversationId: _conversationId,
         metadata: metadata,
       );
+      notifyListeners();
       return convo;
     } catch (e) {
       showToast('User is not on XMTP network');

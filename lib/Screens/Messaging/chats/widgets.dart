@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:xmtp/xmtp.dart';
 
@@ -13,26 +14,40 @@ import '../../../Utils/styles.dart';
 import 'chat_address.dart';
 import 'chat_screen.dart';
 
-class XMTPCoversationList extends StatelessWidget {
+class XMTPCoversationList extends StatefulWidget {
   const XMTPCoversationList({Key key}) : super(key: key);
 
   @override
+  State<XMTPCoversationList> createState() => _XMTPCoversationListState();
+}
+
+class _XMTPCoversationListState extends State<XMTPCoversationList> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<XMTPProvider>(context, listen: false).fetchConversations();
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Conversation>>(
-      future: context.watch<XMTPProvider>().listConversations(),
-      builder: (BuildContext context, snapshot) {
-        if (!snapshot.hasData) {
+    return Consumer<XMTPProvider>(
+      builder: (BuildContext context, XMTPProvider provider, _) {
+        if (provider.isLoadingConversations) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
 
-        List<Conversation> conversations = snapshot.data;
+        final convos = provider.conversations;
+        if (convos.isEmpty) {
+          return const Center(child: Text('No conversations yet'));
+        }
 
         return FutureBuilder<List<DecodedMessage>>(
-          future: context
-              .watch<XMTPProvider>()
-              .mostRecentMessage(convo: conversations),
+          future:
+              context.watch<XMTPProvider>().mostRecentMessage(convo: convos),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Center(
@@ -41,19 +56,36 @@ class XMTPCoversationList extends StatelessWidget {
             }
             List<DecodedMessage> messages = snapshot.data;
 
+            convos.sort((a, b) {
+              // Compare the message time of conversations 'a' and 'b'
+              DateTime timeA = messages
+                  .firstWhere((element) => element.topic == a.topic)
+                  ?.sentAt;
+              DateTime timeB = messages
+                  .firstWhere((element) => element.topic == b.topic)
+                  ?.sentAt;
+
+              if (timeA != null && timeB != null) {
+                return timeB.compareTo(timeA); // Sort in descending order
+              } else if (timeA != null) {
+                return -1; // 'a' has a message, 'b' doesn't have
+              } else if (timeB != null) {
+                return 1; // 'b' has a message, 'a' doesn't have
+              } else {
+                return 0; // Both 'a' and 'b' don't have messages
+              }
+            });
+
             return ListView.builder(
-              itemCount: conversations.length,
+              itemCount: convos.length,
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                Conversation convo = conversations[index];
+                final convo = convos[index];
 
-                DecodedMessage message;
-
-                if (index < messages.length) {
-                  message = messages[index];
-                }
+                DecodedMessage message = messages.firstWhereOrNull(
+                    (element) => element.topic == convo.topic);
                 return ChatListItem(convo: convo, message: message);
               },
             );
@@ -76,56 +108,32 @@ class ChatListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(convo.peer.hexEip55);
     return FutureBuilder<UserModel>(
       future: UsersService().getUserByAddress(convo.peer.hexEip55),
       builder: (ctx, user) {
         if (!user.hasData && !user.hasError) {
-          return const LinearProgressIndicator();
+          return Shimmer.fromColors(
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.grey.shade100,
+            child: ListTile(
+              leading: const CircleAvatar(),
+              title: Container(
+                height: 10,
+                width: 100,
+                color: Colors.white,
+              ),
+              subtitle: Container(
+                height: 10,
+                width: 100,
+                color: Colors.white,
+              ),
+              contentPadding: EdgeInsets.zero,
+            ),
+          );
         }
 
         bool noBeepoAcct =
             user.hasError && user.error.toString() == 'No user found';
-
-        // if (user.hasError && user.error.toString() == 'No user found') {
-        //   return ListTile(
-        //     contentPadding: EdgeInsets.zero,
-        //     leading: CircleAvatar(
-        //       backgroundColor: Colors.grey,
-        //       child: Text(
-        //         convo.peer.hexEip55.substring(0, 2),
-        //         style: const TextStyle(color: Colors.white),
-        //       ),
-        //     ),
-        //     title: Text(
-        //       convo.peer.hexEip55,
-        //       style: const TextStyle(fontSize: 12),
-        //     ),
-        //     subtitle: Row(
-        //       children: [
-        //         Expanded(child: Text(message.content)),
-        //         const SizedBox(width: 8),
-        //         Text(
-        //           DateFormat("jm").format(message.sentAt),
-        //           style: const TextStyle(
-        //             fontSize: 10,
-        //             color: Colors.grey,
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //     onTap: () {
-        //       Navigator.push(
-        //         context,
-        //         MaterialPageRoute(
-        //           builder: (context) => DmScreenAddress(
-        //             conversation: convo,
-        //           ),
-        //         ),
-        //       );
-        //     },
-        //   );
-        // }
 
         return ListTile(
           contentPadding: EdgeInsets.zero,
@@ -159,13 +167,20 @@ class ChatListItem extends StatelessWidget {
                 ),
           title: Text(
             noBeepoAcct ? convo.peer.hexEip55 : user.data.name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           ),
           subtitle: message == null
               ? SizedBox()
               : Row(
                   children: [
-                    Expanded(child: Text(message.content)),
+                    Expanded(
+                        child: Text(
+                      message.content,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    )),
                     const SizedBox(width: 8),
                     Text(
                       DateFormat("jm").format(message.sentAt),

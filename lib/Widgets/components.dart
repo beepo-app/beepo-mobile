@@ -17,6 +17,7 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:linkwell/linkwell.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 // import 'Models/story_model/story.dart';
 import '../Models/market_data.dart';
@@ -479,19 +480,19 @@ class _ChatTabState extends State<ChatTab> {
                                   ),
                                 ),
                               ),
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    showInput = !showInput;
-                                  });
-                                },
-                                icon: Icon(
-                                  Icons.search,
-                                  color: Color(0xff697077),
-                                  //Color(0xff908f8d),
-                                  size: 25,
-                                ),
-                              ),
+                              // IconButton(
+                              //   onPressed: () {
+                              //     setState(() {
+                              //       showInput = !showInput;
+                              //     });
+                              //   },
+                              //   icon: Icon(
+                              //     Icons.search,
+                              //     color: Color(0xff697077),
+                              //     //Color(0xff908f8d),
+                              //     size: 25,
+                              //   ),
+                              // ),
                               // SizedBox(width: 20),
                               // Icon(
                               //   Icons.more_vert_outlined,
@@ -536,59 +537,60 @@ class _ChatTabState extends State<ChatTab> {
                                     return const SizedBox();
                                   },
                                 ),
-                                true
-                                    ? XMTPCoversationList()
-                                    : StreamBuilder(
-                                        stream: FirebaseFirestore.instance
-                                            .collection('conversation')
-                                            .doc(userM['uid'] == ''
-                                                ? ' '
-                                                : userM['uid'])
-                                            .collection("currentConversation")
-                                            .orderBy('created',
-                                                descending: true)
-                                            .snapshots(),
-                                        builder: (context,
-                                            AsyncSnapshot<QuerySnapshot>
-                                                snapshot) {
-                                          if (snapshot.hasData) {
-                                            if (snapshot.data.docs.isEmpty) {
-                                              return Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 50),
-                                                child: const Center(
-                                                  child: Text(
-                                                    'No Messages\n Tap on the + icon to start a conversation',
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                            return ListView.separated(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10),
-                                              physics:
-                                                  const NeverScrollableScrollPhysics(),
-                                              shrinkWrap: true,
-                                              itemCount:
-                                                  snapshot.data.docs.length,
-                                              separatorBuilder: (ctx, i) =>
-                                                  const SizedBox(height: 0),
-                                              itemBuilder: (ctx, index) {
-                                                return MyMessages(
-                                                  uid: snapshot
-                                                      .data.docs[index].id,
-                                                  index: index,
-                                                  docu: snapshot.data.docs,
-                                                );
-                                              },
-                                            );
-                                          }
-                                          return const Center(
-                                            child: CircularProgressIndicator(),
-                                          );
-                                        },
-                                      ),
+
+                                XMTPCoversationList()
+
+                                //  StreamBuilder(
+                                //     stream: FirebaseFirestore.instance
+                                //         .collection('conversation')
+                                //         .doc(userM['uid'] == ''
+                                //             ? ' '
+                                //             : userM['uid'])
+                                //         .collection("currentConversation")
+                                //         .orderBy('created',
+                                //             descending: true)
+                                //         .snapshots(),
+                                //     builder: (context,
+                                //         AsyncSnapshot<QuerySnapshot>
+                                //             snapshot) {
+                                //       if (snapshot.hasData) {
+                                //         if (snapshot.data.docs.isEmpty) {
+                                //           return Padding(
+                                //             padding: const EdgeInsets.only(
+                                //                 top: 50),
+                                //             child: const Center(
+                                //               child: Text(
+                                //                 'No Messages\n Tap on the + icon to start a conversation',
+                                //                 textAlign: TextAlign.center,
+                                //               ),
+                                //             ),
+                                //           );
+                                //         }
+                                //         return ListView.separated(
+                                //           padding: const EdgeInsets.only(
+                                //               top: 10),
+                                //           physics:
+                                //               const NeverScrollableScrollPhysics(),
+                                //           shrinkWrap: true,
+                                //           itemCount:
+                                //               snapshot.data.docs.length,
+                                //           separatorBuilder: (ctx, i) =>
+                                //               const SizedBox(height: 0),
+                                //           itemBuilder: (ctx, index) {
+                                //             return MyMessages(
+                                //               uid: snapshot
+                                //                   .data.docs[index].id,
+                                //               index: index,
+                                //               docu: snapshot.data.docs,
+                                //             );
+                                //           },
+                                //         );
+                                //       }
+                                //       return const Center(
+                                //         child: CircularProgressIndicator(),
+                                //       );
+                                //     },
+                                //   ),
                               ],
                             ),
                           )

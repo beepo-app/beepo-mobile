@@ -89,14 +89,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.4+1"
-  base58check:
-    dependency: transitive
-    description:
-      name: base58check
-      sha256: "6c300dfc33e598d2fe26319e13f6243fea81eaf8204cb4c6b69ef20a625319a5"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
   bip32:
     dependency: "direct main"
     description:
@@ -313,14 +305,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.17.2"
-  dart_bip32_bip44:
-    dependency: "direct main"
-    description:
-      name: dart_bip32_bip44
-      sha256: ca8417bac434f2ece417b03818d91fe2d1d036e5aa568743872dede401660560
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.0"
   dartz:
     dependency: "direct main"
     description:
@@ -1377,6 +1361,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
+  shimmer:
+    dependency: "direct main"
+    description:
+      name: shimmer
+      sha256: "5f88c883a22e9f9f299e5ba0e4f7e6054857224976a5d9f839d4ebdc94a14ac9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -1670,14 +1662,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.12+1"
-  walletconnect_dart:
-    dependency: "direct main"
-    description:
-      name: walletconnect_dart
-      sha256: "6d69d3f7ed43b4a111458da0ba078f4ea291ff11328068c9cbf5cab3bd86593f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.11"
   web3dart:
     dependency: transitive
     description:
@@ -1686,14 +1670,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.1"
-  web_socket_channel:
-    dependency: transitive
-    description:
-      name: web_socket_channel
-      sha256: d88238e5eac9a42bb43ca4e721edba3c08c6354d4a53063afaa568516217621b
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.4.0"
   wechat_assets_picker:
     dependency: "direct main"
     description:

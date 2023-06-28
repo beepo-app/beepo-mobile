@@ -95,10 +95,9 @@ dependencies:
       url: https://github.com/yungzhu/flutter_link_preview.git
       ref: master
   xmtp: ^1.0.0
-  walletconnect_dart:
   bip39: 
-  dart_bip32_bip44: 
   bip32:
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:
