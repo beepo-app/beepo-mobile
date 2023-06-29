@@ -22,12 +22,14 @@ class MediaService {
       http.StreamedResponse response = await request.send();
 
       var data = json.decode(await response.stream.bytesToString());
+      print(data);
       if (response.statusCode == 200) {
         return data['url'];
       } else {
         return null;
       }
     } catch (e) {
+      print(e);
       showToast(e.toString());
       return null;
     }

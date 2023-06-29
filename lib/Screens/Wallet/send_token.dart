@@ -8,13 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../Utils/styles.dart';
-import '../../components.dart';
+import '../../Widgets/components.dart';
 import 'preview_transfer.dart';
 
 class SendToken extends StatefulWidget {
   final Wallet wallet;
   final String balance;
-  SendToken({Key key, this.wallet, this.balance}) : super(key: key);
+  const SendToken({Key key, this.wallet, this.balance}) : super(key: key);
 
   @override
   State<SendToken> createState() => _SendTokenState();
@@ -178,7 +178,7 @@ class _SendTokenState extends State<SendToken> {
                     showToast('Please enter a valid address');
                   } else {
                     Get.to(
-                      SendToken2(
+                      ConfirmTransfer(
                         wallet: widget.wallet,
                         amount: double.parse(amount.text),
                         address: address.text,

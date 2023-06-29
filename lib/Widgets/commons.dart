@@ -86,7 +86,7 @@ Widget fullScreenLoader(String title) {
               ),
               Text(
                 title,
-                style: Get.textTheme.headline6,
+                style: Get.textTheme.titleLarge,
               ),
               const SizedBox(height: 10),
             ],

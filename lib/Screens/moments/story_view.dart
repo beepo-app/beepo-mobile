@@ -13,7 +13,7 @@ import '../../Models/user_model.dart';
 class Homes extends StatefulWidget {
   final UserModel user;
 
-  Homes({this.user});
+  const Homes({Key key, this.user}) : super(key: key);
 
   @override
   State<Homes> createState() => _HomesState();

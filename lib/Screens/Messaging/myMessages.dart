@@ -5,17 +5,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 
 import '../../Models/user_model.dart';
+import '../../Utils/functions.dart';
 import 'chat_dm_screen.dart';
 import 'package:encrypt/encrypt.dart' as enc;
-import '../../generate_keywords.dart';
 
 class MyMessages extends StatefulWidget {
-  const MyMessages({Key key, @required this.uid, this.index, this.docu}) : super(key: key);
+  const MyMessages({Key key, @required this.uid, this.index, this.docu})
+      : super(key: key);
 
   final String uid;
   final int index;
@@ -39,6 +39,7 @@ class _MyMessagesState extends State<MyMessages> {
         .get();
     return tet.docs.isEmpty;
   }
+
   final encrypter = enc.Encrypter(enc.AES(enc.Key.fromLength(32)));
 
   bool isTapped = true;
@@ -292,14 +293,13 @@ class _MyMessagesState extends State<MyMessages> {
               subtitle: Text(
                 widget.docu[widget.index]['type'] == 'message'
                     ? widget.docu[widget.index]['sender'] == userM['uid']
-                        ? 'you: ${encrypter.decrypt64(widget.docu[widget.index]['text'],
-                    iv: enc.IV.fromLength(16)
-                  // ["iv"]
-                )}'
+                        ? 'you: ${encrypter.decrypt64(widget.docu[widget.index]['text'], iv: enc.IV.fromLength(16)
+                            // ["iv"]
+                            )}'
                         : encrypter.decrypt64(widget.docu[widget.index]['text'],
-                    iv: enc.IV.fromLength(16)
-                  // ["iv"]
-                )
+                            iv: enc.IV.fromLength(16)
+                            // ["iv"]
+                            )
                     : widget.docu[widget.index]['sender'] == userM['uid']
                         ? 'Media sent '
                         : 'Media recieved',

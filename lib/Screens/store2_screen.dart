@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../Utils/styles.dart';
-import '../components.dart';
+import '../Widgets/components.dart';
 import 'chatToken_screen.dart';
 
 class Store2 extends StatefulWidget {
-  Store2({Key key}) : super(key: key);
+  const Store2({Key key}) : super(key: key);
 
   @override
   State<Store2> createState() => _Store2State();

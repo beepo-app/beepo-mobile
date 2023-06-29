@@ -14,17 +14,12 @@ class BottomNavHome extends StatefulWidget {
 }
 
 class _BottomNavHomeState extends State<BottomNavHome> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   int index = 0;
   List body = [
-    ChatScreen(),
-    WalletScreen(),
-    Browser(),
-    Profile(),
+    const ChatScreen(),
+    const WalletScreen(),
+    const Browser(),
+    const Profile(),
   ];
 
   @override
@@ -32,39 +27,30 @@ class _BottomNavHomeState extends State<BottomNavHome> {
     return Scaffold(
       body: body[index],
       extendBody: false,
-      bottomNavigationBar: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
-        ),
-        child: BottomNavigationBar(
-          backgroundColor: const Color(0xffc4c4c4),
-          currentIndex: index,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          type: BottomNavigationBarType.fixed,
-          unselectedItemColor: Colors.white,
-          selectedItemColor: const Color(0xffFF9C34),
-          onTap: (int selectedPage) {
-            setState(() => index = selectedPage);
-          },
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Iconsax.message),
-              label: 'Chats',
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Iconsax.wallet), label: 'Wallet'),
-            BottomNavigationBarItem(
-              icon: Icon(Iconsax.global),
-              label: 'Browser',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Iconsax.security_user),
-              label: 'Profile',
-            ),
-          ],
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
+        currentIndex: index,
+        type: BottomNavigationBarType.fixed,
+        unselectedItemColor: Colors.grey,
+        selectedItemColor: const Color(0xffFF9C34),
+        onTap: (int selectedPage) {
+          setState(() => index = selectedPage);
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Iconsax.message),
+            label: 'Chats',
+          ),
+          BottomNavigationBarItem(icon: Icon(Iconsax.wallet), label: 'Wallet'),
+          BottomNavigationBarItem(
+            icon: Icon(Iconsax.global),
+            label: 'Browser',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Iconsax.security_user),
+            label: 'Profile',
+          ),
+        ],
       ),
     );
   }

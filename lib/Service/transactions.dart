@@ -48,7 +48,7 @@ class TransactionService {
         "receiverAddress": address,
         "value": num.parse(amount),
         "networkId": networkId,
-        "pin": "1234",
+        "pin": AuthService().userPin,
       };
 
       //convert to base64

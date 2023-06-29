@@ -7,7 +7,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../../Utils/styles.dart';
 import '../../Widgets/toasts.dart';
-import '../../components.dart';
+import '../../Widgets/components.dart';
 import 'verify_pin.dart';
 
 class PinCode extends StatefulWidget {

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../Utils/styles.dart';
-import '../../components.dart';
+import '../../Widgets/components.dart';
 
 class Browser extends StatefulWidget {
   const Browser({Key key}) : super(key: key);
@@ -33,7 +33,8 @@ class _BrowserState extends State<Browser> {
                     Text(
                       "Hey Beeper, Stay tuned we,re still cooking this awesome feature",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -73,7 +74,8 @@ class _BrowserState extends State<Browser> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Image.asset('assets/Celo.png', height: 13, width: 13),
+                              Image.asset('assets/Celo.png',
+                                  height: 13, width: 13),
                               SizedBox(width: 5),
                               Text(
                                 "Celo Network",
@@ -82,7 +84,8 @@ class _BrowserState extends State<Browser> {
                                   fontSize: 14,
                                 ),
                               ),
-                              Icon(Icons.keyboard_arrow_down_sharp, color: Colors.white)
+                              Icon(Icons.keyboard_arrow_down_sharp,
+                                  color: Colors.white)
                             ],
                           ),
                         ],
@@ -107,14 +110,17 @@ class _BrowserState extends State<Browser> {
                                   color: Colors.grey,
                                 ),
                                 border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(15)),
                                     borderSide: BorderSide(
                                       color: Colors.grey,
                                       width: 1,
                                     )),
                                 focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                                  borderSide: BorderSide(width: 1, color: Colors.grey),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(15)),
+                                  borderSide:
+                                      BorderSide(width: 1, color: Colors.grey),
                                 ),
                               ),
                             ),
@@ -122,9 +128,10 @@ class _BrowserState extends State<Browser> {
                             Column(
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
+                                  children: const [
                                     BrowserContainer(
                                       image: 'assets/mobius.png',
                                       title: 'mobius',
@@ -145,8 +152,9 @@ class _BrowserState extends State<Browser> {
                                 ),
                                 SizedBox(height: 30),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: const [
                                     BrowserContainer3(
                                       image: 'assets/pancake.png',
                                       title: 'pancakeswap',
@@ -184,7 +192,8 @@ class _BrowserState extends State<Browser> {
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: 5,
-                              separatorBuilder: (ctx, i) => SizedBox(height: 20),
+                              separatorBuilder: (ctx, i) =>
+                                  SizedBox(height: 20),
                               itemBuilder: (ctx, i) {
                                 return Container(
                                   padding: EdgeInsets.only(left: 10, right: 10),
@@ -208,8 +217,10 @@ class _BrowserState extends State<Browser> {
                                       SizedBox(width: 15),
                                       Expanded(
                                         child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: const [
                                             Text(
                                               "Here’s Why Blockchain is the Technology For The Future Here’s Why Blockchain is the Technology For The Future, Here’s Why Blockchain is the Technology For The Future",

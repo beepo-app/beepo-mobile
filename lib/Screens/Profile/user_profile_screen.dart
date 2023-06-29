@@ -3,23 +3,23 @@
 import 'package:beepo/Models/user_model.dart';
 import 'package:beepo/Screens/Messaging/chat_dm_screen.dart';
 import 'package:beepo/Utils/styles.dart';
-import 'package:beepo/provider.dart';
+import 'package:beepo/Providers/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 
 import '../Messaging/media_links_docs.dart';
+
 class UserProfile extends StatefulWidget {
   // const UserProfile({Key key}) : super(key: key);
   final UserModel model;
 
-  UserProfile({@required this.model});
+  const UserProfile({Key key, @required this.model}) : super(key: key);
 
   @override
   State<UserProfile> createState() => _UserProfileState();
@@ -36,10 +36,9 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   void initState() {
-
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if(context.watch<ChatNotifier>().enableScreenShot == true){
+      if (context.watch<ChatNotifier>().enableScreenShot == true) {
         Provider.of<ChatNotifier>(context, listen: false).secureScreen();
       }
     });
@@ -255,11 +254,11 @@ class _UserProfileState extends State<UserProfile> {
                             ),
                           ),
                           Switch(
-                            value: context.watch<ChatNotifier>().enableScreenShot,
+                            value:
+                                context.watch<ChatNotifier>().enableScreenShot,
                             activeColor: secondaryColor,
                             onChanged: (val) {
                               // context.read<ChatNotifier>().screenshot();
-
                             },
                           ),
                         ],

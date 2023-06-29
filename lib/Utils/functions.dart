@@ -9,6 +9,23 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
+List createKeywords(String userName) {
+  List arrayName = [];
+  String nameJoin = '';
+  String userNameJoin = '';
+
+  userName.toLowerCase().split('').forEach((letter) {
+    nameJoin += letter;
+    arrayName.add(nameJoin);
+  });
+  // username.toLowerCase().split('').forEach((letter) {
+  //   userNameJoin += letter;
+  //   arrayName.add(userNameJoin);
+  // });
+  return arrayName;
+}
+
+
 String generateRandomString(int len) {
   var r = Random();
   return String.fromCharCodes(List.generate(len, (index) => r.nextInt(33) + 89));
@@ -70,7 +87,7 @@ class ImageUtil {
                   return null;
                 }
               },
-              child: Text('Select from Camera'),
+              child: const Text('Select from Camera'),
             ),
             CupertinoActionSheetAction(
               onPressed: () async {
@@ -88,12 +105,12 @@ class ImageUtil {
                   return null;
                 }
               },
-              child: Text('Select from Gallery'),
+              child: const Text('Select from Gallery'),
             ),
           ],
           cancelButton: CupertinoActionSheetAction(
             onPressed: () => Get.back(),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
         ),
       ));

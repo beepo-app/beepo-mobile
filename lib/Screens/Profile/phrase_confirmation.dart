@@ -8,10 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
-import '../../components.dart';
+import '../../Widgets/components.dart';
 
 class PhraseConfirmation extends StatefulWidget {
-  const PhraseConfirmation();
+  const PhraseConfirmation({Key key}) : super(key: key);
 
   @override
   State<PhraseConfirmation> createState() => _PhraseConfirmationState();
@@ -129,6 +129,3 @@ class _PhraseConfirmationState extends State<PhraseConfirmation> {
     );
   }
 }
-
-
-

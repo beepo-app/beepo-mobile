@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../../provider.dart';
+import '../../Providers/provider.dart';
 
 class CustomVoiceRecorderWidget extends StatefulWidget {
   final bool isGroupChat;
@@ -210,9 +210,7 @@ class _CustomVoiceRecorderWidgetState extends State<CustomVoiceRecorderWidget> {
                 Navigator.of(context).pop();
                 if (widget.isGroupChat) {
                   //
-                  context
-                      .read<ChatNotifier>()
-                      .uploadAudioGroup(path);
+                  context.read<ChatNotifier>().uploadAudioGroup(path);
                 } else {
                   context
                       .read<ChatNotifier>()

@@ -12,7 +12,8 @@ class UserModel {
   final String userName;
   final List<StoryModel> stories;
   final String firebaseToken;
-
+  final String hdWalletAddress;
+  final String bitcoinWalletAddress;
 
   const UserModel({
     @required this.uid,
@@ -20,9 +21,11 @@ class UserModel {
     // @required
     this.userName,
     @required this.image,
-     this.searchKeywords = const [],
+    this.searchKeywords = const [],
     this.stories = const [],
     this.firebaseToken,
+    this.hdWalletAddress = '',
+    this.bitcoinWalletAddress = '',
   });
 
   // get stories => null;
@@ -32,12 +35,13 @@ class UserModel {
     String name,
     String image,
     String userName,
-    List searchKeywords, List<StoryModel> stories,
+    List searchKeywords,
+    List<StoryModel> stories,
   }) =>
       UserModel(
-          uid: uid ?? this.uid,
-          name: name ?? this.name,
-          image: image ?? this.image,
+        uid: uid ?? this.uid,
+        name: name ?? this.name,
+        image: image ?? this.image,
         userName: userName ?? this.userName,
         searchKeywords: searchKeywords ?? this.searchKeywords,
         stories: stories ?? this.stories,
@@ -50,26 +54,33 @@ class UserModel {
       userName: snapshot['userName'],
       searchKeywords: snapshot['searchKeywords'],
       stories: snapshot['stories'],
+      hdWalletAddress: snapshot['hdWalletAddress'],
+      bitcoinWalletAddress: snapshot['bitcoinWalletAddress'],
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'uid': uid,
-    'name': name,
-    'image' : image,
-    'userName' : userName,
-    'searchKeywords' : searchKeywords,
-    'stories' : stories,
-  };
+        'uid': uid,
+        'name': name,
+        'image': image,
+        'userName': userName,
+        'searchKeywords': searchKeywords,
+        'stories': stories,
+        'hdWalletAddress': hdWalletAddress,
+        'bitcoinWalletAddress': bitcoinWalletAddress,
+      };
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-    uid: json['uid'],
-    name: json['name'],
-    userName: json['userName'],
-    image: json['image'],
-    searchKeywords: json['searchKeywords'],
-    stories: json['stories'],
-  );
+        uid: json['uid'],
+        name: json['name'],
+        userName: json['userName'],
+        image: json['image'],
+        searchKeywords: json['searchKeywords'],
+        stories: (json['stories'] as List)
+            .map((e) => StoryModel.fromJson(e))
+            .toList(),
+        hdWalletAddress: json['hdWalletAddress'],
+      );
 
   static UserModel fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
@@ -80,6 +91,7 @@ class UserModel {
       image: snapshot['image'],
       searchKeywords: snapshot['searchKeywords'],
       stories: snapshot['stories'],
+      hdWalletAddress: snapshot['hdWalletAddress'],
     );
   }
 }

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../Utils/styles.dart';
-import '../components.dart';
+import '../Widgets/components.dart';
 
 class RequestToken extends StatefulWidget {
-  RequestToken({Key key}) : super(key: key);
+  const RequestToken({Key key}) : super(key: key);
 
   @override
   State<RequestToken> createState() => _RequestTokenState();
@@ -123,21 +123,21 @@ class _RequestTokenState extends State<RequestToken> {
                           isDense: true,
                           border: const OutlineInputBorder(
                               borderRadius:
-                                  BorderRadius.all(const Radius.circular(15)),
+                                  BorderRadius.all(Radius.circular(15)),
                               borderSide: BorderSide(
                                 color: Colors.grey,
                                 width: 1,
                               )),
                           focusedBorder: const OutlineInputBorder(
                             borderRadius:
-                                const BorderRadius.all(Radius.circular(15)),
+                                BorderRadius.all(Radius.circular(15)),
                             borderSide:
                                 BorderSide(width: 1, color: Colors.grey),
                           ),
                         ),
                       ),
                       const SizedBox(height: 130),
-                      FilledButtons(
+                      const FilledButtons(
                         text: 'Request',
                         color: secondaryColor,
                       )

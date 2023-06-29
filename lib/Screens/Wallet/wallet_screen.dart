@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:beepo/Models/balance.dart';
 import 'package:beepo/Models/market_data.dart';
 import 'package:beepo/Screens/Wallet/send_global.dart';
@@ -11,12 +9,10 @@ import 'package:get/get.dart';
 
 import '../../Models/wallet.dart';
 import '../../Utils/styles.dart';
-import '../../components.dart';
-import '../requestToken.dart';
-import 'send_global.dart';
+import '../../Widgets/components.dart';
 
 class WalletScreen extends StatefulWidget {
-  WalletScreen({Key key}) : super(key: key);
+  const WalletScreen({Key key}) : super(key: key);
 
   @override
   State<WalletScreen> createState() => _WalletScreenState();
@@ -33,6 +29,7 @@ class _WalletScreenState extends State<WalletScreen> {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
+          backgroundColor: Colors.white,
           body: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               SliverAppBar(
@@ -174,6 +171,8 @@ class _WalletScreenState extends State<WalletScreen> {
 
                     //Calculate total balance
                     double totalBalance = 0;
+
+                    // log('eth' + ercBalances.toString());
 
                     //add erc balances
                     try {
@@ -399,9 +398,6 @@ class WalletList extends StatelessWidget {
         }
 
         return WalletListTile(
-          image: wallet.logoUrl,
-          title: wallet.displayName,
-          subtext: wallet.ticker,
           amount: balance ?? 'N/A',
           wallet: wallet,
           coinMarketData: coinMarketData,

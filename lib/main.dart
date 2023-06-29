@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_this, avoid_print
 
-import 'package:beepo/extensions.dart';
-import 'package:beepo/provider.dart';
+import 'package:beepo/Utils/extensions.dart';
+import 'package:beepo/Providers/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -18,6 +18,7 @@ import 'Screens/Auth/onboarding.dart';
 import 'Screens/Messaging/calls/calll_notify.dart';
 import 'Screens/moments/story_download_provider.dart';
 import 'Screens/moments/story_upload_provider.dart';
+import 'Service/xmtp.dart';
 import 'bottom_nav.dart';
 
 void main() async {
@@ -301,7 +302,7 @@ class _MyAppState extends State<MyApp> {
         image: message.data['image'],
         channel: message.data['channelName'],
       );
-    }, onDone: (){
+    }, onDone: () {
       Calls().endCall(uuid.v4());
     });
     // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -327,6 +328,9 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider<StoryDownloadProvider>(
           create: (_) => StoryDownloadProvider.initialize(),
+        ),
+        ChangeNotifierProvider<XMTPProvider>(
+          create: (_) => XMTPProvider(),
         ),
       ],
       builder: (context, _) => GetMaterialApp(

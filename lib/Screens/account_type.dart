@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import '../Utils/styles.dart';
 
 class AccountType extends StatefulWidget {
-  AccountType({Key key}) : super(key: key);
+  const AccountType({Key key}) : super(key: key);
 
   @override
   State<AccountType> createState() => _AccountTypeState();
@@ -79,7 +79,7 @@ class _AccountTypeState extends State<AccountType> {
                     ),
                     SizedBox(height: 30),
                     Row(
-                      children: [
+                      children: const [
                         Expanded(
                           child: Text(
                             "Professional Account",

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../provider.dart';
+import '../../Providers/provider.dart';
 
 class FlowShader extends StatefulWidget {
   const FlowShader({
@@ -24,10 +24,10 @@ class FlowShader extends StatefulWidget {
 
 class _FlowShaderState extends State<FlowShader>
     with SingleTickerProviderStateMixin {
-   AnimationController controller;
-   Animation animation1;
-   Animation animation2;
-   Animation animation3;
+  AnimationController controller;
+  Animation animation1;
+  Animation animation2;
+  Animation animation3;
 
   @override
   void dispose() {
@@ -39,7 +39,7 @@ class _FlowShaderState extends State<FlowShader>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if(context.watch<ChatNotifier>().enableScreenShot == true){
+      if (context.watch<ChatNotifier>().enableScreenShot == true) {
         Provider.of<ChatNotifier>(context, listen: false).secureScreen();
       }
     });

@@ -12,7 +12,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import '../../Service/auth.dart';
 import '../../Utils/styles.dart';
 import '../../bottom_nav.dart';
-import '../../components.dart';
+import '../../Widgets/components.dart';
 
 class VerifyCode extends StatefulWidget {
   final File image;

@@ -5,9 +5,9 @@ import 'package:beepo/Screens/moments/story_download_provider.dart';
 
 // import 'package:beepo/story_screen.dart';
 import 'package:beepo/Screens/moments/story_view.dart';
-import 'package:beepo/extensions.dart';
-import 'package:beepo/provider.dart';
-import 'package:beepo/search.dart';
+import 'package:beepo/Utils/extensions.dart';
+import 'package:beepo/Providers/provider.dart';
+import 'package:beepo/Screens/Messaging/chats/search.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,27 +17,31 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:linkwell/linkwell.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 // import 'Models/story_model/story.dart';
-import 'Models/market_data.dart';
-import 'Models/story_model/storyModel.dart';
-import 'Models/user_model.dart';
-import 'Models/wallet.dart';
-import 'Screens/Browser/browser_page.dart';
-import 'Screens/Messaging/chat_dm_screen.dart';
-import 'Screens/Messaging/groupMessages.dart';
-import 'Screens/Messaging/myMessages.dart';
-import 'Screens/Wallet/token_screen.dart';
-import 'Screens/moments/add_story.dart';
-import 'Screens/moments/bubble_stories.dart';
-import 'Utils/styles.dart';
+import '../Models/market_data.dart';
+import '../Models/story_model/storyModel.dart';
+import '../Models/user_model.dart';
+import '../Models/wallet.dart';
+import '../Screens/Browser/browser_page.dart';
+import '../Screens/Messaging/chat_dm_screen.dart';
+import '../Screens/Messaging/chats/widgets.dart';
+import '../Screens/Messaging/groupMessages.dart';
+import '../Screens/Messaging/myMessages.dart';
+import '../Screens/Wallet/token_screen.dart';
+import '../Screens/moments/add_story.dart';
+import '../Screens/moments/bubble_stories.dart';
+import '../Utils/styles.dart';
 
 class FilledButtons extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final Color color;
 
-  FilledButtons({@required this.text, this.color, @required this.onPressed});
+  const FilledButtons(
+      {Key key, @required this.text, this.color, @required this.onPressed})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -76,11 +80,12 @@ class OutlnButton extends StatelessWidget {
 
   // final Color color;
 
-  OutlnButton({
+  const OutlnButton({
+    Key key,
     @required this.text,
     // required this.color,
     @required this.onPressed,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -122,6 +127,8 @@ class OutlnButton extends StatelessWidget {
 List<UserModel> userss = [];
 
 class ChatTab extends StatefulWidget {
+  const ChatTab({Key key}) : super(key: key);
+
   // ChatTab({Key key}) : super(key: key);
 
   @override
@@ -186,9 +193,11 @@ class _ChatTabState extends State<ChatTab> {
         .doc(userM['uid'])
         .get();
 
-    tem.then((value) =>
-            // setState(() {
-            remove = value.data()['isRemoved'].toString()
+    tem.then((value) {
+      if (value.data() != null) {
+        remove = value.data()['isRemoved'].toString();
+      }
+    }
         // print(remove);
         );
     // }));
@@ -471,19 +480,19 @@ class _ChatTabState extends State<ChatTab> {
                                   ),
                                 ),
                               ),
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    showInput = !showInput;
-                                  });
-                                },
-                                icon: Icon(
-                                  Icons.search,
-                                  color: Color(0xff697077),
-                                  //Color(0xff908f8d),
-                                  size: 25,
-                                ),
-                              ),
+                              // IconButton(
+                              //   onPressed: () {
+                              //     setState(() {
+                              //       showInput = !showInput;
+                              //     });
+                              //   },
+                              //   icon: Icon(
+                              //     Icons.search,
+                              //     color: Color(0xff697077),
+                              //     //Color(0xff908f8d),
+                              //     size: 25,
+                              //   ),
+                              // ),
                               // SizedBox(width: 20),
                               // Icon(
                               //   Icons.more_vert_outlined,
@@ -528,52 +537,60 @@ class _ChatTabState extends State<ChatTab> {
                                     return const SizedBox();
                                   },
                                 ),
-                                StreamBuilder(
-                                  stream: FirebaseFirestore.instance
-                                      .collection('conversation')
-                                      .doc(userM['uid'] == ''
-                                          ? ' '
-                                          : userM['uid'])
-                                      .collection("currentConversation")
-                                      .orderBy('created', descending: true)
-                                      .snapshots(),
-                                  builder: (context,
-                                      AsyncSnapshot<QuerySnapshot> snapshot) {
-                                    if (snapshot.hasData) {
-                                      if (snapshot.data.docs.isEmpty) {
-                                        return Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 50),
-                                          child: const Center(
-                                            child: Text(
-                                              'No Messages\n Tap on the + icon to start a conversation',
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                      return ListView.separated(
-                                        padding: const EdgeInsets.only(top: 10),
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemCount: snapshot.data.docs.length,
-                                        separatorBuilder: (ctx, i) =>
-                                            const SizedBox(height: 0),
-                                        itemBuilder: (ctx, index) {
-                                          return MyMessages(
-                                            uid: snapshot.data.docs[index].id,
-                                            index: index,
-                                            docu: snapshot.data.docs,
-                                          );
-                                        },
-                                      );
-                                    }
-                                    return const Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  },
-                                ),
+
+                                XMTPCoversationList()
+
+                                //  StreamBuilder(
+                                //     stream: FirebaseFirestore.instance
+                                //         .collection('conversation')
+                                //         .doc(userM['uid'] == ''
+                                //             ? ' '
+                                //             : userM['uid'])
+                                //         .collection("currentConversation")
+                                //         .orderBy('created',
+                                //             descending: true)
+                                //         .snapshots(),
+                                //     builder: (context,
+                                //         AsyncSnapshot<QuerySnapshot>
+                                //             snapshot) {
+                                //       if (snapshot.hasData) {
+                                //         if (snapshot.data.docs.isEmpty) {
+                                //           return Padding(
+                                //             padding: const EdgeInsets.only(
+                                //                 top: 50),
+                                //             child: const Center(
+                                //               child: Text(
+                                //                 'No Messages\n Tap on the + icon to start a conversation',
+                                //                 textAlign: TextAlign.center,
+                                //               ),
+                                //             ),
+                                //           );
+                                //         }
+                                //         return ListView.separated(
+                                //           padding: const EdgeInsets.only(
+                                //               top: 10),
+                                //           physics:
+                                //               const NeverScrollableScrollPhysics(),
+                                //           shrinkWrap: true,
+                                //           itemCount:
+                                //               snapshot.data.docs.length,
+                                //           separatorBuilder: (ctx, i) =>
+                                //               const SizedBox(height: 0),
+                                //           itemBuilder: (ctx, index) {
+                                //             return MyMessages(
+                                //               uid: snapshot
+                                //                   .data.docs[index].id,
+                                //               index: index,
+                                //               docu: snapshot.data.docs,
+                                //             );
+                                //           },
+                                //         );
+                                //       }
+                                //       return const Center(
+                                //         child: CircularProgressIndicator(),
+                                //       );
+                                //     },
+                                //   ),
                               ],
                             ),
                           )
@@ -589,6 +606,8 @@ class _ChatTabState extends State<ChatTab> {
 }
 
 class CallTab extends StatefulWidget {
+  const CallTab({Key key}) : super(key: key);
+
   // CallTab({Key key}) : super(key: key);
 
   @override
@@ -727,6 +746,7 @@ class MessageReply extends StatelessWidget {
   final String replyUsername;
 
   const MessageReply({
+    Key key,
     @required this.isMe,
     @required this.text,
     @required this.time,
@@ -734,7 +754,7 @@ class MessageReply extends StatelessWidget {
     this.replyMessage,
     this.replyName,
     this.replyUsername,
-  });
+  }) : super(key: key);
 
   String convertStringToLink(String text) {
     String textData = text;
@@ -744,7 +764,9 @@ class MessageReply extends StatelessWidget {
     List<String> urls = urlMatches
         .map((urlMatch) => text.substring(urlMatch.start, urlMatch.end))
         .toList();
-    urls.forEach((x) => print(x));
+    for (var x in urls) {
+      print(x);
+    }
     // final urlRegExp = RegExp(
     //     r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
     // final urlMatches = urlRegExp.allMatches(textData);
@@ -830,7 +852,7 @@ class MessageReply extends StatelessWidget {
     var hour = time.toDate().hour;
     var min = time.toDate().minute;
 
-    var ampm;
+    String ampm;
     if (hour > 12) {
       hour = hour % 12;
       ampm = 'pm';
@@ -1031,7 +1053,7 @@ class Group extends StatelessWidget {
     var hour = time.toDate().hour;
     var min = time.toDate().minute;
 
-    var ampm;
+    String ampm;
     if (hour > 12) {
       hour = hour % 12;
       ampm = 'pm';
@@ -1096,7 +1118,9 @@ class Group extends StatelessWidget {
       List<String> urls = urlMatches
           .map((urlMatch) => text.substring(urlMatch.start, urlMatch.end))
           .toList();
-      urls.forEach((x) => print(x));
+      for (var x in urls) {
+        print(x);
+      }
       // final urlRegExp = RegExp(
       //     r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
       // final urlMatches = urlRegExp.allMatches(textData);
@@ -1382,25 +1406,20 @@ class CurrentUserStoryBubble extends StatelessWidget {
 }
 
 class WalletListTile extends StatelessWidget {
-  final String image;
-  final String title;
-  final String subtext;
   final String amount;
   final Wallet wallet;
   final String fiatSymbol;
   final CoinMarketData coinMarketData;
   final String fiatValue;
 
-  WalletListTile({
-    @required this.image,
-    @required this.title,
-    @required this.subtext,
+  const WalletListTile({
+    Key key,
     @required this.amount,
     this.coinMarketData,
     this.wallet,
     this.fiatValue,
     this.fiatSymbol,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1432,7 +1451,7 @@ class WalletListTile extends StatelessWidget {
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(17),
           child: CachedNetworkImage(
-            imageUrl: image,
+            imageUrl: wallet.logoUrl,
             height: 34,
             width: 34,
             fit: BoxFit.cover,
@@ -1442,7 +1461,7 @@ class WalletListTile extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                title,
+                wallet.displayName,
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 14,
@@ -1505,7 +1524,7 @@ class BrowserContainer extends StatelessWidget {
   final String image;
   final String title;
 
-  BrowserContainer({this.image, this.title});
+  const BrowserContainer({Key key, this.image, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1551,7 +1570,7 @@ class BrowserContainer2 extends StatelessWidget {
   final String image;
   final String title;
 
-  BrowserContainer2({this.image, this.title});
+  const BrowserContainer2({Key key, this.image, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1569,7 +1588,7 @@ class BrowserContainer2 extends StatelessWidget {
                 const BoxShadow(
                   color: Color(0x3f000000),
                   blurRadius: 8,
-                  offset: const Offset(0, 2),
+                  offset: Offset(0, 2),
                 ),
               ],
               image: DecorationImage(
@@ -1583,7 +1602,7 @@ class BrowserContainer2 extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            color: const Color(0xff0e014c),
+            color: Color(0xff0e014c),
             fontSize: 11,
           ),
         ),
@@ -1596,7 +1615,7 @@ class BrowserContainer3 extends StatelessWidget {
   final String image;
   final String title;
 
-  BrowserContainer3({this.image, this.title});
+  const BrowserContainer3({Key key, this.image, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1613,9 +1632,9 @@ class BrowserContainer3 extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 const BoxShadow(
-                  color: const Color(0x3f000000),
+                  color: Color(0x3f000000),
                   blurRadius: 8,
-                  offset: const Offset(0, 2),
+                  offset: Offset(0, 2),
                 ),
               ],
             ),
@@ -1631,7 +1650,7 @@ class BrowserContainer3 extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            color: const Color(0xff0e014c),
+            color: Color(0xff0e014c),
             fontSize: 11,
           ),
         ),
@@ -1644,7 +1663,7 @@ class BrowserContainer4 extends StatelessWidget {
   final String image;
   final String title;
 
-  BrowserContainer4({this.image, this.title});
+  const BrowserContainer4({Key key, this.image, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1689,6 +1708,8 @@ class BrowserContainer4 extends StatelessWidget {
 }
 
 class ContainerButton extends StatelessWidget {
+  const ContainerButton({Key key}) : super(key: key);
+
   // const ContainerButton({Key key}) : super(key: key);
 
   @override
@@ -1699,9 +1720,9 @@ class ContainerButton extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: [
           const BoxShadow(
-            color: const Color(0x0c000234),
+            color: Color(0x0c000234),
             blurRadius: 12,
-            offset: const Offset(0, 4),
+            offset: Offset(0, 4),
           ),
         ],
         borderRadius: BorderRadius.circular(10),
