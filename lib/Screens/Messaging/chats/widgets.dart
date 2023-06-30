@@ -55,27 +55,27 @@ class _XMTPCoversationListState extends State<XMTPCoversationList> {
               );
             }
             List<DecodedMessage> messages = snapshot.data;
+            if (convos.isNotEmpty) {
+              convos.sort((a, b) {
+                // Compare the message time of conversations 'a' and 'b'
+                DateTime timeA = messages
+                    .firstWhereOrNull((element) => element.topic == a.topic)
+                    ?.sentAt;
+                DateTime timeB = messages
+                    .firstWhereOrNull((element) => element.topic == b.topic)
+                    ?.sentAt;
 
-            convos.sort((a, b) {
-              // Compare the message time of conversations 'a' and 'b'
-              DateTime timeA = messages
-                  .firstWhere((element) => element.topic == a.topic)
-                  ?.sentAt;
-              DateTime timeB = messages
-                  .firstWhere((element) => element.topic == b.topic)
-                  ?.sentAt;
-
-              if (timeA != null && timeB != null) {
-                return timeB.compareTo(timeA); // Sort in descending order
-              } else if (timeA != null) {
-                return -1; // 'a' has a message, 'b' doesn't have
-              } else if (timeB != null) {
-                return 1; // 'b' has a message, 'a' doesn't have
-              } else {
-                return 0; // Both 'a' and 'b' don't have messages
-              }
-            });
-
+                if (timeA != null && timeB != null) {
+                  return timeB.compareTo(timeA); // Sort in descending order
+                } else if (timeA != null) {
+                  return -1; // 'a' has a message, 'b' doesn't have
+                } else if (timeB != null) {
+                  return 1; // 'b' has a message, 'a' doesn't have
+                } else {
+                  return 0; // Both 'a' and 'b' don't have messages
+                }
+              });
+            }
             return ListView.builder(
               itemCount: convos.length,
               shrinkWrap: true,

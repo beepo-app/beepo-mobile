@@ -1455,6 +1455,11 @@ class WalletListTile extends StatelessWidget {
             height: 34,
             width: 34,
             fit: BoxFit.cover,
+            errorWidget: (context, url, error) => CircleAvatar(
+              backgroundColor: Colors.grey[200],
+              radius: 17,
+              child: Text(wallet.displayName[0].toUpperCase()),
+            ),
           ),
         ),
         title: Row(
@@ -1506,11 +1511,16 @@ class WalletListTile extends StatelessWidget {
               ),
             ),
             SizedBox(width: 10),
-            Text(
-              amount,
-              style: const TextStyle(
-                color: Color(0xcc000000),
-                fontSize: 13,
+            Expanded(
+              child: Text(
+                amount,
+                textAlign: TextAlign.end,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: const TextStyle(
+                  color: Color(0xcc000000),
+                  fontSize: 13,
+                ),
               ),
             )
           ],

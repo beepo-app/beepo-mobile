@@ -392,9 +392,15 @@ class WalletList extends StatelessWidget {
           );
           balance = coinBalance['balance'].toString();
 
-          fiatValue = coinBalance['prices'].firstWhere(
-            (e) => e['currency'] == selectedCurrency,
-          )['value'];
+          Map prices = (coinBalance['prices'] as List).firstWhereOrNull(
+                (e) => e['currency'] == selectedCurrency,
+              ) ??
+              {};
+          if (prices.isNotEmpty) {
+            fiatValue = prices['value'] ?? '0.0';
+          } else {
+            fiatValue = '0.0';
+          }
         }
 
         return WalletListTile(
