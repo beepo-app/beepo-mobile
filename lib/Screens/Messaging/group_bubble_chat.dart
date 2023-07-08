@@ -10,16 +10,16 @@ class GroupBubbleChat extends StatelessWidget {
   final bool isMe;
   final String text;
   final Timestamp time;
-  final UserModel user;
+  final UserModel? user;
   final bool sameUser;
 
   const GroupBubbleChat({
-    Key key,
-    @required this.isMe,
-    @required this.text,
-    @required this.time,
+    Key? key,
+    required this.isMe,
+    required this.text,
+    required this.time,
     this.user,
-    @required this.sameUser,
+    required this.sameUser,
   }) : super(key: key);
 
   @override
@@ -64,11 +64,11 @@ class GroupBubbleChat extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => UserProfile(model: user)));
+                            builder: (context) => UserProfile(model: user!)));
                   },
                   child: CircleAvatar(
                     radius: 20,
-                    backgroundImage: CachedNetworkImageProvider(user.image ??
+                    backgroundImage: CachedNetworkImageProvider(user!.image ??
                         'https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg'),
                   ),
                 ),
@@ -115,7 +115,7 @@ class GroupBubbleChat extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            user.name,
+                            user!.name!,
                             style: const TextStyle(
                               color: secondaryColor,
                               fontFamily: 'SignikaNegative',
@@ -125,7 +125,7 @@ class GroupBubbleChat extends StatelessWidget {
                           ),
                           const Spacer(),
                           Text(
-                            '@${user.userName}',
+                            '@${user!.userName!}',
                             style: const TextStyle(
                               color: secondaryColor,
                               fontFamily: '@Precious001',

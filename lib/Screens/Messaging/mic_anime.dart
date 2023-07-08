@@ -9,9 +9,9 @@ import 'package:get/get.dart';
 import '../../Utils/styles.dart';
 
 class GroupProfile extends StatefulWidget {
-  final String image;
+  final String? image;
 
-  const GroupProfile({Key key, this.image}) : super(key: key);
+  const GroupProfile({Key? key, this.image}) : super(key: key);
 
   @override
   State<GroupProfile> createState() => _GroupProfileState();
@@ -102,7 +102,7 @@ class _GroupProfileState extends State<GroupProfile> {
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData) {
                     return Text(
-                      '${snapshot.data.docs.length} members',
+                      '${snapshot.data!.docs.length} members',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -183,7 +183,7 @@ class _GroupProfileState extends State<GroupProfile> {
                             (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (snapshot.hasData) {
                             return ListView.builder(
-                                itemCount: snapshot.data.docs.length,
+                                itemCount: snapshot.data!.docs.length,
                                 itemBuilder: (context, index) {
                                   return Container(
                                     // padding:
@@ -200,11 +200,11 @@ class _GroupProfileState extends State<GroupProfile> {
                                           // borderRadius: BorderRadius.circular(5),
                                           backgroundImage:
                                               CachedNetworkImageProvider(
-                                            snapshot.data.docs[index]
+                                            snapshot.data!.docs[index]
                                                         ['image'] ==
                                                     ""
                                                 ? 'https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg'
-                                                : snapshot.data.docs[index]
+                                                : snapshot.data!.docs[index]
                                                     ['image'],
                                             maxHeight: 45,
                                             maxWidth: 45,
@@ -215,7 +215,7 @@ class _GroupProfileState extends State<GroupProfile> {
                                         ),
                                         // SizedBox(height: 10),
                                         Text(
-                                          '${snapshot.data.docs[index]['name']}  \n@${snapshot.data.docs[index]['userName']}',
+                                          '${snapshot.data!.docs[index]['name']}  \n@${snapshot.data!.docs[index]['userName']}',
                                           style: TextStyle(
                                             fontFamily: 'Roboto',
                                             color: Colors.black,

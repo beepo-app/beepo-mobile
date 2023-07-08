@@ -7,7 +7,7 @@ import 'package:local_auth/local_auth.dart';
 import '../Utils/styles.dart';
 
 class Security extends StatefulWidget {
-  const Security({Key key}) : super(key: key);
+  const Security({Key? key}) : super(key: key);
 
   @override
   State<Security> createState() => _SecurityState();
@@ -131,7 +131,7 @@ class _SecurityState extends State<Security> {
                             .then((val) {
                           if (val) {
                             // Get.to(WalletPhraseScreen());
-                            Get.to(const PhraseConfirmation());
+                            Get.to(PhraseConfirmation());
                           }
                         });
                       },

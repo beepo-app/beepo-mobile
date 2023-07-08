@@ -26,12 +26,12 @@ class MediaService {
       if (response.statusCode == 200) {
         return data['url'];
       } else {
-        return null;
+        return '';
       }
     } catch (e) {
       print(e);
       showToast(e.toString());
-      return null;
+      rethrow;
     }
   }
 }

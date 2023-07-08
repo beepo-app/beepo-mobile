@@ -26,27 +26,30 @@ class TransactionService {
         return '';
       }
     } catch (e) {
-      log(e);
+      log(e.toString());
       return '';
     }
   }
 
   //Send token
   Future<bool> sendToken(
-      {String amount, String gasFee, String address, String networkId}) async {
+      {String? amount,
+      String? gasFee,
+      String? address,
+      String? networkId}) async {
     try {
-      log(address);
+      log(address!);
 
       String seedPhrase = await EncryptionService().getSeedPhrase();
 
       String base64SeedPhrase = base64Encode(utf8.encode(seedPhrase));
 
-      log(networkId);
+      log(networkId!);
       log(base64SeedPhrase);
 
       var body = {
         "receiverAddress": address,
-        "value": num.parse(amount),
+        "value": num.parse(amount!),
         "networkId": networkId,
         "pin": AuthService().userPin,
       };
@@ -108,7 +111,7 @@ class TransactionService {
         return [];
       }
     } catch (e) {
-      log(e);
+      log(e.toString());
       return [];
     }
   }

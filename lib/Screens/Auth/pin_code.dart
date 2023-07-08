@@ -11,12 +11,12 @@ import '../../Widgets/components.dart';
 import 'verify_pin.dart';
 
 class PinCode extends StatefulWidget {
-  final File image;
-  final String name;
+  final File? image;
+  final String? name;
   final bool isSignUp;
-  final String seedPhrase;
+  final String? seedPhrase;
   const PinCode({
-    Key key,
+    Key? key,
     this.image,
     this.name,
     this.isSignUp = true,
@@ -104,10 +104,10 @@ class _PinCodeState extends State<PinCode> {
                 if (otp.text.length == 4) {
                   Hive.box('beepo').put('PIN', otp.text);
                   Get.to(VerifyCode(
-                    name: widget.name,
-                    image: widget.image,
+                    name: widget.name!,
+                    image: widget.image!,
                     isSignUp: widget.isSignUp,
-                    seedPhrase: widget.seedPhrase,
+                    seedPhrase: widget.seedPhrase!,
                   ));
                 } else {
                   showToast('Please enter a valid PIN');

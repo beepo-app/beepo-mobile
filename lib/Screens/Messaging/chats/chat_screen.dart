@@ -25,7 +25,7 @@ import 'widgets.dart';
 
 class DmScreen extends StatefulWidget {
   final Conversation conversation;
-  const DmScreen({Key key, this.conversation}) : super(key: key);
+  const DmScreen({Key? key, required this.conversation}) : super(key: key);
 
   @override
   State<DmScreen> createState() => _DmScreenState();
@@ -33,9 +33,9 @@ class DmScreen extends StatefulWidget {
 
 class _DmScreenState extends State<DmScreen> {
   List<DecodedMessage> messages = [];
-  Future<List<DecodedMessage>> getMessages;
-  UserModel user;
-  Future<UserModel> getUserDetails;
+  Future<List<DecodedMessage>>? getMessages;
+  UserModel? user;
+  Future<UserModel>? getUserDetails;
 
   @override
   void initState() {
@@ -69,7 +69,7 @@ class _DmScreenState extends State<DmScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => UserProfile(
-                            model: user,
+                            model: user!,
                           ),
                         ),
                       );
@@ -82,7 +82,7 @@ class _DmScreenState extends State<DmScreen> {
                         child: CachedNetworkImage(
                           height: 35,
                           width: 35,
-                          imageUrl: user.image,
+                          imageUrl: user!.image!,
                           errorWidget: (context, url, error) => Container(
                             color: Colors.white,
                             child: const Icon(
@@ -100,7 +100,7 @@ class _DmScreenState extends State<DmScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        user.name,
+                        user!.name!,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 15,
@@ -109,7 +109,7 @@ class _DmScreenState extends State<DmScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        "@" + user.userName,
+                        "@" + user!.userName!,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
@@ -136,7 +136,7 @@ class _DmScreenState extends State<DmScreen> {
                   );
                 }
 
-                messages = snapshot.data;
+                messages = snapshot.data!;
 
                 return StreamBuilder<DecodedMessage>(
                   stream: context
@@ -144,7 +144,7 @@ class _DmScreenState extends State<DmScreen> {
                       .streamMessages(convo: widget.conversation),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      messages.insert(0, snapshot.data);
+                      messages.insert(0, snapshot.data!);
                     }
                     return Column(
                       children: [
@@ -212,7 +212,7 @@ class _DmScreenState extends State<DmScreen> {
                         ),
                         ChatControlsWidget(
                           convo: widget.conversation,
-                          user: user,
+                          user: user!,
                         ),
                       ],
                     );
@@ -229,13 +229,13 @@ class _DmScreenState extends State<DmScreen> {
 
 class ChatControlsWidget extends StatefulWidget {
   const ChatControlsWidget({
-    Key key,
+    Key? key,
     this.convo,
     this.user,
   }) : super(key: key);
 
-  final Conversation convo;
-  final UserModel user;
+  final Conversation? convo;
+  final UserModel? user;
 
   @override
   State<ChatControlsWidget> createState() => _ChatControlsWidgetState();
@@ -279,7 +279,7 @@ class _ChatControlsWidgetState extends State<ChatControlsWidget> {
                 decoration: InputDecoration(
                   isDense: true,
                   hintText: "Amount",
-                  suffixText: wallet.ticker ?? " ",
+                  suffixText: wallet.ticker,
                   border: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                       borderSide: BorderSide(
@@ -306,8 +306,8 @@ class _ChatControlsWidgetState extends State<ChatControlsWidget> {
                         wallet: wallet,
                         amount: double.parse(amount.text),
                         address: wallet.ticker == "BITCOIN"
-                            ? widget.user.bitcoinWalletAddress
-                            : widget.user.hdWalletAddress,
+                            ? widget.user!.bitcoinWalletAddress
+                            : widget.user!.hdWalletAddress,
                         convo: widget.convo,
                       ),
                     );
@@ -374,7 +374,7 @@ class _ChatControlsWidgetState extends State<ChatControlsWidget> {
                                     ),
                                   ),
                                   builder: (ctx) {
-                                    return FutureBuilder<Object>(
+                                    return FutureBuilder<List<Wallet>>(
                                       future: WalletsService().getWallets(),
                                       builder: (context, snapshot) {
                                         if (!snapshot.hasData) {
@@ -383,14 +383,14 @@ class _ChatControlsWidgetState extends State<ChatControlsWidget> {
                                           );
                                         }
 
-                                        List<Wallet> wallets = snapshot.data;
+                                        List<Wallet>? wallets = snapshot.data;
                                         return Padding(
                                           padding: const EdgeInsets.all(10),
                                           child: Column(
                                             children: [
                                               const SizedBox(height: 10),
                                               Text(
-                                                "Send Token to ${widget.user.name}",
+                                                "Send Token to ${widget.user!.name}",
                                                 style: const TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w600,
@@ -400,7 +400,7 @@ class _ChatControlsWidgetState extends State<ChatControlsWidget> {
                                               Expanded(
                                                 child: ListView.builder(
                                                   shrinkWrap: true,
-                                                  itemCount: wallets.length,
+                                                  itemCount: wallets!.length,
                                                   itemBuilder:
                                                       (context, index) {
                                                     Wallet wallet =
@@ -411,8 +411,8 @@ class _ChatControlsWidgetState extends State<ChatControlsWidget> {
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(15),
-                                                        color:
-                                                            const Color(0xFFE2E2E2),
+                                                        color: const Color(
+                                                            0xFFE2E2E2),
                                                       ),
                                                       margin: const EdgeInsets
                                                           .symmetric(

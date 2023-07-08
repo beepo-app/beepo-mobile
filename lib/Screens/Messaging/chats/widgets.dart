@@ -15,7 +15,7 @@ import 'chat_address.dart';
 import 'chat_screen.dart';
 
 class XMTPCoversationList extends StatefulWidget {
-  const XMTPCoversationList({Key key}) : super(key: key);
+  const XMTPCoversationList({Key? key}) : super(key: key);
 
   @override
   State<XMTPCoversationList> createState() => _XMTPCoversationListState();
@@ -54,18 +54,18 @@ class _XMTPCoversationListState extends State<XMTPCoversationList> {
                 child: CircularProgressIndicator(),
               );
             }
-            List<DecodedMessage> messages = snapshot.data;
+            List<DecodedMessage>? messages = snapshot.data;
 
             convos.sort((a, b) {
               // Compare the message time of conversations 'a' and 'b'
-              DateTime timeA = messages
+              DateTime? timeA = messages!
                   .firstWhere((element) => element.topic == a.topic)
-                  ?.sentAt;
-              DateTime timeB = messages
+                  .sentAt;
+              DateTime? timeB = messages
                   .firstWhere((element) => element.topic == b.topic)
-                  ?.sentAt;
+                  .sentAt;
 
-              if (timeA != null && timeB != null) {
+              if (timeB != null) {
                 return timeB.compareTo(timeA); // Sort in descending order
               } else if (timeA != null) {
                 return -1; // 'a' has a message, 'b' doesn't have
@@ -84,9 +84,9 @@ class _XMTPCoversationListState extends State<XMTPCoversationList> {
               itemBuilder: (context, index) {
                 final convo = convos[index];
 
-                DecodedMessage message = messages.firstWhereOrNull(
+                DecodedMessage? message = messages!.firstWhereOrNull(
                     (element) => element.topic == convo.topic);
-                return ChatListItem(convo: convo, message: message);
+                return ChatListItem(convo: convo, message: message!);
               },
             );
           },
@@ -98,9 +98,9 @@ class _XMTPCoversationListState extends State<XMTPCoversationList> {
 
 class ChatListItem extends StatelessWidget {
   const ChatListItem({
-    Key key,
-    @required this.convo,
-    @required this.message,
+    Key? key,
+    required this.convo,
+    required this.message,
   }) : super(key: key);
 
   final Conversation convo;
@@ -151,7 +151,7 @@ class ChatListItem extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(25),
                     child: CachedNetworkImage(
-                      imageUrl: user.data.image,
+                      imageUrl: user.data!.image!,
                       height: 40,
                       width: 40,
                       placeholder: (context, url) => const Center(
@@ -166,7 +166,7 @@ class ChatListItem extends StatelessWidget {
                   ),
                 ),
           title: Text(
-            noBeepoAcct ? convo.peer.hexEip55 : user.data.name,
+            noBeepoAcct ? convo.peer.hexEip55 : user.data!.name!,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
@@ -177,7 +177,7 @@ class ChatListItem extends StatelessWidget {
                   children: [
                     Expanded(
                         child: Text(
-                      message.content,
+                      message.content.toString(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     )),
@@ -219,10 +219,11 @@ class ChatListItem extends StatelessWidget {
 }
 
 class ChatMessageWidget extends StatelessWidget {
-  final DecodedMessage message;
+  final DecodedMessage? message;
   final bool isMe;
 
-  const ChatMessageWidget({Key key, this.message, this.isMe}) : super(key: key);
+  const ChatMessageWidget({Key? key, this.message, required this.isMe})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -246,7 +247,7 @@ class ChatMessageWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              message.content,
+              message!.content.toString(),
               style: TextStyle(
                 color: !isMe ? Colors.black : Colors.white,
               ),
@@ -256,7 +257,7 @@ class ChatMessageWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  DateFormat("jm").format(message.sentAt),
+                  DateFormat("jm").format(message!.sentAt),
                   style: TextStyle(
                     fontSize: 10,
                     color: !isMe ? Colors.black : Colors.white,
@@ -283,7 +284,8 @@ class ChatMessageWidget extends StatelessWidget {
 class TransferPreview extends StatelessWidget {
   final Map transfer;
   final bool isMe;
-  const TransferPreview({Key key, this.transfer, this.isMe}) : super(key: key);
+  const TransferPreview({Key? key, required this.transfer, required this.isMe})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -14,12 +14,12 @@ import 'chat_dm_screen.dart';
 import 'package:encrypt/encrypt.dart' as enc;
 
 class MyMessages extends StatefulWidget {
-  const MyMessages({Key key, @required this.uid, this.index, this.docu})
+  const MyMessages({Key? key, required this.uid, this.index, this.docu})
       : super(key: key);
 
   final String uid;
-  final int index;
-  final List docu;
+  final int? index;
+  final List? docu;
 
   @override
   State<MyMessages> createState() => _MyMessagesState();
@@ -87,15 +87,15 @@ class _MyMessagesState extends State<MyMessages> {
                                               Get.to(ChatDm(
                                                 model: UserModel(
                                                   uid: widget.uid,
-                                                  image: snapshot.data.docs[0]
+                                                  image: snapshot.data!.docs[0]
                                                       ['image'],
-                                                  name: snapshot.data.docs[0]
+                                                  name: snapshot.data!.docs[0]
                                                       ['name'],
-                                                  userName: snapshot
-                                                      .data.docs[0]['userName'],
+                                                  userName: snapshot.data!
+                                                      .docs[0]['userName'],
                                                   searchKeywords:
                                                       createKeywords(snapshot
-                                                          .data
+                                                          .data!
                                                           .docs[0]['userName']),
                                                 ),
                                               ));
@@ -198,11 +198,11 @@ class _MyMessagesState extends State<MyMessages> {
                     : Get.to(ChatDm(
                         model: UserModel(
                           uid: widget.uid,
-                          image: snapshot.data.docs[0]['image'],
-                          name: snapshot.data.docs[0]['name'],
-                          userName: snapshot.data.docs[0]['userName'],
-                          searchKeywords:
-                              createKeywords(snapshot.data.docs[0]['userName']),
+                          image: snapshot.data!.docs[0]['image'],
+                          name: snapshot.data!.docs[0]['name'],
+                          userName: snapshot.data!.docs[0]['userName'],
+                          searchKeywords: createKeywords(
+                              snapshot.data!.docs[0]['userName']),
                         ),
                       ));
                 // setState(() {
@@ -217,7 +217,7 @@ class _MyMessagesState extends State<MyMessages> {
                 child: ClipRRect(
                     borderRadius: BorderRadius.circular(25),
                     child: CachedNetworkImage(
-                      imageUrl: snapshot.data.docs[0]['image'],
+                      imageUrl: snapshot.data!.docs[0]['image'],
                       height: 50,
                       width: 50,
                       placeholder: (context, url) => Center(
@@ -235,7 +235,7 @@ class _MyMessagesState extends State<MyMessages> {
                 children: [
                   Expanded(
                     child: Text(
-                      snapshot.data.docs[0]['name'],
+                      snapshot.data!.docs[0]['name'],
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 14,
@@ -244,12 +244,12 @@ class _MyMessagesState extends State<MyMessages> {
                   ),
                   if (DateTime.now()
                           .difference(
-                              widget.docu[widget.index]['created'].toDate())
+                              widget.docu![widget.index!]['created'].toDate())
                           .inHours <
                       24)
                     Text(
                       DateFormat('HH:mm').format(
-                          widget.docu[widget.index]['created'].toDate()),
+                          widget.docu![widget.index!]['created'].toDate()),
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 10,
@@ -258,12 +258,12 @@ class _MyMessagesState extends State<MyMessages> {
                     ),
                   if (DateTime.now()
                           .difference(
-                              widget.docu[widget.index]['created'].toDate())
+                              widget.docu![widget.index!]['created'].toDate())
                           .inHours >
                       48)
                     Text(
                       DateFormat('d:M:y').format(
-                          widget.docu[widget.index]['created'].toDate()),
+                          widget.docu![widget.index!]['created'].toDate()),
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 8,
@@ -271,13 +271,13 @@ class _MyMessagesState extends State<MyMessages> {
                       ),
                     ),
                   if (DateTime.now()
-                              .difference(
-                                  widget.docu[widget.index]['created'].toDate())
+                              .difference(widget.docu![widget.index!]['created']
+                                  .toDate())
                               .inHours >
                           24 &&
                       DateTime.now()
-                              .difference(
-                                  widget.docu[widget.index]['created'].toDate())
+                              .difference(widget.docu![widget.index!]['created']
+                                  .toDate())
                               .inHours <
                           48)
                     Text(
@@ -291,16 +291,17 @@ class _MyMessagesState extends State<MyMessages> {
                 ],
               ),
               subtitle: Text(
-                widget.docu[widget.index]['type'] == 'message'
-                    ? widget.docu[widget.index]['sender'] == userM['uid']
-                        ? 'you: ${encrypter.decrypt64(widget.docu[widget.index]['text'], iv: enc.IV.fromLength(16)
+                widget.docu![widget.index!]['type'] == 'message'
+                    ? widget.docu![widget.index!]['sender'] == userM['uid']
+                        ? 'you: ${encrypter.decrypt64(widget.docu![widget.index!]['text'], iv: enc.IV.fromLength(16)
                             // ["iv"]
                             )}'
-                        : encrypter.decrypt64(widget.docu[widget.index]['text'],
+                        : encrypter.decrypt64(
+                            widget.docu![widget.index!]['text'],
                             iv: enc.IV.fromLength(16)
                             // ["iv"]
                             )
-                    : widget.docu[widget.index]['sender'] == userM['uid']
+                    : widget.docu![widget.index!]['sender'] == userM['uid']
                         ? 'Media sent '
                         : 'Media recieved',
                 style: isTapped == false

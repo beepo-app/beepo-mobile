@@ -15,9 +15,9 @@ import '../../Providers/provider.dart';
 
 class MediaLinks extends StatefulWidget {
   // const UserProfile({Key key}) : super(key: key);
-  final UserModel model;
+  final UserModel? model;
 
-  const MediaLinks({Key key, @required this.model}) : super(key: key);
+  const MediaLinks({Key? key, @required this.model}) : super(key: key);
 
   @override
   State<MediaLinks> createState() => _MediaLinksState();
@@ -29,7 +29,7 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
   bool enable3 = false;
 
   Map userM = Hive.box('beepo').get('userData');
-  TabController tabController;
+  late TabController tabController;
 
   @override
   void initState() {
@@ -89,7 +89,7 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (_) {
                         return FullScreenImage(
-                          imageUrl: widget.model.image,
+                          imageUrl: widget.model!.image!,
                           tag: "imagex",
                         );
                       }));
@@ -101,7 +101,7 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
                         child: CachedNetworkImage(
                           width: 110,
                           height: 110,
-                          imageUrl: widget.model.image,
+                          imageUrl: widget.model!.image!,
                           placeholder: (context, url) =>
                               Center(child: CircularProgressIndicator()),
                           errorWidget: (context, url, error) => Icon(
@@ -116,7 +116,7 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
                   ),
                   SizedBox(height: 12),
                   Text(
-                    widget.model.name,
+                    widget.model!.name!,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -124,7 +124,7 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
                   ),
                   SizedBox(height: 6),
                   Text(
-                    widget.model.userName,
+                    widget.model!.userName!,
                     style: TextStyle(
                       color: Color(0x66ffffff),
                       fontSize: 13,
@@ -202,7 +202,7 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
                                 .collection('messages')
                                 .doc(userM['uid'])
                                 .collection('userMessages')
-                                .doc(widget.model.uid)
+                                .doc(widget.model!.uid)
                                 .collection('messageList')
                                 .where('type', isEqualTo: 'photo')
                                 .snapshots(),
@@ -217,7 +217,7 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
                                   crossAxisSpacing: 15,
                                   crossAxisCount: 3,
                                   children: List.generate(
-                                      snapshot.data.docs.length, (index) {
+                                      snapshot.data!.docs.length, (index) {
                                     return Container(
                                       height: 91,
                                       width: 102,
@@ -231,7 +231,7 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
                                               MaterialPageRoute(builder: (_) {
                                             return FullScreenImage(
                                               imageUrl: snapshot
-                                                  .data.docs[index]['content'],
+                                                  .data!.docs[index]['content'],
                                               tag: "images$index",
                                             );
                                           }));
@@ -241,7 +241,7 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
                                             tag: "images$index",
                                             child: CachedNetworkImage(
                                               imageUrl: snapshot
-                                                  .data.docs[index]['content'],
+                                                  .data!.docs[index]['content'],
                                               fit: BoxFit.fill,
                                             ),
                                           ),
@@ -262,7 +262,7 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
                                 .collection('messages')
                                 .doc(userM['uid'])
                                 .collection('userMessages')
-                                .doc(widget.model.uid)
+                                .doc(widget.model!.uid)
                                 .collection('messageList')
                                 .where('type', isEqualTo: 'video')
                                 .snapshots(),
@@ -277,7 +277,7 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
                                   crossAxisSpacing: 15,
                                   crossAxisCount: 3,
                                   children: List.generate(
-                                      snapshot.data.docs.length, (index) {
+                                      snapshot.data!.docs.length, (index) {
                                     return GestureDetector(
                                       // onTap: () => Get.to(Store()),
                                       child: Container(
@@ -290,7 +290,7 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
                                         ),
                                         child: ClipRRect(
                                           child: CachedNetworkImage(
-                                            imageUrl: snapshot.data.docs[index]
+                                            imageUrl: snapshot.data!.docs[index]
                                                 ['content'],
                                             fit: BoxFit.fill,
                                           ),
@@ -317,7 +317,7 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
                             .collection('messages')
                             .doc(userM['uid'])
                             .collection('userMessages')
-                            .doc(widget.model.uid)
+                            .doc(widget.model!.uid)
                             .collection('messageList')
                             .where('type', isEqualTo: 'message')
                             .snapshots(),
@@ -325,16 +325,16 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
                             (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (snapshot.hasData) {
                             return ListView.builder(
-                                itemCount: snapshot.data.docs.length,
+                                itemCount: snapshot.data!.docs.length,
                                 itemBuilder: (context, index) {
-                                  if (snapshot.data.docs[index]['text']
+                                  if (snapshot.data!.docs[index]['text']
                                               .toString()
                                               .split('?')
                                               .first
                                               .split('.')
                                               .last ==
                                           'com' ||
-                                      snapshot.data.docs[index]['text']
+                                      snapshot.data!.docs[index]['text']
                                               .toString()
                                               .split('?')
                                               .first
@@ -357,7 +357,7 @@ class _MediaLinksState extends State<MediaLinks> with TickerProviderStateMixin {
                                               0.5),
                                       alignment: Alignment.center,
                                       child: LinkWell(
-                                          snapshot.data.docs[index]['text'],
+                                          snapshot.data!.docs[index]['text'],
                                           linkStyle: TextStyle(
                                             fontFamily: 'Roboto',
                                             color: secondaryColor,
@@ -388,7 +388,7 @@ class MediaLinksGroup extends StatefulWidget {
   // const UserProfile({Key key}) : super(key: key);
   final String image;
 
-  const MediaLinksGroup({Key key, @required this.image}) : super(key: key);
+  const MediaLinksGroup({Key? key, required this.image}) : super(key: key);
 
   @override
   State<MediaLinksGroup> createState() => _MediaLinksGroupState();
@@ -401,7 +401,7 @@ class _MediaLinksGroupState extends State<MediaLinksGroup>
   bool enable3 = false;
 
   Map userM = Hive.box('beepo').get('userData');
-  TabController tabController;
+  late TabController tabController;
 
   @override
   void initState() {
@@ -571,7 +571,7 @@ class _MediaLinksGroupState extends State<MediaLinksGroup>
                                   crossAxisSpacing: 15,
                                   crossAxisCount: 3,
                                   children: List.generate(
-                                      snapshot.data.docs.length, (index) {
+                                      snapshot.data!.docs.length, (index) {
                                     return Container(
                                       height: 91,
                                       width: 102,
@@ -585,7 +585,7 @@ class _MediaLinksGroupState extends State<MediaLinksGroup>
                                               MaterialPageRoute(builder: (_) {
                                             return FullScreenImage(
                                               imageUrl: snapshot
-                                                  .data.docs[index]['content'],
+                                                  .data!.docs[index]['content'],
                                               tag: "images$index",
                                             );
                                           }));
@@ -595,7 +595,7 @@ class _MediaLinksGroupState extends State<MediaLinksGroup>
                                             tag: "images$index",
                                             child: CachedNetworkImage(
                                               imageUrl: snapshot
-                                                  .data.docs[index]['content'],
+                                                  .data!.docs[index]['content'],
                                               fit: BoxFit.fill,
                                             ),
                                           ),
@@ -627,7 +627,7 @@ class _MediaLinksGroupState extends State<MediaLinksGroup>
                                   crossAxisSpacing: 15,
                                   crossAxisCount: 3,
                                   children: List.generate(
-                                      snapshot.data.docs.length, (index) {
+                                      snapshot.data!.docs.length, (index) {
                                     return GestureDetector(
                                       // onTap: () => Get.to(Store()),
                                       child: Container(
@@ -640,7 +640,7 @@ class _MediaLinksGroupState extends State<MediaLinksGroup>
                                         ),
                                         child: ClipRRect(
                                           child: CachedNetworkImage(
-                                            imageUrl: snapshot.data.docs[index]
+                                            imageUrl: snapshot.data!.docs[index]
                                                 ['content'],
                                             fit: BoxFit.fill,
                                           ),
@@ -671,16 +671,16 @@ class _MediaLinksGroupState extends State<MediaLinksGroup>
                             (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (snapshot.hasData) {
                             return ListView.builder(
-                                itemCount: snapshot.data.docs.length,
+                                itemCount: snapshot.data!.docs.length,
                                 itemBuilder: (context, index) {
-                                  if (snapshot.data.docs[index]['text']
+                                  if (snapshot.data!.docs[index]['text']
                                               .toString()
                                               .split('?')
                                               .first
                                               .split('.')
                                               .last ==
                                           'com' ||
-                                      snapshot.data.docs[index]['text']
+                                      snapshot.data!.docs[index]['text']
                                               .toString()
                                               .split('?')
                                               .first
@@ -703,7 +703,7 @@ class _MediaLinksGroupState extends State<MediaLinksGroup>
                                               0.5),
                                       alignment: Alignment.center,
                                       child: LinkWell(
-                                          snapshot.data.docs[index]['text'],
+                                          snapshot.data!.docs[index]['text'],
                                           linkStyle: TextStyle(
                                             fontFamily: 'Roboto',
                                             color: Colors.white,

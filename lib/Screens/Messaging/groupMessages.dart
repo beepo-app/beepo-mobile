@@ -10,12 +10,12 @@ import 'package:intl/intl.dart';
 import 'group_screen.dart';
 
 class GroupMessages extends StatefulWidget {
-  const GroupMessages({Key key, @required this.uid, this.index, this.docu})
+  const GroupMessages({Key? key, required this.uid, this.index, this.docu})
       : super(key: key);
 
   final String uid;
-  final int index;
-  final List docu;
+  final int? index;
+  final List? docu;
 
   @override
   State<GroupMessages> createState() => _GroupMessagesState();
@@ -81,12 +81,12 @@ class _GroupMessagesState extends State<GroupMessages> {
               ),
             ),
             if (DateTime.now()
-                    .difference(widget.docu[widget.index]['created'].toDate())
+                    .difference(widget.docu![widget.index!]['created'].toDate())
                     .inHours <
                 24)
               Text(
                 DateFormat('HH:mm')
-                    .format(widget.docu[widget.index]['created'].toDate()),
+                    .format(widget.docu![widget.index!]['created'].toDate()),
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 8,
@@ -94,12 +94,12 @@ class _GroupMessagesState extends State<GroupMessages> {
                 ),
               ),
             if (DateTime.now()
-                    .difference(widget.docu[widget.index]['created'].toDate())
+                    .difference(widget.docu![widget.index!]['created'].toDate())
                     .inHours >
                 48)
               Text(
                 DateFormat('d:M:y')
-                    .format(widget.docu[widget.index]['created'].toDate()),
+                    .format(widget.docu![widget.index!]['created'].toDate()),
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 8,
@@ -108,12 +108,12 @@ class _GroupMessagesState extends State<GroupMessages> {
               ),
             if (DateTime.now()
                         .difference(
-                            widget.docu[widget.index]['created'].toDate())
+                            widget.docu![widget.index!]['created'].toDate())
                         .inHours >
                     24 &&
                 DateTime.now()
                         .difference(
-                            widget.docu[widget.index]['created'].toDate())
+                            widget.docu![widget.index!]['created'].toDate())
                         .inHours <
                     48)
               Text(
@@ -127,11 +127,11 @@ class _GroupMessagesState extends State<GroupMessages> {
           ],
         ),
         subtitle: Text(
-          widget.docu[widget.index]['type'] == 'message'
-              ? widget.docu[widget.index]['sender'] == userM['uid']
-                  ? 'you: ${widget.docu[widget.index]['text']}'
-                  : '${widget.docu[widget.index]['displayName']}:${widget.docu[widget.index]['text']}'
-              : widget.docu[widget.index]['sender'] == userM['uid']
+          widget.docu![widget.index!]['type'] == 'message'
+              ? widget.docu![widget.index!]['sender'] == userM['uid']
+                  ? 'you: ${widget.docu![widget.index!]['text']}'
+                  : '${widget.docu![widget.index!]['displayName']}:${widget.docu![widget.index!]['text']}'
+              : widget.docu![widget.index!]['sender'] == userM['uid']
                   ? 'Media sent '
                   : 'Media recieved',
           style: isTapped == false

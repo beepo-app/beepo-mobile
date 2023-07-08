@@ -6,7 +6,7 @@ import '../Widgets/components.dart';
 import 'requestToken.dart';
 
 class ChatToken extends StatefulWidget {
-  const ChatToken({Key key}) : super(key: key);
+  const ChatToken({Key? key}) : super(key: key);
 
   @override
   State<ChatToken> createState() => _ChatTokenState();

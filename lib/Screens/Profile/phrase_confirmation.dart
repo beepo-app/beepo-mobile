@@ -11,7 +11,7 @@ import 'package:lottie/lottie.dart';
 import '../../Widgets/components.dart';
 
 class PhraseConfirmation extends StatefulWidget {
-  const PhraseConfirmation({Key key}) : super(key: key);
+  const PhraseConfirmation({Key? key}) : super(key: key);
 
   @override
   State<PhraseConfirmation> createState() => _PhraseConfirmationState();
@@ -51,7 +51,7 @@ class _PhraseConfirmationState extends State<PhraseConfirmation> {
                 value: value1,
                 onChanged: (value) {
                   setState(() {
-                    value1 = value;
+                    value1 = value!;
                   });
                 },
                 controlAffinity: ListTileControlAffinity.leading,
@@ -67,7 +67,7 @@ class _PhraseConfirmationState extends State<PhraseConfirmation> {
                 value: value2,
                 onChanged: (value) {
                   setState(() {
-                    value2 = value;
+                    value2 = value!;
                   });
                 },
                 controlAffinity: ListTileControlAffinity.leading,
@@ -83,7 +83,7 @@ class _PhraseConfirmationState extends State<PhraseConfirmation> {
                 value: value3,
                 onChanged: (value) {
                   setState(() {
-                    value3 = value;
+                    value3 = value!;
                   });
                 },
                 controlAffinity: ListTileControlAffinity.leading,
@@ -99,7 +99,7 @@ class _PhraseConfirmationState extends State<PhraseConfirmation> {
                 value: value4,
                 onChanged: (value) {
                   setState(() {
-                    value4 = value;
+                    value4 = value!;
                   });
                 },
                 controlAffinity: ListTileControlAffinity.leading,

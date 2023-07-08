@@ -9,7 +9,7 @@ import '../../Utils/styles.dart';
 import '../../Widgets/components.dart';
 
 class WalletPhraseScreen extends StatefulWidget {
-  const WalletPhraseScreen({Key key}) : super(key: key);
+  const WalletPhraseScreen({Key? key}) : super(key: key);
 
   @override
   State<WalletPhraseScreen> createState() => _WalletPhraseScreenState();
@@ -28,7 +28,7 @@ class _WalletPhraseScreenState extends State<WalletPhraseScreen> {
               return loader();
             }
 
-            String walletPhrase = snapshot.data;
+            String walletPhrase = snapshot.data!;
 
             log(walletPhrase);
 

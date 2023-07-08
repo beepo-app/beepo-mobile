@@ -16,12 +16,12 @@ import 'receive_token.dart';
 import 'send_token.dart';
 
 class WalletToken extends StatefulWidget {
-  final Wallet wallet;
-  final String balance;
-  final String value;
-  final CoinMarketData coinMarketData;
+  final Wallet? wallet;
+  final String? balance;
+  final String? value;
+  final CoinMarketData? coinMarketData;
   const WalletToken(
-      {Key key, this.wallet, this.balance, this.value, this.coinMarketData})
+      {Key? key, this.wallet, this.balance, this.value, this.coinMarketData})
       : super(key: key);
 
   @override
@@ -29,15 +29,15 @@ class WalletToken extends StatefulWidget {
 }
 
 class _WalletTokenState extends State<WalletToken> {
-  String currentMarketPrice;
-  String change24h;
-  bool isPositive;
+  String? currentMarketPrice;
+  String? change24h;
+  bool? isPositive;
   @override
   void initState() {
     super.initState();
-    currentMarketPrice = widget.coinMarketData?.data?.currentPrice ?? '0';
-    change24h = widget.coinMarketData?.data?.priceChangePercentage24H ?? '0';
-    isPositive = change24h.startsWith('-') ? false : true;
+    currentMarketPrice = widget.coinMarketData?.data.currentPrice ?? '0';
+    change24h = widget.coinMarketData?.data.priceChangePercentage24H ?? '0';
+    isPositive = change24h!.startsWith('-') ? false : true;
   }
 
   @override
@@ -71,9 +71,9 @@ class _WalletTokenState extends State<WalletToken> {
                 ),
                 const SizedBox(width: 5),
                 Text(
-                  (isPositive ? '+' : '') + '$change24h%',
+                  (isPositive! ? '+' : '') + '$change24h%',
                   style: TextStyle(
-                    color: isPositive ? Colors.green : Colors.red,
+                    color: isPositive! ? Colors.green : Colors.red,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -102,12 +102,12 @@ class _WalletTokenState extends State<WalletToken> {
                 CircleAvatar(
                   radius: 28,
                   backgroundImage: CachedNetworkImageProvider(
-                    widget.wallet.logoUrl,
+                    widget.wallet!.logoUrl,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  widget.balance + " " + widget.wallet.ticker,
+                  widget.balance! + " " + widget.wallet!.ticker,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -115,7 +115,7 @@ class _WalletTokenState extends State<WalletToken> {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  "\$" + widget.value,
+                  "\$" + widget.value!,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -132,8 +132,8 @@ class _WalletTokenState extends State<WalletToken> {
                           angle: 24.5,
                           child: IconButton(
                               onPressed: () => Get.to(SendToken(
-                                    wallet: widget.wallet,
-                                    balance: widget.value,
+                                    wallet: widget.wallet!,
+                                    balance: widget.value!,
                                   )),
                               icon: const Icon(
                                 Icons.send_outlined,
@@ -155,7 +155,7 @@ class _WalletTokenState extends State<WalletToken> {
                       children: [
                         IconButton(
                           onPressed: () => Get.to(ReceiveToken(
-                            wallet: widget.wallet,
+                            wallet: widget.wallet!,
                           )),
                           icon: const Icon(Icons.file_download_sharp,
                               size: 25, color: Colors.white),
@@ -186,7 +186,7 @@ class _WalletTokenState extends State<WalletToken> {
               ),
             ),
             subtitle: Text(
-              widget.wallet.address,
+              widget.wallet!.address,
               style: const TextStyle(
                 color: Color(0x7f0e014c),
                 fontSize: 12,
@@ -194,7 +194,7 @@ class _WalletTokenState extends State<WalletToken> {
             ),
             trailing: IconButton(
               onPressed: () {
-                Clipboard.setData(ClipboardData(text: widget.wallet.address));
+                Clipboard.setData(ClipboardData(text: widget.wallet!.address));
                 Get.snackbar(
                   'Copied to clipboard',
                   'Address copied to clipboard',
@@ -217,8 +217,8 @@ class _WalletTokenState extends State<WalletToken> {
           ),
           FutureBuilder<List<Transaction>>(
             future: TransactionService().transactionHistory(
-              widget.wallet.chainId.toString(),
-              widget.wallet.address.toLowerCase(),
+              widget.wallet!.chainId.toString(),
+              widget.wallet!.address.toLowerCase(),
             ),
             builder: (_, snapshot) {
               if (snapshot.hasError) {
@@ -238,14 +238,14 @@ class _WalletTokenState extends State<WalletToken> {
                     onRefresh: () async {
                       setState(() {});
                     },
-                    child: snapshot.data.isEmpty
+                    child: snapshot.data!.isEmpty
                         ? const Center(child: Text("No Transactions yet"))
                         : ListView.builder(
                             shrinkWrap: true,
                             padding: EdgeInsets.zero,
-                            itemCount: snapshot.data.length,
+                            itemCount: snapshot.data!.length,
                             itemBuilder: (ctx, i) {
-                              final transaction = snapshot.data[i];
+                              final transaction = snapshot.data![i];
                               bool isSent = transaction.type == 'transfer';
                               return ListTile(
                                 minLeadingWidth: 10,
@@ -259,14 +259,14 @@ class _WalletTokenState extends State<WalletToken> {
                                 onTap: () {
                                   Get.to(TransactionDetails(
                                     transaction: transaction,
-                                    walletTicker: widget.wallet.ticker,
+                                    walletTicker: widget.wallet!.ticker,
                                   ));
                                 },
                                 title: Row(
                                   children: [
                                     Expanded(
                                       child: Text(
-                                        transaction.type.capitalizeFirst,
+                                        transaction.type.capitalizeFirst!,
                                         style: TextStyle(
                                           color: secondaryColor,
                                           fontSize: 13,
@@ -275,7 +275,7 @@ class _WalletTokenState extends State<WalletToken> {
                                     ),
                                     Text(
                                       (isSent ? '-' : '+') +
-                                          "${transaction.value.toPrecision(5)} ${widget.wallet.ticker}",
+                                          "${transaction.value.toPrecision(5)} ${widget.wallet!.ticker}",
                                       style: TextStyle(
                                         color:
                                             isSent ? Colors.red : Colors.green,

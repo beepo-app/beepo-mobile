@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
@@ -14,8 +15,8 @@ import 'package:uuid/uuid.dart';
 
 import '../../../Constants/app_constants.dart';
 import '../../../Models/user_model.dart';
-import '../../../Utils/styles.dart';
 import '../../../Providers/provider.dart';
+import '../../../Utils/styles.dart';
 import 'calll_notify.dart';
 
 List<Widget> callLog = [];
@@ -24,14 +25,14 @@ class VideoCall extends StatefulWidget {
   final String channelName;
   final ClientRole role;
   final UserModel name;
-  bool isVideo;
+  final bool isVideo;
 
-  VideoCall(
-      {Key key,
-      this.channelName,
-      this.role,
-      @required this.name,
-      @required this.isVideo})
+  const VideoCall(
+      {Key? key,
+      required this.name,
+      required this.isVideo,
+      required this.channelName,
+      required this.role})
       : super(key: key);
 
   @override
@@ -44,9 +45,9 @@ class _VideoCallState extends State<VideoCall>
   final _infoStrings = <String>[];
   bool muted = false;
   bool viewPanel = false;
-  RtcEngine _engine;
+  late RtcEngine _engine;
 
-  AnimationController _controller;
+  late AnimationController _controller;
 
   /// The alignment of the card as it is dragged or being animated.
   ///
@@ -55,10 +56,10 @@ class _VideoCallState extends State<VideoCall>
   /// this value is set to the value of the [_animation].
   Alignment _dragAlignment = Alignment.bottomCenter;
 
-  Animation<Alignment> _animation;
+  late Animation<Alignment> _animation;
 
   bool get isFreelyDragged => _dragAlignment.y < 0;
-  Offset panPosition;
+  late Offset panPosition;
 
   /// Calculates and runs a [SpringSimulation].
   void _runAnimation(Offset pixelsPerSecond, Size size) {
@@ -305,7 +306,7 @@ class _VideoCallState extends State<VideoCall>
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: NetworkImage(widget.name.image),
+            image: NetworkImage(widget.name.image!),
             fit: BoxFit.cover,
           ),
         ),
@@ -410,14 +411,14 @@ class _VideoCallState extends State<VideoCall>
                   child: Column(
                     children: [
                       CircleAvatar(
-                        backgroundImage: NetworkImage(widget.name.image),
+                        backgroundImage: NetworkImage(widget.name.image!),
                         radius: 100,
                       ),
                       const SizedBox(
                         height: 20,
                       ),
                       Text(
-                        widget.name.name,
+                        widget.name.name!,
                         style: const TextStyle(
                           fontFamily: "Roboto",
                           fontSize: 32,
@@ -474,7 +475,7 @@ class _VideoCallState extends State<VideoCall>
                               enabled = !enabled;
                             });
                             _engine.enableVideo();
-                            widget.isVideo = true;
+
                             _engine.enableLocalVideo(enabled);
                           },
                           child: const Icon(
@@ -558,14 +559,14 @@ class _VideoCallState extends State<VideoCall>
                         leading: ClipRRect(
                           borderRadius: BorderRadius.circular(25),
                           child: Image.network(
-                            widget.name.image,
+                            widget.name.image!,
                             height: 50,
                             width: 50,
                             fit: BoxFit.cover,
                           ),
                         ),
                         title: Text(
-                          widget.name.name,
+                          widget.name.name!,
                           style: const TextStyle(
                             color: Color.fromRGBO(0, 0, 0, 1),
                             fontSize: 14,

@@ -3,9 +3,7 @@
 import 'package:beepo/Models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-
 import '../../Models/story_model/storyModel.dart';
 
 class StoryDownloadMethod {
@@ -15,8 +13,8 @@ class StoryDownloadMethod {
   final FirebaseFirestore _firestore;
 
   StoryDownloadMethod({
-    @required FirebaseAuth auth,
-    @required FirebaseFirestore firestore,
+    required FirebaseAuth auth,
+    required FirebaseFirestore firestore,
   })  : _auth = auth,
         _firestore = firestore;
 
@@ -28,7 +26,7 @@ class StoryDownloadMethod {
   Stream<bool> currentUserHasStory() async* {
     final user = _auth.currentUser;
     final storiesCollection = _firestore.collection('stories');
-    final stories = storiesCollection.where('uid', isEqualTo: user.uid);
+    final stories = storiesCollection.where('uid', isEqualTo: user!.uid);
     yield* stories.snapshots().map((snapshot) => snapshot.docs.isNotEmpty);
   }
 
@@ -42,9 +40,6 @@ class StoryDownloadMethod {
         snapshot.docs.map((doc) => StoryModel.fromJson(doc.data())).toList());
     // yield* storiesStream;
   }
-
-
-
 
   // get stories of users that the current user is following
   Stream<List<UserModel>> getFollowingUsersStories() async* {
@@ -73,10 +68,10 @@ class StoryDownloadMethod {
   }
 
   Stream<List<String>> _getFollowingUsersId() async* {
-    final User user = _auth.currentUser;
+    final User? user = _auth.currentUser;
     final followingCollection = _firestore.collection('following');
     final following =
-        followingCollection.doc(user.uid).collection('userFollowing');
+        followingCollection.doc(user!.uid).collection('userFollowing');
     yield* following
         .snapshots()
         .map((snapshot) => snapshot.docs.map((e) => e.id).toList());

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class ScreenshotPermissionSwitch extends StatefulWidget {
-  const ScreenshotPermissionSwitch({Key key}) : super(key: key);
+  const ScreenshotPermissionSwitch({Key? key}) : super(key: key);
 
   @override
   _ScreenshotPermissionSwitchState createState() =>
@@ -11,8 +11,8 @@ class ScreenshotPermissionSwitch extends StatefulWidget {
 
 class _ScreenshotPermissionSwitchState
     extends State<ScreenshotPermissionSwitch> {
-  bool _isSwitched;
-  PermissionStatus _permissionStatus;
+  bool? _isSwitched;
+  PermissionStatus? _permissionStatus;
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ class _ScreenshotPermissionSwitchState
         final isDenied = await Permission.storage.isDenied;
         if (isDenied) {
           await _requestPermission();
-          if (_permissionStatus.isGranted) {
+          if (_permissionStatus!.isGranted) {
             setState(() {
               _isSwitched = value;
             });
@@ -72,10 +72,10 @@ class _ScreenshotPermissionSwitchState
   Widget build(BuildContext context) {
     return SwitchListTile(
       title: const Text('Allow Screenshots'),
-      subtitle: _permissionStatus.isGranted
+      subtitle: _permissionStatus!.isGranted
           ? const Text('Screenshots are allowed.')
           : const Text('Screenshots are not allowed.'),
-      value: _isSwitched,
+      value: _isSwitched!,
       onChanged: (value) async {
         await _toggleSwitch(value);
       },

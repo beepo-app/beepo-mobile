@@ -6,7 +6,7 @@ import 'signup_screen.dart';
 import 'package:lottie/lottie.dart';
 
 class Onboarding extends StatefulWidget {
-  const Onboarding({Key key}) : super(key: key);
+  const Onboarding({Key? key}) : super(key: key);
 
   @override
   State<Onboarding> createState() => _OnboardingState();
@@ -14,7 +14,7 @@ class Onboarding extends StatefulWidget {
 
 class _OnboardingState extends State<Onboarding> {
   int check = 0;
-  PageController controller;
+  late PageController controller;
 
   @override
   void initState() {
@@ -97,7 +97,7 @@ class _OnboardingState extends State<Onboarding> {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          body[index]['text'],
+                          body[index]['text']!,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: secondaryColor,

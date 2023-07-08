@@ -10,15 +10,15 @@ import '../../Models/wallet.dart';
 import '../../Utils/styles.dart';
 
 class SendGlobal extends StatefulWidget {
-  final List<Wallet> wallets;
-  final List<CoinMarketData> coinMarketDataList;
-  final CoinBalance btcBalance;
-  final List ercBalances;
-  final String selectedCurrencySymbol;
-  final String selectedCurrency;
+  final List<Wallet>? wallets;
+  final List<CoinMarketData>? coinMarketDataList;
+  final CoinBalance? btcBalance;
+  final List? ercBalances;
+  final String? selectedCurrencySymbol;
+  final String? selectedCurrency;
   final bool isSending;
   const SendGlobal(
-      {Key key,
+      {Key? key,
       this.wallets,
       this.coinMarketDataList,
       this.btcBalance,
@@ -37,7 +37,7 @@ class _SendGlobalState extends State<SendGlobal> {
 
   @override
   void initState() {
-    wallets = widget.wallets;
+    wallets = widget.wallets!;
     super.initState();
   }
 
@@ -103,12 +103,12 @@ class _SendGlobalState extends State<SendGlobal> {
                 onChanged: (value) {
                   setState(() {
                     if (value.trim().isNotEmpty) {
-                      wallets = widget.wallets
+                      wallets = widget.wallets!
                           .where((element) =>
                               element.name.toLowerCase().contains(value))
                           .toList();
                     } else {
-                      wallets = widget.wallets;
+                      wallets = widget.wallets!;
                     }
                   });
                 },
@@ -137,11 +137,11 @@ class _SendGlobalState extends State<SendGlobal> {
                 color: Colors.white,
                 child: WalletList(
                   wallets: wallets,
-                  coinMarketDataList: widget.coinMarketDataList,
-                  btcBalance: widget.btcBalance,
-                  ercBalances: widget.ercBalances,
-                  selectedCurrencySymbol: widget.selectedCurrencySymbol,
-                  selectedCurrency: widget.selectedCurrency,
+                  coinMarketDataList: widget.coinMarketDataList!,
+                  btcBalance: widget.btcBalance!,
+                  ercBalances: widget.ercBalances!,
+                  selectedCurrencySymbol: widget.selectedCurrencySymbol!,
+                  selectedCurrency: widget.selectedCurrency!,
                 ),
               ),
             ),

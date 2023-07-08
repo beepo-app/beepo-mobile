@@ -14,9 +14,9 @@ import 'lottie_animation.dart';
 
 class RecordButton extends StatefulWidget {
   const RecordButton({
-    Key key,
-    @required this.controller,
-    @required this.model,
+    Key? key,
+    required this.controller,
+    required this.model,
   }) : super(key: key);
 
   final AnimationController controller;
@@ -32,12 +32,12 @@ class _RecordButtonState extends State<RecordButton> {
   final double lockerHeight = 200;
   double timerWidth = 0;
 
-  Animation<double> buttonScaleAnimation;
-  Animation<double> timerAnimation;
-  Animation<double> lockerAnimation;
+  late Animation<double> buttonScaleAnimation;
+  late Animation<double> timerAnimation;
+  late Animation<double> lockerAnimation;
 
-  DateTime startTime;
-  Timer timer;
+  late DateTime startTime;
+  late Timer timer;
   String recordDuration = "00:00";
 
   bool isLocked = false;
@@ -82,8 +82,8 @@ class _RecordButtonState extends State<RecordButton> {
 
   @override
   void dispose() {
-    timer?.cancel();
-    timer = null;
+    timer.cancel();
+
     super.dispose();
   }
 
@@ -118,8 +118,8 @@ class _RecordButtonState extends State<RecordButton> {
             const SizedBox(height: 8),
             FlowShader(
               direction: Axis.vertical,
-              child: Column(
-                children: const [
+              child: const Column(
+                children: [
                   Icon(Icons.keyboard_arrow_up),
                   Icon(Icons.keyboard_arrow_up),
                   Icon(Icons.keyboard_arrow_up),
@@ -148,11 +148,11 @@ class _RecordButtonState extends State<RecordButton> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: [
-              showLottie ? const LottieAnimation() : Text(recordDuration),
+              showLottie ? LottieAnimation() : Text(recordDuration),
               const SizedBox(width: size),
               FlowShader(
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Icon(Icons.keyboard_arrow_left),
                     Text("Slide to cancel")
                   ],
@@ -184,11 +184,11 @@ class _RecordButtonState extends State<RecordButton> {
             behavior: HitTestBehavior.opaque,
             onTap: () async {
               // Vibrate.feedback(FeedbackType.success);
-              timer?.cancel();
-              timer = null;
-              startTime = null;
+              timer.cancel();
+
+              startTime = DateTime.now();
               recordDuration = "00:00";
-              context.read<ChatNotifier>().stopRecord(widget.model.uid);
+              context.read<ChatNotifier>().stopRecord(widget.model.uid!);
               context.read<ChatNotifier>().durationCalc();
 
               setState(() {
@@ -241,9 +241,9 @@ class _RecordButtonState extends State<RecordButton> {
           if (isCancelled(details.localPosition, context)) {
             // Vibrate.feedback(FeedbackType.heavy);
 
-            timer?.cancel();
-            timer = null;
-            startTime = null;
+            timer.cancel();
+
+            startTime = DateTime.now();
             recordDuration = "00:00";
 
             setState(() {
@@ -274,11 +274,11 @@ class _RecordButtonState extends State<RecordButton> {
 
             // Vibrate.feedback(FeedbackType.success);
 
-            timer?.cancel();
-            timer = null;
-            startTime = null;
+            timer.cancel();
+
+            startTime = DateTime.now();
             recordDuration = "00:00";
-            context.read<ChatNotifier>().stopRecord(widget.model.uid);
+            context.read<ChatNotifier>().stopRecord(widget.model.uid!);
             context.read<ChatNotifier>().durationCalc();
 
             // var filePath = await Record().stop();

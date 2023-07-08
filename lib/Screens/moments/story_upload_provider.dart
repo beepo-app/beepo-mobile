@@ -4,7 +4,6 @@ import 'package:beepo/Utils/extensions.dart';
 import 'package:beepo/response.dart';
 import 'package:beepo/Screens/moments/story_upload_method.dart';
 import 'package:camera/camera.dart';
-import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,80 +26,60 @@ enum StoryUploadStatus {
 //TODO: Seperate media selection from upload
 //? Movie media selection to a separate class
 class StoryUploadProvider extends ChangeNotifier {
-  final StoryUploadMethod _storyMethod;
-
-  // final FirebaseAuth _firebaseAuth;
-  final ImagePicker _imagePicker;
-
-  StoryUploadProvider({
-    @required StoryUploadMethod storyMethod,
-    // @required FirebaseAuth firebaseAuth,
-    @required ImagePicker imagePicker,
-  })  : _storyMethod = storyMethod,
-        // _firebaseAuth = firebaseAuth,
-        _imagePicker = imagePicker;
+  final StoryUploadMethod? _storyMethod;
+  final ImagePicker? _imagePicker;
+  StoryUploadProvider(this._storyMethod, this._imagePicker);
 
   factory StoryUploadProvider.initialize() => StoryUploadProvider(
-        storyMethod: StoryUploadMethod.initialize(),
-        // firebaseAuth: FirebaseAuth.instance,
-        imagePicker: ImagePicker(),
+        StoryUploadMethod.initialize(),
+        ImagePicker(),
       );
 
-  File _file;
+  late File _file;
 
   File get file => _file;
 
-  StoryModel _story;
+  late StoryModel _story;
   Map userM = Hive.box('beepo').get('userData');
 
   StoryUploadStatus _status = StoryUploadStatus.initial;
 
   StoryUploadStatus get status => _status;
 
-  String _mediaType;
+  late String _mediaType;
 
   String get mediaType => _mediaType;
 
-  Uint8List _thumbnail;
+  late Uint8List _thumbnail;
 
   Uint8List get thumbnail => _thumbnail;
 
-  String _caption;
+  late String _caption;
 
   String get caption => _caption;
 
-  Future<Either<Failure, Success>> uploadStory() async {
+  Future<void> uploadStory() async {
     try {
       _setStoryUploadStatus(StoryUploadStatus.uploading);
-      final response = await _storyMethod.uploadStory(
+      await _storyMethod!.uploadStory(
           story: _story, file: _file, uid: userM['uid'], caption: _caption);
-      return response.fold(
-        (failure) async {
-          _setStoryUploadStatus(StoryUploadStatus.failure);
-          return left(failure);
-        },
-        (success) async {
-          _setStoryUploadStatus(StoryUploadStatus.success);
-          return right(const Success('Story uploaded successfully'));
-        },
-      );
-    } on Failure catch (e) {
+    } on Failure catch (_) {
       _setStoryUploadStatus(StoryUploadStatus.failure);
-      return left(e);
+      rethrow;
     }
   }
 
-  Future<Either<Failure, Success>> getCaption(String text) {
+  void getCaption(String text) {
     _caption = text;
+    notifyListeners();
   }
 
   //TODO: Request permission to access media and camera
-  Future<Either<Failure, Success>> pickMediaGallery(
-      BuildContext context) async {
+  Future<void> pickMediaGallery(BuildContext context) async {
     try {
       _setStoryUploadStatus(StoryUploadStatus.gettingReady);
       //TODO: Add permission check
-      List<AssetEntity> result = await AssetPicker.pickAssets(
+      List<AssetEntity>? result = await AssetPicker.pickAssets(
         context,
         pickerConfig: const AssetPickerConfig(
           maxAssets: 1,
@@ -110,36 +89,22 @@ class StoryUploadProvider extends ChangeNotifier {
       // await _imagePicker.pickImage(source: ImageSource.gallery);
       if (result != null) {
         _selectFile(await result.first.file);
-        if (_file != null) {
-          result.first.type == AssetType.image
-              ? _setMediaType("image")
-              : result.first.type == AssetType.video
-                  ? _setMediaType('video')
-                  : _setMediaType("audio");
+        result.first.type == AssetType.image
+            ? _setMediaType("image")
+            : result.first.type == AssetType.video
+                ? _setMediaType('video')
+                : _setMediaType("audio");
 
-          final story = StoryModel(
-            mediaType: _mediaType,
-            uid: userM['uid'],
-            name: userM['displayName'],
-            profileImage: userM['profilePictureUrl'],
-          );
-          _setStory(story);
-          if (_story != null) {
-            return right(const Success());
-          } else {
-            _resetStatusToInitial();
-            return left(const Failure('Something went wrong'));
-          }
-        } else {
-          _resetStatusToInitial();
-          return left(const Failure('Something went wrong'));
-        }
-      } else {
-        _resetStatusToInitial();
-        return left(const Failure('No file selected'));
+        final story = StoryModel(
+          mediaType: _mediaType,
+          uid: userM['uid'],
+          name: userM['displayName'],
+          profileImage: userM['profilePictureUrl'],
+        );
+        _setStory(story);
       }
-    } on PlatformException catch (e) {
-      return left(Failure(e.message));
+    } on PlatformException catch (_) {
+      rethrow;
     }
   }
 
@@ -163,7 +128,7 @@ class StoryUploadProvider extends ChangeNotifier {
     }
   }
 
-  Future<Either<Failure, Success>> pickImageCamera1() async {
+  Future<void> pickImageCamera1() async {
     try {
       // await initializeControllerFuture;
       _setStoryUploadStatus(StoryUploadStatus.gettingReady);
@@ -173,42 +138,26 @@ class StoryUploadProvider extends ChangeNotifier {
       // if (!mounted) return;
 
       // final result = await _imagePicker.pickImage(source: ImageSource.camera);
-      if (result != null) {
-        final img.Image capturedImage =
-            img.decodeImage(await File(result.path).readAsBytes());
-        final img.Image orientedImage = img.bakeOrientation(capturedImage);
-        final noke = img.flipHorizontal(orientedImage);
-        final yeske = await File(result.path).writeAsBytes(img.encodeJpg(noke));
-        _selectFile(yeske);
-        if (_file != null) {
-          _setMediaType("image");
-          final story = StoryModel(
-            mediaType: _mediaType,
-            uid: userM['uid'],
-            name: userM['displayName'],
-            profileImage: userM['profilePictureUrl'],
-          );
-          _setStory(story);
-          if (_story != null) {
-            return right(const Success());
-          } else {
-            _resetStatusToInitial();
-            return left(const Failure('Something went wrong'));
-          }
-        } else {
-          _resetStatusToInitial();
-          return left(const Failure('Something went wrong'));
-        }
-      } else {
-        _resetStatusToInitial();
-        return left(const Failure('No file selected'));
-      }
-    } on PlatformException catch (e) {
-      return left(Failure(e.message));
+      final img.Image? capturedImage =
+          img.decodeImage(await File(result.path).readAsBytes());
+      final img.Image orientedImage = img.bakeOrientation(capturedImage!);
+      final noke = img.flipHorizontal(orientedImage);
+      final yeske = await File(result.path).writeAsBytes(img.encodeJpg(noke));
+      _selectFile(yeske);
+      _setMediaType("image");
+      final story = StoryModel(
+        mediaType: _mediaType,
+        uid: userM['uid'],
+        name: userM['displayName'],
+        profileImage: userM['profilePictureUrl'],
+      );
+      _setStory(story);
+    } on PlatformException catch (_) {
+      rethrow;
     }
   }
 
-  Future<Either<Failure, Success>> pickImageCamera() async {
+  Future<void> pickImageCamera() async {
     // notifyListeners();
 
     // initializeControllerFuture =  controller.initialize();
@@ -223,47 +172,31 @@ class StoryUploadProvider extends ChangeNotifier {
       // if (!mounted) return;
 
       // final result = await _imagePicker.pickImage(source: ImageSource.camera);
-      if (result != null) {
-        final img.Image capturedImage =
-            img.decodeImage(await File(result.path).readAsBytes());
-        final img.Image orientedImage = img.bakeOrientation(capturedImage);
-        // final noke =         img.flipHorizontal(orientedImage);
-        final yeske =
-            await File(result.path).writeAsBytes(img.encodeJpg(orientedImage));
-        _selectFile(yeske);
-        if (_file != null) {
-          _setMediaType("image");
-          final story = StoryModel(
-            mediaType: _mediaType,
-            uid: userM['uid'],
-            name: userM['displayName'],
-            profileImage: userM['profilePictureUrl'],
-          );
-          _setStory(story);
-          if (_story != null) {
-            return right(const Success());
-          } else {
-            _resetStatusToInitial();
-            return left(const Failure('Something went wrong'));
-          }
-        } else {
-          _resetStatusToInitial();
-          return left(const Failure('Something went wrong'));
-        }
-      } else {
-        _resetStatusToInitial();
-        return left(const Failure('No file selected'));
-      }
-    } on PlatformException catch (e) {
-      return left(Failure(e.message));
+      final img.Image? capturedImage =
+          img.decodeImage(await File(result.path).readAsBytes());
+      final img.Image orientedImage = img.bakeOrientation(capturedImage!);
+      // final noke =         img.flipHorizontal(orientedImage);
+      final yeske =
+          await File(result.path).writeAsBytes(img.encodeJpg(orientedImage));
+      _selectFile(yeske);
+      _setMediaType("image");
+      final story = StoryModel(
+        mediaType: _mediaType,
+        uid: userM['uid'],
+        name: userM['displayName'],
+        profileImage: userM['profilePictureUrl'],
+      );
+      _setStory(story);
+    } on PlatformException catch (_) {
+      rethrow;
     }
   }
 
-  Future<Either<Failure, Success>> pickVideo() async {
+  Future<void> pickVideo() async {
     try {
       _setStoryUploadStatus(StoryUploadStatus.gettingReady);
       //TODO: Add permission check
-      final result = await _imagePicker.pickVideo(
+      final result = await _imagePicker!.pickVideo(
         source: ImageSource.gallery,
         //! Max duration does not work
         //! See: {https://github.com/flutter/flutter/issues/83630}
@@ -277,35 +210,21 @@ class StoryUploadProvider extends ChangeNotifier {
         'File location: ${result.path}'.log();
         'File length: $length'.log();
         _selectFile(File(result.path));
-        if (_file != null) {
-          _setMediaType('video');
-          final story = StoryModel(
-            mediaType: _mediaType,
-            uid: userM['uid'],
-            name: userM['displayName'],
-            profileImage: userM['profilePictureUrl'],
-          );
-          _setStory(story);
-          if (_story != null) {
-            return right(const Success());
-          } else {
-            _resetStatusToInitial();
-            return left(const Failure('Something went wrong'));
-          }
-        } else {
-          _resetStatusToInitial();
-          return left(const Failure('Something went wrong'));
-        }
-      } else {
-        _resetStatusToInitial();
-        return left(const Failure('No file selected'));
+        _setMediaType('video');
+        final story = StoryModel(
+          mediaType: _mediaType,
+          uid: userM['uid'],
+          name: userM['displayName'],
+          profileImage: userM['profilePictureUrl'],
+        );
+        _setStory(story);
       }
-    } on PlatformException catch (e) {
-      return left(Failure(e.message));
+    } on PlatformException catch (_) {
+      rethrow;
     }
   }
 
-  Future<Either<Failure, Success>> getVideoThumbnail() async {
+  Future<void> getVideoThumbnail() async {
     try {
       final thumbImage = await video.VideoThumbnail.thumbnailData(
         video: _file.path,
@@ -316,17 +235,14 @@ class StoryUploadProvider extends ChangeNotifier {
       );
       if (thumbImage != null) {
         _setThumbnail(thumbImage);
-        return right(const Success());
-      } else {
-        return left(const Failure('Unable to get video thumbnail'));
       }
     } catch (e) {
-      return left(Failure(e.toString()));
+      rethrow;
     }
   }
 
-  void _selectFile(File file) {
-    _file = file;
+  void _selectFile(File? file) {
+    _file = file!;
     notifyListeners();
   }
 
@@ -351,36 +267,36 @@ class StoryUploadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void reset() {
-    _resetFileToNull();
-    _resetStoryToNull();
-    _resetStatusToInitial();
-    _resetMediaTypeToNull();
-    _resetThumbnailToNull();
-  }
+  // void reset() {
+  //   _resetFileToNull();
+  //   _resetStoryToNull();
+  //   _resetStatusToInitial();
+  //   _resetMediaTypeToNull();
+  //   _resetThumbnailToNull();
+  // }
 
-  void _resetFileToNull() {
-    _file = null;
-    notifyListeners();
-  }
+  // void _resetFileToNull() {
+  //   _file = null;
+  //   notifyListeners();
+  // }
 
-  void _resetStoryToNull() {
-    _story = null;
-    notifyListeners();
-  }
+  // void _resetStoryToNull() {
+  //   _story = null;
+  //   notifyListeners();
+  // }
 
-  void _resetStatusToInitial() {
-    _status = StoryUploadStatus.initial;
-    notifyListeners();
-  }
+  // void _resetStatusToInitial() {
+  //   _status = StoryUploadStatus.initial;
+  //   notifyListeners();
+  // }
 
-  void _resetMediaTypeToNull() {
-    _mediaType = '';
-    notifyListeners();
-  }
+  // void _resetMediaTypeToNull() {
+  //   _mediaType = '';
+  //   notifyListeners();
+  // }
 
-  void _resetThumbnailToNull() {
-    _thumbnail = null;
-    notifyListeners();
-  }
+  // void _resetThumbnailToNull() {
+  //   _thumbnail = null;
+  //   notifyListeners();
+  // }
 }

@@ -12,32 +12,32 @@ import 'package:provider/provider.dart';
 
 class BubbleStories extends StatefulWidget {
   const BubbleStories({
-    Key key,
-     this.index,
+    Key? key,
+    this.index,
     this.docu,
-    @required this.uid,
+    required this.uid,
     this.hasStory = true,
     this.myStory,
     // this.useNetworkImage = false,
   }) : super(key: key);
 
   final bool hasStory;
-  final int index;
-  final List docu;
+  final int? index;
+  final List? docu;
   final String uid;
-  final bool myStory;
+  final bool? myStory;
 
   @override
   State<BubbleStories> createState() => _BubbleStoriesState();
 }
 
 class _BubbleStoriesState extends State<BubbleStories> {
-
   Map userM = Hive.box('beepo').get('userData');
-  PageController cont;
+  late PageController cont;
 
   @override
   void initState() {
+    cont = PageController();
     super.initState();
   }
 
@@ -53,25 +53,26 @@ class _BubbleStoriesState extends State<BubbleStories> {
                   builder: (context) => StreamBuilder<List<StoryModel>>(
                       stream: context
                           .read<StoryDownloadProvider>()
-                          .getFriendsStories(widget.docu[widget.index]['uid']),
+                          .getFriendsStories(
+                              widget.docu![widget.index!]['uid']),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          List<StoryModel> uset = snapshot.data;
+                          List<StoryModel> uset = snapshot.data!;
                           UserModel beta = UserModel(
-                                  uid: widget.uid,
-                                  name: widget.docu[widget.index]['name'],
-                                  image: widget.docu[widget.index]['profileImage'],
-                                  // userName: userName,
-                          )
-                              .copyWith(stories: uset);
-                          cont = PageController(initialPage: widget.index);
+                            uid: widget.uid,
+                            name: widget.docu![widget.index!]['name'],
+                            image: widget.docu![widget.index!]['profileImage'],
+                            bitcoinWalletAddress: '', firebaseToken: '',
+                            // userName: userName,
+                          ).copyWith(stories: uset);
+                          cont = PageController(initialPage: widget.index!);
 
                           return PageView.builder(
-                          itemCount: widget.docu.length,
+                            itemCount: widget.docu!.length,
                             itemBuilder: (context, num) {
                               return MoreStories(
-                                uid: widget.docu[widget.index]['uid'],
-                                docu: widget.docu,
+                                uid: widget.docu![widget.index!]['uid'],
+                                docu: widget.docu!,
                                 user: beta,
                               );
                             },
@@ -87,13 +88,58 @@ class _BubbleStoriesState extends State<BubbleStories> {
                       })));
         },
         child: StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .where('uid', isEqualTo: widget.uid)
+                .snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (!snapshot.hasData) {
+                return const SizedBox();
+              }
+              // usName = snapshot.data.docs[0]['userName'];
+              return Column(
+                children: [
+                  widget.hasStory
+                      ? Container(
+                          margin: const EdgeInsets.only(right: 7.0, top: 10),
+                          padding: const EdgeInsets.all(2.0),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                          ),
+                          width: 60,
+                          height: 60,
+                          child: snapshot.data!.docs[0]['image'].isNotEmpty
+                              ? CircleAvatar(
+                                  backgroundImage: CachedNetworkImageProvider(
+                                      snapshot.data!.docs[0]['image']),
+                                  radius: 30,
+                                )
+                              : const CircleAvatar(
+                                  child: Icon(
+                                    Icons.person,
+                                    color: secondaryColor,
+                                  ),
+                                  backgroundColor: secondaryColor,
+                                ),
+                        )
+                      : const SizedBox(
+                          width: 1,
+                        ),
+                  Text(
+                    widget.hasStory ? snapshot.data!.docs[0]['name'] : ' ',
+                    style: const TextStyle(color: Colors.white, fontSize: 10),
+                  ),
+                ],
+              );
+            }),
+      );
+    } else {
+      return StreamBuilder(
           stream: FirebaseFirestore.instance
-              .collection('users').where('uid', isEqualTo: widget.uid).snapshots(),
+              .collection('users')
+              .where('uid', isEqualTo: userM['uid'])
+              .snapshots(),
           builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if(!snapshot.hasData){
-              return const SizedBox();
-            }
-            // usName = snapshot.data.docs[0]['userName'];
             return Column(
               children: [
                 widget.hasStory
@@ -105,9 +151,10 @@ class _BubbleStoriesState extends State<BubbleStories> {
                         ),
                         width: 60,
                         height: 60,
-                        child: snapshot.data.docs[0]['image'].isNotEmpty
+                        child: snapshot.data!.docs[0]['image'].isNotEmpty
                             ? CircleAvatar(
-                                backgroundImage: CachedNetworkImageProvider(snapshot.data.docs[0]['image']),
+                                backgroundImage: CachedNetworkImageProvider(
+                                    snapshot.data!.docs[0]['image']),
                                 radius: 30,
                               )
                             : const CircleAvatar(
@@ -115,61 +162,19 @@ class _BubbleStoriesState extends State<BubbleStories> {
                                   Icons.person,
                                   color: secondaryColor,
                                 ),
-                          backgroundColor: secondaryColor,
-                        ),
+                                backgroundColor: secondaryColor,
+                              ),
                       )
                     : const SizedBox(
                         width: 1,
                       ),
                 Text(
-                  widget.hasStory ? snapshot.data.docs[0]['name'] : ' ',
+                  widget.hasStory ? 'Your Moments' : ' ',
                   style: const TextStyle(color: Colors.white, fontSize: 10),
                 ),
               ],
             );
-          }
-        ),
-      );
-    } else {
-      return StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('users').where('uid', isEqualTo: userM['uid']).snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          return Column(
-            children: [
-              widget.hasStory
-                  ? Container(
-                      margin: const EdgeInsets.only(right: 7.0, top: 10),
-                      padding: const EdgeInsets.all(2.0),
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      width: 60,
-                      height: 60,
-                      child: snapshot.data.docs[0]['image'].isNotEmpty
-                          ? CircleAvatar(
-                              backgroundImage: CachedNetworkImageProvider(snapshot.data.docs[0]['image']),
-                              radius: 30,
-                            )
-                          : const CircleAvatar(
-                              child: Icon(
-                                Icons.person,
-                                color: secondaryColor,
-                              ),
-                        backgroundColor: secondaryColor,
-                      ),
-                    )
-                  : const SizedBox(
-                      width: 1,
-                    ),
-              Text(
-                widget.hasStory ? 'Your Moments' : ' ',
-                style: const TextStyle(color: Colors.white, fontSize: 10),
-              ),
-            ],
-          );
-        }
-      );
+          });
     }
   }
 }

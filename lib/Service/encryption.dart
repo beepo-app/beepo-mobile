@@ -90,7 +90,7 @@ class EncryptionService {
 //     }
 //   }
 
-  Future<String> getSeedPhrase({String seedPhrase}) async {
+  Future<String> getSeedPhrase({String? seedPhrase}) async {
     try {
       // String seedphrase = box.get('seedphrase', defaultValue: '');
       String seedphrase = seedPhrase ?? box.get('seedphrase', defaultValue: '');

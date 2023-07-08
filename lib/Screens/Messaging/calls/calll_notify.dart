@@ -15,19 +15,18 @@ import 'package:get/get.dart' as note;
 import 'package:hive/hive.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
-
 class Calls {
   final stopWatchTimer = StopWatchTimer(mode: StopWatchMode.countUp);
   int time = 0;
   Map userM = Hive.box('beepo').get('userData');
 
   startCall({
-    String uid,
-    String name,
-    String userName,
-    UserModel model,
-    bool hasVideo,
-    String channel,
+    String? uid,
+    String? name,
+    String? userName,
+    UserModel? model,
+    bool? hasVideo,
+    String? channel,
   }) async {
     // this._currentUuid = _uuid.v4();
     CallKitParams params = CallKitParams(
@@ -39,13 +38,13 @@ class Calls {
       ios: IOSParams(handleType: 'generic'),
     );
     await FlutterCallkitIncoming.startCall(params);
-    FlutterCallkitIncoming.onEvent.listen((CallEvent event) {
-      switch (event.event) {
+    FlutterCallkitIncoming.onEvent.listen((CallEvent? event) {
+      switch (event!.event) {
         case Event.ACTION_CALL_START:
           () {
             while (event.event != Event.ACTION_CALL_ACCEPT) {
               Timer(const Duration(seconds: 30), () {
-                endCall(uid);
+                endCall(uid!);
                 showMissedCall();
                 note.Get.back();
               });
@@ -70,11 +69,11 @@ class Calls {
           // TODO: accepted an incoming call
           // TODO: show screen calling in Flutter
           break;
-        case Event.ACTION_CALL_DECLINE:(){
-          endCall(uid);
-          showMissedCall(uid: uid, name: name);
-
-        };
+        case Event.ACTION_CALL_DECLINE:
+          () {
+            endCall(uid!);
+            showMissedCall(uid: uid, name: name);
+          };
           // TODO: declined an incoming call
           break;
         case Event.ACTION_CALL_ENDED:
@@ -86,7 +85,7 @@ class Calls {
                 .collection('allCalls')
                 .add({
               'name': name,
-              'image': model.image,
+              'image': model!.image,
               'callType': 'startCall',
               'created': Timestamp.now(),
             });
@@ -135,13 +134,13 @@ class Calls {
   }
 
   receiveIncomingCall({
-    String uid,
-    String name,
-    UserModel model,
-    bool hasVideo,
-    String userName,
-    String image,
-    String channel,
+    String? uid,
+    String? name,
+    UserModel? model,
+    bool? hasVideo,
+    String? userName,
+    String? image,
+    String? channel,
   }) async {
     // this._currentUuid = _uuid.v4();
     CallKitParams callKitParams = CallKitParams(
@@ -189,8 +188,8 @@ class Calls {
     );
     await FlutterCallkitIncoming.showCallkitIncoming(callKitParams);
 
-    FlutterCallkitIncoming.onEvent.listen((CallEvent event) {
-      switch (event.event) {
+    FlutterCallkitIncoming.onEvent.listen((CallEvent? event) {
+      switch (event?.event) {
         case Event.ACTION_CALL_INCOMING:
           () {
             print('$name Call incoming');
@@ -200,7 +199,7 @@ class Calls {
                 .collection('allCalls')
                 .add({
               'name': name,
-              'image': model.image,
+              'image': model?.image,
               'callType': 'callReceived',
               'created': Timestamp.now(),
             });
@@ -215,27 +214,26 @@ class Calls {
                 .collection('allCalls')
                 .add({
               'name': name,
-              'image': model.image,
+              'image': model?.image,
               'callType': 'callReceived',
               'created': Timestamp.now(),
             });
             note.Get.to(VideoCall(
-              name: model,
-              isVideo: hasVideo,
-              channelName: channel,
+              name: model!,
+              isVideo: hasVideo!,
+              channelName: channel!,
               role: ClientRole.Broadcaster,
               // time: time,
             ));
-
           };
           // TODO: started an outgoing call
           // TODO: show screen calling in Flutter
           break;
         case Event.ACTION_CALL_ACCEPT:
           note.Get.to(VideoCall(
-            name: model,
-            isVideo: hasVideo,
-            channelName: channel,
+            name: model!,
+            isVideo: hasVideo!,
+            channelName: channel!,
             role: ClientRole.Broadcaster,
             // time: time,
           ));
@@ -252,7 +250,7 @@ class Calls {
                 .collection('allCalls')
                 .add({
               'name': name,
-              'image': model.image,
+              'image': model!.image,
               'callType': 'callReceived',
               'created': Timestamp.now(),
             });
@@ -261,18 +259,19 @@ class Calls {
           // showMissedCall(uid: uid, name: name);
           // TODO: declined an incoming call
           break;
-        case Event.ACTION_CALL_ENDED:() {
-          note.Get.back();
-          FirebaseFirestore.instance
-              .collection('calls')
-              .doc(userM['uid'])
-              .collection('allCalls')
-              .add({
-            'name': name,
-            'image': model.image,
-            'callType': 'callReceived',
-          });
-        };
+        case Event.ACTION_CALL_ENDED:
+          () {
+            note.Get.back();
+            FirebaseFirestore.instance
+                .collection('calls')
+                .doc(userM['uid'])
+                .collection('allCalls')
+                .add({
+              'name': name,
+              'image': model!.image,
+              'callType': 'callReceived',
+            });
+          };
           // TODO: ended an incoming/outgoing call
           break;
 
@@ -304,7 +303,7 @@ class Calls {
     });
   }
 
-  showMissedCall({String uid, String name}) async {
+  showMissedCall({String? uid, String? name}) async {
     // this._currentUuid = _uuid.v4();
     CallKitParams params = CallKitParams(
       id: uid,

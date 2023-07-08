@@ -9,7 +9,7 @@ import '../../../Widgets/toasts.dart';
 import 'chat_address.dart';
 
 class CheckAddress extends StatefulWidget {
-  const CheckAddress({Key key}) : super(key: key);
+  const CheckAddress({Key? key}) : super(key: key);
 
   @override
   State<CheckAddress> createState() => _CheckAddressState();
@@ -50,11 +50,9 @@ class _CheckAddressState extends State<CheckAddress> {
                           _addressController.text.trim(),
                         );
 
-                if (convo != null) {
-                  Get.off(DmScreenAddress(
-                    conversation: convo,
-                  ));
-                }
+                Get.off(DmScreenAddress(
+                  conversation: convo,
+                ));
               },
               text: 'Chat with Address',
             ),

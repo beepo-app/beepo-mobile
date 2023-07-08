@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class LottieAnimation extends StatefulWidget {
-  const LottieAnimation({Key key}) : super(key: key);
+  const LottieAnimation({Key? key}) : super(key: key);
 
   @override
   State<LottieAnimation> createState() => _LottieAnimationState();
@@ -10,7 +10,7 @@ class LottieAnimation extends StatefulWidget {
 
 class _LottieAnimationState extends State<LottieAnimation>
     with SingleTickerProviderStateMixin {
-   AnimationController controller;
+  late AnimationController controller;
 
   @override
   void initState() {

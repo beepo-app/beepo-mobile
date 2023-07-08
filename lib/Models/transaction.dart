@@ -12,16 +12,16 @@ String transactionToJson(List<Transaction> data) =>
 
 class Transaction {
   Transaction({
-    this.type,
-    this.from,
-    this.to,
-    this.value,
-    this.hash,
-    this.gasfee,
-    this.timestamp,
-    this.confirmed,
-    this.networkId,
-    this.url,
+    required this.type,
+    required this.from,
+    required this.to,
+    required this.value,
+    required this.hash,
+    required this.gasfee,
+    required this.timestamp,
+    required this.confirmed,
+    required this.networkId,
+    required this.url,
   });
 
   String type;
@@ -51,7 +51,7 @@ class Transaction {
   Map<String, dynamic> toJson() => {
         "type": type,
         "from": from,
-        "to": to ?? '',
+        "to": to,
         "value": value,
         "hash": hash,
         "gasfee": gasfee,

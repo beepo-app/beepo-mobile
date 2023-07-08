@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import '../../Widgets/components.dart';
 
 class SignUp extends StatelessWidget {
-  const SignUp({Key key}) : super(key: key);
+  const SignUp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class SignUp extends StatelessWidget {
               const SizedBox(height: 12),
               OutlnButton(
                 text: 'Login',
-                onPressed: () => Get.to(const Login()),
+                onPressed: () => Get.to(Login()),
               ),
               const SizedBox(height: 90),
             ],

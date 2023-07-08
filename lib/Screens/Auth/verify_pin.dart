@@ -20,7 +20,11 @@ class VerifyCode extends StatefulWidget {
   final bool isSignUp;
   final String seedPhrase;
   const VerifyCode(
-      {Key key, this.image, this.name, this.isSignUp, this.seedPhrase})
+      {Key? key,
+      required this.image,
+      required this.name,
+      required this.isSignUp,
+      required this.seedPhrase})
       : super(key: key);
 
   @override

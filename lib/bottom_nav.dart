@@ -7,7 +7,7 @@ import 'Screens/Profile/profile_screen.dart';
 import 'Screens/Wallet/wallet_screen.dart';
 
 class BottomNavHome extends StatefulWidget {
-  const BottomNavHome({Key key}) : super(key: key);
+  const BottomNavHome({Key? key}) : super(key: key);
 
   @override
   State<BottomNavHome> createState() => _BottomNavHomeState();
@@ -15,11 +15,11 @@ class BottomNavHome extends StatefulWidget {
 
 class _BottomNavHomeState extends State<BottomNavHome> {
   int index = 0;
-  List body = [
-    const ChatScreen(),
-    const WalletScreen(),
-    const Browser(),
-    const Profile(),
+  List<Widget> body = [
+    ChatScreen(),
+    WalletScreen(),
+    Browser(),
+    Profile(),
   ];
 
   @override

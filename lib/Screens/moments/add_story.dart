@@ -13,10 +13,10 @@ import 'package:video_player/video_player.dart';
 
 import '../../Utils/styles.dart';
 
-CameraController controlle;
+late CameraController controlle;
 
 class AddStory extends StatefulWidget {
-  const AddStory({Key key, @required this.camera1, @required this.camera2})
+  const AddStory({Key? key, required this.camera1, required this.camera2})
       : super(key: key);
   final CameraDescription camera1;
   final CameraDescription camera2;
@@ -28,17 +28,17 @@ class AddStory extends StatefulWidget {
 }
 
 class _AddStoryState extends State<AddStory> {
-  VideoPlayerController _videoPlayerController;
-  TextEditingController controller = TextEditingController();
-  Future<void> initializeControllerFuture;
+  late VideoPlayerController _videoPlayerController;
+  late TextEditingController controller = TextEditingController();
+  late Future<void> initializeControllerFuture;
 
-  CameraDescription selected;
+  late CameraDescription selected;
 
-  String currentCameraTab;
+  late String currentCameraTab;
 
   @override
   void dispose() {
-    _videoPlayerController?.dispose();
+    _videoPlayerController.dispose();
     controlle.dispose();
     super.dispose();
   }
@@ -55,7 +55,7 @@ class _AddStoryState extends State<AddStory> {
     }
   }
 
-  void _showSnackBar(BuildContext context, {@required String message}) {
+  void _showSnackBar(BuildContext context, {required String message}) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
@@ -103,24 +103,21 @@ class _AddStoryState extends State<AddStory> {
                       // If no media is selected, decoration image will be null.
 
                       // If image is selected (file is not null)
-                      image:
-                          (selectedFile != null && selectedMediaType == "image")
+                      image: (selectedMediaType == "image")
+                          ? DecorationImage(
+                              image: FileImage(File(selectedFile.path)),
+                              fit: BoxFit.contain,
+                            )
+                          // If video is selected (file is not null)
+                          : (selectedMediaType == "video")
                               ? DecorationImage(
-                                  image: FileImage(File(selectedFile.path)),
+                                  image: MemoryImage(videoThumbnail),
                                   fit: BoxFit.contain,
                                 )
-                              // If video is selected (file is not null)
-                              : (selectedFile != null &&
-                                      selectedMediaType == "video" &&
-                                      videoThumbnail != null)
-                                  ? DecorationImage(
-                                      image: MemoryImage(videoThumbnail),
-                                      fit: BoxFit.contain,
-                                    )
-                                  : null,
+                              : null,
                       color: Colors.black,
                     ),
-                    child: (selectedFile != null)
+                    child: selectedFile.path.isEmpty
                         ? const SizedBox.shrink()
                         : FutureBuilder<void>(
                             future: initializeControllerFuture,
@@ -153,7 +150,6 @@ class _AddStoryState extends State<AddStory> {
                     child: IconButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        context.read<StoryUploadProvider>().reset();
                       },
                       icon: const Icon(
                         Icons.close,
@@ -165,7 +161,7 @@ class _AddStoryState extends State<AddStory> {
                     alignment: Alignment.topRight,
                     child: IconButton(
                       onPressed: () => StoryModalSheet.openModalBottomSheet(
-                        child: const StorySettings(),
+                        child: StorySettings(),
                         context: context,
                       ),
                       icon: const Icon(
@@ -176,7 +172,11 @@ class _AddStoryState extends State<AddStory> {
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
-                    child: (context.watch<StoryUploadProvider>().file == null)
+                    child: (context
+                            .watch<StoryUploadProvider>()
+                            .file
+                            .path
+                            .isEmpty)
                         ? Container(
                             // width: double.infinity,
                             height: 140,
@@ -206,33 +206,21 @@ class _AddStoryState extends State<AddStory> {
                                               final selectedMediaType = context
                                                   .read<StoryUploadProvider>()
                                                   .mediaType;
-                                              if (selectedFile != null &&
-                                                  selectedMediaType ==
-                                                      "gallery") {
+                                              if (selectedMediaType ==
+                                                  "gallery") {
                                                 final isVideoDurationNotLong =
                                                     await _checkVideoDurationIsNotLong(
                                                         selectedFile);
                                                 if (isVideoDurationNotLong &&
                                                     mounted) {
-                                                  final result = await context
+                                                  await context
                                                       .read<
                                                           StoryUploadProvider>()
                                                       .getVideoThumbnail();
-                                                  result.fold(
-                                                    (failure) => _showSnackBar(
-                                                        context,
-                                                        message:
-                                                            failure.message),
-                                                    (success) {},
-                                                  );
                                                 } else {
                                                   _showSnackBar(context,
                                                       message:
                                                           'Video duration cannot be more than 40 seconds');
-                                                  context
-                                                      .read<
-                                                          StoryUploadProvider>()
-                                                      .reset();
                                                 }
                                               }
                                             }
@@ -358,25 +346,15 @@ class _AddStoryState extends State<AddStory> {
                                       _showSnackBar(context,
                                           message: 'Upload in progress');
                                     } else {
-                                      await uploader.getCaption(
+                                      uploader.getCaption(
                                           controller.text.trim().isEmpty
                                               ? " "
                                               : controller.text.trim());
-                                      final result =
-                                          await uploader.uploadStory();
 
-                                      result.fold(
-                                        (failure) => _showSnackBar(context,
-                                            message: failure.message),
-                                        (success) => _showSnackBar(context,
-                                            message:
-                                                'Story uploaded successfully'),
-                                      );
+                                      await uploader.uploadStory();
+
                                       Navigator.pop(context);
                                       controller.clear();
-                                      context
-                                          .read<StoryUploadProvider>()
-                                          .reset();
                                     }
                                   },
                                   child: Container(
@@ -419,7 +397,7 @@ class _AddStoryState extends State<AddStory> {
 }
 
 class StorySettings extends StatefulWidget {
-  const StorySettings({Key key}) : super(key: key);
+  const StorySettings({Key? key}) : super(key: key);
 
   @override
   State<StorySettings> createState() => _StorySettingsState();
@@ -546,10 +524,10 @@ class _StorySettingsState extends State<StorySettings> {
 
 class RowWithSwitch extends StatelessWidget {
   const RowWithSwitch({
-    Key key,
-    @required this.allowEveryone,
-    @required this.switchedClicked,
-    @required this.text,
+    Key? key,
+    required this.allowEveryone,
+    required this.switchedClicked,
+    required this.text,
   }) : super(key: key);
 
   final bool allowEveryone;

@@ -7,14 +7,14 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../Utils/functions.dart';
 
 class TransactionDetails extends StatelessWidget {
-  final Transaction transaction;
-  final String walletTicker;
-  const TransactionDetails({Key key, this.transaction, this.walletTicker})
+  final Transaction? transaction;
+  final String? walletTicker;
+  const TransactionDetails({Key? key, this.transaction, this.walletTicker})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool isSent = transaction.type == 'transfer';
+    bool isSent = transaction!.type == 'transfer';
 
     return Scaffold(
       body: Container(
@@ -67,7 +67,7 @@ class TransactionDetails extends StatelessWidget {
             const SizedBox(height: 40),
             ReusableTransferText(
               text: (isSent ? '-' : '+') +
-                  "${transaction.value.toPrecision(5)} $walletTicker",
+                  "${transaction!.value.toPrecision(5)} $walletTicker",
               color: isSent ? Colors.red : Colors.green,
               size: 20,
               fontWeight: FontWeight.bold,
@@ -92,7 +92,7 @@ class TransactionDetails extends StatelessWidget {
                   ),
                   ReusableTransferText(
                     text: formatDate(DateTime.fromMillisecondsSinceEpoch(
-                      transaction.timestamp * 1000,
+                      transaction!.timestamp * 1000,
                     )),
                     size: 15,
                     fontWeight: FontWeight.w500,
@@ -115,7 +115,7 @@ class TransactionDetails extends StatelessWidget {
                     letterSpacing: 0,
                   ),
                   ReusableTransferText(
-                    text: transaction.confirmed ? "Confirmed" : "Pending",
+                    text: transaction!.confirmed ? "Confirmed" : "Pending",
                     size: 15,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0,
@@ -137,7 +137,7 @@ class TransactionDetails extends StatelessWidget {
                     letterSpacing: 0,
                   ),
                   ReusableTransferText(
-                    text: transaction.type.capitalizeFirst,
+                    text: transaction!.type.capitalizeFirst!,
                     size: 15,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0,
@@ -160,7 +160,7 @@ class TransactionDetails extends StatelessWidget {
                   const SizedBox(width: 20),
                   Expanded(
                     child: ReusableTransferText(
-                      text: isSent ? transaction.to : transaction.from,
+                      text: isSent ? transaction!.to : transaction!.from,
                       size: 12,
                       fontWeight: FontWeight.w500,
                       letterSpacing: 0,
@@ -187,7 +187,7 @@ class TransactionDetails extends StatelessWidget {
                   const Spacer(),
                   Expanded(
                     child: ReusableTransferText(
-                      text: "${transaction.gasfee} $walletTicker",
+                      text: "${transaction!.gasfee} $walletTicker",
                       size: 15,
                       fontWeight: FontWeight.w500,
                       letterSpacing: 0,
@@ -208,7 +208,7 @@ class TransactionDetails extends StatelessWidget {
                 color: secondaryColor,
               ),
               onPressed: () {
-                launchUrl(Uri.parse(transaction.url));
+                launchUrl(Uri.parse(transaction!.url));
               },
             ),
           ],
@@ -220,15 +220,15 @@ class TransactionDetails extends StatelessWidget {
 
 class ReusableTransferText extends StatelessWidget {
   final String text;
-  final Color color;
-  final double size;
-  final double letterSpacing;
-  final FontWeight fontWeight;
-  final TextOverflow textOverflow;
-  final TextAlign align;
+  final Color? color;
+  final double? size;
+  final double? letterSpacing;
+  final FontWeight? fontWeight;
+  final TextOverflow? textOverflow;
+  final TextAlign? align;
   const ReusableTransferText({
-    Key key,
-    @required this.text,
+    Key? key,
+    required this.text,
     this.color,
     this.size,
     this.fontWeight,

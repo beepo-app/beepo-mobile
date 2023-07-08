@@ -10,7 +10,7 @@ import '../Models/user_model.dart';
 
 class UsersService {
   //get user details with username
-  Future<Map> getUserDetails({String username}) async {
+  Future<Map> getUserDetails({String? username}) async {
     try {
       // final response = await http.get(
       //   Uri.parse('$baseUrl/users/$username'),
@@ -40,10 +40,10 @@ class UsersService {
         return result;
       } else {
         log(await response.stream.bytesToString());
-        return null;
+        return {};
       }
     } catch (e) {
-      return null;
+      rethrow;
     }
   }
 
@@ -71,6 +71,9 @@ class UsersService {
           uid: result['uid'],
           hdWalletAddress: result['hdWalletAddress'],
           bitcoinWalletAddress: result['bitcoinWalletAddress'],
+          firebaseToken: '',
+          searchKeywords: [],
+          stories: [],
         );
       } else {
         print(await response.stream.bytesToString());
@@ -105,6 +108,9 @@ class UsersService {
           uid: data['uid'],
           hdWalletAddress: data['hdWalletAddress'],
           bitcoinWalletAddress: data['bitcoinWalletAddress'],
+          firebaseToken: '',
+          searchKeywords: [],
+          stories: [],
         );
       } else {
         // return ;

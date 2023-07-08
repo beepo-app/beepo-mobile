@@ -10,7 +10,7 @@ import '../../Utils/styles.dart';
 
 class ReceiveToken extends StatefulWidget {
   final Wallet wallet;
-  const ReceiveToken({Key key, this.wallet}) : super(key: key);
+  const ReceiveToken({Key? key, required this.wallet}) : super(key: key);
 
   @override
   State<ReceiveToken> createState() => _ReceiveTokenState();
