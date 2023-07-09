@@ -901,98 +901,99 @@ class MessageReply extends StatelessWidget {
             if (onSwipedMessage! && replyMessage != "")
               buildReply(replyMessage!, replyUsername!, replyName!),
             if (convertStringToLink(text) != null)
-              FlutterLinkPreview(
-                  url: convertStringToLink(text),
-                  titleStyle: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: txtColor1,
-                  ),
-                  builder: (info) {
-                    if (info == null) return const SizedBox();
-                    if (info is WebImageInfo) {
-                      return CachedNetworkImage(
-                        imageUrl: info.image,
-                        fit: BoxFit.contain,
-                      );
-                    }
+              // FlutterLinkPreview(
+              //     url: convertStringToLink(text),
+              //     titleStyle: TextStyle(
+              //       fontSize: 16,
+              //       fontWeight: FontWeight.bold,
+              //       color: txtColor1,
+              //     ),
+              //     builder: (info) {
+              //       if (info == null) return const SizedBox();
+              //       if (info is WebImageInfo) {
+              //         return CachedNetworkImage(
+              //           imageUrl: info.image,
+              //           fit: BoxFit.contain,
+              //         );
+              //       }
 
-                    final WebInfo webInfo = info;
-                    if (!WebAnalyzer.isNotEmpty(webInfo.title)) {
-                      return const SizedBox();
-                    }
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: const Color(0xFFF0F1F2),
+              //       final WebInfo webInfo = info;
+              //       if (!WebAnalyzer.isNotEmpty(webInfo.title)) {
+              //         return const SizedBox();
+              //       }
+              //       return Container(
+              //         decoration: BoxDecoration(
+              //           borderRadius: BorderRadius.circular(10),
+              //           color: const Color(0xFFF0F1F2),
+              //         ),
+              //         padding: const EdgeInsets.all(10),
+              //         child: Column(
+              //           crossAxisAlignment: CrossAxisAlignment.start,
+              //           children: <Widget>[
+              //             Row(
+              //               children: <Widget>[
+              //                 CachedNetworkImage(
+              //                   imageUrl: webInfo.icon ?? "",
+              //                   imageBuilder: (context, imageProvider) {
+              //                     return Image(
+              //                       image: imageProvider,
+              //                       fit: BoxFit.contain,
+              //                       width: 30,
+              //                       height: 30,
+              //                       errorBuilder: (context, error, stackTrace) {
+              //                         return const Icon(Icons.link);
+              //                       },
+              //                     );
+              //                   },
+              //                 ),
+              //                 const SizedBox(width: 8),
+              //                 Expanded(
+              //                   child: Text(
+              //                     webInfo.title,
+              //                     overflow: TextOverflow.ellipsis,
+              //                   ),
+              //                 ),
+              //               ],
+              //             ),
+              //             if (WebAnalyzer.isNotEmpty(webInfo.description)) ...[
+              //               const SizedBox(height: 8),
+              //               Text(
+              //                 webInfo.description,
+              //                 maxLines: 5,
+              //                 overflow: TextOverflow.ellipsis,
+              //               ),
+              //             ],
+              //             if (WebAnalyzer.isNotEmpty(webInfo.image)) ...[
+              //               const SizedBox(height: 8),
+              //               CachedNetworkImage(
+              //                 imageUrl: webInfo.image,
+              //                 fit: BoxFit.contain,
+              //               ),
+              //             ]
+              //           ],
+              //         ),
+              //       );
+              //     }),
+
+              LinkWell(
+                text,
+                style: isMe
+                    ? TextStyle(
+                        fontFamily: 'Roboto',
+                        color: Colors.white,
+                        fontSize: 11.5,
+                      )
+                    : TextStyle(
+                        fontFamily: 'Roboto',
+                        color: secondaryColor,
+                        fontSize: 11.5,
                       ),
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              CachedNetworkImage(
-                                imageUrl: webInfo.icon ?? "",
-                                imageBuilder: (context, imageProvider) {
-                                  return Image(
-                                    image: imageProvider,
-                                    fit: BoxFit.contain,
-                                    width: 30,
-                                    height: 30,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return const Icon(Icons.link);
-                                    },
-                                  );
-                                },
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  webInfo.title,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                          if (WebAnalyzer.isNotEmpty(webInfo.description)) ...[
-                            const SizedBox(height: 8),
-                            Text(
-                              webInfo.description,
-                              maxLines: 5,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                          if (WebAnalyzer.isNotEmpty(webInfo.image)) ...[
-                            const SizedBox(height: 8),
-                            CachedNetworkImage(
-                              imageUrl: webInfo.image,
-                              fit: BoxFit.contain,
-                            ),
-                          ]
-                        ],
-                      ),
-                    );
-                  }),
-            LinkWell(
-              text,
-              style: isMe
-                  ? TextStyle(
-                      fontFamily: 'Roboto',
-                      color: Colors.white,
-                      fontSize: 11.5,
-                    )
-                  : TextStyle(
-                      fontFamily: 'Roboto',
-                      color: secondaryColor,
-                      fontSize: 11.5,
-                    ),
-              linkStyle: TextStyle(
-                fontFamily: 'Roboto',
-                color: primaryColor,
-                fontSize: 11.5,
+                linkStyle: TextStyle(
+                  fontFamily: 'Roboto',
+                  color: primaryColor,
+                  fontSize: 11.5,
+                ),
               ),
-            ),
             SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -1247,104 +1248,105 @@ class Group extends StatelessWidget {
                   if (onSwipedMessage && replyMessage != "")
                     buildReply(replyMessage, replyUsername, replyName),
                   if (convertStringToLink(text) != null)
-                    FlutterLinkPreview(
-                        url: convertStringToLink(text),
-                        titleStyle: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: txtColor1,
-                        ),
-                        builder: (info) {
-                          if (info == null) return const SizedBox();
-                          if (info is WebImageInfo) {
-                            return CachedNetworkImage(
-                              imageUrl: info.image,
-                              fit: BoxFit.contain,
-                            );
-                          }
+                    // FlutterLinkPreview(
+                    //     url: convertStringToLink(text),
+                    //     titleStyle: TextStyle(
+                    //       fontSize: 16,
+                    //       fontWeight: FontWeight.bold,
+                    //       color: txtColor1,
+                    //     ),
+                    //     builder: (info) {
+                    //       if (info == null) return const SizedBox();
+                    //       if (info is WebImageInfo) {
+                    //         return CachedNetworkImage(
+                    //           imageUrl: info.image,
+                    //           fit: BoxFit.contain,
+                    //         );
+                    //       }
 
-                          final WebInfo webInfo = info;
-                          if (!WebAnalyzer.isNotEmpty(webInfo.title)) {
-                            return const SizedBox();
-                          }
-                          return Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: const Color(0xFFF0F1F2),
-                            ),
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    CachedNetworkImage(
-                                      imageUrl: webInfo.icon ?? "",
-                                      imageBuilder: (context, imageProvider) {
-                                        return Image(
-                                          image: imageProvider,
-                                          fit: BoxFit.contain,
-                                          width: 30,
-                                          height: 30,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                            return const Icon(Icons.link);
-                                          },
-                                        );
-                                      },
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        webInfo.title,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                if (WebAnalyzer.isNotEmpty(
-                                    webInfo.description)) ...[
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    webInfo.description,
-                                    maxLines: 5,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                                if (WebAnalyzer.isNotEmpty(webInfo.image)) ...[
-                                  const SizedBox(height: 8),
-                                  CachedNetworkImage(
-                                    imageUrl: webInfo.image,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ]
-                              ],
-                            ),
-                          );
-                        }),
-                  Padding(
-                    padding: const EdgeInsets.all(3.0),
-                    child: LinkWell(
-                      text,
-                      style: isMe
-                          ? TextStyle(
-                              color: Colors.white,
-                              fontSize: 11.5,
-                              // decoration: TextDecoration.underline,
-                            )
-                          : TextStyle(
-                              color: Colors.black,
-                              //Colors.black,
-                              fontSize: 11.5,
-                              // decoration: TextDecoration.underline,
-                            ),
-                      linkStyle: TextStyle(
-                        color: Colors.blueAccent,
-                        fontSize: 11,
-                        decoration: TextDecoration.underline,
+                    //       final WebInfo webInfo = info;
+                    //       if (!WebAnalyzer.isNotEmpty(webInfo.title)) {
+                    //         return const SizedBox();
+                    //       }
+                    //       return Container(
+                    //         decoration: BoxDecoration(
+                    //           borderRadius: BorderRadius.circular(10),
+                    //           color: const Color(0xFFF0F1F2),
+                    //         ),
+                    //         padding: const EdgeInsets.all(10),
+                    //         child: Column(
+                    //           crossAxisAlignment: CrossAxisAlignment.start,
+                    //           children: <Widget>[
+                    //             Row(
+                    //               children: <Widget>[
+                    //                 CachedNetworkImage(
+                    //                   imageUrl: webInfo.icon ?? "",
+                    //                   imageBuilder: (context, imageProvider) {
+                    //                     return Image(
+                    //                       image: imageProvider,
+                    //                       fit: BoxFit.contain,
+                    //                       width: 30,
+                    //                       height: 30,
+                    //                       errorBuilder:
+                    //                           (context, error, stackTrace) {
+                    //                         return const Icon(Icons.link);
+                    //                       },
+                    //                     );
+                    //                   },
+                    //                 ),
+                    //                 const SizedBox(width: 8),
+                    //                 Expanded(
+                    //                   child: Text(
+                    //                     webInfo.title,
+                    //                     overflow: TextOverflow.ellipsis,
+                    //                   ),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //             if (WebAnalyzer.isNotEmpty(
+                    //                 webInfo.description)) ...[
+                    //               const SizedBox(height: 8),
+                    //               Text(
+                    //                 webInfo.description,
+                    //                 maxLines: 5,
+                    //                 overflow: TextOverflow.ellipsis,
+                    //               ),
+                    //             ],
+                    //             if (WebAnalyzer.isNotEmpty(webInfo.image)) ...[
+                    //               const SizedBox(height: 8),
+                    //               CachedNetworkImage(
+                    //                 imageUrl: webInfo.image,
+                    //                 fit: BoxFit.contain,
+                    //               ),
+                    //             ]
+                    //           ],
+                    //         ),
+                    //       );
+                    //     }),
+
+                    Padding(
+                      padding: const EdgeInsets.all(3.0),
+                      child: LinkWell(
+                        text,
+                        style: isMe
+                            ? TextStyle(
+                                color: Colors.white,
+                                fontSize: 11.5,
+                                // decoration: TextDecoration.underline,
+                              )
+                            : TextStyle(
+                                color: Colors.black,
+                                //Colors.black,
+                                fontSize: 11.5,
+                                // decoration: TextDecoration.underline,
+                              ),
+                        linkStyle: TextStyle(
+                          color: Colors.blueAccent,
+                          fontSize: 11,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
-                  ),
                   SizedBox(height: 5),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -1408,8 +1410,8 @@ class CurrentUserStoryBubble extends StatelessWidget {
             MaterialPageRoute(builder: (context) => Homes(user: user)));
       },
       child: BubbleStories(
-        uid: user.uid,
-        hasStory: user.stories.isNotEmpty,
+        uid: user.uid!,
+        hasStory: user.stories!.isNotEmpty,
         myStory: true,
         // useNetworkImage: true,
       ),
@@ -1467,6 +1469,11 @@ class WalletListTile extends StatelessWidget {
             height: 34,
             width: 34,
             fit: BoxFit.cover,
+            errorWidget: (context, url, error) => CircleAvatar(
+              backgroundColor: Colors.grey[200],
+              radius: 17,
+              child: Text(wallet!.displayName[0].toUpperCase()),
+            ),
           ),
         ),
         title: Row(
@@ -1518,11 +1525,16 @@ class WalletListTile extends StatelessWidget {
               ),
             ),
             SizedBox(width: 10),
-            Text(
-              amount,
-              style: const TextStyle(
-                color: Color(0xcc000000),
-                fontSize: 13,
+            Expanded(
+              child: Text(
+                amount,
+                textAlign: TextAlign.end,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: const TextStyle(
+                  color: Color(0xcc000000),
+                  fontSize: 13,
+                ),
               ),
             )
           ],

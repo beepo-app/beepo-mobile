@@ -118,7 +118,7 @@ class _RecordButtonState extends State<RecordButton> {
             const SizedBox(height: 8),
             FlowShader(
               direction: Axis.vertical,
-              child: const Column(
+              child: Column(
                 children: [
                   Icon(Icons.keyboard_arrow_up),
                   Icon(Icons.keyboard_arrow_up),
@@ -151,7 +151,7 @@ class _RecordButtonState extends State<RecordButton> {
               showLottie ? LottieAnimation() : Text(recordDuration),
               const SizedBox(width: size),
               FlowShader(
-                child: const Row(
+                child: Row(
                   children: [
                     Icon(Icons.keyboard_arrow_left),
                     Text("Slide to cancel")
