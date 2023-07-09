@@ -5,7 +5,7 @@ import '../Utils/styles.dart';
 import '../Widgets/components.dart';
 
 class RequestToken extends StatefulWidget {
-  const RequestToken({Key key}) : super(key: key);
+  const RequestToken({Key? key}) : super(key: key);
 
   @override
   State<RequestToken> createState() => _RequestTokenState();
@@ -129,17 +129,17 @@ class _RequestTokenState extends State<RequestToken> {
                                 width: 1,
                               )),
                           focusedBorder: const OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(15)),
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
                             borderSide:
                                 BorderSide(width: 1, color: Colors.grey),
                           ),
                         ),
                       ),
                       const SizedBox(height: 130),
-                      const FilledButtons(
+                      FilledButtons(
                         text: 'Request',
                         color: secondaryColor,
+                        onPressed: () {},
                       )
                     ],
                   ),

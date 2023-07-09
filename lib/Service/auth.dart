@@ -47,16 +47,12 @@ class AuthService {
 
       // Upload image and get image url
       String imageUrl = "";
-      if (img != null) {
-        imageUrl = await MediaService.uploadProfilePicture(img);
-      }
+      imageUrl = await MediaService.uploadProfilePicture(img);
       //If image was selected, add to the body of the request
 
       var body = {'displayName': displayName, "encrypted_pin": encryptedPin};
 
-      if (img != null) {
-        body['profilePictureUrl'] = imageUrl;
-      }
+      body['profilePictureUrl'] = imageUrl;
 
       final response = await http.post(
         Uri.parse('$baseUrl/users'),
@@ -85,6 +81,8 @@ class AuthService {
           userName: data['user']['username'],
           hdWalletAddress: data['hdWalletAddress'],
           bitcoinWalletAddress: data['bitcoinWalletAddress'],
+          firebaseToken: '',
+          stories: [],
         );
 
         await FirebaseFirestore.instance
@@ -118,17 +116,13 @@ class AuthService {
 
       log(response.body.toString());
 
-      if (response.statusCode == 200) {
-        Map data = json.decode(response.body);
-        box.put('userData', data);
-        return data;
-      } else {
-        return null;
-      }
+      Map data = json.decode(response.body);
+      box.put('userData', data);
+      return data;
     } catch (e) {
       print(e);
       showToast(e.toString());
-      return null;
+      rethrow;
     }
   }
 
@@ -179,14 +173,12 @@ class AuthService {
         box.put('contextId', data['contextId']);
         box.put('serverPublicKey', data['serverPublicKey']);
         return data;
-      } else {
-        print(response.body);
-        return null;
       }
+      return {};
     } catch (e) {
       print(e);
       showToast(e.toString());
-      return null;
+      rethrow;
     }
   }
 
@@ -249,7 +241,7 @@ class AuthService {
   }
 
   //Retrieve Passphrase
-  Future<String> retrievePassphrase({String pin}) async {
+  Future<String> retrievePassphrase({String? pin}) async {
     try {
       String encryptedPin;
       print('pin: $pin');
@@ -296,10 +288,10 @@ class AuthService {
 
   //Edit profile
   Future<bool> editProfile({
-    String displayName,
-    String username,
-    String imgUrl,
-    String description,
+    String? displayName,
+    String? username,
+    String? imgUrl,
+    String? description,
   }) async {
     try {
       final response = await http.post(
@@ -319,19 +311,20 @@ class AuthService {
 
       var data = json.decode(response.body);
       Map me = await getUser();
-      final search = createKeywords(username);
+      final search = createKeywords(username!);
       await FirebaseFirestore.instance
           .collection('users')
           .doc(me['uid'])
           .update(UserModel(
-                  name: displayName,
-                  userName: username,
-                  image: imgUrl,
-                  searchKeywords: search,
-                  hdWalletAddress: data['hdWalletAddress'],
-                  bitcoinWalletAddress: data['bitcoinWalletAddress'],
-                  uid: me['uid'])
-              .toJson());
+              name: displayName!,
+              userName: username,
+              image: imgUrl!,
+              searchKeywords: search,
+              hdWalletAddress: data['hdWalletAddress'],
+              bitcoinWalletAddress: data['bitcoinWalletAddress'],
+              uid: me['uid'],
+              firebaseToken: '',
+              stories: []).toJson());
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       } else {

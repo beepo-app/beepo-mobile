@@ -7,11 +7,11 @@ String balanceModelToJson(CoinBalance data) => json.encode(data.toJson());
 
 class CoinBalance {
   CoinBalance({
-    this.balance,
-    this.symbol,
-    this.status,
-    this.prices,
-    this.address,
+    required this.balance,
+    required this.symbol,
+    required this.status,
+    required this.prices,
+    required this.address,
   });
 
   num balance;
@@ -41,9 +41,9 @@ class CoinBalance {
 
 class Price {
   Price({
-    this.currency,
-    this.symbol,
-    this.value,
+    required this.currency,
+    required this.symbol,
+    required this.value,
   });
 
   String currency;

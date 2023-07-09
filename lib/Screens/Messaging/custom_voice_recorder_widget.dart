@@ -12,7 +12,7 @@ class CustomVoiceRecorderWidget extends StatefulWidget {
   final bool isGroupChat;
   final String receiverId;
   const CustomVoiceRecorderWidget(
-      {Key key, @required this.isGroupChat, this.receiverId = ''})
+      {Key? key, required this.isGroupChat, this.receiverId = ''})
       : super(key: key);
 
   @override
@@ -21,8 +21,8 @@ class CustomVoiceRecorderWidget extends StatefulWidget {
 }
 
 class _CustomVoiceRecorderWidgetState extends State<CustomVoiceRecorderWidget> {
-  RecorderController recorderController;
-  PlayerController playerController;
+  late RecorderController recorderController;
+  late PlayerController playerController;
   bool isRecording = false;
   double radius = 50;
   String path = '';
@@ -79,7 +79,7 @@ class _CustomVoiceRecorderWidgetState extends State<CustomVoiceRecorderWidget> {
     await recorderController.record();
   }
 
-  Future<String> stopRecording() async {
+  Future<String?> stopRecording() async {
     return await recorderController.stop();
   }
 
@@ -184,7 +184,7 @@ class _CustomVoiceRecorderWidgetState extends State<CustomVoiceRecorderWidget> {
                         } else {
                           final path = await recorderController.stop();
 
-                          setState(() => this.path = path);
+                          setState(() => this.path = path!);
                           await playerController.preparePlayer(path: this.path);
                         }
                       },

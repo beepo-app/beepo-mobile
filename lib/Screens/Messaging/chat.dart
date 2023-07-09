@@ -11,7 +11,7 @@ import 'chats/check_address.dart';
 import 'chats/search.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key key}) : super(key: key);
+  const ChatScreen({Key? key}) : super(key: key);
 
   // ChatScreen({Key key}) : super(key: key);
 
@@ -48,7 +48,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         const SizedBox(height: 30),
                         FilledButtons(
                           text: 'Chat with an ETH address',
-                          onPressed: () => Get.off(const CheckAddress())
+                          onPressed: () => Get.off(CheckAddress())!
                               .then((value) => setState(() {})),
                         ),
                       ],

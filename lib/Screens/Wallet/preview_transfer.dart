@@ -18,12 +18,12 @@ import '../../Utils/styles.dart';
 import '../../Widgets/components.dart';
 
 class ConfirmTransfer extends StatefulWidget {
-  final Wallet wallet;
-  final double amount;
-  final String address;
-  final Conversation convo;
+  final Wallet? wallet;
+  final double? amount;
+  final String? address;
+  final Conversation? convo;
   const ConfirmTransfer({
-    Key key,
+    Key? key,
     this.wallet,
     this.amount,
     this.address,
@@ -37,20 +37,20 @@ class ConfirmTransfer extends StatefulWidget {
 class _ConfirmTransferState extends State<ConfirmTransfer> {
   @override
   Widget build(BuildContext context) {
-    print(widget.wallet.chainId.toString());
+    print(widget.wallet!.chainId.toString());
     return Scaffold(
       appBar: appBar('Confirm Transaction'),
       body: FutureBuilder<String>(
         future: TransactionService().estimateGasFee(
-            widget.wallet.ticker == "BITCOIN"
+            widget.wallet!.ticker == "BITCOIN"
                 ? 'bitcoin'
-                : widget.wallet.chainId.toString()),
+                : widget.wallet!.chainId.toString()),
         builder: (c, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          String gasFee = snapshot.data;
+          String gasFee = snapshot.data!;
 
           return Center(
             child: Column(
@@ -65,7 +65,7 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "${widget.amount} ${widget.wallet.ticker}",
+                  "${widget.amount} ${widget.wallet!.ticker}",
                   style: const TextStyle(
                     color: txtColor1,
                     fontSize: 18,
@@ -85,7 +85,7 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
                   height: 11,
                 ),
                 Text(
-                  widget.address,
+                  widget.address!,
                   style: const TextStyle(
                     color: txtColor1,
                     fontSize: 12,
@@ -93,7 +93,7 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
                 ),
                 const SizedBox(height: 60),
                 Text(
-                  "Gas Fee: $gasFee ${widget.wallet.ticker}",
+                  "Gas Fee: $gasFee ${widget.wallet!.ticker}",
                   style: const TextStyle(
                     color: txtColor1,
                     fontSize: 12,
@@ -166,7 +166,7 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
                                         amount: widget.amount.toString(),
                                         gasFee: gasFee,
                                         networkId:
-                                            widget.wallet.chainId.toString(),
+                                            widget.wallet!.chainId.toString(),
                                       );
                                       Get.back();
                                       if (result) {
@@ -174,7 +174,7 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
                                           //send message
                                           var trxDetails = {
                                             'value': widget.amount.toString(),
-                                            'token': widget.wallet.ticker,
+                                            'token': widget.wallet!.ticker,
                                             'address': widget.address,
                                             'type': 'transfer',
                                           };
@@ -187,17 +187,17 @@ class _ConfirmTransferState extends State<ConfirmTransfer> {
                                               );
                                           Get.to(
                                             TransferSuccess(
-                                              widget.address,
+                                              widget.address!,
                                               widget.amount.toString(),
-                                              widget.wallet.ticker,
+                                              widget.wallet!.ticker,
                                             ),
                                           );
                                         } else {
                                           Get.off(
                                             TransferSuccess(
-                                              widget.address,
+                                              widget.address!,
                                               widget.amount.toString(),
-                                              widget.wallet.ticker,
+                                              widget.wallet!.ticker,
                                             ),
                                           );
                                         }

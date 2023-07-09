@@ -12,9 +12,9 @@ import '../../Widgets/components.dart';
 import 'preview_transfer.dart';
 
 class SendToken extends StatefulWidget {
-  final Wallet wallet;
-  final String balance;
-  const SendToken({Key key, this.wallet, this.balance}) : super(key: key);
+  final Wallet? wallet;
+  final String? balance;
+  const SendToken({Key? key, this.wallet, this.balance}) : super(key: key);
 
   @override
   State<SendToken> createState() => _SendTokenState();
@@ -53,7 +53,7 @@ class _SendTokenState extends State<SendToken> {
                 ),
                 decoration: InputDecoration(
                   isDense: true,
-                  suffixText: widget.wallet.ticker ?? " ",
+                  suffixText: widget.wallet!.ticker,
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                       borderSide: BorderSide(
@@ -94,9 +94,7 @@ class _SendTokenState extends State<SendToken> {
                   prefixIcon: IconButton(
                     onPressed: () async {
                       String scannedCode = await Get.to(() => ScanCode());
-                      if (scannedCode != null) {
-                        address.text = scannedCode;
-                      }
+                      address.text = scannedCode;
                     },
                     icon: Icon(
                       Icons.qr_code_scanner_sharp,
@@ -179,7 +177,7 @@ class _SendTokenState extends State<SendToken> {
                   } else {
                     Get.to(
                       ConfirmTransfer(
-                        wallet: widget.wallet,
+                        wallet: widget.wallet!,
                         amount: double.parse(amount.text),
                         address: address.text,
                       ),

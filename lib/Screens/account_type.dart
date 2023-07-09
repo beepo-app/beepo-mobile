@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import '../Utils/styles.dart';
 
 class AccountType extends StatefulWidget {
-  const AccountType({Key key}) : super(key: key);
+  const AccountType({Key? key}) : super(key: key);
 
   @override
   State<AccountType> createState() => _AccountTypeState();

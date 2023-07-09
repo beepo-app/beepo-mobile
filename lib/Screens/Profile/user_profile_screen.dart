@@ -19,7 +19,7 @@ class UserProfile extends StatefulWidget {
   // const UserProfile({Key key}) : super(key: key);
   final UserModel model;
 
-  const UserProfile({Key key, @required this.model}) : super(key: key);
+  const UserProfile({Key? key, required this.model}) : super(key: key);
 
   @override
   State<UserProfile> createState() => _UserProfileState();
@@ -85,7 +85,7 @@ class _UserProfileState extends State<UserProfile> {
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (_) {
                         return FullScreenImage(
-                          imageUrl: widget.model.image,
+                          imageUrl: widget.model.image!,
                           tag: "imagex",
                         );
                       }));
@@ -97,7 +97,7 @@ class _UserProfileState extends State<UserProfile> {
                         child: CachedNetworkImage(
                           width: 110,
                           height: 110,
-                          imageUrl: widget.model.image,
+                          imageUrl: widget.model.image!,
                           placeholder: (context, url) =>
                               Center(child: CircularProgressIndicator()),
                           errorWidget: (context, url, error) => Icon(
@@ -112,7 +112,7 @@ class _UserProfileState extends State<UserProfile> {
                   ),
                   SizedBox(height: 12),
                   Text(
-                    widget.model.name,
+                    widget.model.name!,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -120,7 +120,7 @@ class _UserProfileState extends State<UserProfile> {
                   ),
                   SizedBox(height: 6),
                   Text(
-                    widget.model.userName,
+                    widget.model.userName!,
                     style: TextStyle(
                       color: Color(0x66ffffff),
                       fontSize: 13,
@@ -148,7 +148,11 @@ class _UserProfileState extends State<UserProfile> {
                                         userName: widget.model.userName,
                                         image: widget.model.image,
                                         searchKeywords:
-                                            widget.model.searchKeywords),
+                                            widget.model.searchKeywords,
+                                        bitcoinWalletAddress: '',
+                                        firebaseToken: '',
+                                        hdWalletAddress: '',
+                                        stories: []),
                                   ),
                                 )),
                           ),
@@ -334,7 +338,7 @@ class _UserProfileState extends State<UserProfile> {
                                 crossAxisSpacing: 15,
                                 crossAxisCount: 3,
                                 children: List.generate(
-                                    snapshot.data.docs.length, (index) {
+                                    snapshot.data!.docs.length, (index) {
                                   return GestureDetector(
                                     // onTap: () => Get.to(Store()),
                                     child: Container(
@@ -347,7 +351,7 @@ class _UserProfileState extends State<UserProfile> {
                                       ),
                                       child: ClipRRect(
                                         child: CachedNetworkImage(
-                                          imageUrl: snapshot.data.docs[index]
+                                          imageUrl: snapshot.data!.docs[index]
                                               ['content'],
                                           fit: BoxFit.fill,
                                         ),

@@ -25,10 +25,10 @@ List createKeywords(String userName) {
   return arrayName;
 }
 
-
 String generateRandomString(int len) {
   var r = Random();
-  return String.fromCharCodes(List.generate(len, (index) => r.nextInt(33) + 89));
+  return String.fromCharCodes(
+      List.generate(len, (index) => r.nextInt(33) + 89));
 }
 
 String formatCurrency(num num) {
@@ -43,7 +43,7 @@ String formatDate(DateTime date) {
 class ImageUtil {
   Future<File> cropProfileImage(File file) async {
     try {
-      CroppedFile croppedFile = await ImageCropper().cropImage(
+      CroppedFile? croppedFile = await ImageCropper().cropImage(
         sourcePath: file.path,
         compressQuality: 50,
         cropStyle: CropStyle.circle,
@@ -53,25 +53,21 @@ class ImageUtil {
         ),
       );
 
-      if (croppedFile != null) {
-        return File(croppedFile.path);
-      } else {
-        return null;
-      }
+      return File(croppedFile!.path);
     } catch (e) {
-      return null;
+      rethrow;
     }
   }
 
-  Future<File> pickProfileImage({BuildContext context}) async {
+  Future<File> pickProfileImage({BuildContext? context}) async {
     try {
       return cropProfileImage(await showCupertinoModalPopup(
-        context: context,
+        context: context!,
         builder: (BuildContext context) => CupertinoActionSheet(
           actions: [
             CupertinoActionSheetAction(
               onPressed: () async {
-                XFile result = await ImagePicker().pickImage(
+                XFile? result = await ImagePicker().pickImage(
                   source: ImageSource.camera,
                   preferredCameraDevice: CameraDevice.front,
                 );
@@ -79,30 +75,31 @@ class ImageUtil {
                 if (result != null) {
                   if ((await result.length()) > 5000000) {
                     showToast('File too large');
-                    return null;
+                    return;
                   } else {
                     Get.back(result: File(result.path));
                   }
                 } else {
-                  return null;
+                  return;
                 }
               },
               child: const Text('Select from Camera'),
             ),
             CupertinoActionSheetAction(
               onPressed: () async {
-                XFile result = await ImagePicker().pickImage(source: ImageSource.gallery);
+                XFile? result =
+                    await ImagePicker().pickImage(source: ImageSource.gallery);
 
                 if (result != null) {
                   //File size limit - 5mb
                   if ((await result.length()) > 5000000) {
                     showToast('File too large');
-                    return null;
+                    return;
                   } else {
                     Get.back(result: File(result.path));
                   }
                 } else {
-                  return null;
+                  return;
                 }
               },
               child: const Text('Select from Gallery'),
@@ -115,7 +112,7 @@ class ImageUtil {
         ),
       ));
     } catch (e) {
-      return null;
+      rethrow;
     }
   }
 }

@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import '../Utils/styles.dart';
 
 class Language extends StatefulWidget {
-  const Language({Key key}) : super(key: key);
+  const Language({Key? key}) : super(key: key);
 
   @override
   State<Language> createState() => _LanguageState();

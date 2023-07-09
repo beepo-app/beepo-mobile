@@ -6,8 +6,8 @@ import 'dart:convert';
 
 class CoinMarketData {
   CoinMarketData({
-    this.id,
-    this.data,
+    required this.id,
+    required this.data,
   });
 
   String id;
@@ -31,18 +31,18 @@ class CoinMarketData {
 
 class Data {
   Data({
-    this.marketCap,
-    this.currentPrice,
-    this.volume,
-    this.priceChangePercentage24H,
-    this.priceChangePercentage7D,
-    this.priceChangePercentage14D,
-    this.priceChangePercentage30D,
-    this.priceChangePercentage60D,
-    this.priceChangePercentage200D,
-    this.priceChangePercentage1Y,
-    this.circulatingSupply,
-    this.totalSupply,
+    required this.marketCap,
+    required this.currentPrice,
+    required this.volume,
+    required this.priceChangePercentage24H,
+    required this.priceChangePercentage7D,
+    required this.priceChangePercentage14D,
+    required this.priceChangePercentage30D,
+    required this.priceChangePercentage60D,
+    required this.priceChangePercentage200D,
+    required this.priceChangePercentage1Y,
+    required this.circulatingSupply,
+    required this.totalSupply,
   });
 
   String marketCap;

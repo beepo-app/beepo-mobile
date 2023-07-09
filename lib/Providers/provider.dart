@@ -18,7 +18,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pointycastle/asymmetric/api.dart';
-import 'package:record_mp3/record_mp3.dart';
 import 'package:rsa_encrypt/rsa_encrypt.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
@@ -32,15 +31,15 @@ class ChatNotifier extends ChangeNotifier {
 
   String imageUrl = ' ';
 
-  String photoUrl;
+  String? photoUrl;
   Map userM = Hive.box('beepo').get('userData');
 
   Reference ref = FirebaseStorage.instance.ref();
-  File selectedImage;
-  File selectedImageForChat;
+  File? selectedImage;
+  File? selectedImageForChat;
 
   // String decrypted;
-  Encrypted encrypted;
+  Encrypted? encrypted;
 
   bool enableScreenShot = false;
   bool enableMedia = false;
@@ -79,7 +78,7 @@ class ChatNotifier extends ChangeNotifier {
     encrypted = encrypterer.encrypt(text);
     notifyListeners();
 
-    return encrypted.base16;
+    return encrypted!.base16;
   }
 
   decrypt(Encrypted encrypting) async {
@@ -105,7 +104,7 @@ class ChatNotifier extends ChangeNotifier {
 
   //Group Methods
   pickUploadImageGroup(BuildContext context) async {
-    List<AssetEntity> image;
+    List<AssetEntity>? image;
     // Reference reg = FirebaseStorage.instance.ref();
     try {
       image = await AssetPicker.pickAssets(
@@ -122,14 +121,14 @@ class ChatNotifier extends ChangeNotifier {
       notifyListeners();
 
       if (image != null) {
-        File file = await image.first.file;
+        File? file = await image.first.file;
 
-        await ref.putFile(file);
+        await ref.putFile(file!);
         ref.getDownloadURL().then((value) {
           print(value);
           photoUrl = value;
           notifyListeners();
-          sendPhotoMsgGroup(photoUrl);
+          sendPhotoMsgGroup(photoUrl!);
         });
       }
     } on PlatformException catch (e) {
@@ -187,20 +186,14 @@ class ChatNotifier extends ChangeNotifier {
         maxWidth: 512,
         maxHeight: 512,
         imageQuality: 75);
-    ref = FirebaseStorage.instance.ref().child(image.path);
+    ref = FirebaseStorage.instance.ref().child(image!.path);
     notifyListeners();
 
-    if (image != null) {
-      File file = File(image.path);
-      await ImageUtil().cropProfileImage(file).then((value) {
-        if (value != null) {
-          // setState(() {
-          selectedImageForChat = value;
-          notifyListeners();
-          // });
-        }
-      });
-    }
+    File file = File(image.path);
+    await ImageUtil().cropProfileImage(file).then((value) {
+      selectedImageForChat = value;
+      notifyListeners();
+    });
 
     await ref.putFile(File(image.path));
     ref.getDownloadURL().then((value) {
@@ -214,7 +207,7 @@ class ChatNotifier extends ChangeNotifier {
 
   //Chat Methods
   pickUploadImageChat(String id, BuildContext context) async {
-    List<AssetEntity> image;
+    List<AssetEntity>? image;
     // Reference reg = FirebaseStorage.instance.ref();
     try {
       image = await AssetPicker.pickAssets(
@@ -226,17 +219,15 @@ class ChatNotifier extends ChangeNotifier {
       ref = FirebaseStorage.instance.ref().child('image.png');
       notifyListeners();
 
-      if (image != null) {
-        File file = await image.first.file;
+      File? file = await image!.first.file;
 
-        await ref.putFile(file);
-        ref.getDownloadURL().then((value) {
-          print(value);
-          photoUrl = value;
-          notifyListeners();
-          sendPhotoMsg(photoUrl, receiverId: id);
-        });
-      }
+      await ref.putFile(file!);
+      ref.getDownloadURL().then((value) {
+        print(value);
+        photoUrl = value;
+        notifyListeners();
+        sendPhotoMsg(photoUrl!, receiverId: id);
+      });
     } on PlatformException catch (e) {
       print(e.message);
     }
@@ -244,7 +235,7 @@ class ChatNotifier extends ChangeNotifier {
 // }
   }
 
-  sendPhotoMsg(String photoMsg, {String receiverId}) async {
+  sendPhotoMsg(String photoMsg, {String? receiverId}) async {
     if (photoMsg.isNotEmpty) {
       var ref = FirebaseFirestore.instance
           .collection('messages')
@@ -348,26 +339,20 @@ class ChatNotifier extends ChangeNotifier {
         maxWidth: 512,
         maxHeight: 512,
         imageQuality: 75);
-    reh = FirebaseStorage.instance.ref().child(image.path);
+    reh = FirebaseStorage.instance.ref().child(image!.path);
     notifyListeners();
 
-    if (image != null) {
-      File file = File(image.path);
-      await ImageUtil().cropProfileImage(file).then((value) {
-        if (value != null) {
-          // setState(() {
-          selectedImageForChat = value;
-          notifyListeners();
-          // });
-        }
-      });
-    }
+    File file = File(image.path);
+    await ImageUtil().cropProfileImage(file).then((value) {
+      selectedImageForChat = value;
+      notifyListeners();
+    });
     await reh.putFile(File(image.path));
     reh.getDownloadURL().then((value) {
       print(value);
       photoUrl = value;
       notifyListeners();
-      sendPhotoMsg(photoUrl, receiverId: id);
+      sendPhotoMsg(photoUrl!, receiverId: id);
     });
   }
 
@@ -451,39 +436,29 @@ class ChatNotifier extends ChangeNotifier {
     bool hasPermission = await checkPermission();
     if (hasPermission) {
       recordFilePath = await getFilePath();
-
-      RecordMp3.instance.start(recordFilePath, (type) {
-        // setState(() {});
-        notifyListeners();
-      });
     } else {}
     // setState(() {});
     notifyListeners();
   }
 
-  void cancelRecord() {
-    RecordMp3.instance.stop();
-  }
+  void cancelRecord() {}
 
   void stopRecord(String receiverId) async {
-    bool s = RecordMp3.instance.stop();
-    if (s) {
-      // setState(() {
-      isSending = true;
-      notifyListeners();
-      // });
-      await uploadAudio(receiverId, '');
+    // setState(() {
+    isSending = true;
+    notifyListeners();
+    // });
+    await uploadAudio(receiverId, '');
 
-      // setState(() {
-      // isPlayingMsg = false;
-      // notifyListeners();
-      // });
-    }
+    // setState(() {
+    // isPlayingMsg = false;
+    // notifyListeners();
+    // });
   }
 
   void pauseAudio() async {
     AudioPlayer player = AudioPlayer();
-    player.setUrl(recordFilePath, isLocal: true);
+    player.setUrl(recordFilePath!, isLocal: true);
     await player.pause();
   }
 
@@ -491,7 +466,7 @@ class ChatNotifier extends ChangeNotifier {
 
   durationCalc() {
     AudioPlayer audioPlayer = AudioPlayer();
-    audioPlayer.setUrl(recordFilePath, isLocal: true);
+    audioPlayer.setUrl(recordFilePath!, isLocal: true);
     audioPlayer.onDurationChanged.listen((Duration event) {
       dure = event;
       notifyListeners();
@@ -519,16 +494,16 @@ class ChatNotifier extends ChangeNotifier {
   }
 
   Future<void> play() async {
-    if (recordFilePath != null && File(recordFilePath).existsSync()) {
+    if (File(recordFilePath!).existsSync()) {
       AudioPlayer audioPlayer = AudioPlayer();
       await audioPlayer.play(
-        recordFilePath,
+        recordFilePath!,
         isLocal: true,
       );
     }
   }
 
-  String recordFilePath;
+  String? recordFilePath;
   ScrollController scrollController = ScrollController();
 
   // = ScrollController();
@@ -545,7 +520,7 @@ class ChatNotifier extends ChangeNotifier {
     return sdPath + "/test_${i++}.mp3";
   }
 
-  sendAudioMsg(String audioMsg, {String receiverId}) async {
+  sendAudioMsg(String audioMsg, {String? receiverId}) async {
     if (audioMsg.isNotEmpty) {
       var ref = FirebaseFirestore.instance
           .collection('messages')

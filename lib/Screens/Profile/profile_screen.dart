@@ -16,7 +16,7 @@ import '../language_screen.dart';
 import '../security_screen.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({Key key}) : super(key: key);
+  const Profile({Key? key}) : super(key: key);
 
   // const Profile({Key key}) : super(key: key);
 
@@ -25,7 +25,7 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  Map userData;
+  Map? userData;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class _ProfileState extends State<Profile> {
                       alignment: Alignment.center,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(70),
-                        child: userData['profilePictureUrl'] == null
+                        child: userData!['profilePictureUrl'] == null
                             ? Container(
                                 height: 135,
                                 width: 135,
@@ -64,7 +64,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               )
                             : CachedNetworkImage(
-                                imageUrl: userData['profilePictureUrl'],
+                                imageUrl: userData!['profilePictureUrl'],
                                 height: 135,
                                 width: 135,
                                 fit: BoxFit.cover,
@@ -84,7 +84,7 @@ class _ProfileState extends State<Profile> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          userData['displayName'].toString(),
+                          userData!['displayName'].toString(),
                           style: const TextStyle(
                             color: Color(0xffff9c34),
                             fontSize: 18,
@@ -92,7 +92,7 @@ class _ProfileState extends State<Profile> {
                         ),
                         const SizedBox(width: 8),
                         GestureDetector(
-                          onTap: () => Get.to(() => EditProfile(userData))
+                          onTap: () => Get.to(() => EditProfile(userData!))!
                               .then((value) => setState(() {})),
                           child: const Icon(
                             Icons.mode_edit_outlined,
@@ -107,7 +107,7 @@ class _ProfileState extends State<Profile> {
                     ),
                     Center(
                       child: Text(
-                        "@" + userData['username'].toString(),
+                        "@" + userData!['username'].toString(),
                         style: TextStyle(
                           color: secondaryColor,
                           fontSize: 15,

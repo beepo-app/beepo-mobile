@@ -12,7 +12,7 @@ class StoryDownloadProvider extends ChangeNotifier {
   final StoryDownloadMethod _storyMethod;
 
   StoryDownloadProvider({
-    @required StoryDownloadMethod storyMethod,
+    required StoryDownloadMethod storyMethod,
   }) : _storyMethod = storyMethod;
 
   factory StoryDownloadProvider.initialize() => StoryDownloadProvider(
@@ -57,5 +57,4 @@ class StoryDownloadProvider extends ChangeNotifier {
   Stream<List<UserModel>> getFollowingUsers() =>
       _storyMethod.getFollowingUsers();
 // Stream<List<DocumentSnapshot>> getUsers() => _storyMethod.getUsersInStories();
-
 }

@@ -5,8 +5,8 @@ import '../../Providers/provider.dart';
 
 class FlowShader extends StatefulWidget {
   const FlowShader({
-    Key key,
-    @required this.child,
+    Key? key,
+    required this.child,
     this.duration = const Duration(seconds: 2),
     this.direction = Axis.horizontal,
     this.flowColors = const <Color>[Colors.white, Colors.black],
@@ -24,10 +24,10 @@ class FlowShader extends StatefulWidget {
 
 class _FlowShaderState extends State<FlowShader>
     with SingleTickerProviderStateMixin {
-  AnimationController controller;
-  Animation animation1;
-  Animation animation2;
-  Animation animation3;
+  late AnimationController controller;
+  late Animation animation1;
+  late Animation animation2;
+  late Animation animation3;
 
   @override
   void dispose() {

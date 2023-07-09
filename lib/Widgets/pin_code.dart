@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class NumberKeyboard extends StatelessWidget {
   final Function(int) onPressed;
 
-  const NumberKeyboard({Key key, this.onPressed}) : super(key: key);
+  const NumberKeyboard({Key? key, required this.onPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -61,15 +61,16 @@ class NumberKeyboard extends StatelessWidget {
 }
 
 class _NumberKey extends StatelessWidget {
-  final int number;
+  final int? number;
   final void Function(int) onPressed;
 
-  const _NumberKey({Key key, this.number, this.onPressed}) : super(key: key);
+  const _NumberKey({Key? key, this.number, required this.onPressed})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => onPressed(number),
+      onTap: () => onPressed(number!),
       child: Container(
         decoration: BoxDecoration(
           color: secondaryColor,

@@ -11,7 +11,7 @@ import '../Models/wallet.dart';
 import '../Widgets/toasts.dart';
 
 class WalletsService {
-  Future<List> getWallets() async {
+  Future<List<Wallet>> getWallets() async {
     try {
       final response = await http.get(
         Uri.parse("$baseUrl/wallet/coins"),
@@ -34,7 +34,7 @@ class WalletsService {
       print(e);
 
       showToast(e.toString());
-      return null;
+      rethrow;
     }
   }
 
@@ -61,7 +61,7 @@ class WalletsService {
       }
     } catch (e) {
       showToast(e.toString());
-      return null;
+      rethrow;
     }
   }
 
@@ -81,17 +81,13 @@ class WalletsService {
       print(response.body);
       log(response.statusCode.toString());
 
-      if (response.statusCode == 200) {
-        var data = json.decode(response.body);
-        CoinBalance balance = CoinBalance.fromJson(data);
-        return balance;
-      } else {
-        return null;
-      }
+      var data = json.decode(response.body);
+      CoinBalance balance = CoinBalance.fromJson(data);
+      return balance;
     } catch (e) {
       print(e);
       showToast(e.toString());
-      return null;
+      rethrow;
     }
   }
 
@@ -126,7 +122,7 @@ class WalletsService {
       print(e);
 
       showToast(e.toString());
-      return null;
+      rethrow;
     }
   }
 

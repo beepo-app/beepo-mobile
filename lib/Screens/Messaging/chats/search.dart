@@ -61,10 +61,10 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                 return const SizedBox();
               }
               return ListView.builder(
-                itemCount: snapshot.data.docs.length,
+                itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
-                  final user =
-                      UserModel.fromJson(snapshot.data.docs[index].data());
+                  UserModel? user =
+                      UserModel.fromJson(snapshot.data!.docs[index].data());
                   return _searchcontroller.text.isNotEmpty
                       ? ListTile(
                           onTap: () async {
@@ -72,7 +72,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                             //combine users data and my data to a string
                             final convo = await context
                                 .read<XMTPProvider>()
-                                .newConversation(user.hdWalletAddress);
+                                .newConversation(user.hdWalletAddress!);
 
                             if (convo == null) {
                               log('Conversation is null');
@@ -111,7 +111,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                             ),
                             child: ClipOval(
                               child: CachedNetworkImage(
-                                imageUrl: user.image,
+                                imageUrl: user.image!,
                                 placeholder: (context, url) =>
                                     Center(child: CircularProgressIndicator()),
                                 filterQuality: FilterQuality.high,
@@ -123,11 +123,11 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                             ),
                           ),
                           title: Text(
-                            user.name,
+                            user.name!,
                             style: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.w600),
                           ),
-                          subtitle: Text('@' + user.userName),
+                          subtitle: Text('@' + user.userName!),
                         )
                       : const SizedBox();
                 },
@@ -253,7 +253,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
 
 class SocialAppBar extends StatelessWidget implements PreferredSizeWidget {
   const SocialAppBar({
-    @required this.title,
+    required this.title,
     this.leading = true,
   });
 
@@ -293,12 +293,12 @@ class SearchBar extends StatelessWidget {
     this.onChanged,
   });
 
-  final VoidCallback ontap;
-  final bool readonly;
-  final bool autofocus;
+  final VoidCallback? ontap;
+  final bool? readonly;
+  final bool? autofocus;
 
-  final TextEditingController controller;
-  final Function(String) onChanged;
+  final TextEditingController? controller;
+  final Function(String)? onChanged;
   final node1 = FocusNode();
   @override
   Widget build(BuildContext context) {
@@ -308,21 +308,19 @@ class SearchBar extends StatelessWidget {
         cursorColor: Colors.white,
         controller: controller,
         style: TextStyle(color: Colors.white),
-        readOnly: readonly,
-        autofocus: autofocus,
+        readOnly: readonly!,
+        autofocus: autofocus!,
         focusNode: node1,
         onTap: ontap,
         onChanged: onChanged,
         decoration: customTextFieldDecoration(
           context: context,
           hint: 'search',
-          suffixICon: null,
           prefixIcon: const Icon(
             Icons.search_rounded,
             size: 23,
             color: Colors.white,
           ),
-          errorText: null,
         ),
       ),
     );
@@ -331,21 +329,22 @@ class SearchBar extends StatelessWidget {
 
 class SearchBar2 extends StatefulWidget {
   SearchBar2({
+    Key? key,
     this.ontap,
     this.autofocus = false,
     this.readonly = false,
     this.controller,
     this.onChanged,
     this.showInput = false,
-  });
+  }) : super(key: key);
 
-  final VoidCallback ontap;
-  final bool readonly;
-  final bool autofocus;
+  final VoidCallback? ontap;
+  final bool? readonly;
+  final bool? autofocus;
   bool showInput;
 
-  final TextEditingController controller;
-  final Function(String) onChanged;
+  final TextEditingController? controller;
+  final Function(String)? onChanged;
 
   @override
   State<SearchBar2> createState() => _SearchBar2State();
@@ -370,8 +369,8 @@ class _SearchBar2State extends State<SearchBar2> {
                 widget.showInput = !widget.showInput;
               });
             },
-            readOnly: widget.readonly,
-            autofocus: widget.autofocus,
+            readOnly: widget.readonly!,
+            autofocus: widget.autofocus!,
             focusNode: node1,
             onTap: widget.ontap,
             onChanged: widget.onChanged,
@@ -402,11 +401,11 @@ class _SearchBar2State extends State<SearchBar2> {
 }
 
 customTextFieldDecoration({
-  @required BuildContext context,
-  @required String hint,
-  Widget suffixICon,
-  Widget prefixIcon,
-  String errorText,
+  required BuildContext context,
+  required String hint,
+  Widget? suffixICon,
+  Widget? prefixIcon,
+  String? errorText,
   bool outline = false,
 }) =>
     InputDecoration(

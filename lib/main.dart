@@ -37,11 +37,10 @@ void main() async {
 String playerId = '';
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
 // The navigator key is necessary to navigate using static methods
-  static final GlobalKey<NavigatorState> navigatorKey =
-      GlobalKey<NavigatorState>();
+  static final navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -71,7 +70,7 @@ class _MyAppState extends State<MyApp> {
     OneSignal.shared.removeTriggerForKey("trigger_2");
 
     // Get the value for a trigger by its key
-    Object triggerValue =
+    Object? triggerValue =
         await OneSignal.shared.getTriggerValueForKey("trigger_3");
     print("'trigger_3' key trigger value: ${triggerValue?.toString()}");
 
@@ -121,8 +120,8 @@ class _MyAppState extends State<MyApp> {
       this.setState(() {
         _debugLabelString =
             deviceState?.jsonRepresentation() ?? "Device state null";
-        print('USER ID IS ${deviceState.userId}');
-        playerId = deviceState.userId;
+        print('USER ID IS ${deviceState!.userId}');
+        playerId = deviceState.userId!;
         FirebaseFirestore.instance
             .collection('OneSignal')
             .doc(userM['uid'])
@@ -245,6 +244,11 @@ class _MyAppState extends State<MyApp> {
         uid: message.data['uid'],
         userName: message.data['userName'],
         image: message.data['image'],
+        bitcoinWalletAddress: '',
+        firebaseToken: '',
+        hdWalletAddress: '',
+        searchKeywords: [],
+        stories: [],
       ),
       hasVideo: message.data['hasVideo'] == 'true' ? true : false,
       userName: message.data['userName'],
@@ -296,6 +300,11 @@ class _MyAppState extends State<MyApp> {
           uid: message.data['uid'],
           userName: message.data['userName'],
           image: message.data['image'],
+          bitcoinWalletAddress: '',
+          firebaseToken: '',
+          hdWalletAddress: '',
+          searchKeywords: [],
+          stories: [],
         ),
         hasVideo: message.data['hasVideo'] == 'true' ? true : false,
         userName: message.data['userName'],

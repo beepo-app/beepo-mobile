@@ -12,7 +12,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_link_preview/flutter_link_preview.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:linkwell/linkwell.dart';
@@ -35,12 +34,12 @@ import '../Screens/moments/bubble_stories.dart';
 import '../Utils/styles.dart';
 
 class FilledButtons extends StatelessWidget {
-  final String text;
+  final String? text;
   final VoidCallback onPressed;
-  final Color color;
+  final Color? color;
 
   const FilledButtons(
-      {Key key, @required this.text, this.color, @required this.onPressed})
+      {Key? key, required this.text, this.color, required this.onPressed})
       : super(key: key);
 
   @override
@@ -61,7 +60,7 @@ class FilledButtons extends StatelessWidget {
           ),
         ),
         child: Text(
-          text,
+          text!,
           textAlign: TextAlign.center,
           style: const TextStyle(
             color: Colors.white,
@@ -81,10 +80,10 @@ class OutlnButton extends StatelessWidget {
   // final Color color;
 
   const OutlnButton({
-    Key key,
-    @required this.text,
+    Key? key,
+    required this.text,
     // required this.color,
-    @required this.onPressed,
+    required this.onPressed,
   }) : super(key: key);
 
   @override
@@ -127,7 +126,7 @@ class OutlnButton extends StatelessWidget {
 List<UserModel> userss = [];
 
 class ChatTab extends StatefulWidget {
-  const ChatTab({Key key}) : super(key: key);
+  const ChatTab({Key? key}) : super(key: key);
 
   // ChatTab({Key key}) : super(key: key);
 
@@ -136,13 +135,13 @@ class ChatTab extends StatefulWidget {
 }
 
 class _ChatTabState extends State<ChatTab> {
-  String receiver;
+  String? receiver;
   bool showInput = false;
 
-  Stream<List<StoryModel>> currentUserStories;
-  Stream<List<StoryModel>> friendsStories;
+  Stream<List<StoryModel>>? currentUserStories;
+  Stream<List<StoryModel>>? friendsStories;
 
-  Stream<List<DocumentSnapshot>> currentUserFollowing;
+  Stream<List<DocumentSnapshot>>? currentUserFollowing;
 
   Box box1 = Hive.box('beepo');
 
@@ -155,9 +154,9 @@ class _ChatTabState extends State<ChatTab> {
 
   Map userM = Hive.box('beepo').get('userData');
 
-  Widget usert;
-  CameraDescription firstCamera;
-  CameraDescription secondCamera;
+  Widget? usert;
+  CameraDescription? firstCamera;
+  CameraDescription? secondCamera;
 
   // List<CameraDescription> cameras;
   gethg() async {
@@ -170,7 +169,7 @@ class _ChatTabState extends State<ChatTab> {
 
   final TextEditingController _searchcontroller = TextEditingController();
 
-  String remove;
+  String? remove;
 
   @override
   void initState() {
@@ -195,7 +194,7 @@ class _ChatTabState extends State<ChatTab> {
 
     tem.then((value) {
       if (value.data() != null) {
-        remove = value.data()['isRemoved'].toString();
+        remove = value.data()!['isRemoved'].toString();
       }
     }
         // print(remove);
@@ -213,8 +212,8 @@ class _ChatTabState extends State<ChatTab> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => AddStory(
-                      camera1: firstCamera,
-                      camera2: secondCamera,
+                      camera1: firstCamera!,
+                      camera2: secondCamera!,
                     ),
                   ),
                 );
@@ -260,7 +259,7 @@ class _ChatTabState extends State<ChatTab> {
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           try {
-                            List<StoryModel> userStories = snapshot.data;
+                            List<StoryModel> userStories = snapshot.data!;
                             'UserStories: $userStories'.log();
                             Map useR;
                             useR = Hive.box('beepo').get('userData');
@@ -270,6 +269,11 @@ class _ChatTabState extends State<ChatTab> {
                               name: useR['displayName'],
                               userName: useR['username'],
                               image: useR['profilePictureUrl'],
+                              bitcoinWalletAddress: '',
+                              firebaseToken: '',
+                              hdWalletAddress: '',
+                              searchKeywords: [],
+                              stories: [],
                               // searchKeywords: fuck.data['searchKeywords'],
                             );
 
@@ -279,7 +283,9 @@ class _ChatTabState extends State<ChatTab> {
                             );
 
                             return CurrentUserStoryBubble(user: user);
-                          } catch (e) {}
+                          } catch (e) {
+                            rethrow;
+                          }
                         }
                         if (!snapshot.hasData) {}
                         if (snapshot.hasError) {}
@@ -298,7 +304,7 @@ class _ChatTabState extends State<ChatTab> {
                       builder:
                           (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.hasData) {
-                          if (snapshot.data.docs.isEmpty) {
+                          if (snapshot.data!.docs.isEmpty) {
                             return SizedBox();
                           }
                           return ListView.builder(
@@ -306,12 +312,12 @@ class _ChatTabState extends State<ChatTab> {
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             scrollDirection: Axis.horizontal,
-                            itemCount: snapshot.data.docs.length,
+                            itemCount: snapshot.data!.docs.length,
                             itemBuilder: (context, index) {
                               return BubbleStories(
-                                uid: snapshot.data.docs[index].id,
+                                uid: snapshot.data!.docs[index].id,
                                 index: index,
-                                docu: snapshot.data.docs,
+                                docu: snapshot.data!.docs,
                                 myStory: false,
                                 // index: index,
                               );
@@ -393,13 +399,13 @@ class _ChatTabState extends State<ChatTab> {
                                       );
                                     }
                                     return ListView.builder(
-                                      itemCount: snapshot.data.docs.length,
+                                      itemCount: snapshot.data!.docs.length,
                                       // shrinkWrap: true,
                                       itemBuilder: (context, index) {
                                         final data =
-                                            snapshot.data.docs[index].data();
+                                            snapshot.data!.docs[index].data();
                                         print(
-                                            'this is the length:  ${snapshot.data.docs.length}');
+                                            'this is the length:  ${snapshot.data!.docs.length}');
                                         return _searchcontroller.text.isNotEmpty
                                             ? ListTile(
                                                 onTap: () {
@@ -417,6 +423,11 @@ class _ChatTabState extends State<ChatTab> {
                                                               data['name'],
                                                           searchKeywords: data[
                                                               'searchKeywords'],
+                                                          bitcoinWalletAddress:
+                                                              '',
+                                                          firebaseToken: '',
+                                                          hdWalletAddress: '',
+                                                          stories: [],
                                                         ),
                                                       ),
                                                     ),
@@ -512,21 +523,22 @@ class _ChatTabState extends State<ChatTab> {
                                   builder: (context,
                                       AsyncSnapshot<QuerySnapshot> snapshot) {
                                     if (snapshot.hasData) {
-                                      if (snapshot.data.docs.isNotEmpty) {
+                                      if (snapshot.data!.docs.isNotEmpty) {
                                         return ListView.separated(
                                           padding:
                                               const EdgeInsets.only(top: 10),
                                           physics:
                                               const NeverScrollableScrollPhysics(),
                                           shrinkWrap: true,
-                                          itemCount: snapshot.data.docs.length,
+                                          itemCount: snapshot.data!.docs.length,
                                           separatorBuilder: (ctx, i) =>
                                               const SizedBox(height: 0),
                                           itemBuilder: (ctx, index) {
                                             return GroupMessages(
-                                              uid: snapshot.data.docs[index].id,
+                                              uid:
+                                                  snapshot.data!.docs[index].id,
                                               index: index,
-                                              docu: snapshot.data.docs,
+                                              docu: snapshot.data!.docs,
                                             );
                                           },
                                         );
@@ -606,7 +618,7 @@ class _ChatTabState extends State<ChatTab> {
 }
 
 class CallTab extends StatefulWidget {
-  const CallTab({Key key}) : super(key: key);
+  const CallTab({Key? key}) : super(key: key);
 
   // CallTab({Key key}) : super(key: key);
 
@@ -679,20 +691,20 @@ class _CallTabState extends State<CallTab> {
                     return ListView.builder(
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
-                        Timestamp time = snapshot.data.docs[index]['created'];
+                        Timestamp time = snapshot.data!.docs[index]['created'];
                         return ListTile(
                           contentPadding: EdgeInsets.zero,
                           leading: ClipRRect(
                             borderRadius: BorderRadius.circular(25),
                             child: Image.network(
-                              snapshot.data.docs[index]['image'],
+                              snapshot.data!.docs[index]['image'],
                               height: 50,
                               width: 50,
                               fit: BoxFit.cover,
                             ),
                           ),
                           title: Text(
-                            snapshot.data.docs[index]['name'],
+                            snapshot.data!.docs[index]['name'],
                             style: TextStyle(
                               color: Color.fromRGBO(0, 0, 0, 1),
                               fontSize: 14,
@@ -711,7 +723,7 @@ class _CallTabState extends State<CallTab> {
                             // );
                             // },
                           ),
-                          trailing: snapshot.data.docs[index]['callType'] ==
+                          trailing: snapshot.data!.docs[index]['callType'] ==
                                   'callReceived'
                               ? const Icon(
                                   Icons.phone_missed_sharp,
@@ -725,7 +737,7 @@ class _CallTabState extends State<CallTab> {
                                 ),
                         );
                       },
-                      itemCount: snapshot.data.docs.length,
+                      itemCount: snapshot.data!.docs.length,
                     );
                   }),
             ),
@@ -740,16 +752,16 @@ class MessageReply extends StatelessWidget {
   final bool isMe;
   final String text;
   final Timestamp time;
-  final bool onSwipedMessage;
-  final String replyMessage;
-  final String replyName;
-  final String replyUsername;
+  final bool? onSwipedMessage;
+  final String? replyMessage;
+  final String? replyName;
+  final String? replyUsername;
 
   const MessageReply({
-    Key key,
-    @required this.isMe,
-    @required this.text,
-    @required this.time,
+    Key? key,
+    required this.isMe,
+    required this.text,
+    required this.time,
     this.onSwipedMessage,
     this.replyMessage,
     this.replyName,
@@ -785,7 +797,7 @@ class MessageReply extends StatelessWidget {
     // //   }
     // // }
     if (text.isEmpty) {
-      return null;
+      return '';
     }
     return textData;
   }
@@ -886,101 +898,102 @@ class MessageReply extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (onSwipedMessage && replyMessage != "")
-              buildReply(replyMessage, replyUsername, replyName),
+            if (onSwipedMessage! && replyMessage != "")
+              buildReply(replyMessage!, replyUsername!, replyName!),
             if (convertStringToLink(text) != null)
-              FlutterLinkPreview(
-                  url: convertStringToLink(text),
-                  titleStyle: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: txtColor1,
-                  ),
-                  builder: (info) {
-                    if (info == null) return const SizedBox();
-                    if (info is WebImageInfo) {
-                      return CachedNetworkImage(
-                        imageUrl: info.image,
-                        fit: BoxFit.contain,
-                      );
-                    }
+              // FlutterLinkPreview(
+              //     url: convertStringToLink(text),
+              //     titleStyle: TextStyle(
+              //       fontSize: 16,
+              //       fontWeight: FontWeight.bold,
+              //       color: txtColor1,
+              //     ),
+              //     builder: (info) {
+              //       if (info == null) return const SizedBox();
+              //       if (info is WebImageInfo) {
+              //         return CachedNetworkImage(
+              //           imageUrl: info.image,
+              //           fit: BoxFit.contain,
+              //         );
+              //       }
 
-                    final WebInfo webInfo = info;
-                    if (!WebAnalyzer.isNotEmpty(webInfo.title)) {
-                      return const SizedBox();
-                    }
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: const Color(0xFFF0F1F2),
+              //       final WebInfo webInfo = info;
+              //       if (!WebAnalyzer.isNotEmpty(webInfo.title)) {
+              //         return const SizedBox();
+              //       }
+              //       return Container(
+              //         decoration: BoxDecoration(
+              //           borderRadius: BorderRadius.circular(10),
+              //           color: const Color(0xFFF0F1F2),
+              //         ),
+              //         padding: const EdgeInsets.all(10),
+              //         child: Column(
+              //           crossAxisAlignment: CrossAxisAlignment.start,
+              //           children: <Widget>[
+              //             Row(
+              //               children: <Widget>[
+              //                 CachedNetworkImage(
+              //                   imageUrl: webInfo.icon ?? "",
+              //                   imageBuilder: (context, imageProvider) {
+              //                     return Image(
+              //                       image: imageProvider,
+              //                       fit: BoxFit.contain,
+              //                       width: 30,
+              //                       height: 30,
+              //                       errorBuilder: (context, error, stackTrace) {
+              //                         return const Icon(Icons.link);
+              //                       },
+              //                     );
+              //                   },
+              //                 ),
+              //                 const SizedBox(width: 8),
+              //                 Expanded(
+              //                   child: Text(
+              //                     webInfo.title,
+              //                     overflow: TextOverflow.ellipsis,
+              //                   ),
+              //                 ),
+              //               ],
+              //             ),
+              //             if (WebAnalyzer.isNotEmpty(webInfo.description)) ...[
+              //               const SizedBox(height: 8),
+              //               Text(
+              //                 webInfo.description,
+              //                 maxLines: 5,
+              //                 overflow: TextOverflow.ellipsis,
+              //               ),
+              //             ],
+              //             if (WebAnalyzer.isNotEmpty(webInfo.image)) ...[
+              //               const SizedBox(height: 8),
+              //               CachedNetworkImage(
+              //                 imageUrl: webInfo.image,
+              //                 fit: BoxFit.contain,
+              //               ),
+              //             ]
+              //           ],
+              //         ),
+              //       );
+              //     }),
+
+              LinkWell(
+                text,
+                style: isMe
+                    ? TextStyle(
+                        fontFamily: 'Roboto',
+                        color: Colors.white,
+                        fontSize: 11.5,
+                      )
+                    : TextStyle(
+                        fontFamily: 'Roboto',
+                        color: secondaryColor,
+                        fontSize: 11.5,
                       ),
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              CachedNetworkImage(
-                                imageUrl: webInfo.icon ?? "",
-                                imageBuilder: (context, imageProvider) {
-                                  return Image(
-                                    image: imageProvider,
-                                    fit: BoxFit.contain,
-                                    width: 30,
-                                    height: 30,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return const Icon(Icons.link);
-                                    },
-                                  );
-                                },
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  webInfo.title,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                          if (WebAnalyzer.isNotEmpty(webInfo.description)) ...[
-                            const SizedBox(height: 8),
-                            Text(
-                              webInfo.description,
-                              maxLines: 5,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                          if (WebAnalyzer.isNotEmpty(webInfo.image)) ...[
-                            const SizedBox(height: 8),
-                            CachedNetworkImage(
-                              imageUrl: webInfo.image,
-                              fit: BoxFit.contain,
-                            ),
-                          ]
-                        ],
-                      ),
-                    );
-                  }),
-            LinkWell(
-              text,
-              style: isMe
-                  ? TextStyle(
-                      fontFamily: 'Roboto',
-                      color: Colors.white,
-                      fontSize: 11.5,
-                    )
-                  : TextStyle(
-                      fontFamily: 'Roboto',
-                      color: secondaryColor,
-                      fontSize: 11.5,
-                    ),
-              linkStyle: TextStyle(
-                fontFamily: 'Roboto',
-                color: primaryColor,
-                fontSize: 11.5,
+                linkStyle: TextStyle(
+                  fontFamily: 'Roboto',
+                  color: primaryColor,
+                  fontSize: 11.5,
+                ),
               ),
-            ),
             SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -1024,7 +1037,7 @@ class Group extends StatelessWidget {
   final bool isMe;
   final String text;
   final Timestamp time;
-  final UserModel user;
+  final UserModel? user;
   final bool sameUser;
   final bool onSwipedMessage;
   final String replyMessage;
@@ -1032,16 +1045,16 @@ class Group extends StatelessWidget {
   final String replyUsername;
 
   const Group({
-    Key key,
-    @required this.isMe,
-    @required this.text,
-    @required this.time,
+    Key? key,
+    required this.isMe,
+    required this.text,
+    required this.time,
     this.user,
-    @required this.sameUser,
-    @required this.onSwipedMessage,
-    @required this.replyMessage,
-    @required this.replyName,
-    @required this.replyUsername,
+    required this.sameUser,
+    required this.onSwipedMessage,
+    required this.replyMessage,
+    required this.replyName,
+    required this.replyUsername,
   }) : super(key: key);
 
   @override
@@ -1139,7 +1152,7 @@ class Group extends StatelessWidget {
       // //   }
       // // }
       if (text.isEmpty) {
-        return null;
+        return '';
       }
       return textData;
     }
@@ -1165,11 +1178,11 @@ class Group extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => UserProfile(model: user)));
+                            builder: (context) => UserProfile(model: user!)));
                   },
                   child: CircleAvatar(
                     radius: 20,
-                    backgroundImage: CachedNetworkImageProvider(user.image ??
+                    backgroundImage: CachedNetworkImageProvider(user!.image ??
                         'https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg'),
                   ),
                 ),
@@ -1211,7 +1224,7 @@ class Group extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            user.name,
+                            user!.name!,
                             style: TextStyle(
                               color: secondaryColor,
                               fontFamily: 'SignikaNegative',
@@ -1221,7 +1234,7 @@ class Group extends StatelessWidget {
                           ),
                           Spacer(),
                           Text(
-                            '@${user.userName}',
+                            '@${user!.userName}',
                             style: TextStyle(
                               color: secondaryColor,
                               fontFamily: '@Precious001',
@@ -1235,104 +1248,105 @@ class Group extends StatelessWidget {
                   if (onSwipedMessage && replyMessage != "")
                     buildReply(replyMessage, replyUsername, replyName),
                   if (convertStringToLink(text) != null)
-                    FlutterLinkPreview(
-                        url: convertStringToLink(text),
-                        titleStyle: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: txtColor1,
-                        ),
-                        builder: (info) {
-                          if (info == null) return const SizedBox();
-                          if (info is WebImageInfo) {
-                            return CachedNetworkImage(
-                              imageUrl: info.image,
-                              fit: BoxFit.contain,
-                            );
-                          }
+                    // FlutterLinkPreview(
+                    //     url: convertStringToLink(text),
+                    //     titleStyle: TextStyle(
+                    //       fontSize: 16,
+                    //       fontWeight: FontWeight.bold,
+                    //       color: txtColor1,
+                    //     ),
+                    //     builder: (info) {
+                    //       if (info == null) return const SizedBox();
+                    //       if (info is WebImageInfo) {
+                    //         return CachedNetworkImage(
+                    //           imageUrl: info.image,
+                    //           fit: BoxFit.contain,
+                    //         );
+                    //       }
 
-                          final WebInfo webInfo = info;
-                          if (!WebAnalyzer.isNotEmpty(webInfo.title)) {
-                            return const SizedBox();
-                          }
-                          return Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: const Color(0xFFF0F1F2),
-                            ),
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    CachedNetworkImage(
-                                      imageUrl: webInfo.icon ?? "",
-                                      imageBuilder: (context, imageProvider) {
-                                        return Image(
-                                          image: imageProvider,
-                                          fit: BoxFit.contain,
-                                          width: 30,
-                                          height: 30,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                            return const Icon(Icons.link);
-                                          },
-                                        );
-                                      },
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        webInfo.title,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                if (WebAnalyzer.isNotEmpty(
-                                    webInfo.description)) ...[
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    webInfo.description,
-                                    maxLines: 5,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                                if (WebAnalyzer.isNotEmpty(webInfo.image)) ...[
-                                  const SizedBox(height: 8),
-                                  CachedNetworkImage(
-                                    imageUrl: webInfo.image,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ]
-                              ],
-                            ),
-                          );
-                        }),
-                  Padding(
-                    padding: const EdgeInsets.all(3.0),
-                    child: LinkWell(
-                      text,
-                      style: isMe
-                          ? TextStyle(
-                              color: Colors.white,
-                              fontSize: 11.5,
-                              // decoration: TextDecoration.underline,
-                            )
-                          : TextStyle(
-                              color: Colors.black,
-                              //Colors.black,
-                              fontSize: 11.5,
-                              // decoration: TextDecoration.underline,
-                            ),
-                      linkStyle: TextStyle(
-                        color: Colors.blueAccent,
-                        fontSize: 11,
-                        decoration: TextDecoration.underline,
+                    //       final WebInfo webInfo = info;
+                    //       if (!WebAnalyzer.isNotEmpty(webInfo.title)) {
+                    //         return const SizedBox();
+                    //       }
+                    //       return Container(
+                    //         decoration: BoxDecoration(
+                    //           borderRadius: BorderRadius.circular(10),
+                    //           color: const Color(0xFFF0F1F2),
+                    //         ),
+                    //         padding: const EdgeInsets.all(10),
+                    //         child: Column(
+                    //           crossAxisAlignment: CrossAxisAlignment.start,
+                    //           children: <Widget>[
+                    //             Row(
+                    //               children: <Widget>[
+                    //                 CachedNetworkImage(
+                    //                   imageUrl: webInfo.icon ?? "",
+                    //                   imageBuilder: (context, imageProvider) {
+                    //                     return Image(
+                    //                       image: imageProvider,
+                    //                       fit: BoxFit.contain,
+                    //                       width: 30,
+                    //                       height: 30,
+                    //                       errorBuilder:
+                    //                           (context, error, stackTrace) {
+                    //                         return const Icon(Icons.link);
+                    //                       },
+                    //                     );
+                    //                   },
+                    //                 ),
+                    //                 const SizedBox(width: 8),
+                    //                 Expanded(
+                    //                   child: Text(
+                    //                     webInfo.title,
+                    //                     overflow: TextOverflow.ellipsis,
+                    //                   ),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //             if (WebAnalyzer.isNotEmpty(
+                    //                 webInfo.description)) ...[
+                    //               const SizedBox(height: 8),
+                    //               Text(
+                    //                 webInfo.description,
+                    //                 maxLines: 5,
+                    //                 overflow: TextOverflow.ellipsis,
+                    //               ),
+                    //             ],
+                    //             if (WebAnalyzer.isNotEmpty(webInfo.image)) ...[
+                    //               const SizedBox(height: 8),
+                    //               CachedNetworkImage(
+                    //                 imageUrl: webInfo.image,
+                    //                 fit: BoxFit.contain,
+                    //               ),
+                    //             ]
+                    //           ],
+                    //         ),
+                    //       );
+                    //     }),
+
+                    Padding(
+                      padding: const EdgeInsets.all(3.0),
+                      child: LinkWell(
+                        text,
+                        style: isMe
+                            ? TextStyle(
+                                color: Colors.white,
+                                fontSize: 11.5,
+                                // decoration: TextDecoration.underline,
+                              )
+                            : TextStyle(
+                                color: Colors.black,
+                                //Colors.black,
+                                fontSize: 11.5,
+                                // decoration: TextDecoration.underline,
+                              ),
+                        linkStyle: TextStyle(
+                          color: Colors.blueAccent,
+                          fontSize: 11,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
-                  ),
                   SizedBox(height: 5),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -1381,8 +1395,8 @@ class Group extends StatelessWidget {
 
 class CurrentUserStoryBubble extends StatelessWidget {
   const CurrentUserStoryBubble({
-    Key key,
-    @required this.user,
+    Key? key,
+    required this.user,
   }) : super(key: key);
 
   // final List<Story> stories;
@@ -1396,8 +1410,8 @@ class CurrentUserStoryBubble extends StatelessWidget {
             MaterialPageRoute(builder: (context) => Homes(user: user)));
       },
       child: BubbleStories(
-        uid: user.uid,
-        hasStory: user.stories.isNotEmpty,
+        uid: user.uid!,
+        hasStory: user.stories!.isNotEmpty,
         myStory: true,
         // useNetworkImage: true,
       ),
@@ -1407,14 +1421,14 @@ class CurrentUserStoryBubble extends StatelessWidget {
 
 class WalletListTile extends StatelessWidget {
   final String amount;
-  final Wallet wallet;
-  final String fiatSymbol;
-  final CoinMarketData coinMarketData;
-  final String fiatValue;
+  final Wallet? wallet;
+  final String? fiatSymbol;
+  final CoinMarketData? coinMarketData;
+  final String? fiatValue;
 
   const WalletListTile({
-    Key key,
-    @required this.amount,
+    Key? key,
+    required this.amount,
     this.coinMarketData,
     this.wallet,
     this.fiatValue,
@@ -1442,23 +1456,23 @@ class WalletListTile extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 8),
       child: ListTile(
         onTap: () => Get.to(WalletToken(
-          wallet: wallet,
+          wallet: wallet!,
           balance: amount,
-          value: fiatValue,
-          coinMarketData: coinMarketData,
+          value: fiatValue!,
+          coinMarketData: coinMarketData!,
         )),
         dense: true,
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(17),
           child: CachedNetworkImage(
-            imageUrl: wallet.logoUrl,
+            imageUrl: wallet!.logoUrl,
             height: 34,
             width: 34,
             fit: BoxFit.cover,
             errorWidget: (context, url, error) => CircleAvatar(
               backgroundColor: Colors.grey[200],
               radius: 17,
-              child: Text(wallet.displayName[0].toUpperCase()),
+              child: Text(wallet!.displayName[0].toUpperCase()),
             ),
           ),
         ),
@@ -1466,7 +1480,7 @@ class WalletListTile extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                wallet.displayName,
+                wallet!.displayName,
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 14,
@@ -1476,7 +1490,7 @@ class WalletListTile extends StatelessWidget {
             ),
             const SizedBox(width: 5),
             Text(
-              fiatSymbol + fiatValue,
+              fiatSymbol! + fiatValue!,
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 14,
@@ -1531,10 +1545,10 @@ class WalletListTile extends StatelessWidget {
 }
 
 class BrowserContainer extends StatelessWidget {
-  final String image;
-  final String title;
+  final String? image;
+  final String? title;
 
-  const BrowserContainer({Key key, this.image, this.title}) : super(key: key);
+  const BrowserContainer({Key? key, this.image, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1559,13 +1573,13 @@ class BrowserContainer extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.asset(image),
+              child: Image.asset(image!),
             ),
           ),
         ),
         const SizedBox(height: 8),
         Text(
-          title,
+          title!,
           style: const TextStyle(
             color: Color(0xff0e014c),
             fontSize: 11,
@@ -1577,10 +1591,10 @@ class BrowserContainer extends StatelessWidget {
 }
 
 class BrowserContainer2 extends StatelessWidget {
-  final String image;
-  final String title;
+  final String? image;
+  final String? title;
 
-  const BrowserContainer2({Key key, this.image, this.title}) : super(key: key);
+  const BrowserContainer2({Key? key, this.image, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1602,7 +1616,7 @@ class BrowserContainer2 extends StatelessWidget {
                 ),
               ],
               image: DecorationImage(
-                image: AssetImage(image),
+                image: AssetImage(image!),
                 fit: BoxFit.contain,
               ),
             ),
@@ -1610,7 +1624,7 @@ class BrowserContainer2 extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          title,
+          title!,
           style: const TextStyle(
             color: Color(0xff0e014c),
             fontSize: 11,
@@ -1622,10 +1636,10 @@ class BrowserContainer2 extends StatelessWidget {
 }
 
 class BrowserContainer3 extends StatelessWidget {
-  final String image;
-  final String title;
+  final String? image;
+  final String? title;
 
-  const BrowserContainer3({Key key, this.image, this.title}) : super(key: key);
+  const BrowserContainer3({Key? key, this.image, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1649,7 +1663,7 @@ class BrowserContainer3 extends StatelessWidget {
               ],
             ),
             child: Image.asset(
-              image,
+              image!,
               height: 55,
               width: 55,
               fit: BoxFit.cover,
@@ -1658,7 +1672,7 @@ class BrowserContainer3 extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          title,
+          title!,
           style: const TextStyle(
             color: Color(0xff0e014c),
             fontSize: 11,
@@ -1670,10 +1684,10 @@ class BrowserContainer3 extends StatelessWidget {
 }
 
 class BrowserContainer4 extends StatelessWidget {
-  final String image;
-  final String title;
+  final String? image;
+  final String? title;
 
-  const BrowserContainer4({Key key, this.image, this.title}) : super(key: key);
+  const BrowserContainer4({Key? key, this.image, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1697,7 +1711,7 @@ class BrowserContainer4 extends StatelessWidget {
               ],
             ),
             child: Image.asset(
-              image,
+              image!,
               height: 55,
               width: 55,
               fit: BoxFit.cover,
@@ -1706,7 +1720,7 @@ class BrowserContainer4 extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          title,
+          title!,
           style: const TextStyle(
             color: Color(0xff0e014c),
             fontSize: 11,
@@ -1718,7 +1732,7 @@ class BrowserContainer4 extends StatelessWidget {
 }
 
 class ContainerButton extends StatelessWidget {
-  const ContainerButton({Key key}) : super(key: key);
+  const ContainerButton({Key? key}) : super(key: key);
 
   // const ContainerButton({Key key}) : super(key: key);
 

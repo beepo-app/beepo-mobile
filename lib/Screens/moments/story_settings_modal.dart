@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class StoryModalSheet {
   static Future<void> openModalBottomSheet({
-    @required Widget child,
-    @required BuildContext context,
+    required Widget child,
+    required BuildContext context,
   }) {
     return Future.delayed(Duration.zero, () {
       return showModalBottomSheet(

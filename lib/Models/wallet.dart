@@ -12,20 +12,20 @@ String walletToJson(List<Wallet> data) =>
 
 class Wallet {
   Wallet({
-    this.id,
-    this.owner,
-    this.ticker,
-    this.description,
-    this.chainId,
-    this.name,
-    this.displayName,
-    this.isTestnet,
-    this.derivationPath,
-    this.logoUrl,
-    this.transactionCount,
-    this.publicKey,
-    this.address,
-    this.v,
+    required this.id,
+    required this.owner,
+    required this.ticker,
+    required this.description,
+    required this.chainId,
+    required this.name,
+    required this.displayName,
+    required this.isTestnet,
+    required this.derivationPath,
+    required this.logoUrl,
+    required this.transactionCount,
+    required this.publicKey,
+    required this.address,
+    required this.v,
   });
 
   String id;

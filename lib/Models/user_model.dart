@@ -1,51 +1,32 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 // import 'package:beepo/Models/story_model/story.dart';
-import 'package:beepo/Models/story_model/storyModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:voster/models/story_model/story.dart';
-import 'package:flutter/material.dart';
+
+import 'package:beepo/Models/story_model/storyModel.dart';
 
 class UserModel {
-  final String uid;
-  final String name;
-  final String image;
-  final List searchKeywords;
-  final String userName;
-  final List<StoryModel> stories;
-  final String firebaseToken;
-  final String hdWalletAddress;
-  final String bitcoinWalletAddress;
+  final String? uid;
+  final String? name;
+  final String? image;
+  final List? searchKeywords;
+  final String? userName;
+  final List<StoryModel>? stories;
+  final String? firebaseToken;
+  final String? hdWalletAddress;
+  final String? bitcoinWalletAddress;
 
   const UserModel({
-    @required this.uid,
-    @required this.name,
-    // @required
+    this.uid,
+    this.name,
     this.userName,
-    @required this.image,
-    this.searchKeywords = const [],
-    this.stories = const [],
+    this.image,
+    this.searchKeywords,
+    this.stories,
     this.firebaseToken,
-    this.hdWalletAddress = '',
-    this.bitcoinWalletAddress = '',
+    this.hdWalletAddress,
+    this.bitcoinWalletAddress,
   });
 
-  // get stories => null;
-
-  UserModel copyWith({
-    String uid,
-    String name,
-    String image,
-    String userName,
-    List searchKeywords,
-    List<StoryModel> stories,
-  }) =>
-      UserModel(
-        uid: uid ?? this.uid,
-        name: name ?? this.name,
-        image: image ?? this.image,
-        userName: userName ?? this.userName,
-        searchKeywords: searchKeywords ?? this.searchKeywords,
-        stories: stories ?? this.stories,
-      );
   factory UserModel.fromMap(Map<String, dynamic> snapshot) {
     return UserModel(
       uid: snapshot['uid'],
@@ -56,6 +37,7 @@ class UserModel {
       stories: snapshot['stories'],
       hdWalletAddress: snapshot['hdWalletAddress'],
       bitcoinWalletAddress: snapshot['bitcoinWalletAddress'],
+      firebaseToken: snapshot['firebaseToken'],
     );
   }
 
@@ -68,10 +50,11 @@ class UserModel {
         'stories': stories,
         'hdWalletAddress': hdWalletAddress,
         'bitcoinWalletAddress': bitcoinWalletAddress,
+        'firebaseToken': firebaseToken
       };
 
-  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        uid: json['uid'],
+  factory UserModel.fromJson(Map<dynamic, dynamic>? json) => UserModel(
+        uid: json!['uid'],
         name: json['name'],
         userName: json['userName'],
         image: json['image'],
@@ -80,6 +63,8 @@ class UserModel {
             .map((e) => StoryModel.fromJson(e))
             .toList(),
         hdWalletAddress: json['hdWalletAddress'],
+        bitcoinWalletAddress: json['bitcoinWalletAddress'],
+        firebaseToken: 'firebaseToken',
       );
 
   static UserModel fromSnap(DocumentSnapshot snap) {
@@ -92,6 +77,32 @@ class UserModel {
       searchKeywords: snapshot['searchKeywords'],
       stories: snapshot['stories'],
       hdWalletAddress: snapshot['hdWalletAddress'],
+      bitcoinWalletAddress: snapshot['bitcoinWalletAddress'],
+      firebaseToken: snapshot['firebaseToken'],
+    );
+  }
+
+  UserModel copyWith({
+    String? uid,
+    String? name,
+    String? image,
+    List? searchKeywords,
+    String? userName,
+    List<StoryModel>? stories,
+    String? firebaseToken,
+    String? hdWalletAddress,
+    String? bitcoinWalletAddress,
+  }) {
+    return UserModel(
+      uid: uid ?? this.uid,
+      name: name ?? this.name,
+      image: image ?? this.image,
+      searchKeywords: searchKeywords ?? this.searchKeywords,
+      userName: userName ?? this.userName,
+      stories: stories ?? this.stories,
+      firebaseToken: firebaseToken ?? this.firebaseToken,
+      hdWalletAddress: hdWalletAddress ?? this.hdWalletAddress,
+      bitcoinWalletAddress: bitcoinWalletAddress ?? this.bitcoinWalletAddress,
     );
   }
 }

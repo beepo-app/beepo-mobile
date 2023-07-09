@@ -19,7 +19,7 @@ import '../../Widgets/toasts.dart';
 class EditProfile extends StatefulWidget {
   final Map data;
 
-  const EditProfile(this.data, {Key key}) : super(key: key);
+  const EditProfile(this.data, {Key? key}) : super(key: key);
 
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -29,7 +29,7 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController displayNameController = TextEditingController();
   TextEditingController userNameController = TextEditingController();
   TextEditingController bioController = TextEditingController();
-  File file;
+  File? file;
 
   @override
   void initState() {
@@ -56,7 +56,7 @@ class _EditProfileState extends State<EditProfile> {
                       borderRadius: BorderRadius.circular(100),
                       child: file != null
                           ? Image.file(
-                              file,
+                              file!,
                               height: 120,
                               width: 120,
                               fit: BoxFit.cover,
@@ -187,7 +187,7 @@ class _EditProfileState extends State<EditProfile> {
                       loadingDialog('Saving changes...');
                       String imgUrl = widget.data['profilePictureUrl'];
                       if (file != null) {
-                        imgUrl = await MediaService.uploadProfilePicture(file);
+                        imgUrl = await MediaService.uploadProfilePicture(file!);
                       }
                       bool result = await AuthService().editProfile(
                         displayName: displayNameController.text,

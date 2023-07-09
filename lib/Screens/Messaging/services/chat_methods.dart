@@ -5,24 +5,24 @@ import 'package:flutter/material.dart';
 
 class ChatMethods {
   void storeMessages({
-    BuildContext context,
-    String text,
-    String userID,
-    String receiverID,
-    List searchKeywords,
-    String userName,
-    String img,
-    String displayName,
-    bool swiped,
-    String replyMessage,
-    String replyName,
-    String replyUsername,
-    encrypt.Key key,
-    encrypt.IV iv,
+    BuildContext? context,
+    String? text,
+    String? userID,
+    String? receiverID,
+    List? searchKeywords,
+    String? userName,
+    String? img,
+    String? displayName,
+    bool? swiped,
+    String? replyMessage,
+    String? replyName,
+    String? replyUsername,
+    encrypt.Key? key,
+    encrypt.IV? iv,
   }) async {
     try {
-      final encrypter = encrypt.Encrypter(encrypt.AES(key));
-      final encrypted = encrypter.encrypt(text, iv: iv);
+      final encrypter = encrypt.Encrypter(encrypt.AES(key!));
+      final encrypted = encrypter.encrypt(text!, iv: iv);
 
       await FirebaseFirestore.instance
           .collection("conversation")
@@ -72,9 +72,9 @@ class ChatMethods {
         'created': Timestamp.now(),
         'type': 'message',
         'swiped': swiped,
-        'replyMessage' : replyMessage,
+        'replyMessage': replyMessage,
         'replyName': replyName,
-        'replyUser' : replyUsername,
+        'replyUser': replyUsername,
         // 'key': key.base64,
         // 'iv': iv.base64,
       });
@@ -92,29 +92,29 @@ class ChatMethods {
         'created': Timestamp.now(),
         'type': 'message',
         'swiped': swiped,
-        'replyMessage' : replyMessage,
+        'replyMessage': replyMessage,
         'replyName': replyName,
-        'replyUser' : replyUsername,
+        'replyUser': replyUsername,
         // 'key': key.base64,
         // 'iv': iv.base64,
       });
     } catch (e) {
-      displaySnack(context, "Please check your internet connection");
+      displaySnack(context!, "Please check your internet connection");
     }
   }
 
   void storeGroupMessages({
-    BuildContext context,
-    String text,
-    String sender,
-    List searchKeywords,
-    String userName,
-    String image,
-    String displayName,
-    bool swiped,
-    String replyMessage,
-    String replyName,
-    String replyUsername,
+    BuildContext? context,
+    String? text,
+    String? sender,
+    List? searchKeywords,
+    String? userName,
+    String? image,
+    String? displayName,
+    bool? swiped,
+    String? replyMessage,
+    String? replyName,
+    String? replyUsername,
   }) async {
     try {
       await FirebaseFirestore.instance.collection("groups").doc('beepo').set({
@@ -127,9 +127,9 @@ class ChatMethods {
         'searchKeywords': searchKeywords,
         'type': 'message',
         'swiped': swiped,
-        'replyMessage' : replyMessage,
+        'replyMessage': replyMessage,
         'replyName': replyName,
-        'replyUser' : replyUsername,
+        'replyUser': replyUsername,
       });
 
       await FirebaseFirestore.instance.collection('groupMessages').add({
@@ -141,12 +141,12 @@ class ChatMethods {
         'userName': userName,
         'displayName': displayName,
         'swiped': swiped,
-        'replyMessage' : replyMessage,
+        'replyMessage': replyMessage,
         'replyName': replyName,
-        'replyUser' : replyUsername,
+        'replyUser': replyUsername,
       });
     } catch (e) {
-      displaySnack(context, "Please check your internet connection");
+      displaySnack(context!, "Please check your internet connection");
     }
   }
 }

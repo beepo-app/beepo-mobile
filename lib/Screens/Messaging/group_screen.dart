@@ -30,7 +30,7 @@ import 'custom_voice_recorder_widget.dart';
 import 'services/chat_methods.dart';
 
 class GroupDm extends StatefulWidget {
-  const GroupDm({Key key}) : super(key: key);
+  const GroupDm({Key? key}) : super(key: key);
 
   @override
   State<GroupDm> createState() => _GroupDmState();
@@ -41,7 +41,7 @@ class _GroupDmState extends State<GroupDm> {
   bool isTyping = true;
 
   Map userM = Hive.box('beepo').get('userData');
-  int isPlaying;
+  int isPlaying = 0;
 
   String replyMessage = '';
   String uName = '';
@@ -87,7 +87,7 @@ class _GroupDmState extends State<GroupDm> {
   }
 
   Future<http.Response> sendNotification(
-      {List<String> tokenIdList, String contents, String heading}) async {
+      {List<String>? tokenIdList, String? contents, String? heading}) async {
     String _debugLabelString = "";
 
     OneSignal.shared.setNotificationWillShowInForegroundHandler(
@@ -339,7 +339,7 @@ class _GroupDmState extends State<GroupDm> {
                                                   snapshot) {
                                             if (snapshot.hasData) {
                                               return Text(
-                                                '${snapshot.data.docs.length} members',
+                                                '${snapshot.data!.docs.length} members',
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 12,
@@ -423,7 +423,7 @@ class _GroupDmState extends State<GroupDm> {
                               order: GroupedListOrder.DESC,
                               controller:
                                   context.read<ChatNotifier>().scrollController,
-                              elements: snapshot.data.docs,
+                              elements: snapshot.data!.docs,
                               floatingHeader: true,
                               useStickyGroupSeparators: true,
                               groupHeaderBuilder: (element) {
@@ -457,7 +457,7 @@ class _GroupDmState extends State<GroupDm> {
                               },
                               indexedItemBuilder: (context, d, index) {
                                 Timestamp time =
-                                    snapshot.data.docs[index]['created'];
+                                    snapshot.data!.docs[index]['created'];
                                 var day = time.toDate().day.toString();
                                 var month = time.toDate().month.toString();
                                 var year =
@@ -481,20 +481,21 @@ class _GroupDmState extends State<GroupDm> {
 
                                 return Column(
                                   children: [
-                                    if (snapshot.data.docs[index]["type"] ==
+                                    if (snapshot.data!.docs[index]["type"] ==
                                         'message')
                                       SwipeTo(
                                         onRightSwipe: () {
                                           rightSwiped = true;
                                           swiped = true;
                                           if (userM['uid'] !=
-                                              snapshot.data.docs[index]
+                                              snapshot.data!.docs[index]
                                                   ["sender"]) {
                                             replyToMessage(
-                                              snapshot.data.docs[index]["text"],
-                                              snapshot.data.docs[index]
+                                              snapshot.data!.docs[index]
+                                                  ["text"],
+                                              snapshot.data!.docs[index]
                                                   ["userName"],
-                                              snapshot.data.docs[index]
+                                              snapshot.data!.docs[index]
                                                   ["displayName"],
                                             );
                                           }
@@ -505,10 +506,11 @@ class _GroupDmState extends State<GroupDm> {
                                           leftSwiped = true;
                                           swiped = true;
                                           if (userM['uid'] ==
-                                              snapshot.data.docs[index]
+                                              snapshot.data!.docs[index]
                                                   ["sender"]) {
                                             replyToMessage(
-                                              snapshot.data.docs[index]["text"],
+                                              snapshot.data!.docs[index]
+                                                  ["text"],
                                               '',
                                               userM['displayName'],
                                             );
@@ -518,54 +520,54 @@ class _GroupDmState extends State<GroupDm> {
                                         },
                                         child: Group(
                                           isMe: userM['uid'] ==
-                                              snapshot.data.docs[index]
+                                              snapshot.data?.docs[index]
                                                   ["sender"],
-                                          text: snapshot.data.docs[index]
+                                          text: snapshot.data?.docs[index]
                                               ["text"],
-                                          time: snapshot.data.docs[index]
+                                          time: snapshot.data?.docs[index]
                                               ["created"],
                                           user: UserModel(
-                                            uid: snapshot.data.docs[index]
+                                            uid: snapshot.data?.docs[index]
                                                 ["sender"],
-                                            name: snapshot.data.docs[index]
+                                            name: snapshot.data?.docs[index]
                                                 ["displayName"],
-                                            image: snapshot.data.docs[index]
+                                            image: snapshot.data?.docs[index]
                                                 ["image"],
-                                            userName: snapshot.data.docs[index]
+                                            userName: snapshot.data?.docs[index]
                                                 ["userName"],
                                           ),
-                                          sameUser: snapshot.data.docs[index]
+                                          sameUser: snapshot.data?.docs[index]
                                                       ["sender"] !=
                                                   snapshot
-                                                      .data.docs.last["sender"]
-                                              ? (snapshot.data.docs[index + 1]
+                                                      .data?.docs.last["sender"]
+                                              ? (snapshot.data?.docs[index + 1]
                                                       ["sender"] ==
-                                                  snapshot.data.docs[index]
+                                                  snapshot.data?.docs[index]
                                                       ["sender"])
                                               : false,
                                           onSwipedMessage: snapshot
-                                              .data.docs[index]["swiped"],
-                                          replyMessage: snapshot
-                                              .data.docs[index]["replyMessage"],
-                                          replyName: snapshot.data.docs[index]
+                                              .data?.docs[index]["swiped"],
+                                          replyMessage: snapshot.data
+                                              ?.docs[index]["replyMessage"],
+                                          replyName: snapshot.data?.docs[index]
                                               ["replyName"],
                                           replyUsername: snapshot
-                                              .data.docs[index]["replyUser"],
+                                              .data?.docs[index]["replyUser"],
                                         ),
                                       )
-                                    else if (snapshot.data.docs[index]
+                                    else if (snapshot.data?.docs[index]
                                             ["type"] ==
                                         'audio')
                                       Align(
-                                        alignment: (snapshot.data.docs[index]
+                                        alignment: (snapshot.data?.docs[index]
                                                     ['sender'] ==
                                                 userM['uid'])
                                             ? Alignment.centerRight
                                             : Alignment.centerLeft,
                                         child: VoiceMessage(
-                                          audioSrc: snapshot.data.docs[index]
+                                          audioSrc: snapshot.data?.docs[index]
                                               ['content'],
-                                          me: snapshot.data.docs[index]
+                                          me: snapshot.data?.docs[index]
                                                   ['sender'] ==
                                               userM['uid'],
                                           meBgColor: secondaryColor,
@@ -576,7 +578,7 @@ class _GroupDmState extends State<GroupDm> {
                                       )
                                     else
                                       Align(
-                                        alignment: (snapshot.data.docs[index]
+                                        alignment: (snapshot.data?.docs[index]
                                                     ['sender'] ==
                                                 userM['uid'])
                                             ? Alignment.centerRight
@@ -592,7 +594,7 @@ class _GroupDmState extends State<GroupDm> {
                                                   builder: (_) {
                                                     return FullScreenImage(
                                                       imageUrl: snapshot
-                                                              .data.docs[index]
+                                                              .data!.docs[index]
                                                           ["content"],
                                                       tag: "image",
                                                     );
@@ -605,7 +607,7 @@ class _GroupDmState extends State<GroupDm> {
                                                 tag: 'image$index',
                                                 child: CachedNetworkImage(
                                                   fit: BoxFit.cover,
-                                                  imageUrl: snapshot.data
+                                                  imageUrl: snapshot.data!
                                                       .docs[index]["content"],
                                                   placeholder: (context, url) =>
                                                       Center(
@@ -632,16 +634,17 @@ class _GroupDmState extends State<GroupDm> {
                                     ),
                                     // for(var i=index; i< (snapshot.data.docs.length-1); i++)
                                     if (index != 0)
-                                      if (snapshot.data.docs[index - 1]
+                                      if (snapshot.data!.docs[index - 1]
                                               ["sender"] !=
-                                          snapshot.data.docs[index]["sender"])
+                                          snapshot.data!.docs[index]["sender"])
                                         SizedBox(
                                           height: 14,
                                         ),
                                   ],
                                 );
                               },
-                              groupBy: (QueryDocumentSnapshot<Object> element) {
+                              groupBy:
+                                  (QueryDocumentSnapshot<Object?> element) {
                                 final date =
                                     element['created'].toDate() as DateTime;
 
@@ -850,10 +853,10 @@ class _GroupDmState extends State<GroupDm> {
 }
 
 class FullScreenImage extends StatelessWidget {
-  final String imageUrl;
-  final String tag;
+  final String? imageUrl;
+  final String? tag;
 
-  const FullScreenImage({Key key, this.imageUrl, this.tag}) : super(key: key);
+  const FullScreenImage({Key? key, this.imageUrl, this.tag}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -862,11 +865,11 @@ class FullScreenImage extends StatelessWidget {
       body: GestureDetector(
         child: Center(
           child: Hero(
-            tag: tag,
+            tag: tag!,
             child: CachedNetworkImage(
               width: MediaQuery.of(context).size.width,
               fit: BoxFit.contain,
-              imageUrl: imageUrl,
+              imageUrl: imageUrl!,
               placeholder: (context, url) =>
                   Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) => Icon(

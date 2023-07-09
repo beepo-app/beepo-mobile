@@ -1,49 +1,46 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-// import 'package:flutter/cupertino.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-
 class StoryModel {
-  final String url;
-  final String mediaType;
+  final String? url;
+  final String? mediaType;
 
   // final Duration duration;
-  final Timestamp createdDate;
+  final Timestamp? createdDate;
 
   // final int hoursAgo;
-  final String path;
-  final String caption;
-  final String uid;
-  final String name;
-  final String profileImage;
+  final String? path;
+  final String? caption;
+  final String? uid;
+  final String? name;
+  final String? profileImage;
 
   const StoryModel({
     this.url,
-    @required this.mediaType,
+    this.mediaType,
     // this.duration = const Duration(seconds: 20),
     this.createdDate,
     // @Default(0) this.hoursAgo,
     this.path,
-    @Default(' ') this.caption,
-    @required this.uid,
-    @required this.name,
-    @required this.profileImage,
+    this.caption,
+    this.uid,
+    this.name,
+    this.profileImage,
   });
 
   // get stories => null;
 
   StoryModel copyWith({
-    String url,
-    String uid,
-    String mediaType,
+    String? url,
+    String? uid,
+    String? mediaType,
     // Duration duration,
-    Timestamp createdDate,
+    Timestamp? createdDate,
     // int hoursAgo,
-    String path,
-    String name,
-    String profileImage,
-    String caption,
+    String? path,
+    String? name,
+    String? profileImage,
+    String? caption,
   }) =>
       StoryModel(
         url: url ?? this.url,

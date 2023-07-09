@@ -6,7 +6,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.2+4
 
 environment:
-  sdk: ">=2.9.1 <3.0.0"
+  sdk: ">=2.19.3 <3.0.0"
 
 dependencies:
   flutter:
@@ -32,7 +32,6 @@ dependencies:
   #audio_recorder: any
   path: any
   permission_handler: any
-  record_mp3: ^2.1.0
   audioplayers: ^0.20.1
 
   qr_flutter: ^4.0.0
@@ -90,10 +89,7 @@ dependencies:
   grouped_list: ^5.1.2
   http: ^0.13.4
   video_player: ^2.4.10
-  flutter_link_preview:
-    git:
-      url: https://github.com/yungzhu/flutter_link_preview.git
-      ref: master
+  # flutter_link_previewer: ^3.2.1
   xmtp: ^1.0.0
   bip39:
   bip32:

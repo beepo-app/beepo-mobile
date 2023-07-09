@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class ScanCode extends StatefulWidget {
-  const ScanCode({Key key}) : super(key: key);
+  const ScanCode({Key? key}) : super(key: key);
 
   @override
   State<ScanCode> createState() => _ScanCodeState();
@@ -18,8 +18,8 @@ class ScanCode extends StatefulWidget {
 
 class _ScanCodeState extends State<ScanCode> {
   final qrKey = GlobalKey(debugLabel: 'QR');
-  String result;
-  QRViewController controller;
+  String? result;
+  QRViewController? controller;
   bool runOnce = true;
 
   @override
@@ -43,7 +43,7 @@ class _ScanCodeState extends State<ScanCode> {
                   //   result = scanData.code;
                   // });
 
-                  bool isAddress = scanData.code.startsWith('0x');
+                  bool isAddress = scanData.code!.startsWith('0x');
                   if (!isAddress) {
                     showToast('Invalid Address');
                     return;

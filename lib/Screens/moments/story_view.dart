@@ -13,7 +13,7 @@ import '../../Models/user_model.dart';
 class Homes extends StatefulWidget {
   final UserModel user;
 
-  const Homes({Key key, this.user}) : super(key: key);
+  const Homes({Key? key, required this.user}) : super(key: key);
 
   @override
   State<Homes> createState() => _HomesState();
@@ -27,11 +27,11 @@ class _HomesState extends State<Homes> {
   final storyItems = <StoryItem>[];
 
   void addStoryItems() {
-    for (final story in widget.user.stories) {
+    for (final story in widget.user.stories!) {
       switch (story.mediaType) {
         case "image":
           storyItems.add(StoryItem.pageImage(
-            url: story.url,
+            url: story.url!,
             controller: controller,
             caption:
                 // Text(
@@ -41,7 +41,7 @@ class _HomesState extends State<Homes> {
           break;
         case "video":
           storyItems.add(StoryItem.pageVideo(
-            story.url,
+            story.url!,
             controller: controller,
             caption:
                 // Text(
@@ -52,38 +52,34 @@ class _HomesState extends State<Homes> {
     }
   }
 
-  int i;
+  int? i;
 
   // final PageController cont = PageController();
 
   @override
   void initState() {
-
     super.initState();
     addStoryItems();
     // calDate(date);
     i = 0;
     if (DateTime.now()
-        .difference(widget.user.stories[0].createdDate.toDate())
-        .inHours >
+            .difference(widget.user.stories![0].createdDate!.toDate())
+            .inHours >
         23) {
-      if(widget.user.stories.length != 1){
-        context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
+      if (widget.user.stories!.length != 1) {
+        context.read<StoryDownloadProvider>().delete(widget.user.stories![0]);
         FirebaseFirestore.instance
             .collection('usersStories')
-            .doc(widget.user.stories[0].uid)
+            .doc(widget.user.stories![0].uid)
             .delete();
-      }
-      else{
+      } else {
         Navigator.pop(context);
-        context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
+        context.read<StoryDownloadProvider>().delete(widget.user.stories![0]);
         FirebaseFirestore.instance
             .collection('usersStories')
-            .doc(widget.user.stories[0].uid)
+            .doc(widget.user.stories![0].uid)
             .delete();
-        setState(() {
-
-        });
+        setState(() {});
       }
     }
   }
@@ -97,14 +93,14 @@ class _HomesState extends State<Homes> {
               controller: controller,
               storyItems: storyItems,
               onStoryShow: (s) {
-                print("Showing a story ${widget.user.stories.length}");
+                print("Showing a story ${widget.user.stories!.length}");
               },
               onVerticalSwipeComplete: (f) {
                 if (f == Direction.up) {
-                  if (i < storyItems.length - 1) {
+                  if (i! < storyItems.length - 1) {
                     controller.next();
                     setState(() {
-                      i = i + 1;
+                      i = i! + 1;
                     });
                   } else {
                     Navigator.pop(context);
@@ -114,7 +110,7 @@ class _HomesState extends State<Homes> {
                   controller.previous();
                   if (i != 0) {
                     setState(() {
-                      i = i - 1;
+                      i = i! - 1;
                     });
                   } else {
                     Navigator.pop(context);
@@ -148,7 +144,7 @@ class _HomesState extends State<Homes> {
             child: StatusProfile(
               user: widget.user,
               date:
-                  '${DateTime.now().difference(widget.user.stories[i].createdDate.toDate()).inHours}h:${DateTime.now().difference(widget.user.stories[i].createdDate.toDate()).inMinutes - 60 * DateTime.now().difference(widget.user.stories[i].createdDate.toDate()).inHours}min ago',
+                  '${DateTime.now().difference(widget.user.stories![i!].createdDate!.toDate()).inHours}h:${DateTime.now().difference(widget.user.stories![i!].createdDate!.toDate()).inMinutes - 60 * DateTime.now().difference(widget.user.stories![i!].createdDate!.toDate()).inHours}min ago',
             ),
           ),
         )
@@ -161,10 +157,10 @@ class MoreStories extends StatefulWidget {
   final UserModel user;
 
   const MoreStories({
-    Key key,
-    @required this.uid,
-    @required this.docu,
-    @required this.user,
+    Key? key,
+    required this.uid,
+    required this.docu,
+    required this.user,
   }) : super(key: key);
 
   @override
@@ -179,11 +175,11 @@ class _MoreStoriesState extends State<MoreStories> {
   final storyItems = <StoryItem>[];
 
   void addStoryItems() {
-    for (final story in widget.user.stories) {
+    for (final story in widget.user.stories!) {
       switch (story.mediaType) {
         case "image":
           storyItems.add(StoryItem.pageImage(
-            url: story.url,
+            url: story.url!,
             controller: controller,
             caption:
                 // Text(
@@ -193,7 +189,7 @@ class _MoreStoriesState extends State<MoreStories> {
           break;
         case "video":
           storyItems.add(StoryItem.pageVideo(
-            story.url,
+            story.url!,
             controller: controller,
             caption:
                 // Text(
@@ -204,7 +200,7 @@ class _MoreStoriesState extends State<MoreStories> {
     }
   }
 
-  int i;
+  int? i;
 
   @override
   void initState() {
@@ -213,26 +209,23 @@ class _MoreStoriesState extends State<MoreStories> {
     // calDate(date);
     i = 0;
     if (DateTime.now()
-            .difference(widget.user.stories[0].createdDate.toDate())
+            .difference(widget.user.stories![0].createdDate!.toDate())
             .inHours >
         23) {
-      if(widget.user.stories.length != 1){
-        context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
+      if (widget.user.stories!.length != 1) {
+        context.read<StoryDownloadProvider>().delete(widget.user.stories![0]);
         FirebaseFirestore.instance
             .collection('usersStories')
-            .doc(widget.user.stories[0].uid)
+            .doc(widget.user.stories![0].uid)
             .delete();
-      }
-      else{
+      } else {
         Navigator.pop(context);
-        context.read<StoryDownloadProvider>().delete(widget.user.stories[0]);
+        context.read<StoryDownloadProvider>().delete(widget.user.stories![0]);
         FirebaseFirestore.instance
             .collection('usersStories')
-            .doc(widget.user.stories[0].uid)
+            .doc(widget.user.stories![0].uid)
             .delete();
-        setState(() {
-
-        });
+        setState(() {});
       }
     }
   }
@@ -249,55 +242,54 @@ class _MoreStoriesState extends State<MoreStories> {
     return Stack(children: [
       Material(
         type: MaterialType.transparency,
-        child:  StoryView(
-                  controller: controller,
-                  storyItems: storyItems,
-                  onStoryShow: (s) {
-                    print("Showing a story");
-                  },
-                  onVerticalSwipeComplete: (f) {
-                    if (f == Direction.up) {
-                      if (i < storyItems.length - 1) {
-                        controller.next();
-                        setState(() {
-                          i = i + 1;
-                        });
-                      } else {
-                        // pageController.nextPage(
-                        //     duration: Duration(microseconds: 300),
-                        //     curve: Curves.easeIn);
-                        Navigator.pop(context);
-                      }
-                      // Navigator.pop(context);
-                    } else if (f == Direction.down) {
-                      controller.previous();
-                      if (i != 0) {
-                        setState(() {
-                          i = i - 1;
-                        });
-                      } else {
-                        Navigator.pop(context);
-                      }
-                    }
-                  },
-                  onComplete: () {
-                    // if (index < (widget.docu.length - 1)) {
-                    //   pageController.nextPage(
-                    //       duration: Duration(microseconds: 300),
-                    //       curve: Curves.easeIn);
-                    // }
-                    Navigator.pop(context);
-                    // i++;
-                    // cont.nextPage(duration: Duration(seconds: 1), curve: Curves.easeIn);
+        child: StoryView(
+          controller: controller,
+          storyItems: storyItems,
+          onStoryShow: (s) {
+            print("Showing a story");
+          },
+          onVerticalSwipeComplete: (f) {
+            if (f == Direction.up) {
+              if (i! < storyItems.length - 1) {
+                controller.next();
+                setState(() {
+                  i = i! + 1;
+                });
+              } else {
+                // pageController.nextPage(
+                //     duration: Duration(microseconds: 300),
+                //     curve: Curves.easeIn);
+                Navigator.pop(context);
+              }
+              // Navigator.pop(context);
+            } else if (f == Direction.down) {
+              controller.previous();
+              if (i != 0) {
+                setState(() {
+                  i = i! - 1;
+                });
+              } else {
+                Navigator.pop(context);
+              }
+            }
+          },
+          onComplete: () {
+            // if (index < (widget.docu.length - 1)) {
+            //   pageController.nextPage(
+            //       duration: Duration(microseconds: 300),
+            //       curve: Curves.easeIn);
+            // }
+            Navigator.pop(context);
+            // i++;
+            // cont.nextPage(duration: Duration(seconds: 1), curve: Curves.easeIn);
 
-                    print("Completed a cycle");
-                  },
-                  progressPosition: ProgressPosition.top,
-                  repeat: false,
-                  inline: true,
-                ),
+            print("Completed a cycle");
+          },
+          progressPosition: ProgressPosition.top,
+          repeat: false,
+          inline: true,
+        ),
       ),
-
       Padding(
         padding: const EdgeInsets.only(top: 80, left: 20),
         child: GestureDetector(
@@ -312,7 +304,7 @@ class _MoreStoriesState extends State<MoreStories> {
           child: StatusProfile(
               user: widget.user,
               date:
-                  '${DateTime.now().difference(widget.user.stories[i].createdDate.toDate()).inHours}h:${DateTime.now().difference(widget.user.stories[i].createdDate.toDate()).inMinutes - 60 * DateTime.now().difference(widget.user.stories[i].createdDate.toDate()).inHours}min ago'),
+                  '${DateTime.now().difference(widget.user.stories![i!].createdDate!.toDate()).inHours}h:${DateTime.now().difference(widget.user.stories![i!].createdDate!.toDate()).inMinutes - 60 * DateTime.now().difference(widget.user.stories![i!].createdDate!.toDate()).inHours}min ago'),
         ),
       )
     ]);
@@ -321,10 +313,10 @@ class _MoreStoriesState extends State<MoreStories> {
 
 class StatusProfile extends StatelessWidget {
   // const StatusProfile({Key? key}) : super(key: key);
-  final UserModel user;
-  final String date;
+  final UserModel? user;
+  final String? date;
 
-  const StatusProfile({Key key, this.user, this.date}) : super(key: key);
+  const StatusProfile({Key? key, this.user, this.date}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -333,7 +325,7 @@ class StatusProfile extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 24,
-          backgroundImage: NetworkImage(user.image),
+          backgroundImage: NetworkImage(user!.image!),
         ),
         SizedBox(
           width: 10,
@@ -343,23 +335,21 @@ class StatusProfile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                user.name,
+                user!.name!,
                 style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                  decoration: TextDecoration.none
-                ),
+                    fontSize: 20,
+                    color: Colors.white,
+                    decoration: TextDecoration.none),
               ),
               SizedBox(
                 height: 5,
               ),
               Text(
-                date,
+                date!,
                 style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.white,
-                    decoration: TextDecoration.none
-                ),
+                    fontSize: 10,
+                    color: Colors.white,
+                    decoration: TextDecoration.none),
               ),
             ],
           ),

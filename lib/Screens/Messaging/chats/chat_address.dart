@@ -20,8 +20,8 @@ import '../../Wallet/preview_transfer.dart';
 import 'widgets.dart';
 
 class DmScreenAddress extends StatefulWidget {
-  final Conversation conversation;
-  const DmScreenAddress({Key key, this.conversation}) : super(key: key);
+  final Conversation? conversation;
+  const DmScreenAddress({Key? key, this.conversation}) : super(key: key);
 
   @override
   State<DmScreenAddress> createState() => _DmScreenAddressState();
@@ -29,7 +29,7 @@ class DmScreenAddress extends StatefulWidget {
 
 class _DmScreenAddressState extends State<DmScreenAddress> {
   List<DecodedMessage> messages = [];
-  Future<List<DecodedMessage>> getMessages;
+  Future<List<DecodedMessage>>? getMessages;
   // UserModel user;
   // Future<UserModel> getUserDetails;
 
@@ -46,7 +46,7 @@ class _DmScreenAddressState extends State<DmScreenAddress> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Scaffold(
-      appBar: appBar(widget.conversation.peer.hexEip55),
+      appBar: appBar(widget.conversation!.peer.hexEip55),
       body: FutureBuilder<List<DecodedMessage>>(
         future: getMessages,
         builder: (BuildContext context, snapshot) {
@@ -56,7 +56,7 @@ class _DmScreenAddressState extends State<DmScreenAddress> {
             );
           }
 
-          messages = snapshot.data;
+          messages = snapshot.data!;
 
           return StreamBuilder<DecodedMessage>(
             stream: context
@@ -64,7 +64,7 @@ class _DmScreenAddressState extends State<DmScreenAddress> {
                 .streamMessages(convo: widget.conversation),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                messages.insert(0, snapshot.data);
+                messages.insert(0, snapshot.data!);
               }
               return Column(
                 children: [
@@ -103,7 +103,7 @@ class _DmScreenAddressState extends State<DmScreenAddress> {
                       reverse: true,
                       useStickyGroupSeparators: true,
                       itemBuilder: (context, DecodedMessage msg) {
-                        bool isMe = msg.sender != widget.conversation.peer;
+                        bool isMe = msg.sender != widget.conversation!.peer;
 
                         print(msg.content.toString().isJSON);
 
@@ -128,7 +128,7 @@ class _DmScreenAddressState extends State<DmScreenAddress> {
                     ),
                   ),
                   ChatControlsWidget(
-                    convo: widget.conversation,
+                    convo: widget.conversation!,
                     // user: user,
                   ),
                 ],
@@ -146,13 +146,13 @@ class _DmScreenAddressState extends State<DmScreenAddress> {
 
 class ChatControlsWidget extends StatefulWidget {
   const ChatControlsWidget({
-    Key key,
+    Key? key,
     this.convo,
     this.user,
   }) : super(key: key);
 
-  final Conversation convo;
-  final UserModel user;
+  final Conversation? convo;
+  final UserModel? user;
 
   @override
   State<ChatControlsWidget> createState() => _ChatControlsWidgetState();
@@ -196,7 +196,7 @@ class _ChatControlsWidgetState extends State<ChatControlsWidget> {
                 decoration: InputDecoration(
                   isDense: true,
                   hintText: "Amount",
-                  suffixText: wallet.ticker ?? " ",
+                  suffixText: wallet.ticker,
                   border: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                       borderSide: BorderSide(
@@ -223,8 +223,8 @@ class _ChatControlsWidgetState extends State<ChatControlsWidget> {
                         wallet: wallet,
                         amount: double.parse(amount.text),
                         address: wallet.ticker == "BITCOIN"
-                            ? widget.user.bitcoinWalletAddress
-                            : widget.user.hdWalletAddress,
+                            ? widget.user!.bitcoinWalletAddress
+                            : widget.user!.hdWalletAddress,
                         convo: widget.convo,
                       ),
                     );

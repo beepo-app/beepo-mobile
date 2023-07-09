@@ -8,7 +8,7 @@ import '../Widgets/components.dart';
 import 'chatToken_screen.dart';
 
 class Store2 extends StatefulWidget {
-  const Store2({Key key}) : super(key: key);
+  const Store2({Key? key}) : super(key: key);
 
   @override
   State<Store2> createState() => _Store2State();

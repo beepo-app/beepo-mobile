@@ -12,7 +12,7 @@ import '../../Utils/styles.dart';
 import '../../Widgets/components.dart';
 
 class WalletScreen extends StatefulWidget {
-  const WalletScreen({Key key}) : super(key: key);
+  const WalletScreen({Key? key}) : super(key: key);
 
   @override
   State<WalletScreen> createState() => _WalletScreenState();
@@ -125,7 +125,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 ],
               )
             ],
-            body: FutureBuilder(
+            body: FutureBuilder<List<dynamic>>(
               future: Future.wait([
                 _getWallets, //runs only once
                 WalletsService().getCoinMarketData(),
@@ -135,9 +135,9 @@ class _WalletScreenState extends State<WalletScreen> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                final List<Wallet> wallets = snapshot.data[0] ?? [];
+                final List<Wallet> wallets = snapshot.data![0];
                 final List<CoinMarketData> coinMarketDataList =
-                    snapshot.data[1];
+                    snapshot.data![1];
 
                 Wallet btcWallet =
                     wallets.firstWhere((e) => e.name == 'Bitcoin');
@@ -154,8 +154,8 @@ class _WalletScreenState extends State<WalletScreen> {
                       return loader();
                     }
 
-                    CoinBalance btcBalance = snapshot.data[0];
-                    List ercBalances = snapshot.data[1];
+                    CoinBalance btcBalance = snapshot.data![0];
+                    List ercBalances = snapshot.data![1];
 
                     //Get all currencies
                     List<Map> availableCurrencies = [];
@@ -191,9 +191,8 @@ class _WalletScreenState extends State<WalletScreen> {
 
                     //add btc balance
                     totalBalance += double.parse(btcBalance.prices
-                            .firstWhere((e) => e.currency == selectedCurrency)
-                            .value ??
-                        '0.00');
+                        .firstWhere((e) => e.currency == selectedCurrency)
+                        .value);
 
                     return SafeArea(
                       child: Container(
@@ -347,13 +346,13 @@ class WalletList extends StatelessWidget {
   final String selectedCurrency;
 
   const WalletList({
-    Key key,
-    @required this.wallets,
-    @required this.coinMarketDataList,
-    @required this.btcBalance,
-    @required this.ercBalances,
-    @required this.selectedCurrencySymbol,
-    @required this.selectedCurrency,
+    Key? key,
+    required this.wallets,
+    required this.coinMarketDataList,
+    required this.btcBalance,
+    required this.ercBalances,
+    required this.selectedCurrencySymbol,
+    required this.selectedCurrency,
   }) : super(key: key);
 
   @override
@@ -373,8 +372,8 @@ class WalletList extends StatelessWidget {
         Wallet wallet = wallets[index];
         String fiatValue = '0';
         CoinMarketData coinMarketData = coinMarketDataList.firstWhere(
-            (e) => e.id == wallet.chainId.toString(),
-            orElse: () => null);
+          (e) => e.id == wallet.chainId.toString(),
+        );
         String balance;
 
         if (wallet.ticker == 'BITCOIN') {
@@ -404,13 +403,13 @@ class WalletList extends StatelessWidget {
         }
 
         return WalletListTile(
-          amount: balance ?? 'N/A',
+          amount: balance,
           wallet: wallet,
           coinMarketData: coinMarketData,
           fiatSymbol: selectedCurrencySymbol,
           fiatValue: fiatValue == 'null'
               ? '0.00'
-              : num.parse(fiatValue ?? "0.00").toStringAsFixed(2),
+              : num.parse(fiatValue).toStringAsFixed(2),
         );
       },
     );
@@ -418,12 +417,12 @@ class WalletList extends StatelessWidget {
 }
 
 class WalletIcon extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  final VoidCallback onTap;
-  final double angle;
+  final String? text;
+  final IconData? icon;
+  final VoidCallback? onTap;
+  final double? angle;
   const WalletIcon({
-    Key key,
+    Key? key,
     this.text,
     this.icon,
     this.onTap,
@@ -447,12 +446,12 @@ class WalletIcon extends StatelessWidget {
               child: Column(
                 children: [
                   Transform.rotate(
-                    angle: angle,
+                    angle: angle!,
                     child: Icon(icon, size: 22, color: Colors.white),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    text,
+                    text!,
                     style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,

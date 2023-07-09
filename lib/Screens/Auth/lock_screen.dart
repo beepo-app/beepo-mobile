@@ -9,7 +9,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import '../../Utils/styles.dart';
 
 class LockScreen extends StatefulWidget {
-  const LockScreen({Key key}) : super(key: key);
+  const LockScreen({Key? key}) : super(key: key);
 
   @override
   State<LockScreen> createState() => _LockScreenState();

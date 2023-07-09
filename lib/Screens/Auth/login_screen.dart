@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import '../../Widgets/components.dart';
 
 class Login extends StatelessWidget {
-  const Login({Key key}) : super(key: key);
+  const Login({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +71,10 @@ class Login extends StatelessWidget {
                   // bool result = await AuthService().loginWithSecretPhrase(phrase);
 
                   // AuthService().verifyPhrase(phrase);
-                  Get.to(PinCode(isSignUp: false, seedPhrase: phrase));
+                  Get.to(PinCode(
+                    isSignUp: false,
+                    seedPhrase: phrase,
+                  ));
 
                   // Get.back();
                   // if (result) {

@@ -40,7 +40,7 @@ import 'services/chat_methods.dart';
 class ChatDm extends StatefulWidget {
   final UserModel model;
 
-  const ChatDm({Key key, this.model}) : super(key: key);
+  const ChatDm({Key? key, required this.model}) : super(key: key);
 
   @override
   State<ChatDm> createState() => _ChatDmState();
@@ -49,15 +49,15 @@ class ChatDm extends StatefulWidget {
 class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
   TextEditingController messageController = TextEditingController();
   bool isTyping = true;
-  AnimationController controller;
-  String player;
-  String tokens;
+  late AnimationController controller;
+  String player = '';
+  String tokens = '';
 
   Map userM = Hive.box('beepo').get('userData');
-  int isPlaying;
+  int isPlaying = 0;
 
   var uuid = Uuid();
-  String _currentUuid;
+  String _currentUuid = '';
 
   bool swiped = false;
 
@@ -85,7 +85,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
 
 //One Signal Notifications
   Future<Response> sendNotification(
-      {List<String> tokenIdList, String contents, String heading}) async {
+      {List<String>? tokenIdList, String? contents, String? heading}) async {
     String _debugLabelString = "";
 
     OneSignal.shared.setNotificationWillShowInForegroundHandler(
@@ -328,7 +328,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                               child: CachedNetworkImage(
                                 height: 35,
                                 width: 35,
-                                imageUrl: widget.model.image,
+                                imageUrl: widget.model.image!,
                                 placeholder: (context, url) =>
                                     Center(child: CircularProgressIndicator()),
                                 errorWidget: (context, url, error) => Icon(
@@ -357,7 +357,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                         )));
                           },
                           child: Text(
-                            widget.model.name,
+                            widget.model.name!,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 15,
@@ -449,7 +449,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                           controller:
                               context.read<ChatNotifier>().scrollController,
                           reverse: true,
-                          elements: snapshot.data.docs,
+                          elements: snapshot.data!.docs,
                           groupBy: (element) {
                             final date =
                                 element['created'].toDate() as DateTime;
@@ -488,7 +488,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                           },
                           indexedItemBuilder: (ctx, documentSnapshot, index) {
                             Timestamp time =
-                                snapshot.data.docs[index]['created'];
+                                snapshot.data!.docs[index]['created'];
                             // var day = time.toDate().day.toString();
                             // var month = time.toDate().month.toString();
                             // var year =
@@ -513,21 +513,22 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                             }
                             return Column(
                               children: [
-                                if (snapshot.data.docs[index]["type"] ==
+                                if (snapshot.data!.docs[index]["type"] ==
                                     'message')
                                   SwipeTo(
                                     onRightSwipe: () {
                                       rightSwiped = true;
                                       swiped = true;
                                       if (userM['uid'] !=
-                                          snapshot.data.docs[index]["sender"]) {
+                                          snapshot.data!.docs[index]
+                                              ["sender"]) {
                                         replyToMessage(
                                             encrypter.decrypt64(
-                                                snapshot.data.docs[index]
+                                                snapshot.data!.docs[index]
                                                     ["text"],
                                                 iv: enc.IV.fromLength(16)),
-                                            widget.model.userName,
-                                            widget.model.name);
+                                            widget.model.userName!,
+                                            widget.model.name!);
                                       }
 
                                       focusNode.requestFocus();
@@ -536,10 +537,12 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                       leftSwiped = true;
                                       swiped = true;
                                       if (userM['uid'] ==
-                                          snapshot.data.docs[index]["sender"]) {
+                                          snapshot.data!.docs[index]
+                                              ["sender"]) {
                                         replyToMessage(
                                           encrypter.decrypt64(
-                                              snapshot.data.docs[index]["text"],
+                                              snapshot.data!.docs[index]
+                                                  ["text"],
                                               iv: enc.IV.fromLength(16)),
                                           '',
                                           userM['displayName'],
@@ -550,36 +553,37 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                     },
                                     child: MessageReply(
                                       isMe: userM['uid'] ==
-                                          snapshot.data.docs[index]["sender"],
+                                          snapshot.data!.docs[index]["sender"],
                                       // displayname: widget.model.name,
                                       text: encrypter.decrypt64(
-                                        snapshot.data.docs[index]["text"],
+                                        snapshot.data!.docs[index]["text"],
                                         iv: enc.IV.fromLength(16),
                                       ),
-                                      time: snapshot.data.docs[index]
+                                      time: snapshot.data!.docs[index]
                                           ["created"],
-                                      onSwipedMessage: snapshot.data.docs[index]
-                                          ["swiped"],
-                                      replyUsername: snapshot.data.docs[index]
+                                      onSwipedMessage:
+                                          snapshot.data!.docs[index]["swiped"],
+                                      replyUsername: snapshot.data!.docs[index]
                                           ["replyUser"],
-                                      replyName: snapshot.data.docs[index]
+                                      replyName: snapshot.data!.docs[index]
                                           ["replyName"],
-                                      replyMessage: snapshot.data.docs[index]
+                                      replyMessage: snapshot.data!.docs[index]
                                           ["replyMessage"],
                                     ),
                                   )
-                                else if (snapshot.data.docs[index]["type"] ==
+                                else if (snapshot.data!.docs[index]["type"] ==
                                     'audio')
                                   Align(
-                                    alignment: (snapshot.data.docs[index]
+                                    alignment: (snapshot.data!.docs[index]
                                                 ['sender'] ==
                                             userM['uid'])
                                         ? Alignment.centerRight
                                         : Alignment.centerLeft,
                                     child: VoiceMessage(
-                                      audioSrc: snapshot.data.docs[index]
+                                      audioSrc: snapshot.data!.docs[index]
                                           ['content'],
-                                      me: snapshot.data.docs[index]['sender'] ==
+                                      me: snapshot.data!.docs[index]
+                                              ['sender'] ==
                                           userM['uid'],
                                       meBgColor: secondaryColor,
                                       contactBgColor: Color(0xffc4c4c4),
@@ -589,7 +593,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                   )
                                 else
                                   Align(
-                                    alignment: (snapshot.data.docs[index]
+                                    alignment: (snapshot.data!.docs[index]
                                                 ['sender'] ==
                                             userM['uid'])
                                         ? Alignment.centerRight
@@ -603,7 +607,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                               MaterialPageRoute(builder: (_) {
                                             return FullScreenImage(
                                               imageUrl: snapshot
-                                                  .data.docs[index]["content"],
+                                                  .data!.docs[index]["content"],
                                               tag: "image",
                                             );
                                           }));
@@ -614,7 +618,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                             child: CachedNetworkImage(
                                               fit: BoxFit.cover,
                                               imageUrl: snapshot
-                                                  .data.docs[index]["content"],
+                                                  .data!.docs[index]["content"],
                                               placeholder: (context, url) => Center(
                                                   child:
                                                       CircularProgressIndicator()),
@@ -681,7 +685,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                     context
                                         .read<ChatNotifier>()
                                         .cameraUploadImageChat(
-                                            widget.model.uid);
+                                            widget.model.uid!);
                                   },
                                   constraints: BoxConstraints(
                                     maxWidth: 30,
@@ -704,7 +708,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                       context
                                           .read<ChatNotifier>()
                                           .pickUploadImageChat(
-                                              widget.model.uid, context);
+                                              widget.model.uid!, context);
                                     },
                                     constraints: const BoxConstraints(
                                       maxWidth: 30,
@@ -749,7 +753,7 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                                 context: context,
                                 builder: (ctx) => CustomVoiceRecorderWidget(
                                       isGroupChat: false,
-                                      receiverId: widget.model.uid,
+                                      receiverId: widget.model.uid!,
                                     ));
                           },
                           icon: SvgPicture.asset(
@@ -768,12 +772,12 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
                               context: context,
                               text: context.read<ChatNotifier>().chatText,
                               userID: userM['uid'],
-                              receiverID: widget.model.uid,
+                              receiverID: widget.model.uid!,
                               searchKeywords:
-                                  createKeywords(widget.model.userName),
-                              img: widget.model.image,
-                              displayName: widget.model.name,
-                              userName: widget.model.userName,
+                                  createKeywords(widget.model.userName!),
+                              img: widget.model.image!,
+                              displayName: widget.model.name!,
+                              userName: widget.model.userName!,
                               key: enc.Key.fromLength(32),
                               iv: enc.IV.fromLength(16),
                               swiped: swiped,
@@ -920,10 +924,10 @@ class _ChatDmState extends State<ChatDm> with SingleTickerProviderStateMixin {
 }
 
 class FullScreenImage extends StatelessWidget {
-  final String imageUrl;
-  final String tag;
+  final String? imageUrl;
+  final String? tag;
 
-  const FullScreenImage({Key key, this.imageUrl, this.tag}) : super(key: key);
+  const FullScreenImage({Key? key, this.imageUrl, this.tag}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -932,11 +936,11 @@ class FullScreenImage extends StatelessWidget {
       body: GestureDetector(
         child: Center(
           child: Hero(
-            tag: tag,
+            tag: tag!,
             child: CachedNetworkImage(
               width: MediaQuery.of(context).size.width,
               fit: BoxFit.contain,
-              imageUrl: imageUrl,
+              imageUrl: imageUrl!,
               placeholder: (context, url) =>
                   Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) => Icon(
