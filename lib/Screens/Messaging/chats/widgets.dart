@@ -151,7 +151,7 @@ class ChatListItem extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(25),
                     child: CachedNetworkImage(
-                      imageUrl: user.data!.image!,
+                      imageUrl: user.data!.image ?? '',
                       height: 40,
                       width: 40,
                       placeholder: (context, url) => const Center(

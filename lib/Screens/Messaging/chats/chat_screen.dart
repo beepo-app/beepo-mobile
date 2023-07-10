@@ -82,7 +82,7 @@ class _DmScreenState extends State<DmScreen> {
                         child: CachedNetworkImage(
                           height: 35,
                           width: 35,
-                          imageUrl: user!.image!,
+                          imageUrl: user!.image ?? "",
                           errorWidget: (context, url, error) => Container(
                             color: Colors.white,
                             child: const Icon(
