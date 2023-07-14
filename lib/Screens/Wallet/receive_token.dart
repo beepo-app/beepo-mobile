@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../Models/wallet.dart';
@@ -81,11 +80,11 @@ class _ReceiveTokenState extends State<ReceiveToken> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      QrImage(
-                        data: widget.wallet.address,
-                        version: QrVersions.auto,
-                        size: 200.0,
-                      ),
+                      // QrImage(
+                      //   data: widget.wallet.address,
+                      //   version: QrVersions.auto,
+                      //   size: 200.0,
+                      // ),
                       const SizedBox(height: 22),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,

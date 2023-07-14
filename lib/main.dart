@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_this, avoid_print
+// ignore_for_file: prefer_const_constructors, unnecessary_this, avoid_print, unused_field
 
 import 'package:beepo/Utils/extensions.dart';
 import 'package:beepo/Providers/provider.dart';
