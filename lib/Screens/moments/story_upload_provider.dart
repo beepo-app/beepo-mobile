@@ -35,26 +35,26 @@ class StoryUploadProvider extends ChangeNotifier {
         ImagePicker(),
       );
 
-  late File _file;
+   File _file = File('https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg');
 
   File get file => _file;
 
-  late StoryModel _story;
+   StoryModel _story = const StoryModel();
   Map userM = Hive.box('beepo').get('userData');
 
   StoryUploadStatus _status = StoryUploadStatus.initial;
 
   StoryUploadStatus get status => _status;
 
-  late String _mediaType;
+   String _mediaType = 'image';
 
   String get mediaType => _mediaType;
 
-  late Uint8List _thumbnail;
+   Uint8List _thumbnail = Uint8List(0);
 
   Uint8List get thumbnail => _thumbnail;
 
-  late String _caption;
+   String _caption = '';
 
   String get caption => _caption;
 

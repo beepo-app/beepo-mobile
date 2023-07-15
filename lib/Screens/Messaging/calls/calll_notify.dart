@@ -189,7 +189,7 @@ class Calls {
     await FlutterCallkitIncoming.showCallkitIncoming(callKitParams);
 
     FlutterCallkitIncoming.onEvent.listen((CallEvent? event) {
-      switch (event?.event) {
+      switch (event!.event) {
         case Event.ACTION_CALL_INCOMING:
           () {
             print('$name Call incoming');

@@ -20,7 +20,7 @@ class CreateAccount extends StatefulWidget {
 
 class _CreateAccountState extends State<CreateAccount> {
   TextEditingController displayName = TextEditingController();
-  late File selectedImage;
+  late File selectedImage = File('https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg');
 
   @override
   Widget build(BuildContext context) {

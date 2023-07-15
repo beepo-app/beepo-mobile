@@ -107,7 +107,6 @@ class _PinCodeState extends State<PinCode> {
                     name: widget.name!,
                     image: widget.image!,
                     isSignUp: widget.isSignUp,
-                    seedPhrase: widget.seedPhrase!,
                   ));
                 } else {
                   showToast('Please enter a valid PIN');

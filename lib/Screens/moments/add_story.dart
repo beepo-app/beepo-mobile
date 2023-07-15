@@ -16,10 +16,10 @@ import '../../Utils/styles.dart';
 late CameraController controlle;
 
 class AddStory extends StatefulWidget {
-  const AddStory({Key? key, required this.camera1, required this.camera2})
+  const AddStory({Key? key, required this.camera1, this.camera2})
       : super(key: key);
   final CameraDescription camera1;
-  final CameraDescription camera2;
+  final CameraDescription? camera2;
 
   // static const String routeName = '/add-story';
 
@@ -47,7 +47,7 @@ class _AddStoryState extends State<AddStory> {
   //? Find a better name for this method
   Future<bool> _checkVideoDurationIsNotLong(File file) async {
     _videoPlayerController = VideoPlayerController.file(file);
-    await _videoPlayerController?.initialize();
+    await _videoPlayerController.initialize();
     if (_videoPlayerController.value.duration.inSeconds > 40) {
       return false;
     } else {
@@ -277,7 +277,7 @@ class _AddStoryState extends State<AddStory> {
                                         setState(() {
                                           // hasChanged = !hasChanged;
                                           if (selected == widget.camera1) {
-                                            selected = widget.camera2;
+                                            selected = widget.camera2!;
                                           } else {
                                             selected = widget.camera1;
                                           }

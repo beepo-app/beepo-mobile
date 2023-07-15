@@ -213,7 +213,7 @@ class _ChatTabState extends State<ChatTab> {
                   MaterialPageRoute(
                     builder: (context) => AddStory(
                       camera1: firstCamera!,
-                      camera2: secondCamera!,
+                      camera2: secondCamera,
                     ),
                   ),
                 );
@@ -1437,8 +1437,8 @@ class WalletListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String currentMarketPrice = coinMarketData?.data?.currentPrice ?? '0';
-    String change24h = coinMarketData?.data?.priceChangePercentage24H ?? '0';
+    String currentMarketPrice = coinMarketData?.data.currentPrice ?? '0';
+    String change24h = coinMarketData?.data.priceChangePercentage24H ?? '0';
     bool isPositive = change24h.startsWith('-') ? false : true;
     return Container(
       width: double.infinity,

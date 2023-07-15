@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
@@ -111,7 +112,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   final bool _requireConsent = true;
-  Map userM = Hive.box('beepo').get('userData');
+  var userM = Hive.box('beepo').get('userData');
 
   void _handleGetDeviceState() async {
     print("Getting DeviceState");
@@ -231,9 +232,27 @@ class _MyAppState extends State<MyApp> {
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  FlutterLocalNotificationsPlugin();
+
   Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
     await Firebase.initializeApp();
+    var androidInitialize =
+    AndroidInitializationSettings('notification_icon');
+    var initializationsSettings = InitializationSettings(
+        android: androidInitialize,
+      // iOS: iOSInitialize,
+    );
+    await flutterLocalNotificationsPlugin.initialize(
+      initializationsSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {
+        // ...
+      },
+      onDidReceiveBackgroundNotificationResponse: (ff){
+        print(ff.payload);
+      }
+    );
     print("Handling a background message: ${message.messageId}");
 
     Calls().receiveIncomingCall(
@@ -276,6 +295,7 @@ class _MyAppState extends State<MyApp> {
         'token': token,
       });
     });
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print(
@@ -314,7 +334,6 @@ class _MyAppState extends State<MyApp> {
     }, onDone: () {
       Calls().endCall(uuid.v4());
     });
-    // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
   @override
