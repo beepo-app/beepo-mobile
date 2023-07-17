@@ -318,7 +318,7 @@ class _ChatTabState extends State<ChatTab> {
                                 uid: snapshot.data!.docs[index].id,
                                 index: index,
                                 docu: snapshot.data!.docs,
-                                myStory: false,
+                                myStory: false, isExplore: false,
                                 // index: index,
                               );
                             },
@@ -1412,7 +1412,7 @@ class CurrentUserStoryBubble extends StatelessWidget {
       child: BubbleStories(
         uid: user.uid!,
         hasStory: user.stories!.isNotEmpty,
-        myStory: true,
+        myStory: true, isExplore: false,
         // useNetworkImage: true,
       ),
     );

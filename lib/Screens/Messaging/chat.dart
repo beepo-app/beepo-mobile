@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_const
 
+import 'package:beepo/Screens/moments/moments_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
@@ -23,7 +24,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         body: HawkFabMenu(
           icon: AnimatedIcons.menu_close,
@@ -104,6 +105,16 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     Tab(
                       child: Text(
+                        "Moments",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    Tab(
+                      child: Text(
                         "Calls",
                         style: TextStyle(
                           color: Colors.white,
@@ -119,6 +130,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: TabBarView(
                     children: [
                       ChatTab(),
+                      MomentsTab(),
                       CallTab(),
                     ],
                   ),

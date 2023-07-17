@@ -81,11 +81,11 @@ class _ReceiveTokenState extends State<ReceiveToken> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      QrImage(
-                        data: widget.wallet.address,
-                        version: QrVersions.auto,
-                        size: 200.0,
-                      ),
+                      // QrImage(
+                      //   data: widget.wallet.address,
+                      //   version: QrVersions.auto,
+                      //   size: 200.0,
+                      // ),
                       const SizedBox(height: 22),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,

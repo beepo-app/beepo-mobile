@@ -1,8 +1,9 @@
 import 'package:beepo/Models/story_model/storyModel.dart';
 import 'package:beepo/Models/user_model.dart';
+import 'package:beepo/Screens/moments/story_download_provider.dart';
 import 'package:beepo/Screens/moments/story_view.dart';
 import 'package:beepo/Utils/styles.dart';
-import 'package:beepo/Screens/moments/story_download_provider.dart';
+
 // import 'package:beepo/story_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,6 +19,7 @@ class BubbleStories extends StatefulWidget {
     required this.uid,
     this.hasStory = true,
     this.myStory,
+    required this.isExplore,
     // this.useNetworkImage = false,
   }) : super(key: key);
 
@@ -26,6 +28,7 @@ class BubbleStories extends StatefulWidget {
   final List? docu;
   final String uid;
   final bool? myStory;
+  final bool isExplore;
 
   @override
   State<BubbleStories> createState() => _BubbleStoriesState();
@@ -62,7 +65,8 @@ class _BubbleStoriesState extends State<BubbleStories> {
                             uid: widget.uid,
                             name: widget.docu![widget.index!]['name'],
                             image: widget.docu![widget.index!]['profileImage'],
-                            bitcoinWalletAddress: '', firebaseToken: '',
+                            bitcoinWalletAddress: '',
+                            firebaseToken: '',
                             // userName: userName,
                           ).copyWith(stories: uset);
                           cont = PageController(initialPage: widget.index!);
@@ -103,11 +107,13 @@ class _BubbleStoriesState extends State<BubbleStories> {
                       ? Container(
                           margin: const EdgeInsets.only(right: 7.0, top: 10),
                           padding: const EdgeInsets.all(2.0),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
+                          decoration: BoxDecoration(
+                            shape: widget.isExplore
+                                ? BoxShape.rectangle
+                                : BoxShape.circle,
                           ),
-                          width: 60,
-                          height: 60,
+                          width: widget.isExplore? 100 : 60,
+                          height: widget.isExplore? 100 : 60,
                           child: snapshot.data!.docs[0]['image'].isNotEmpty
                               ? CircleAvatar(
                                   backgroundImage: CachedNetworkImageProvider(
