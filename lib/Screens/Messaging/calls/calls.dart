@@ -92,9 +92,9 @@ class _VideoCallState extends State<VideoCall>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (context.watch<ChatNotifier>().enableScreenShot == true) {
-        Provider.of<ChatNotifier>(context, listen: false).secureScreen();
-      }
+      // if (context.watch<ChatNotifier>().enableScreenShot == true) {
+      //   Provider.of<ChatNotifier>(context, listen: false).secureScreen();
+      // }
     });
     initialize();
     _controller = AnimationController(vsync: this);

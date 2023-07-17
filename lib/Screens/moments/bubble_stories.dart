@@ -59,7 +59,8 @@ class _BubbleStoriesState extends State<BubbleStories> {
                           .getFriendsStories(
                               widget.docu![widget.index!]['uid']),
                       builder: (context, snapshot) {
-                        if (snapshot.hasData) {
+                        if (snapshot.hasData && !snapshot.hasError) {
+                          // if(!snapshot.hasError){
                           List<StoryModel> uset = snapshot.data!;
                           UserModel beta = UserModel(
                             uid: widget.uid,
@@ -69,27 +70,30 @@ class _BubbleStoriesState extends State<BubbleStories> {
                             firebaseToken: '',
                             // userName: userName,
                           ).copyWith(stories: uset);
-                          cont = PageController(initialPage: widget.index!);
+                          cont = PageController(initialPage: snapshot.data!.indexOf(snapshot.data!.first));
 
-                          return PageView.builder(
-                            itemCount: widget.docu!.length,
-                            itemBuilder: (context, num) {
-                              return MoreStories(
+                          // return PageView.builder(
+                          //   itemCount: widget.docu!.length,
+                          //   itemBuilder: (context, num) {
+                              return
+                                MoreStories(
                                 uid: widget.docu![widget.index!]['uid'],
                                 docu: widget.docu!,
                                 user: beta,
                               );
-                            },
-                            controller: cont,
+                            // },
+                            // controller: cont,
                             // scrollDirection: Axis.vertical,
-                          );
+                          // );
                         }
                         return const Center(
                           child: CircularProgressIndicator(
                             color: primaryColor,
                           ),
                         );
-                      })));
+                      }
+                      // }
+                        )));
         },
         child: StreamBuilder(
             stream: FirebaseFirestore.instance
