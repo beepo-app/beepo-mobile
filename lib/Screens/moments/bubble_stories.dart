@@ -69,7 +69,7 @@ class _BubbleStoriesState extends State<BubbleStories> {
                             firebaseToken: '',
                             // userName: userName,
                           ).copyWith(stories: uset);
-                          cont = PageController(initialPage: widget.index!);
+                          cont = PageController(initialPage: snapshot.data!.indexOf(snapshot.data!.first));
 
                           return PageView.builder(
                             itemCount: widget.docu!.length,

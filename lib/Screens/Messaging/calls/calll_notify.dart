@@ -38,6 +38,7 @@ class Calls {
       ios: IOSParams(handleType: 'generic'),
     );
     await FlutterCallkitIncoming.startCall(params);
+
     FlutterCallkitIncoming.onEvent.listen((CallEvent? event) {
       switch (event!.event) {
         case Event.ACTION_CALL_START:

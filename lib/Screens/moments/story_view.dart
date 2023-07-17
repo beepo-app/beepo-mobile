@@ -130,24 +130,24 @@ class _HomesState extends State<Homes> {
             ),
           ]),
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 50, left: 20),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ChatDm(
-                            model: widget.user,
-                          )));
-            },
-            child: StatusProfile(
-              user: widget.user,
-              date:
-                  '${DateTime.now().difference(widget.user.stories![i!].createdDate!.toDate()).inHours}h:${DateTime.now().difference(widget.user.stories![i!].createdDate!.toDate()).inMinutes - 60 * DateTime.now().difference(widget.user.stories![i!].createdDate!.toDate()).inHours}min ago',
-            ),
-          ),
-        )
+        // Padding(
+        //   padding: const EdgeInsets.only(top: 50, left: 20),
+        //   child: GestureDetector(
+        //     onTap: () {
+        //       Navigator.push(
+        //           context,
+        //           MaterialPageRoute(
+        //               builder: (context) => ChatDm(
+        //                     model: widget.user,
+        //                   )));
+        //     },
+        //     child: StatusProfile(
+        //       user: widget.user,
+        //       date:
+        //           '${DateTime.now().difference(widget.user.stories![i!].createdDate!.toDate()).inHours}h:${DateTime.now().difference(widget.user.stories![i!].createdDate!.toDate()).inMinutes - 60 * DateTime.now().difference(widget.user.stories![i!].createdDate!.toDate()).inHours}min ago',
+        //     ),
+        //   ),
+        // )
       ]);
 }
 
