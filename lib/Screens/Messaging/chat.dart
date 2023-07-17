@@ -130,7 +130,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: TabBarView(
                     children: [
                       ChatTab(),
-                      MomentsTab(),
+                      MomentsTab(hasStory: false,),
                       CallTab(),
                     ],
                   ),

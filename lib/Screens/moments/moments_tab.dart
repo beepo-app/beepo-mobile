@@ -17,9 +17,8 @@ import 'add_story.dart';
 import 'bubble_stories.dart';
 
 class MomentsTab extends StatefulWidget {
-  const MomentsTab({Key? key}) : super(key: key);
-
-  // ChatTab({Key key}) : super(key: key);
+  const MomentsTab({Key? key, required this.hasStory}) : super(key: key);
+  final bool hasStory;
 
   @override
   State<MomentsTab> createState() => _MomentsTabState();
@@ -87,10 +86,7 @@ class _MomentsTabState extends State<MomentsTab> {
       if (value.data() != null) {
         remove = value.data()!['isRemoved'].toString();
       }
-    }
-        // print(remove);
-        );
-    // }));
+    });
 
     return Column(
       children: [
@@ -209,7 +205,8 @@ class _MomentsTabState extends State<MomentsTab> {
                                 uid: snapshot.data!.docs[index].id,
                                 index: index,
                                 docu: snapshot.data!.docs,
-                                myStory: false, isExplore: true,
+                                myStory: false,
+                                isExplore: false,
 
                                 // index: index,
                               );
@@ -221,8 +218,7 @@ class _MomentsTabState extends State<MomentsTab> {
                             color: primaryColor,
                           ),
                         );
-                      }
-                      ),
+                      }),
                 ]),
               ),
             ),
@@ -253,21 +249,21 @@ class _MomentsTabState extends State<MomentsTab> {
                         Text(
                           'Explore Moments',
                           style: TextStyle(
-                              fontFamily: 'Roboto',
-                              fontStyle: FontStyle.normal,
-                              fontSize: 18,
-                          fontWeight: FontWeight.w400,
+                            fontFamily: 'Roboto',
+                            fontStyle: FontStyle.normal,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
                           ),
+
                         ),
                         Row(
-                          children: [
-                            Text('Latest'),
-                            Icon(Icons.sort)
-                          ],
+                          children: [Text('Latests'), Icon(Icons.sort)],
                         )
                       ],
                     ),
-                    SizedBox(height: 20,),
+                    SizedBox(
+                      height: 20,
+                    ),
                     StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('usersStories')
@@ -280,44 +276,83 @@ class _MomentsTabState extends State<MomentsTab> {
                             if (snapshot.data!.docs.isEmpty) {
                               return SizedBox();
                             }
-                            return  GridView.builder(
+                            return GridView.builder(
                               gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
                                 crossAxisSpacing: 11,
                                 mainAxisSpacing: 30,
-                                childAspectRatio: 3,
+                                childAspectRatio: 0.8,
                               ),
                               itemBuilder: (context, index) {
                                 return Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: Colors.transparent,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                    ),
-                                    height: 200,
-                                    alignment: Alignment.centerLeft,
-                                    child: Stack(
-                                      children: [
-                                        CachedNetworkImage(
-                                          height: 35,
-                                          width: 35,
-                                          imageUrl: snapshot.data!.docs[0]['image'],
-                                          placeholder: (context, url) =>
-                                              Center(child: CircularProgressIndicator()),
-                                          errorWidget: (context, url, error) => Icon(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Colors.transparent,
+                                  ),
+                                  // padding: const EdgeInsets.symmetric(
+                                  //   horizontal: 10,
+                                  // ),
+                                  // height: 200,
+                                  // alignment: Alignment.center,
+                                  child: Stack(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: CachedNetworkImage(
+                                          // height: double.infinity,
+                                          width: double.infinity,
+                                          imageUrl: snapshot.data!.docs[index]
+                                              ['url'],
+                                          placeholder: (context, url) => Center(
+                                              child:
+                                                  CircularProgressIndicator()),
+                                          errorWidget: (context, url, error) =>
+                                              Icon(
                                             Icons.person,
                                             color: secondaryColor,
                                           ),
                                           filterQuality: FilterQuality.high,
+                                          fit: BoxFit.fitWidth,
                                         ),
-                                      ],
-                                    )
+                                      ),
+                                      Align(
+                                        alignment: Alignment.bottomLeft,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(20.0),
+                                          child: Row(
+                                            children: [
+                                              CircleAvatar(
+                                                backgroundImage:
+                                                    CachedNetworkImageProvider(
+                                                  snapshot.data!.docs[index]
+                                                      ['profileImage'],
+                                                ),
+                                                radius: 30,
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text(
+                                                snapshot.data!.docs[index]
+                                                    ['name'],
+                                                style: TextStyle(
+                                                  fontFamily: 'Roboto',
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.white,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                    fit: StackFit.loose,
+                                  ),
                                 );
                               },
-                              itemCount: 12,
+                              itemCount: snapshot.data!.docs.length,
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                             );
@@ -327,9 +362,7 @@ class _MomentsTabState extends State<MomentsTab> {
                               color: primaryColor,
                             ),
                           );
-                        }
-                    )
-
+                        })
                   ],
                 ),
               ),
