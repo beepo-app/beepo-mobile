@@ -117,7 +117,7 @@ class _AddStoryState extends State<AddStory> {
                               : null,
                       color: Colors.black,
                     ),
-                    child: selectedFile.path.isEmpty
+                    child: selectedFile.path!=''
                         ? const SizedBox.shrink()
                         : FutureBuilder<void>(
                             future: initializeControllerFuture,
@@ -131,7 +131,8 @@ class _AddStoryState extends State<AddStory> {
                                 return const Center(
                                     child: CircularProgressIndicator(
                                   color: secondaryColor,
-                                ));
+                                ),
+                                );
                               }
                             },
                           ),
@@ -176,7 +177,7 @@ class _AddStoryState extends State<AddStory> {
                             .watch<StoryUploadProvider>()
                             .file
                             .path
-                            .isEmpty)
+                            == '')
                         ? Container(
                             // width: double.infinity,
                             height: 140,
@@ -302,7 +303,8 @@ class _AddStoryState extends State<AddStory> {
                                 ),
                                 SizedBox(height: 5),
                               ],
-                            ))
+                            ),
+                    )
                         : Padding(
                             padding: const EdgeInsets.all(15.0),
                             child: Row(

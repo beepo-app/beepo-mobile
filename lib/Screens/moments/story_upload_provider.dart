@@ -35,7 +35,7 @@ class StoryUploadProvider extends ChangeNotifier {
         ImagePicker(),
       );
 
-   File _file = File('https://pbs.twimg.com/profile_images/1619846077506621443/uWNSRiRL_400x400.jpg');
+   File _file = File('');
 
   File get file => _file;
 

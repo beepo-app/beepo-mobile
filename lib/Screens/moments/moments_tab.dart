@@ -37,13 +37,6 @@ class _MomentsTabState extends State<MomentsTab> {
   Box box1 = Hive.box('beepo');
   late PageController cont;
 
-  setLeave() async {
-    await FirebaseFirestore.instance
-        .collection('LeaveGroup')
-        .doc(userM['uid'])
-        .set({'isRemoved': 'false'});
-  }
-
   Map userM = Hive.box('beepo').get('userData');
 
   Widget? usert;
@@ -67,6 +60,12 @@ class _MomentsTabState extends State<MomentsTab> {
   void initState() {
     currentUserStories =
         context.read<StoryDownloadProvider>().getCurrentUserStories();
+    // friendsStories = context
+    //     .read<
+    //     StoryDownloadProvider>()
+    //     .getFriendsStories(snapshot
+    //     .data!
+    //     .docs[index]['uid']);
     gethg();
     cont = PageController();
     super.initState();
@@ -287,132 +286,132 @@ class _MomentsTabState extends State<MomentsTab> {
                                 childAspectRatio: 0.8,
                               ),
                               itemBuilder: (context, index) {
-                                return InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => StreamBuilder<
-                                                    List<StoryModel>>(
-                                                stream: context
-                                                    .read<
-                                                        StoryDownloadProvider>()
-                                                    .getFriendsStories(snapshot
-                                                        .data!
-                                                        .docs[index]['uid']),
-                                                builder: (context, snap) {
-                                                  if (snapshot.hasData) {
-                                                    List<StoryModel> uset =
-                                                        snap.data!;
-                                                    UserModel beta = UserModel(
-                                                      uid: snapshot.data!
-                                                          .docs[index]['uid'],
-                                                      name: snapshot.data!
-                                                          .docs[index]['name'],
-                                                      image: snapshot
-                                                              .data!.docs[index]
-                                                          ['profileImage'],
-                                                      bitcoinWalletAddress: '',
-                                                      firebaseToken: '',
-                                                      // userName: userName,
-                                                    ).copyWith(stories: uset);
-                                                    cont = PageController(
-                                                        initialPage: index);
+                                return StreamBuilder<List<StoryModel>>(
+                                    stream: context
+                                        .read<StoryDownloadProvider>()
+                                        .getFriendsStories(
+                                            snapshot.data!.docs[index]['uid']),
+                                    builder: (context, snap) {
+                                      if (snap.hasData) {
+                                        List<StoryModel> uset = snap.data!;
+                                        UserModel beta = UserModel(
+                                          uid: snapshot.data!.docs[index]
+                                              ['uid'],
+                                          name: snapshot.data!.docs[index]
+                                              ['name'],
+                                          image: snapshot.data!.docs[index]
+                                              ['profileImage'],
+                                          bitcoinWalletAddress: '',
+                                          firebaseToken: '',
+                                          // userName: userName,
+                                        ).copyWith(stories: uset);
 
-                                                    // return PageView.builder(
-                                                    //   itemCount: snapshot
-                                                    //       .data!.docs.length,
-                                                    //   itemBuilder:
-                                                    //       (context, num) {
-                                                        return MoreStories(
-                                                          uid: snapshot.data!
-                                                                  .docs[index]
-                                                              ['uid'],
-                                                          docu: snapshot
-                                                              .data!.docs,
-                                                          user: beta,
-                                                        );
-                                                      // },
-                                                      // controller: cont,
-                                                      // scrollDirection: Axis.vertical,
-                                                    // );
-                                                  }
-                                                  return const Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                      color: primaryColor,
-                                                    ),
-                                                  );
-                                                })));
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: Colors.transparent,
-                                    ),
-                                    // padding: const EdgeInsets.symmetric(
-                                    //   horizontal: 10,
-                                    // ),
-                                    // height: 200,
-                                    // alignment: Alignment.center,
-                                    child: Stack(
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          child: CachedNetworkImage(
-                                            // height: double.infinity,
-                                            width: double.infinity,
-                                            imageUrl: snapshot.data!.docs[index]
-                                                ['url'],
-                                            placeholder: (context, url) => Center(
-                                                child:
-                                                    CircularProgressIndicator()),
-                                            errorWidget:
-                                                (context, url, error) => Icon(
-                                              Icons.person,
-                                              color: secondaryColor,
+                                        return InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    MoreStories(
+                                                  uid: snapshot
+                                                      .data!.docs[index]['uid'],
+                                                  docu: snapshot.data!.docs,
+                                                  user: beta,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              color: Colors.transparent,
                                             ),
-                                            filterQuality: FilterQuality.high,
-                                            fit: BoxFit.fitWidth,
-                                          ),
-                                        ),
-                                        Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(20.0),
-                                            child: Row(
+                                            child: Stack(
                                               children: [
-                                                CircleAvatar(
-                                                  backgroundImage:
-                                                      CachedNetworkImageProvider(
-                                                    snapshot.data!.docs[index]
-                                                        ['profileImage'],
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  child: CachedNetworkImage(
+                                                    // height: double.infinity,
+                                                    width: double.infinity,
+                                                    height: double.infinity,
+                                                    imageUrl: snapshot.data!
+                                                        .docs[index]['url'],
+                                                    placeholder: (context,
+                                                            url) =>
+                                                        Center(
+                                                            child:
+                                                                CircularProgressIndicator()),
+                                                    errorWidget:
+                                                        (context, url, error) =>
+                                                            Icon(
+                                                      Icons.person,
+                                                      color: secondaryColor,
+                                                    ),
+                                                    filterQuality:
+                                                        FilterQuality.high,
+                                                    fit: BoxFit.cover,
                                                   ),
-                                                  radius: 30,
                                                 ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Text(
-                                                  snapshot.data!.docs[index]
-                                                      ['name'],
-                                                  style: TextStyle(
-                                                    fontFamily: 'Roboto',
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: Colors.white,
+                                                Align(
+                                                  alignment:
+                                                      Alignment.bottomLeft,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            20.0),
+                                                    child: Row(
+                                                      children: [
+                                                        CircleAvatar(
+                                                          backgroundImage:
+                                                              CachedNetworkImageProvider(
+                                                            snapshot.data!
+                                                                    .docs[index]
+                                                                [
+                                                                'profileImage'],
+                                                          ),
+                                                          radius: 30,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        Expanded(
+                                                          child: Text(
+                                                            snapshot.data!
+                                                                    .docs[index]
+                                                                ['name'],
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Roboto',
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .fade,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
                                                 )
                                               ],
+                                              fit: StackFit.loose,
                                             ),
                                           ),
-                                        )
-                                      ],
-                                      fit: StackFit.loose,
-                                    ),
-                                  ),
-                                );
+                                        );
+                                      }
+                                      return const Center(
+                                        child: CircularProgressIndicator(
+                                          color: primaryColor,
+                                        ),
+                                      );
+                                    });
                               },
                               itemCount: snapshot.data!.docs.length,
                               shrinkWrap: true,
