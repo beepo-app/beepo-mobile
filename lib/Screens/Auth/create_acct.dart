@@ -20,7 +20,7 @@ class CreateAccount extends StatefulWidget {
 
 class _CreateAccountState extends State<CreateAccount> {
   TextEditingController displayName = TextEditingController();
-  late File selectedImage;
+  File? selectedImage;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +60,7 @@ class _CreateAccountState extends State<CreateAccount> {
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(100),
                           child: Image.file(
-                            selectedImage,
+                            selectedImage!,
                             height: 120,
                             width: 120,
                             fit: BoxFit.cover,

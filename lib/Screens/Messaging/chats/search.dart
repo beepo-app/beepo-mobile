@@ -63,6 +63,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
               return ListView.builder(
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
+                  log('Search: ${snapshot.data!.docs[index].data()}');
                   UserModel? user =
                       UserModel.fromJson(snapshot.data!.docs[index].data());
                   return _searchcontroller.text.isNotEmpty

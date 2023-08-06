@@ -35,7 +35,7 @@ class AuthService {
   String get contextId => box.get('contextId', defaultValue: '');
 
   //Create User
-  Future<bool> createUser(String displayName, File img, String pin) async {
+  Future<bool> createUser(String displayName, File? img, String pin) async {
     try {
       //To generate keys and contextId
       Map keys = await isolateFunction();
@@ -47,12 +47,14 @@ class AuthService {
 
       // Upload image and get image url
       String imageUrl = "";
-      imageUrl = await MediaService.uploadProfilePicture(img);
       //If image was selected, add to the body of the request
 
       var body = {'displayName': displayName, "encrypted_pin": encryptedPin};
 
-      body['profilePictureUrl'] = imageUrl;
+      if (img != null) {
+        imageUrl = await MediaService.uploadProfilePicture(img);
+        body['profilePictureUrl'] = imageUrl;
+      }
 
       final response = await http.post(
         Uri.parse('$baseUrl/users'),
@@ -64,7 +66,7 @@ class AuthService {
         body: json.encode(body),
       );
 
-      print(response.body);
+      log('testing auth' + response.body);
       if (response.statusCode == 201 || response.statusCode == 200) {
         var data = json.decode(response.body);
 

@@ -148,20 +148,20 @@ class XMTPProvider extends ChangeNotifier {
   }
 
   //create new conversation
-  Future<xmtp.Conversation> newConversation(String address,
+  Future<xmtp.Conversation?> newConversation(String address,
       {Map<String, String>? metadata}) async {
     try {
       var convo = await client.newConversation(
         address,
         conversationId: _conversationId,
-        metadata: metadata!,
+        // metadata: metadata!,
       );
       notifyListeners();
       return convo;
     } catch (e) {
       showToast('User is not on XMTP network');
       dev.log(e.toString());
-      rethrow;
+      return null;
     }
   }
 

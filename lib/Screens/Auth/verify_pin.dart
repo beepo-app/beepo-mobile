@@ -15,16 +15,16 @@ import '../../bottom_nav.dart';
 import '../../Widgets/components.dart';
 
 class VerifyCode extends StatefulWidget {
-  final File image;
+  final File? image;
   final String name;
   final bool isSignUp;
-  final String seedPhrase;
+  final String? seedPhrase;
   const VerifyCode(
       {Key? key,
-      required this.image,
+      this.image,
       required this.name,
       required this.isSignUp,
-      required this.seedPhrase})
+      this.seedPhrase})
       : super(key: key);
 
   @override
@@ -127,7 +127,7 @@ class _VerifyCodeState extends State<VerifyCode> {
                     );
 
                     bool result = await AuthService().loginWithSecretPhrase(
-                      widget.seedPhrase,
+                      widget.seedPhrase!,
                       pin,
                     );
 

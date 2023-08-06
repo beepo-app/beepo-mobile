@@ -105,9 +105,9 @@ class _PinCodeState extends State<PinCode> {
                   Hive.box('beepo').put('PIN', otp.text);
                   Get.to(VerifyCode(
                     name: widget.name!,
-                    image: widget.image!,
+                    image: widget.image,
                     isSignUp: widget.isSignUp,
-                    seedPhrase: widget.seedPhrase!,
+                    seedPhrase: widget.seedPhrase,
                   ));
                 } else {
                   showToast('Please enter a valid PIN');
