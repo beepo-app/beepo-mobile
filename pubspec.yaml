@@ -94,6 +94,7 @@ dependencies:
   bip39:
   bip32:
   shimmer: ^3.0.0
+  firebase_analytics: ^9.3.8
 
 dev_dependencies:
   flutter_test:

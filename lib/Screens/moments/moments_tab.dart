@@ -315,7 +315,7 @@ class _MomentsTabState extends State<MomentsTab> {
                                                     MoreStories(
                                                   uid: snapshot
                                                       .data!.docs[index]['uid'],
-                                                  docu: snapshot.data!.docs,
+
                                                   user: beta,
                                                 ),
                                               ),

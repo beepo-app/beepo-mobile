@@ -3,11 +3,14 @@
 import 'package:beepo/Screens/moments/story_download_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:story_view/story_view.dart';
 
 import '../../Models/user_model.dart';
+
+Map userM = Hive.box('beepo').get('userData');
 
 class Homes extends StatefulWidget {
   final UserModel user;
@@ -20,13 +23,24 @@ class Homes extends StatefulWidget {
 
 class _HomesState extends State<Homes> {
   final StoryController controller = StoryController();
-
-  Map userM = Hive.box('beepo').get('userData');
+  int fory = 0;
 
   final storyItems = <StoryItem>[];
 
-  void addStoryItems() {
+  void addStoryItems() async {
     for (final story in widget.user.stories!) {
+      FirebaseFirestore.instance
+          .collection('MomentCount')
+          .doc(story.createdDate.toString())
+          .get()
+          .then(
+        (value) {
+          setState(() {
+            fory = value.data()!.length;
+          });
+        },
+      );
+
       switch (story.mediaType) {
         case "image":
           storyItems.add(StoryItem.pageImage(
@@ -147,6 +161,7 @@ class _HomesState extends State<Homes> {
               //     child:
               StatusProfile(
             user: widget.user,
+            views: fory,
             date:
                 '${DateTime.now().difference(widget.user.stories![i!].createdDate!.toDate()).inHours}h:${DateTime.now().difference(widget.user.stories![i!].createdDate!.toDate()).inMinutes - 60 * DateTime.now().difference(widget.user.stories![i!].createdDate!.toDate()).inHours}min ago',
           ),
@@ -158,13 +173,11 @@ class _HomesState extends State<Homes> {
 
 class MoreStories extends StatefulWidget {
   final String uid;
-  final List docu;
   final UserModel user;
 
   const MoreStories({
     Key? key,
     required this.uid,
-    required this.docu,
     required this.user,
   }) : super(key: key);
 
@@ -212,6 +225,7 @@ class _MoreStoriesState extends State<MoreStories> {
     super.initState();
     addStoryItems();
     // calDate(date);
+
     i = 0;
     if (DateTime.now()
             .difference(widget.user.stories![0].createdDate!.toDate())
@@ -252,6 +266,13 @@ class _MoreStoriesState extends State<MoreStories> {
             controller: controller,
             storyItems: storyItems,
             onStoryShow: (s) {
+              FirebaseFirestore.instance
+                  .collection("MomentCount")
+                  .doc(widget.user.stories![storyItems.indexOf(s)].createdDate
+                      .toString())
+                  .set({
+                'name of who viewed': userM['displayName'],
+              });
               print("Showing a story");
             },
             onVerticalSwipeComplete: (f) {
@@ -324,45 +345,71 @@ class StatusProfile extends StatelessWidget {
   // const StatusProfile({Key? key}) : super(key: key);
   final UserModel? user;
   final String? date;
+  final int views;
 
-  const StatusProfile({Key? key, this.user, this.date}) : super(key: key);
+  const StatusProfile({Key? key, this.user, this.date, this.views = 0})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
       children: [
-        CircleAvatar(
-          radius: 24,
-          backgroundImage: NetworkImage(user!.image!),
-        ),
-        SizedBox(
-          width: 10,
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        if (user!.uid == userM['uid'])
+          Row(
             children: [
-              Text(
-                user!.name!,
-                style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    decoration: TextDecoration.none),
-              ),
+              SvgPicture.asset('assets/eye.svg'),
               SizedBox(
-                height: 5,
+                width: 20,
               ),
               Text(
-                date!,
+                '$views Views',
                 style: TextStyle(
-                    fontSize: 10,
-                    color: Colors.white,
-                    decoration: TextDecoration.none),
-              ),
+                  color: Colors.white,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12,
+                ),
+              )
             ],
           ),
-        )
+        SizedBox(
+          height: 20,
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              radius: 24,
+              backgroundImage: NetworkImage(user!.image!),
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    user!.name!,
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                        decoration: TextDecoration.none),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    date!,
+                    style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.white,
+                        decoration: TextDecoration.none),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ],
     );
   }

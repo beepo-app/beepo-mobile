@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_this, avoid_print
 
+import 'package:beepo/Service/analytics.dart';
 import 'package:beepo/Utils/extensions.dart';
 import 'package:beepo/Providers/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -370,6 +371,9 @@ class _MyAppState extends State<MyApp> {
                 ? LockScreen()
                 : BottomNavHome()
             : Onboarding(),
+        navigatorObservers: [
+          AnalyticService().getAnalytics(),
+        ],
       ),
     );
   }

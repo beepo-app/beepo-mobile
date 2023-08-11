@@ -51,49 +51,58 @@ class _BubbleStoriesState extends State<BubbleStories> {
       return InkWell(
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => StreamBuilder<List<StoryModel>>(
-                      stream: context
-                          .read<StoryDownloadProvider>()
-                          .getFriendsStories(
-                              widget.docu![widget.index!]['uid']),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData && !snapshot.hasError) {
-                          // if(!snapshot.hasError){
-                          List<StoryModel> uset = snapshot.data!;
-                          UserModel beta = UserModel(
-                            uid: widget.uid,
-                            name: widget.docu![widget.index!]['name'],
-                            image: widget.docu![widget.index!]['profileImage'],
-                            bitcoinWalletAddress: '',
-                            firebaseToken: '',
-                            // userName: userName,
-                          ).copyWith(stories: uset);
-                          cont = PageController(initialPage: snapshot.data!.indexOf(snapshot.data!.first));
+            context,
+            MaterialPageRoute(
+              builder: (context) => StreamBuilder<List<StoryModel>>(
+                stream: context
+                    .read<StoryDownloadProvider>()
+                    .getFriendsStories(widget.docu![widget.index!]['uid']),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && !snapshot.hasError) {
+                    // if(!snapshot.hasError){
+                    List<StoryModel> uset = snapshot.data!;
+                    UserModel beta = UserModel(
+                      uid: widget.uid,
+                      name: widget.docu![widget.index!]['name'],
+                      image: widget.docu![widget.index!]['profileImage'],
+                      bitcoinWalletAddress: '',
+                      firebaseToken: '',
+                      // userName: userName,
+                    ).copyWith(stories: uset);
+                    cont = PageController(
+                        initialPage:
+                            snapshot.data!.indexOf(snapshot.data!.first));
+                    // for (int i = 0; i < snapshot.data!.length; i++) {
 
-                          // return PageView.builder(
-                          //   itemCount: widget.docu!.length,
-                          //   itemBuilder: (context, num) {
-                              return
-                                MoreStories(
-                                uid: widget.docu![widget.index!]['uid'],
-                                docu: widget.docu!,
-                                user: beta,
-                              );
-                            // },
-                            // controller: cont,
-                            // scrollDirection: Axis.vertical,
-                          // );
-                        }
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            color: primaryColor,
-                          ),
-                        );
-                      }
-                      // }
-                        )));
+                    // }
+
+                    // return PageView.builder(
+                    //   itemCount: widget.docu!.length,
+                    //   itemBuilder: (context, num) {
+                    return MoreStories(
+                      uid: widget.docu![widget.index!]['uid'],
+
+                      user: beta,
+                    );
+                    // },
+                    // controller: cont,
+                    // scrollDirection: Axis.vertical,
+                    // );
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: primaryColor,
+                    ),
+                  );
+                },
+
+                // }
+              ),
+              settings: RouteSettings(
+                name: 'story view of ${widget.docu![widget.index!]['name']}',
+              ),
+            ),
+          );
         },
         child: StreamBuilder(
             stream: FirebaseFirestore.instance
@@ -116,8 +125,8 @@ class _BubbleStoriesState extends State<BubbleStories> {
                                 ? BoxShape.rectangle
                                 : BoxShape.circle,
                           ),
-                          width: widget.isExplore? 100 : 60,
-                          height: widget.isExplore? 100 : 60,
+                          width: widget.isExplore ? 100 : 60,
+                          height: widget.isExplore ? 100 : 60,
                           child: snapshot.data!.docs[0]['image'].isNotEmpty
                               ? CircleAvatar(
                                   backgroundImage: CachedNetworkImageProvider(
