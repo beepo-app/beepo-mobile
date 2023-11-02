@@ -7,7 +7,7 @@ import '../../Utils/styles.dart';
 import '../../Widgets/components.dart';
 
 class Browser extends StatefulWidget {
-  const Browser({Key? key}) : super(key: key);
+  const Browser({Key? key}) : super(key: key); 
 
   @override
   State<Browser> createState() => _BrowserState();
